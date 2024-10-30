@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-CPugCurl gLogCurl;
+CPugCurl gPugCurl;
 
 void CPugCurl::ServerActivate()
 {
