@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="precompiled.cpp" />
+    <ClCompile Include="MetaDLL.cpp">
+      <Filter>MeaMod\MetaDLL</Filter>
+    </ClCompile>
+    <ClCompile Include="MetaEngine.cpp">
+      <Filter>MeaMod\MetaEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="MetaMod.cpp">
+      <Filter>MeaMod\MetaMod</Filter>
+    </ClCompile>
+    <ClCompile Include="ReAPI.cpp">
+      <Filter>ReAPI\ReAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="ReGameDLL.cpp">
+      <Filter>ReAPI\ReGameDLL</Filter>
+    </ClCompile>
+    <ClCompile Include="PugCurl.cpp">
+      <Filter>PugMod\PugCurl</Filter>
+    </ClCompile>
+    <ClCompile Include="PugMod.cpp">
+      <Filter>PugMod\PugMod</Filter>
+    </ClCompile>
+    <ClCompile Include="PugUtil.cpp">
+      <Filter>PugMod\PugUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="PugConfig.cpp">
+      <Filter>PugMod\PugConfig</Filter>
+    </ClCompile>
+    <ClCompile Include="PugTask.cpp">
+      <Filter>PugMod\PugTask</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="precompiled.h" />
+    <ClInclude Include="MetaDLL.h">
+      <Filter>MeaMod\MetaDLL</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaEngine.h">
+      <Filter>MeaMod\MetaEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaMod.h">
+      <Filter>MeaMod\MetaMod</Filter>
+    </ClInclude>
+    <ClInclude Include="ReAPI.h">
+      <Filter>ReAPI\ReAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="ReGameDLL.h">
+      <Filter>ReAPI\ReGameDLL</Filter>
+    </ClInclude>
+    <ClInclude Include="PugCurl.h">
+      <Filter>PugMod\PugCurl</Filter>
+    </ClInclude>
+    <ClInclude Include="PugMod.h">
+      <Filter>PugMod\PugMod</Filter>
+    </ClInclude>
+    <ClInclude Include="PugUtil.h">
+      <Filter>PugMod\PugUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="PugConfig.h">
+      <Filter>PugMod\PugConfig</Filter>
+    </ClInclude>
+    <ClInclude Include="PugTask.h">
+      <Filter>PugMod\PugTask</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="PugMod">
+      <UniqueIdentifier>{69f88ec9-5ec4-4d65-b9a3-06804fe06b03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MeaMod">
+      <UniqueIdentifier>{e35de177-cf02-44a8-a60b-f8e78cfec8e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ReAPI">
+      <UniqueIdentifier>{aea590e2-23a2-4c24-94da-eaae125784f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MeaMod\MetaDLL">
+      <UniqueIdentifier>{49ebf606-af40-4703-9c09-fd35f82490cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MeaMod\MetaEngine">
+      <UniqueIdentifier>{756b899f-c02c-4bb8-90f3-fdaf43bf9668}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MeaMod\MetaMod">
+      <UniqueIdentifier>{a9954dca-d681-4215-954b-d30ac9013702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ReAPI\ReAPI">
+      <UniqueIdentifier>{fe2ad5d8-3989-46d9-9ad4-51df04ac2520}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ReAPI\ReGameDLL">
+      <UniqueIdentifier>{bd3a284f-7a90-48b8-8b45-93e88f40f19b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PugMod\PugCurl">
+      <UniqueIdentifier>{80defb46-71e2-44dc-8bf5-01cdd5fe5dae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PugMod\PugMod">
+      <UniqueIdentifier>{f1db98bb-8521-417d-8372-effe61776169}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PugMod\PugUtil">
+      <UniqueIdentifier>{b93afc21-2ea4-4cff-a3d4-18d1f5b8ec06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PugMod\PugConfig">
+      <UniqueIdentifier>{1a2bec10-527b-4b0d-ae4f-dd795b76b793}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PugMod\PugTask">
+      <UniqueIdentifier>{befb0be6-27b7-4731-a65e-f010770cdc02}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PugMod.def">
+      <Filter>PugMod\PugMod</Filter>
+    </None>
+  </ItemGroup>
+</Project>
