@@ -43,7 +43,7 @@ jobs:
         mkdir -p publish/addons/pugmod/dlls
 
         # Copy released file to dlls
-        cp ./pugmod/Release/pugmod_mm.so publish/addons/pugmod/dlls
+        cp ./PugMod/Release/pugmod_mm.so publish/addons/pugmod/dlls
         
     - name: Deploy artifacts
       uses: actions/upload-artifact@v3
