@@ -12,13 +12,14 @@ void CPugTask::ServerDeactivate()
 	this->m_Data.clear();
 }
 
-void CPugTask::Create(int Index, float Delay, bool Repeat)
+void CPugTask::Create(int Index, float Delay, bool Repeat, int Parameter)
 {
 	if (this->m_Data.find(Index) == this->m_Data.end())
 	{
 		this->m_Data[Index].Index = Index;
 		this->m_Data[Index].NextTime = (gpGlobals->time + Delay);
 		this->m_Data[Index].Repeat = Repeat;
+		this->m_Data[Index].Parameter = Parameter;
 	}
 }
 
@@ -42,11 +43,11 @@ void CPugTask::ServerFrame()
 				{
 					switch (it->second.Index)
 					{
-					case 1337:
-					{
-						gPugMod.SetState(STATE_WARMUP);
-						break;
-					}
+						case TASK_CHANGE_STATE:
+						{
+							gPugMod.SetState(it->second.Parameter);
+							break;
+						}
 					}
 
 					this->Remove(it->second.Index);

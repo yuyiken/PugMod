@@ -32,6 +32,15 @@
     <ClCompile Include="PugTask.cpp">
       <Filter>PugMod\PugTask</Filter>
     </ClCompile>
+    <ClCompile Include="PugWarmup.cpp">
+      <Filter>PugMod\PugWarmup</Filter>
+    </ClCompile>
+    <ClCompile Include="PugCvar.cpp">
+      <Filter>PugMod\PugCvars</Filter>
+    </ClCompile>
+    <ClCompile Include="PugSpawn.cpp">
+      <Filter>PugMod\PugDeathmatch\PugSpawn</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="precompiled.h" />
@@ -64,6 +73,15 @@
     </ClInclude>
     <ClInclude Include="PugTask.h">
       <Filter>PugMod\PugTask</Filter>
+    </ClInclude>
+    <ClInclude Include="PugWarmup.h">
+      <Filter>PugMod\PugWarmup</Filter>
+    </ClInclude>
+    <ClInclude Include="PugCvar.h">
+      <Filter>PugMod\PugCvars</Filter>
+    </ClInclude>
+    <ClInclude Include="PugSpawn.h">
+      <Filter>PugMod\PugDeathmatch\PugSpawn</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -105,6 +123,18 @@
     </Filter>
     <Filter Include="PugMod\PugTask">
       <UniqueIdentifier>{befb0be6-27b7-4731-a65e-f010770cdc02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PugMod\PugWarmup">
+      <UniqueIdentifier>{ff847c80-72a5-486e-ad64-135106813cfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PugMod\PugCvars">
+      <UniqueIdentifier>{f07941e2-705b-4b8d-88a3-f5f80a97c627}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PugMod\PugDeathmatch">
+      <UniqueIdentifier>{b999064e-7a95-4a2d-bb25-a12167598fa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PugMod\PugDeathmatch\PugSpawn">
+      <UniqueIdentifier>{06516cf1-b5d0-4bc5-8eee-f9c33fe95948}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

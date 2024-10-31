@@ -44,6 +44,50 @@ void CPugUtil::ServerCommand(const char* Format, ...)
 	g_engfuncs.pfnServerCommand(Command);
 }
 
+void CPugUtil::ClientPrint(edict_t* pEntity, int msg_dest, const char* Format, ...)
+{
+	va_list argList;
+
+	va_start(argList, Format);
+
+	char Buffer[188] = { 0 };
+
+	int Length = vsnprintf(Buffer, sizeof(Buffer), Format, argList);
+
+	va_end(argList);
+
+	if (msg_dest == PRINT_CONSOLE)
+	{
+		if (Length > 125)
+		{
+			Length = 125;
+		}
+
+		Buffer[Length++] = '\n';
+		Buffer[Length++] = '\n';
+		Buffer[Length] = 0;
+	}
+
+	static int iMsgTextMsg;
+
+	if (iMsgTextMsg || (iMsgTextMsg = gpMetaUtilFuncs->pfnGetUserMsgID(&Plugin_info, "TextMsg", NULL)))
+	{
+		if (pEntity)
+		{
+			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgTextMsg, NULL, pEntity);
+		}
+		else
+		{
+			g_engfuncs.pfnMessageBegin(MSG_BROADCAST, iMsgTextMsg, NULL, NULL);
+		}
+
+		g_engfuncs.pfnWriteByte(msg_dest);
+		g_engfuncs.pfnWriteString("%s");
+		g_engfuncs.pfnWriteString(Buffer);
+		g_engfuncs.pfnMessageEnd();
+	}
+}
+
 int CPugUtil::ParseColors(char* Buffer)
 {
 	size_t len = strlen(Buffer);

@@ -26,7 +26,6 @@ class CPugMod
 public:
 	void ServerActivate();
 	void ServerDeactivate();
-	void ServerFrame();
 	void SetState(int State);
 
 	int m_State;
