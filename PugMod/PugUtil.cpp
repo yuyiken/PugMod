@@ -106,43 +106,69 @@ int CPugUtil::ParseColors(char* Buffer)
 			{
 				c = Buffer[++i];
 
-				if (c == 'n' || c == 't' || (c >= '1' && c <= '4'))
+				switch (c)
 				{
-					switch (c)
+					case '1': // Default chat text color
 					{
-						case '1': // Default chat text color
-						{
-							c = '\x01';
-							break;
-						}
-						case '2': // ?
-						{
-							c = '\x02';
-							break;
-						}
-						case '3': // ?
-						{
-							c = '\x03';
-							break;
-						}
-						case '4': // Green chat text color
-						{
-							c = '\x04';
-							break;
-						}
-						case 'n': // New Line Character
-						{
-							c = '\n';
-							break;
-						}
-						case 't': // TAB Character
-						{
-							c = '\t';
-							break;
-						}
+						c = '\x01';
+						offs++;
+						break;
 					}
-
-					offs++;
+					case '2': // ?
+					{
+						c = '\x02';
+						offs++;
+						break;
+					}
+					case '3': // ?
+					{
+						c = '\x03';
+						offs++;
+						break;
+					}
+					case '4': // Green chat text color
+					{
+						c = '\x04';
+						offs++;
+						break;
+					}
+					case 'n': // New Line Character
+					{
+						c = '\n';
+						offs++;
+						break;
+					}
+					case 't': // TAB Character
+					{
+						c = '\t';
+						offs++;
+						break;
+					}
+					// For menu system
+					case 'w': // w Character: White text on menu
+					{
+						c = '\w';
+						offs++;
+						break;
+					}
+					case 'y': // y Character: Yellow text on menu
+					{
+						c = '\t';
+						offs++;
+						break;
+					}
+					case 'r': // r Character: Red text on menu
+					{
+						c = '\r';
+						offs++;
+						break;
+					}
+					case 'R': // R Character: Right align text on menu
+					{
+						c = '\R';
+						offs++;
+						break;
+					}
 				}
 			}
 

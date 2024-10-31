@@ -41,6 +41,9 @@
     <ClCompile Include="PugSpawn.cpp">
       <Filter>PugMod\PugDeathmatch\PugSpawn</Filter>
     </ClCompile>
+    <ClCompile Include="PugMenu.cpp">
+      <Filter>PugMod\PugMenu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="precompiled.h" />
@@ -82,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="PugSpawn.h">
       <Filter>PugMod\PugDeathmatch\PugSpawn</Filter>
+    </ClInclude>
+    <ClInclude Include="PugMenu.h">
+      <Filter>PugMod\PugMenu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -135,6 +141,9 @@
     </Filter>
     <Filter Include="PugMod\PugDeathmatch\PugSpawn">
       <UniqueIdentifier>{06516cf1-b5d0-4bc5-8eee-f9c33fe95948}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PugMod\PugMenu">
+      <UniqueIdentifier>{453e913d-f469-4b89-b562-38b2c79a9519}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

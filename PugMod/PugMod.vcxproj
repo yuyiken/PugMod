@@ -17,6 +17,7 @@
     <ClCompile Include="PugConfig.cpp" />
     <ClCompile Include="PugCurl.cpp" />
     <ClCompile Include="PugCvar.cpp" />
+    <ClCompile Include="PugMenu.cpp" />
     <ClCompile Include="PugMod.cpp" />
     <ClCompile Include="MetaDLL.cpp" />
     <ClCompile Include="MetaEngine.cpp" />
@@ -36,6 +37,7 @@
     <ClInclude Include="PugConfig.h" />
     <ClInclude Include="PugCurl.h" />
     <ClInclude Include="PugCvar.h" />
+    <ClInclude Include="PugMenu.h" />
     <ClInclude Include="PugMod.h" />
     <ClInclude Include="MetaDLL.h" />
     <ClInclude Include="MetaEngine.h" />

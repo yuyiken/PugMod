@@ -53,11 +53,6 @@ void CPugSpawn::Enable()
     {
         this->LoadSpawns();
 
-        if (gReGameDLL.m_Hookchains)
-        {
-            gReGameDLL.m_Hookchains->CSGameRules_GetPlayerSpawnSpot()->registerHook(this->CSGameRules_GetPlayerSpawnSpot);
-        }
-
         this->m_Enabled = true;
     }
 }
@@ -66,25 +61,8 @@ void CPugSpawn::Disable()
 {
     if (this->m_Enabled)
     {
-        if (gReGameDLL.m_Hookchains)
-        {
-            gReGameDLL.m_Hookchains->CSGameRules_GetPlayerSpawnSpot()->unregisterHook(this->CSGameRules_GetPlayerSpawnSpot);
-        }
-
         this->m_Enabled = false;
     }
-}
-
-edict_t* CPugSpawn::CSGameRules_GetPlayerSpawnSpot(IReGameHook_CSGameRules_GetPlayerSpawnSpot* chain, CBasePlayer* Player)
-{
-    auto Result = chain->callNext(Player);
-
-    if (gPugSpawn.SetPlayerPosition(Player))
-    {
-        return nullptr;
-    }
-
-    return Result;
 }
 
 bool CPugSpawn::SetPlayerPosition(CBasePlayer* Player)
@@ -131,7 +109,8 @@ bool CPugSpawn::SetPlayerPosition(CBasePlayer* Player)
                     return true;
                 }
             }
-        } while (true);
+        }
+        while (true);
     }
 
     return false;
