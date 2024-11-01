@@ -14,8 +14,7 @@
     <None Include="PugMod.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PugCommand.cpp" />
-    <ClCompile Include="PugConfig.cpp" />
+    <ClCompile Include="PugClientCmd.cpp" />
     <ClCompile Include="PugCurl.cpp" />
     <ClCompile Include="PugCvar.cpp" />
     <ClCompile Include="PugDeathmatch.cpp" />
@@ -28,14 +27,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PugServerCmd.cpp" />
     <ClCompile Include="PugTask.cpp" />
     <ClCompile Include="PugUtil.cpp" />
     <ClCompile Include="ReAPI.cpp" />
     <ClCompile Include="ReGameDLL.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PugCommand.h" />
-    <ClInclude Include="PugConfig.h" />
+    <ClInclude Include="PugClientCmd.h" />
     <ClInclude Include="PugCurl.h" />
     <ClInclude Include="PugCvar.h" />
     <ClInclude Include="PugDeathmatch.h" />
@@ -45,6 +44,7 @@
     <ClInclude Include="MetaEngine.h" />
     <ClInclude Include="MetaMod.h" />
     <ClInclude Include="precompiled.h" />
+    <ClInclude Include="PugServerCmd.h" />
     <ClInclude Include="PugTask.h" />
     <ClInclude Include="PugUtil.h" />
     <ClInclude Include="ReAPI.h" />

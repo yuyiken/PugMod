@@ -12,7 +12,6 @@ typedef struct S_SPAWN_POINT
 
 typedef struct S_ITEM_INFO
 {
-	std::string Alias;
 	std::string Label;
 	int Enabled;
 	int Bot;
@@ -33,15 +32,16 @@ typedef struct S_PLAYER_INFO
 		this->LastSecondary.clear();
 		this->LastPrimary.clear();
 	}
-} P_PLAYER_INFO, * LP_PLAYER_INFO;
+} P_PLAYER_INFO, *LP_PLAYER_INFO;
 
 class CPugDeathmatch
 {
 public:
 	void ServerActivate();
+	void ServerDeactivate();
 
-	void LoadSpawns();
-	void LoadWeapons();
+	void AddSpawn();
+	void AddItem(std::string Item, std::string Label, bool Enable, bool Bot, int Slot);
 
 	void Init();
 	void Stop();
@@ -78,7 +78,7 @@ public:
 private:
 	bool m_Running;
 	std::map<size_t, P_SPAWN_POINT> m_Spawns;
-	std::vector<P_ITEM_INFO> m_Weapons;
+	std::map<std::string, P_ITEM_INFO> m_Weapons;
 	std::map<int, P_PLAYER_INFO> m_Info;
 };
 

@@ -1,8 +1,8 @@
 #include "precompiled.h"
 
-CPugCommand gPugCommand;
+CPugClientCmd gPugClientCmd;
 
-bool CPugCommand::ClientCommand(edict_t* pEntity)
+bool CPugClientCmd::Command(edict_t* pEntity)
 {
 	if (!FNullEnt(pEntity))
 	{
@@ -14,20 +14,17 @@ bool CPugCommand::ClientCommand(edict_t* pEntity)
 
 			if (pCmd)
 			{
-				auto pArg1 = g_engfuncs.pfnCmd_Argv(1);
-
 				if (pCmd[0u] != '\0')
 				{
 					if (!Q_strcmp(pCmd, "menuselect"))
 					{
+						auto pArg1 = g_engfuncs.pfnCmd_Argv(1);
+
 						if (pArg1)
 						{
-							if (Player->m_iMenu == Menu_OFF)
+							if (gPugMenu[Player->entindex()].Handle(Player->entindex(), std::atoi(pArg1)))
 							{
-								if (gPugMenu[Player->entindex()].Handle(Player->entindex(), atoi(pArg1)))
-								{
-									return true;
-								}
+								return true;
 							}
 						}
 					}
@@ -40,11 +37,13 @@ bool CPugCommand::ClientCommand(edict_t* pEntity)
 					}
 					else if (!Q_strcmp(pCmd, "say") || !Q_strcmp(pCmd, "say_team"))
 					{
+						auto pArg1 = g_engfuncs.pfnCmd_Argv(1);
+
 						if (pArg1)
 						{
 							if (pArg1[0u] != '\0')
 							{
-								if (Q_strstr(pArg1, "guns") != nullptr)
+								if (!Q_strcmp(pArg1, "guns"))
 								{
 									if (gPugDeathmatch.SetHideMenu(Player, false))
 									{

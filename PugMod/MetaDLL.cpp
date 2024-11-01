@@ -20,7 +20,7 @@ C_DLLEXPORT int GetEntityAPI2(DLL_FUNCTIONS* pFunctionTable, int* interfaceVersi
 
 void DLL_PRE_ClientCommand(edict_t* pEntity)
 {
-	if (gPugCommand.ClientCommand(pEntity))
+	if (gPugClientCmd.Command(pEntity))
 	{
 		RETURN_META(MRES_SUPERCEDE);
 	}
@@ -49,8 +49,6 @@ void DLL_POST_ServerActivate(edict_t* pEdictList, int edictCount, int clientMax)
 {
 	gPugCvar.ServerActivate();
 
-	gPugConfig.ServerActivate();
-
 	gPugCurl.ServerActivate();
 
 	gPugTask.ServerActivate();
@@ -69,6 +67,8 @@ void DLL_POST_ServerDeactivate(void)
 	gPugTask.ServerDeactivate();
 
 	gPugMod.ServerDeactivate();
+
+	gPugDeathmatch.ServerDeactivate();
 
 	RETURN_META(MRES_IGNORED);
 }

@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="precompiled.cpp" />
     <ClCompile Include="MetaDLL.cpp">
       <Filter>MeaMod\MetaDLL</Filter>
     </ClCompile>
@@ -26,27 +25,29 @@
     <ClCompile Include="PugUtil.cpp">
       <Filter>PugMod\PugUtil</Filter>
     </ClCompile>
-    <ClCompile Include="PugConfig.cpp">
-      <Filter>PugMod\PugConfig</Filter>
-    </ClCompile>
     <ClCompile Include="PugTask.cpp">
       <Filter>PugMod\PugTask</Filter>
-    </ClCompile>
-    <ClCompile Include="PugWarmup.cpp">
-      <Filter>PugMod\PugWarmup</Filter>
     </ClCompile>
     <ClCompile Include="PugCvar.cpp">
       <Filter>PugMod\PugCvars</Filter>
     </ClCompile>
-    <ClCompile Include="PugSpawn.cpp">
-      <Filter>PugMod\PugDeathmatch\PugSpawn</Filter>
-    </ClCompile>
     <ClCompile Include="PugMenu.cpp">
       <Filter>PugMod\PugMenu</Filter>
     </ClCompile>
+    <ClCompile Include="PugDeathmatch.cpp">
+      <Filter>PugMod\PugDeathmatch</Filter>
+    </ClCompile>
+    <ClCompile Include="precompiled.cpp">
+      <Filter>Precompiled</Filter>
+    </ClCompile>
+    <ClCompile Include="PugClientCmd.cpp">
+      <Filter>PugMod\PugClientCmd</Filter>
+    </ClCompile>
+    <ClCompile Include="PugServerCmd.cpp">
+      <Filter>PugMod\PugServerCmd</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="precompiled.h" />
     <ClInclude Include="MetaDLL.h">
       <Filter>MeaMod\MetaDLL</Filter>
     </ClInclude>
@@ -71,23 +72,26 @@
     <ClInclude Include="PugUtil.h">
       <Filter>PugMod\PugUtil</Filter>
     </ClInclude>
-    <ClInclude Include="PugConfig.h">
-      <Filter>PugMod\PugConfig</Filter>
-    </ClInclude>
     <ClInclude Include="PugTask.h">
       <Filter>PugMod\PugTask</Filter>
-    </ClInclude>
-    <ClInclude Include="PugWarmup.h">
-      <Filter>PugMod\PugWarmup</Filter>
     </ClInclude>
     <ClInclude Include="PugCvar.h">
       <Filter>PugMod\PugCvars</Filter>
     </ClInclude>
-    <ClInclude Include="PugSpawn.h">
-      <Filter>PugMod\PugDeathmatch\PugSpawn</Filter>
-    </ClInclude>
     <ClInclude Include="PugMenu.h">
       <Filter>PugMod\PugMenu</Filter>
+    </ClInclude>
+    <ClInclude Include="PugDeathmatch.h">
+      <Filter>PugMod\PugDeathmatch</Filter>
+    </ClInclude>
+    <ClInclude Include="precompiled.h">
+      <Filter>Precompiled</Filter>
+    </ClInclude>
+    <ClInclude Include="PugClientCmd.h">
+      <Filter>PugMod\PugClientCmd</Filter>
+    </ClInclude>
+    <ClInclude Include="PugServerCmd.h">
+      <Filter>PugMod\PugServerCmd</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -124,9 +128,6 @@
     <Filter Include="PugMod\PugUtil">
       <UniqueIdentifier>{b93afc21-2ea4-4cff-a3d4-18d1f5b8ec06}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PugMod\PugConfig">
-      <UniqueIdentifier>{1a2bec10-527b-4b0d-ae4f-dd795b76b793}</UniqueIdentifier>
-    </Filter>
     <Filter Include="PugMod\PugTask">
       <UniqueIdentifier>{befb0be6-27b7-4731-a65e-f010770cdc02}</UniqueIdentifier>
     </Filter>
@@ -139,11 +140,17 @@
     <Filter Include="PugMod\PugDeathmatch">
       <UniqueIdentifier>{b999064e-7a95-4a2d-bb25-a12167598fa8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PugMod\PugDeathmatch\PugSpawn">
-      <UniqueIdentifier>{06516cf1-b5d0-4bc5-8eee-f9c33fe95948}</UniqueIdentifier>
-    </Filter>
     <Filter Include="PugMod\PugMenu">
       <UniqueIdentifier>{453e913d-f469-4b89-b562-38b2c79a9519}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Precompiled">
+      <UniqueIdentifier>{3d0104c2-0d00-4861-8ac8-066fc0103cae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PugMod\PugClientCmd">
+      <UniqueIdentifier>{a3fb0c50-2170-42f3-8433-aa56f07d43c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PugMod\PugServerCmd">
+      <UniqueIdentifier>{dd9401ac-913f-4a5f-8eac-fa91f2f394fa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

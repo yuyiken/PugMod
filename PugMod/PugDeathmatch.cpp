@@ -6,89 +6,75 @@ void CPugDeathmatch::ServerActivate()
 {
     this->m_Running = false;
 
-    this->LoadSpawns();
+	this->m_Spawns.clear();
 
-	this->LoadWeapons();
+	this->m_Weapons.clear();
+
+	this->m_Info.clear();
+
+	gPugUtil.ServerCommand("exec addons/pugmod/cfg/csdm.cfg");
+
+	gPugUtil.ServerCommand("exec addons/pugmod/cfg/spawns/%s.cfg", STRING(gpGlobals->mapname));
+}
+
+void CPugDeathmatch::ServerDeactivate()
+{
+	this->m_Running = false;
 }
 
 void CPugDeathmatch::LoadSpawns()
 {
-    this->m_Spawns.clear();
+    //this->m_Spawns.clear();
 
-    char Path[MAX_PATH] = { 0 };
+    //char Path[MAX_PATH] = { 0 };
 
-    Q_sprintf(Path, "%s/csdm/spawns/%s.txt", gPugConfig.GetFullPath().c_str(), STRING(gpGlobals->mapname));
+    //Q_sprintf(Path, "%s/csdm/spawns/%s.txt", gPugConfig.GetFullPath().c_str(), STRING(gpGlobals->mapname));
 
-    std::ifstream File(Path);
+    //std::ifstream File(Path);
 
-    if (File)
-    {
-        auto LineCount = 1;
+    //if (File)
+    //{
+    //    auto LineCount = 1;
 
-        std::string Line = "";
+    //    std::string Line = "";
 
-        P_SPAWN_POINT Info;
+    //    P_SPAWN_POINT Info;
 
-        while (std::getline(File, Line))
-        {
-            std::istringstream Row(Line);
+    //    while (std::getline(File, Line))
+    //    {
+    //        std::istringstream Row(Line);
 
-            if (!(Row >> Info.Vecs[0] >> Info.Vecs[1] >> Info.Vecs[2] >> Info.Angles[0] >> Info.Angles[1] >> Info.Angles[2] >> Info.Team >> Info.VAngles[0] >> Info.VAngles[1] >> Info.VAngles[2]))
-            {
-                gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Line %d of the %s spawns file is incorrect.", Plugin_info.logtag, LineCount, STRING(gpGlobals->mapname));
-            }
+    //        if (!(Row >> Info.Vecs[0] >> Info.Vecs[1] >> Info.Vecs[2] >> Info.Angles[0] >> Info.Angles[1] >> Info.Angles[2] >> Info.Team >> Info.VAngles[0] >> Info.VAngles[1] >> Info.VAngles[2]))
+    //        {
+    //            gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Line %d of the %s spawns file is incorrect.", Plugin_info.logtag, LineCount, STRING(gpGlobals->mapname));
+    //        }
 
-            this->m_Spawns.insert(std::make_pair(this->m_Spawns.size(), Info));
+    //        this->m_Spawns.insert(std::make_pair(this->m_Spawns.size(), Info));
 
-            LineCount++;
-        }
+    //        LineCount++;
+    //    }
 
-        File.close();
-    }
-    else
-    {
-        gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Failed to read file: %s", __func__, Path);
-    }
+    //    File.close();
+    //}
+    //else
+    //{
+    //    gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Failed to read file: %s", __func__, Path);
+    //}
 }
 
-void CPugDeathmatch::LoadWeapons()
+void CPugDeathmatch::AddSpawn()
 {
-    this->m_Weapons.clear();
+	// Add spawn like settings
+}
 
-    char Path[MAX_PATH] = { 0 };
+void CPugDeathmatch::AddItem(std::string Item, std::string Label, bool Enable, bool Bot, int Slot)
+{
+	if (!Item.empty() && !Label.empty())
+	{
+		P_ITEM_INFO ItemInfo = { Label, Enable, Bot, Slot };
 
-    Q_sprintf(Path, "%s/csdm/weapons.txt", gPugConfig.GetFullPath().c_str());
-
-    std::ifstream File(Path);
-
-    if (File)
-    {
-        std::string Line;
-
-        P_ITEM_INFO Info;
-
-        while (std::getline(File, Line))
-        {
-            std::istringstream Row(Line);
-
-            if (Row >> Info.Alias >> Info.Label >> Info.Enabled >> Info.Bot >> Info.Slot)
-            {
-                Info.Alias.erase(std::remove(Info.Alias.begin(), Info.Alias.end(), '\"'), Info.Alias.end());
-
-                Info.Alias = "weapon_" + Info.Alias;
-
-                Info.Label.erase(std::remove(Info.Label.begin(), Info.Label.end(), '\"'), Info.Label.end());
-
-                this->m_Weapons.push_back(Info);
-            }
-        }
-
-        File.close();
-    }
-    else
-    {
-        gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Failed to read file: %s", __func__, Path);
-    }
+		this->m_Weapons.insert(std::make_pair(Item, ItemInfo));
+	}
 }
 
 void CPugDeathmatch::Init()

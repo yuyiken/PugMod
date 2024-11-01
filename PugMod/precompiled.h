@@ -78,11 +78,11 @@
 
 // Pug Mod
 #include "PugMod.h"
-#include "PugConfig.h"
 #include "PugCvar.h"
 #include "PugCurl.h"
 #include "PugMenu.h"
-#include "PugCommand.h"
+#include "PugClientCmd.h"
+#include "PugServerCmd.h"
 #include "PugDeathmatch.h"
 #include "PugTask.h"
 #include "PugUtil.h"
