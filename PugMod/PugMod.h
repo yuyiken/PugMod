@@ -1,7 +1,7 @@
 #pragma once
 
 constexpr int STATE_DEAD = 0;
-constexpr int STATE_WARMUP = 1;
+constexpr int STATE_DEATHMATCH = 1;
 constexpr int STATE_START = 2;
 constexpr int STATE_FIRST_HALF = 3;
 constexpr int STATE_HALFTIME = 4;
@@ -12,7 +12,7 @@ constexpr int STATE_END = 7;
 const char PUG_MOD_STATES_STR[][32] =
 {
 	"Morto",
-	"Aquecimento",
+	"Deathmatch",
 	"Iniciando",
 	"Primeiro Tempo",
 	"Intervalo",
@@ -27,6 +27,9 @@ public:
 	void ServerActivate();
 	void ServerDeactivate();
 	void SetState(int State);
+
+	void PlayerGetIntoGame(CBasePlayer* Player);
+	bool PlayerJoinTeam(CBasePlayer* Player, int Slot);
 
 	int m_State;
 

@@ -4,7 +4,6 @@ class CPugCvar
 public:
 	void ServerActivate();
 
-	cvar_t* m_BotDeathmatch;
 	cvar_t* m_SvRestart;
 
 	cvar_t* m_LogTag;

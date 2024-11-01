@@ -4,11 +4,11 @@
 
 typedef struct S_MENU_ITEM
 {
-	int			Info;
-	std::string Text;
-	bool		Disabled;
-	int			Parameter;
-} P_MENU_ITEM, * LP_MENU_ITEM;
+	std::string		Info;
+	std::string		Text;
+	bool			Disabled;
+	std::string		Parameter;
+} P_MENU_ITEM, *LP_MENU_ITEM;
 
 class CPugMenu
 {
@@ -17,9 +17,9 @@ public:
 
 	void Create(std::string Title, bool Exit, void* CallbackFunction);
 
-	void AddItem(int Info, std::string Text);
-	void AddItem(int Info, std::string Text, bool Disabled);
-	void AddItem(int Info, std::string Text, bool Disabled, int Parameter);
+	void AddItem(std::string Info, std::string Text);
+	void AddItem(std::string Info, std::string Text, bool Disabled);
+	void AddItem(std::string Info, std::string Text, bool Disabled, std::string Parameter);
 
 	void Show(int EntityIndex);
 	void Hide(int EntityIndex);
@@ -38,4 +38,4 @@ private:
 	void* m_Func = nullptr;
 };
 
-extern std::array<CPugMenu, MAX_CLIENTS + 1> gMatchMenu;
+extern std::array<CPugMenu, MAX_CLIENTS + 1> gPugMenu;

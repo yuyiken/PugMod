@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-std::array<CPugMenu, MAX_CLIENTS + 1> gMatchMenu;
+std::array<CPugMenu, MAX_CLIENTS + 1> gPugMenu;
 
 void CPugMenu::Clear()
 {
@@ -28,17 +28,17 @@ void CPugMenu::Create(std::string Title, bool Exit, void* CallbackFunction)
 	this->m_Func = CallbackFunction;
 }
 
-void CPugMenu::AddItem(int Info, std::string Text)
+void CPugMenu::AddItem(std::string Info, std::string Text)
 {
-	this->AddItem(Info, Text, false, 0);
+	this->AddItem(Info, Text, false, "");
 }
 
-void CPugMenu::AddItem(int Info, std::string Text, bool Disabled)
+void CPugMenu::AddItem(std::string Info, std::string Text, bool Disabled)
 {
-	this->AddItem(Info, Text, Disabled, 0);
+	this->AddItem(Info, Text, Disabled, "");
 }
 
-void CPugMenu::AddItem(int Info, std::string Text, bool Disabled, int Parameter)
+void CPugMenu::AddItem(std::string Info, std::string Text, bool Disabled, std::string Parameter)
 {
 	P_MENU_ITEM ItemData = { Info, Text, Disabled, Parameter };
 
@@ -190,15 +190,15 @@ void CPugMenu::Display(int EntityIndex, int Page)
 
 	if (End != this->m_Data.size())
 	{
-		Slots |= MENU_KEY_9; // MENU_KEY_9;
+		Slots |= MENU_KEY_9;
 
 		if (Page)
 		{
-			MenuText += "\n\\r9.\\w Avançar\n\\r0.\\w Voltar";
+			MenuText += "\n\\r9.\\w AvanÃ§ar\n\\r0.\\w Voltar";
 		}
 		else
 		{
-			MenuText += "\n\\r9.\\w Avançar";
+			MenuText += "\n\\r9.\\w AvanÃ§ar";
 
 			if (this->m_Exit)
 			{

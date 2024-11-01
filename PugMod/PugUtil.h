@@ -23,7 +23,10 @@ public:
     short FixedSigned16(float value, float scale);
     hudtextparms_t HudParam(int red, int green, int blue, float x, float y, int effects, float fxtime, float holdtime, float fadeintime, float fadeouttime, int channel);
     void HudMessage(edict_t* pEntity, hudtextparms_t textparms, const char* Format, ...);
+    void TeamInfo(edict_t* pEntity, int playerIndex, const char* pszTeamName);
+    std::array<int, SPECTATOR + 1U> GetPlayerCount();
 
+public:
     std::map<std::string, cvar_t> m_CvarData;
 };
 

@@ -11,11 +11,21 @@ C_DLLEXPORT int GetEntityAPI2(DLL_FUNCTIONS* pFunctionTable, int* interfaceVersi
 {
 	memset(&gDLL_FunctionTable_Pre, 0, sizeof(DLL_FUNCTIONS));
 
-	// Register Functions Here
+	gDLL_FunctionTable_Pre.pfnClientCommand = DLL_PRE_ClientCommand;
 
 	memcpy(pFunctionTable, &gDLL_FunctionTable_Pre, sizeof(DLL_FUNCTIONS));
 
 	return 1;
+}
+
+void DLL_PRE_ClientCommand(edict_t* pEntity)
+{
+	if (gPugCommand.ClientCommand(pEntity))
+	{
+		RETURN_META(MRES_SUPERCEDE);
+	}
+
+	RETURN_META(MRES_IGNORED);
 }
 #pragma endregion
 
@@ -46,6 +56,8 @@ void DLL_POST_ServerActivate(edict_t* pEdictList, int edictCount, int clientMax)
 	gPugTask.ServerActivate();
 
 	gPugMod.ServerActivate();
+
+	gPugDeathmatch.ServerActivate();
 
 	RETURN_META(MRES_IGNORED);
 }

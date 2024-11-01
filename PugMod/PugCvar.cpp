@@ -7,9 +7,6 @@ void CPugCvar::ServerActivate()
 	// sv_restart
 	this->m_SvRestart = gPugUtil.CvarRegister("sv_restart", "0");
 
-	// bot_deathmatch
-	this->m_BotDeathmatch = gPugUtil.CvarRegister("bot_deathmatch", "0");
-
 	// Log Tag
 	this->m_LogTag = gPugUtil.CvarRegister("pug_log_tag", "PUG");
 
@@ -35,7 +32,7 @@ void CPugCvar::ServerActivate()
 	this->m_Config[STATE_DEAD] = gPugUtil.CvarRegister("pug_cfg_main", "pugmod.cfg");
 
 	// Aquecimento
-	this->m_Config[STATE_WARMUP] = gPugUtil.CvarRegister("pug_cfg_warmup", "warmup.cfg");
+	this->m_Config[STATE_DEATHMATCH] = gPugUtil.CvarRegister("pug_cfg_deathmatch", "deathmatch.cfg");
 
 	// Votação
 	this->m_Config[STATE_START] = gPugUtil.CvarRegister("pug_cfg_start", "start.cfg");

@@ -349,3 +349,36 @@ void CPugUtil::HudMessage(edict_t* pEntity, hudtextparms_t textparms, const char
 	g_engfuncs.pfnWriteString(Buffer);
 	g_engfuncs.pfnMessageEnd();
 }
+
+void CPugUtil::TeamInfo(edict_t* pEntity, int playerIndex, const char* pszTeamName)
+{
+	static int iMsgTeamInfo;
+
+	if (iMsgTeamInfo || (iMsgTeamInfo = gpMetaUtilFuncs->pfnGetUserMsgID(&Plugin_info, "TeamInfo", NULL)))
+	{
+		g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgTeamInfo, nullptr, pEntity);
+		g_engfuncs.pfnWriteByte(playerIndex);
+		g_engfuncs.pfnWriteString(pszTeamName);
+		g_engfuncs.pfnMessageEnd();
+	}
+}
+
+std::array<int, SPECTATOR + 1U> CPugUtil::GetPlayerCount()
+{
+	std::array<int, SPECTATOR + 1U> PlayerCount = { 0 };
+
+	for (int i = 1; i <= gpGlobals->maxClients; ++i)
+	{
+		auto Player = UTIL_PlayerByIndexSafe(i);
+
+		if (Player)
+		{
+			if (!Player->IsDormant())
+			{
+				PlayerCount[Player->m_iTeam]++;
+			}
+		}
+	}
+
+	return PlayerCount;
+}

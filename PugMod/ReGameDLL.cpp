@@ -43,6 +43,14 @@ bool CReGameDLL::Init()
 										this->m_Hookchains->CBasePlayer_HasRestrictItem()->registerHook(this->CBasePlayer_HasRestrictItem);
 
 										this->m_Hookchains->CSGameRules_GetPlayerSpawnSpot()->registerHook(this->CSGameRules_GetPlayerSpawnSpot);
+
+										this->m_Hookchains->CBasePlayer_GetIntoGame()->registerHook(this->CBasePlayer_GetIntoGame);
+
+										this->m_Hookchains->CSGameRules_PlayerSpawn()->registerHook(this->CSGameRules_PlayerSpawn);
+
+										this->m_Hookchains->CBasePlayer_SetAnimation()->registerHook(this->CBasePlayer_SetAnimation);
+
+										this->m_Hookchains->HandleMenu_ChooseTeam()->registerHook(this->HandleMenu_ChooseTeam);
 									}
 								}
 
@@ -70,7 +78,15 @@ bool CReGameDLL::Stop()
 
 		this->m_Hookchains->CBasePlayer_HasRestrictItem()->unregisterHook(this->CBasePlayer_HasRestrictItem);
 
-		this->m_Hookchains->CSGameRules_GetPlayerSpawnSpot()->registerHook(this->CSGameRules_GetPlayerSpawnSpot);
+		this->m_Hookchains->CSGameRules_GetPlayerSpawnSpot()->unregisterHook(this->CSGameRules_GetPlayerSpawnSpot);
+
+		this->m_Hookchains->CBasePlayer_GetIntoGame()->unregisterHook(this->CBasePlayer_GetIntoGame);
+
+		this->m_Hookchains->CSGameRules_PlayerSpawn()->unregisterHook(this->CSGameRules_PlayerSpawn);
+
+		this->m_Hookchains->CBasePlayer_SetAnimation()->unregisterHook(this->CBasePlayer_SetAnimation);
+
+		this->m_Hookchains->HandleMenu_ChooseTeam()->unregisterHook(this->HandleMenu_ChooseTeam);
 	}
 	
 	return false;
@@ -85,7 +101,7 @@ CGameRules* CReGameDLL::InstallGameRules(IReGameHook_InstallGameRules* chain)
 
 void CReGameDLL::CBasePlayer_AddAccount(IReGameHook_CBasePlayer_AddAccount* chain, CBasePlayer* Player, int Amount, RewardType Type, bool TrackChange)
 {
-	if (gPugWarmup.AddAccount(Player, Amount, Type, TrackChange))
+	if (gPugDeathmatch.AddAccount(Player, Amount, Type, TrackChange))
 	{
 		Amount = 0;
 	}
@@ -95,7 +111,7 @@ void CReGameDLL::CBasePlayer_AddAccount(IReGameHook_CBasePlayer_AddAccount* chai
 
 bool CReGameDLL::CBasePlayer_HasRestrictItem(IReGameHook_CBasePlayer_HasRestrictItem* chain, CBasePlayer* Player, ItemID ItemIndex, ItemRestType RestType)
 {
-	if (gPugWarmup.HasRestrictItem(Player, ItemIndex, RestType))
+	if (gPugDeathmatch.HasRestrictItem(Player, ItemIndex, RestType))
 	{
 		return true;
 	}
@@ -105,10 +121,45 @@ bool CReGameDLL::CBasePlayer_HasRestrictItem(IReGameHook_CBasePlayer_HasRestrict
 
 edict_t* CReGameDLL::CSGameRules_GetPlayerSpawnSpot(IReGameHook_CSGameRules_GetPlayerSpawnSpot* chain, CBasePlayer* Player)
 {
-	if (gPugSpawn.SetPlayerPosition(Player))
+	if (gPugDeathmatch.SetPlayerPosition(Player))
 	{
 		return nullptr;
 	}
 
 	return chain->callNext(Player);
+}
+
+bool CReGameDLL::CBasePlayer_GetIntoGame(IReGameHook_CBasePlayer_GetIntoGame* chain, CBasePlayer* Player)
+{
+	auto Result = chain->callNext(Player);
+
+	gPugMod.PlayerGetIntoGame(Player);
+
+	gPugDeathmatch.ResetPlayer(Player);
+
+	return Result;
+}
+
+void CReGameDLL::CSGameRules_PlayerSpawn(IReGameHook_CSGameRules_PlayerSpawn* chain, CBasePlayer* Player)
+{
+	chain->callNext(Player);
+
+	gPugDeathmatch.PlayerSpawn(Player);
+}
+
+void CReGameDLL::CBasePlayer_SetAnimation(IReGameHook_CBasePlayer_SetAnimation* chain, CBasePlayer* Player, PLAYER_ANIM playerAnimation)
+{
+	chain->callNext(Player, playerAnimation);
+
+	gPugDeathmatch.SetAnimation(Player, playerAnimation);
+}
+
+BOOL CReGameDLL::HandleMenu_ChooseTeam(IReGameHook_HandleMenu_ChooseTeam* chain, CBasePlayer* Player, int Slot)
+{
+	if (gPugMod.PlayerJoinTeam(Player, Slot))
+	{
+		Slot = 0;
+	}
+
+	return chain->callNext(Player, Slot);
 }
