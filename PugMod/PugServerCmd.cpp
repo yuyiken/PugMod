@@ -17,16 +17,23 @@ void CPugServerCmd::CSDM_AddSpawn()
 		return;
 	}
 
-	LOG_CONSOLE(PLID, "[%s] Uso: pug_dm_add_spawn <?> <?> <?> <?> <?> <?> <?> <?> <?> <?>", Plugin_info.logtag);
+	gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Uso: pug_dm_add_spawn <?> <?> <?> <?> <?> <?> <?> <?> <?> <?>", Plugin_info.logtag);
 }
 
 void CPugServerCmd::CSDM_AddItem()
 {
 	if (g_engfuncs.pfnCmd_Argc() == 6)
 	{
-		// gPugDeathmatch.AddItem();
+		gPugDeathmatch.AddItem
+		(
+			g_engfuncs.pfnCmd_Argv(1),
+			g_engfuncs.pfnCmd_Argv(2),
+			std::stoi(g_engfuncs.pfnCmd_Argv(3)),
+			std::stoi(g_engfuncs.pfnCmd_Argv(4))
+		);
+
 		return;
 	}
 
-	LOG_CONSOLE(PLID, "[%s] Uso: pug_dm_add_weapon <nome> <texto> <ativo> <bot> <slot>", Plugin_info.logtag);
+	gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Uso: pug_dm_add_weapon <nome> <texto> <ativo> <bot>", Plugin_info.logtag);
 }

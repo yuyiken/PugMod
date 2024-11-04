@@ -8,72 +8,46 @@ void CPugDeathmatch::ServerActivate()
 
 	this->m_Spawns.clear();
 
-	this->m_Weapons.clear();
+	this->m_Items.clear();
 
 	this->m_Info.clear();
-
-	gPugUtil.ServerCommand("exec addons/pugmod/cfg/csdm.cfg");
-
-	gPugUtil.ServerCommand("exec addons/pugmod/cfg/spawns/%s.cfg", STRING(gpGlobals->mapname));
 }
 
 void CPugDeathmatch::ServerDeactivate()
 {
 	this->m_Running = false;
+
+	this->m_Spawns.clear();
+
+	this->m_Items.clear();
+
+	this->m_Info.clear();
 }
 
-void CPugDeathmatch::LoadSpawns()
+void CPugDeathmatch::AddSpawn(vec3_t Vecs, vec3_t Angles, vec3_t VAngles, int Team)
 {
-    //this->m_Spawns.clear();
-
-    //char Path[MAX_PATH] = { 0 };
-
-    //Q_sprintf(Path, "%s/csdm/spawns/%s.txt", gPugConfig.GetFullPath().c_str(), STRING(gpGlobals->mapname));
-
-    //std::ifstream File(Path);
-
-    //if (File)
-    //{
-    //    auto LineCount = 1;
-
-    //    std::string Line = "";
-
-    //    P_SPAWN_POINT Info;
-
-    //    while (std::getline(File, Line))
-    //    {
-    //        std::istringstream Row(Line);
-
-    //        if (!(Row >> Info.Vecs[0] >> Info.Vecs[1] >> Info.Vecs[2] >> Info.Angles[0] >> Info.Angles[1] >> Info.Angles[2] >> Info.Team >> Info.VAngles[0] >> Info.VAngles[1] >> Info.VAngles[2]))
-    //        {
-    //            gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Line %d of the %s spawns file is incorrect.", Plugin_info.logtag, LineCount, STRING(gpGlobals->mapname));
-    //        }
-
-    //        this->m_Spawns.insert(std::make_pair(this->m_Spawns.size(), Info));
-
-    //        LineCount++;
-    //    }
-
-    //    File.close();
-    //}
-    //else
-    //{
-    //    gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Failed to read file: %s", __func__, Path);
-    //}
-}
-
-void CPugDeathmatch::AddSpawn()
-{
-	// Add spawn like settings
-}
-
-void CPugDeathmatch::AddItem(std::string Item, std::string Label, bool Enable, bool Bot, int Slot)
-{
-	if (!Item.empty() && !Label.empty())
+	if (!Vecs.IsZero())
 	{
-		P_ITEM_INFO ItemInfo = { Label, Enable, Bot, Slot };
+		this->m_Spawns.push_back({ Vecs, Angles, VAngles, Team });
+	}
+}
 
-		this->m_Weapons.insert(std::make_pair(Item, ItemInfo));
+void CPugDeathmatch::AddItem(std::string Alias, std::string Label, bool Enable, bool Bot)
+{
+	if (!Alias.empty())
+	{
+		if (gReGameDLL.m_API)
+		{
+			auto Slot = gReGameDLL.m_API->GetWeaponSlot(Alias.c_str());
+
+			if (Slot)
+			{
+				if (Slot->slot == InventorySlotType::PISTOL_SLOT || Slot->slot == InventorySlotType::PRIMARY_WEAPON_SLOT)
+				{
+					this->m_Items.push_back({ Slot->id, Slot->slot, Slot->weaponName });
+				}
+			}
+		}
 	}
 }
 
@@ -136,15 +110,15 @@ bool CPugDeathmatch::SetPlayerPosition(CBasePlayer* Player)
             {
                 auto Spawn = std::next(std::begin(this->m_Spawns), (std::rand() % this->m_Spawns.size()));
 
-                if (!Spawn->second.Vecs.IsZero())
+                if (!Spawn->Vecs.IsZero())
                 {
-                    if (this->CheckDistance(Player, Spawn->second.Vecs, SPAWN_POINT_MIN_DISTANCE))
+                    if (this->CheckDistance(Player, Spawn->Vecs, SPAWN_POINT_MIN_DISTANCE))
                     {
-                        Player->edict()->v.origin = Spawn->second.Vecs + Vector(0.0f, 0.0f, 1.0f);
+                        Player->edict()->v.origin = Spawn->Vecs + Vector(0.0f, 0.0f, 1.0f);
 
-                        Player->edict()->v.angles = Spawn->second.Angles;
+                        Player->edict()->v.angles = Spawn->Angles;
 
-                        Player->edict()->v.v_angle = Spawn->second.VAngles;
+                        Player->edict()->v.v_angle = Spawn->VAngles;
 
                         Player->edict()->v.v_angle.z = 0;
 
@@ -172,7 +146,8 @@ bool CPugDeathmatch::SetPlayerPosition(CBasePlayer* Player)
                         return true;
                     }
                 }
-            } while (true);
+            }
+			while (true);
         }
     }
 
@@ -196,9 +171,9 @@ void CPugDeathmatch::PlayerSpawn(CBasePlayer* Player)
 		}
 		else
 		{
-			this->EquipRandom(Player, 2);
+			this->EquipRandom(Player, InventorySlotType::PISTOL_SLOT);
 
-			this->EquipRandom(Player, 1);
+			this->EquipRandom(Player, InventorySlotType::PRIMARY_WEAPON_SLOT);
 		}
 	}
 }
@@ -211,13 +186,13 @@ void CPugDeathmatch::SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnimati
 		{
 			if (Player->m_pActiveItem)
 			{
-				if (Player->m_pActiveItem->m_iId == WEAPON_USP || Player->m_pActiveItem->m_iId == WEAPON_GLOCK18 || Player->m_pActiveItem->m_iId == WEAPON_FAMAS || Player->m_pActiveItem->m_iId == WEAPON_M4A1)
+				if ((Player->m_pActiveItem->m_iId == WEAPON_USP) || (Player->m_pActiveItem->m_iId == WEAPON_GLOCK18) || (Player->m_pActiveItem->m_iId == WEAPON_FAMAS) || (Player->m_pActiveItem->m_iId == WEAPON_M4A1))
 				{
-					CBasePlayerWeapon* Weapon = static_cast<CBasePlayerWeapon*>(Player->m_pActiveItem);
+					CBasePlayerWeapon* PlayerWeapon = static_cast<CBasePlayerWeapon*>(Player->m_pActiveItem);
 
-					if (Weapon)
+					if (PlayerWeapon)
 					{
-						this->SetWeaponState(Player->entindex(), Weapon);
+						this->SetWeaponState(Player->entindex(), PlayerWeapon);
 					}
 				}
 			}
@@ -267,7 +242,7 @@ void CPugDeathmatch::ResetPlayer(CBasePlayer* Player)
 	}
 }
 
-void CPugDeathmatch::EquipItem(CBasePlayer* Player, InventorySlotType SlotType, std::string Item)
+void CPugDeathmatch::EquipItem(CBasePlayer* Player, WeaponSlotInfo* Item)
 {
 	if (this->m_Running)
 	{
@@ -277,17 +252,17 @@ void CPugDeathmatch::EquipItem(CBasePlayer* Player, InventorySlotType SlotType, 
 
 			Player->m_iAutoWepSwitch = 1;
 
-			auto PlayerItem = static_cast<CBasePlayerItem*>(Player->CSPlayer()->GiveNamedItemEx(Item.c_str()));
+			auto PlayerItem = static_cast<CBasePlayerItem*>(Player->CSPlayer()->GiveNamedItemEx(Item->weaponName));
 
 			if (PlayerItem)
 			{
 				Player->GiveAmmo(PlayerItem->CSPlayerItem()->m_ItemInfo.iMaxAmmo1, const_cast<char*>(PlayerItem->CSPlayerItem()->m_ItemInfo.pszAmmo1), -1);
 
-				if (SlotType == InventorySlotType::PISTOL_SLOT)
+				if (Item->slot == InventorySlotType::PISTOL_SLOT)
 				{
 					this->m_Info[Player->entindex()].LastSecondary = Item;
 				}
-				else if (SlotType == InventorySlotType::PRIMARY_WEAPON_SLOT)
+				else
 				{
 					this->m_Info[Player->entindex()].LastPrimary = Item;
 				}
@@ -311,29 +286,23 @@ void CPugDeathmatch::EquipItem(CBasePlayer* Player, InventorySlotType SlotType, 
 	}
 }
 
-void CPugDeathmatch::EquipRandom(CBasePlayer* Player, int Slot)
+void CPugDeathmatch::EquipRandom(CBasePlayer* Player, InventorySlotType Slot)
 {
 	if (this->m_Running)
 	{
 		if (Player)
 		{
-			if (this->m_Weapons.size())
+			if (this->m_Items.size() > 0)
 			{
 				do
 				{
-					auto Item = std::next(std::begin(this->m_Weapons), (std::rand() % this->m_Weapons.size()));
+					auto Item = &this->m_Items[(std::rand() % this->m_Items.size())];
 
-					if (Item->Enabled)
+					if (Item)
 					{
-						if (Item->Slot == Slot)
+						if (Item->slot)
 						{
-							if (!Item->Bot && Player->IsBot())
-							{
-								continue;
-							}
-
-							this->EquipItem(Player, InventorySlotType::PISTOL_SLOT, Item->Alias);
-
+							this->EquipItem(Player, Item);
 							break;
 						}
 					}
@@ -348,23 +317,28 @@ bool CPugDeathmatch::EquipLast(CBasePlayer* Player)
 {
 	if (this->m_Running)
 	{
-		auto Result = false;
-
-		if (!this->m_Info[Player->entindex()].LastSecondary.empty())
+		if (!FNullEnt(Player))
 		{
-			Result = true;
+			auto Result = false;
 
-			this->EquipItem(Player, InventorySlotType::PISTOL_SLOT, this->m_Info[Player->entindex()].LastSecondary);
+			auto EntityIndex = Player->entindex();
+
+			if (this->m_Info[EntityIndex].LastSecondary)
+			{
+				Result = true;
+
+				this->EquipItem(Player, this->m_Info[EntityIndex].LastSecondary);
+			}
+
+			if (this->m_Info[EntityIndex].LastPrimary)
+			{
+				Result = true;
+
+				this->EquipItem(Player, this->m_Info[EntityIndex].LastPrimary);
+			}
+
+			return Result;
 		}
-
-		if (!this->m_Info[Player->entindex()].LastPrimary.empty())
-		{
-			Result = true;
-
-			this->EquipItem(Player, InventorySlotType::PRIMARY_WEAPON_SLOT, this->m_Info[Player->entindex()].LastPrimary);
-		}
-
-		return Result;
 	}
 
 	return false;
@@ -428,7 +402,7 @@ void CPugDeathmatch::EquipMenu(int EntityIndex)
 
 		gPugMenu[EntityIndex].AddItem("1", "Novas Armas", false);
 
-		if (!this->m_Info[EntityIndex].LastSecondary.empty() || !this->m_Info[EntityIndex].LastPrimary.empty())
+		if (this->m_Info[EntityIndex].LastPrimary || this->m_Info[EntityIndex].LastSecondary)
 		{
 			gPugMenu[EntityIndex].AddItem("2", "Setup Anterior", false);
 			gPugMenu[EntityIndex].AddItem("3", "2 + E ocultar o menu", false);
@@ -444,51 +418,48 @@ void CPugDeathmatch::EquipMenuHandle(int EntityIndex, P_MENU_ITEM Item)
 
 	if (Player)
 	{
-		if (!Item.Disabled)
+		switch (std::stoi(Item.Info))
 		{
-			switch (std::stoi(Item.Info))
+			case 1:
 			{
-				case 1:
+				gPugDeathmatch.WeaponMenu(EntityIndex, 2);
+				return;
+			}
+			case 2:
+			{
+				if (gPugDeathmatch.EquipLast(Player))
 				{
-					gPugDeathmatch.SecondaryMenu(EntityIndex);
 					return;
 				}
-				case 2:
-				{
-					if (gPugDeathmatch.EquipLast(Player))
-					{
-						return;
-					}
-					break;
-				}
-				case 3:
-				{
-					gPugDeathmatch.SetHideMenu(Player, true);
+				break;
+			}
+			case 3:
+			{
+				gPugDeathmatch.SetHideMenu(Player, true);
 
-					if (gPugDeathmatch.EquipLast(Player))
-					{
-						return;
-					}
-					break;
+				if (gPugDeathmatch.EquipLast(Player))
+				{
+					return;
 				}
+				break;
 			}
 		}
 
-		gPugDeathmatch.EquipMenu(Player->entindex());
+		gPugDeathmatch.WeaponMenu(Player->entindex(), 2);
 	}
 }
 
-void CPugDeathmatch::SecondaryMenu(int EntityIndex)
+void CPugDeathmatch::WeaponMenu(int EntityIndex, int Slot)
 {
 	if (this->m_Running)
 	{
-		gPugMenu[EntityIndex].Create("CSDM: Armas Secundárias", false, (void*)this->SecondaryMenuHandle);
-
-		for (auto const& Weapon : this->m_Weapons)
+		for (auto const& Weapon : this->m_Items)
 		{
-			if (Weapon.Slot == 2)
+			gPugMenu[EntityIndex].Create("CSDM: Armas", false, (void*)this->WeaponMenuHandle);
+
+			if (Weapon.slot == Slot)
 			{
-				gPugMenu[EntityIndex].AddItem(Weapon.Alias, Weapon.Label, Weapon.Enabled ? false : true);
+				gPugMenu[EntityIndex].AddItem(Weapon.weaponName, Weapon.weaponName, false, Weapon.weaponName);
 			}
 		}
 
@@ -496,52 +467,25 @@ void CPugDeathmatch::SecondaryMenu(int EntityIndex)
 	}
 }
 
-void CPugDeathmatch::SecondaryMenuHandle(int EntityIndex, P_MENU_ITEM Item)
+void CPugDeathmatch::WeaponMenuHandle(int EntityIndex, P_MENU_ITEM Item)
 {
 	auto Player = UTIL_PlayerByIndexSafe(EntityIndex);
 
 	if (Player)
 	{
-		if (!Item.Disabled)
+		if (gReGameDLL.m_API)
 		{
-			gPugDeathmatch.EquipItem(Player, InventorySlotType::PISTOL_SLOT, Item.Info);
+			auto Slot = gReGameDLL.m_API->GetWeaponSlot(Item.Info.c_str());
 
-			gPugDeathmatch.PrimaryMenu(EntityIndex);
-		}
-	}
-}
-
-void CPugDeathmatch::PrimaryMenu(int EntityIndex)
-{
-	if (this->m_Running)
-	{
-		gPugMenu[EntityIndex].Create("CSDM: Primary Weapons", false, (void*)this->PrimaryMenuHandle);
-
-		for (auto const& Weapon : this->m_Weapons)
-		{
-			if (Weapon.Slot == 1)
+			if (Slot)
 			{
-				gPugMenu[EntityIndex].AddItem(Weapon.Alias, Weapon.Label, Weapon.Enabled ? false : true);
+				gPugDeathmatch.EquipItem(Player, Slot);
+
+				if (Slot->slot == InventorySlotType::PISTOL_SLOT)
+				{
+					gPugDeathmatch.WeaponMenu(EntityIndex, InventorySlotType::PRIMARY_WEAPON_SLOT);
+				}
 			}
-		}
-
-		gPugMenu[EntityIndex].Show(EntityIndex);
-	}
-}
-
-void CPugDeathmatch::PrimaryMenuHandle(int EntityIndex, P_MENU_ITEM Item)
-{
-	auto Player = UTIL_PlayerByIndexSafe(EntityIndex);
-
-	if (Player)
-	{
-		if (!Item.Disabled)
-		{
-			gPugDeathmatch.EquipItem(Player, InventorySlotType::PRIMARY_WEAPON_SLOT, Item.Info);
-		}
-		else
-		{
-			gPugDeathmatch.PrimaryMenu(EntityIndex);
 		}
 	}
 }

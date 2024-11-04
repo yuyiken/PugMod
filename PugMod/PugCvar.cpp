@@ -31,24 +31,6 @@ void CPugCvar::ServerActivate()
 	// Configuração incial
 	this->m_Config[STATE_DEAD] = gPugUtil.CvarRegister("pug_cfg_main", "pugmod.cfg");
 
-	// Aquecimento
+	// Deathmatch
 	this->m_Config[STATE_DEATHMATCH] = gPugUtil.CvarRegister("pug_cfg_deathmatch", "deathmatch.cfg");
-
-	// Votação
-	this->m_Config[STATE_START] = gPugUtil.CvarRegister("pug_cfg_start", "start.cfg");
-
-	// Primeiro Tempo
-	this->m_Config[STATE_FIRST_HALF] = gPugUtil.CvarRegister("pug_cfg_1st", "esl.cfg");
-
-	// Intervalo
-	this->m_Config[STATE_HALFTIME] = gPugUtil.CvarRegister("pug_cfg_halftime", "halftime.cfg");
-
-	// Segundo Tempo
-	this->m_Config[STATE_SECOND_HALF] = gPugUtil.CvarRegister("pug_cfg_2nd", "esl.cfg");
-
-	// Overtime
-	this->m_Config[STATE_OVERTIME] = gPugUtil.CvarRegister("pug_cfg_overtime", "esl-ot.cfg");
-
-	// Fim
-	this->m_Config[STATE_END] = gPugUtil.CvarRegister("pug_cfg_end", "end.cfg");
 }

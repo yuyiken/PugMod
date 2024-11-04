@@ -9,10 +9,10 @@ void CPugMod::ServerActivate()
 
 void CPugMod::ServerDeactivate()
 {
-	if (this->m_State >= STATE_FIRST_HALF && this->m_State <= STATE_OVERTIME)
-	{
-		this->SetState(STATE_END);
-	}
+	//if (this->m_State >= STATE_FIRST_HALF && this->m_State <= STATE_OVERTIME)
+	//{
+	//	this->SetState(STATE_END);
+	//}
 }
 
 void CPugMod::SetState(int State)
@@ -28,30 +28,6 @@ void CPugMod::SetState(int State)
 		case STATE_DEATHMATCH:
 		{
 			gPugDeathmatch.Init();
-			break;
-		}
-		case STATE_START:
-		{
-			break;
-		}
-		case STATE_FIRST_HALF:
-		{
-			break;
-		}
-		case STATE_HALFTIME:
-		{
-			break;
-		}
-		case STATE_SECOND_HALF:
-		{
-			break;
-		}
-		case STATE_OVERTIME:
-		{
-			break;
-		}
-		case STATE_END:
-		{
 			break;
 		}
 	}

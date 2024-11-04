@@ -56,6 +56,8 @@ C_DLLEXPORT int Meta_Attach(PLUG_LOADTIME now, META_FUNCTIONS* pFunctionTable, m
 
 	gReGameDLL.Init();
 
+	std::srand(std::time(0));
+
 	return 1;
 }
 
