@@ -11,6 +11,10 @@ void CPugDeathmatch::ServerActivate()
 	this->m_Items.clear();
 
 	this->m_Info.clear();
+
+	this->LoadSpawns();
+
+	this->LoadItems();
 }
 
 void CPugDeathmatch::ServerDeactivate()
@@ -24,30 +28,92 @@ void CPugDeathmatch::ServerDeactivate()
 	this->m_Info.clear();
 }
 
-void CPugDeathmatch::AddSpawn(vec3_t Vecs, vec3_t Angles, vec3_t VAngles, int Team)
+void CPugDeathmatch::LoadSpawns()
 {
-	if (!Vecs.IsZero())
+	this->m_Spawns.clear();
+
+	char Path[MAX_PATH] = { 0 };
+	g_engfuncs.pfnGetGameDir(Path);
+
+	Q_sprintf(Path, "%s/addons/pugmod/cfg/spawns/%s.txt", Path,STRING(gpGlobals->mapname));
+	
+	std::ifstream File(Path);
+
+	if (File)
 	{
-		this->m_Spawns.push_back({ Vecs, Angles, VAngles, Team });
+		auto LineCount = 1;
+
+		std::string Line = "";
+
+		P_SPAWN_POINT Info;
+
+		while (std::getline(File, Line))
+		{
+			std::istringstream Row(Line);
+
+			if (Row >> Info.Vecs[0] >> Info.Vecs[1] >> Info.Vecs[2] >> Info.Angles[0] >> Info.Angles[1] >> Info.Angles[2] >> Info.Team >> Info.VAngles[0] >> Info.VAngles[1] >> Info.VAngles[2])
+			{
+				this->m_Spawns.push_back(Info);
+			}
+			else
+			{
+				gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Line %d of the %s spawns file is incorrect.", Plugin_info.logtag, LineCount, STRING(gpGlobals->mapname));
+			}
+
+			LineCount++;
+		}
+
+		File.close();
+	}
+	else
+	{
+		gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Failed to read file: %s", __func__, Path);
 	}
 }
 
-void CPugDeathmatch::AddItem(std::string Alias, std::string Label, bool Enable, bool Bot)
+void CPugDeathmatch::LoadItems()
 {
-	if (!Alias.empty())
-	{
-		if (gReGameDLL.m_API)
-		{
-			auto Slot = gReGameDLL.m_API->GetWeaponSlot(Alias.c_str());
+	this->m_Items.clear();
 
-			if (Slot)
+	char Path[MAX_PATH] = { 0 };
+
+	g_engfuncs.pfnGetGameDir(Path);
+
+	Q_sprintf(Path, "%s/addons/pugmod/cfg/weapons.txt", Path);
+
+	std::ifstream File(Path);
+
+	if (File)
+	{
+		auto LineCount = 1;
+
+		std::string Line = "";
+
+		P_ITEM_INFO Info;
+
+		while (std::getline(File, Line))
+		{
+			std::istringstream Row(Line);
+			
+			if (Row >> std::quoted(Info.Alias) >> std::quoted(Info.Label) >> Info.Enable >> Info.Bot >> Info.Slot)
 			{
-				if (Slot->slot == InventorySlotType::PISTOL_SLOT || Slot->slot == InventorySlotType::PRIMARY_WEAPON_SLOT)
-				{
-					this->m_Items.push_back({ Slot->id, Slot->slot, Slot->weaponName });
-				}
+				Info.Alias = "weapon_" + Info.Alias;
+
+				this->m_Items.push_back(Info);
 			}
+			else
+			{
+				gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Line %d of the weapons file is incorrect.", Plugin_info.logtag, LineCount);
+			}
+
+			LineCount++;
 		}
+
+		File.close();
+	}
+	else
+	{
+		gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Failed to read file: %s", __func__, Path);
 	}
 }
 
@@ -171,9 +237,9 @@ void CPugDeathmatch::PlayerSpawn(CBasePlayer* Player)
 		}
 		else
 		{
-			this->EquipRandom(Player, InventorySlotType::PISTOL_SLOT);
+			this->EquipRandom(Player, 2);
 
-			this->EquipRandom(Player, InventorySlotType::PRIMARY_WEAPON_SLOT);
+			this->EquipRandom(Player, 1);
 		}
 	}
 }
@@ -246,7 +312,7 @@ void CPugDeathmatch::EquipItem(CBasePlayer* Player, WeaponSlotInfo* Item)
 {
 	if (this->m_Running)
 	{
-		if (Player)
+		if (Player && Item)
 		{
 			auto AutoWepSwitch = Player->m_iAutoWepSwitch;
 
@@ -258,7 +324,7 @@ void CPugDeathmatch::EquipItem(CBasePlayer* Player, WeaponSlotInfo* Item)
 			{
 				Player->GiveAmmo(PlayerItem->CSPlayerItem()->m_ItemInfo.iMaxAmmo1, const_cast<char*>(PlayerItem->CSPlayerItem()->m_ItemInfo.pszAmmo1), -1);
 
-				if (Item->slot == InventorySlotType::PISTOL_SLOT)
+				if (Item->slot == 2)
 				{
 					this->m_Info[Player->entindex()].LastSecondary = Item;
 				}
@@ -286,7 +352,7 @@ void CPugDeathmatch::EquipItem(CBasePlayer* Player, WeaponSlotInfo* Item)
 	}
 }
 
-void CPugDeathmatch::EquipRandom(CBasePlayer* Player, InventorySlotType Slot)
+void CPugDeathmatch::EquipRandom(CBasePlayer* Player, int Slot)
 {
 	if (this->m_Running)
 	{
@@ -296,15 +362,23 @@ void CPugDeathmatch::EquipRandom(CBasePlayer* Player, InventorySlotType Slot)
 			{
 				do
 				{
-					auto Item = &this->m_Items[(std::rand() % this->m_Items.size())];
+					auto Item = this->m_Items[(std::rand() % this->m_Items.size())];
 
-					if (Item)
+					if (Item.Slot == Slot)
 					{
-						if (Item->slot)
+						if (Player->IsBot() && (Item.Bot == 0))
 						{
-							this->EquipItem(Player, Item);
-							break;
+							continue;
 						}
+
+						auto SlotInfo = gReGameDLL.m_API->GetWeaponSlot(Item.Alias.c_str());
+
+						if (SlotInfo)
+						{
+							this->EquipItem(Player, SlotInfo);
+						}
+
+						break;
 					}
 				}
 				while (true);
@@ -453,17 +527,20 @@ void CPugDeathmatch::WeaponMenu(int EntityIndex, int Slot)
 {
 	if (this->m_Running)
 	{
-		for (auto const& Weapon : this->m_Items)
+		if (this->m_Items.size() > 0)
 		{
 			gPugMenu[EntityIndex].Create("CSDM: Armas", false, (void*)this->WeaponMenuHandle);
 
-			if (Weapon.slot == Slot)
+			for (auto const& Item : this->m_Items)
 			{
-				gPugMenu[EntityIndex].AddItem(Weapon.weaponName, Weapon.weaponName, false, Weapon.weaponName);
+				if (Item.Slot == Slot)
+				{
+					gPugMenu[EntityIndex].AddItem(Item.Alias, Item.Label, !Item.Enable, std::to_string(Item.Slot));
+				}
 			}
-		}
 
-		gPugMenu[EntityIndex].Show(EntityIndex);
+			gPugMenu[EntityIndex].Show(EntityIndex);
+		}
 	}
 }
 
@@ -473,17 +550,20 @@ void CPugDeathmatch::WeaponMenuHandle(int EntityIndex, P_MENU_ITEM Item)
 
 	if (Player)
 	{
-		if (gReGameDLL.m_API)
+		if (!Item.Disabled)
 		{
-			auto Slot = gReGameDLL.m_API->GetWeaponSlot(Item.Info.c_str());
-
-			if (Slot)
+			if (gReGameDLL.m_API)
 			{
-				gPugDeathmatch.EquipItem(Player, Slot);
+				auto SlotInfo = gReGameDLL.m_API->GetWeaponSlot(Item.Info.c_str());
 
-				if (Slot->slot == InventorySlotType::PISTOL_SLOT)
+				if (SlotInfo)
 				{
-					gPugDeathmatch.WeaponMenu(EntityIndex, InventorySlotType::PRIMARY_WEAPON_SLOT);
+					gPugDeathmatch.EquipItem(Player, SlotInfo);
+
+					if (SlotInfo->slot == 2)
+					{
+						gPugDeathmatch.WeaponMenu(EntityIndex, 1);
+					}
 				}
 			}
 		}
