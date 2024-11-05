@@ -2,22 +2,22 @@
 
 constexpr auto SPAWN_POINT_MIN_DISTANCE = 250.0f;
 
-typedef struct S_SPAWN_POINT
+typedef struct S_DM_SPAWN
 {
 	vec3_t Vecs;
 	vec3_t Angles;
-	vec3_t VAngles;
 	int Team;
-} P_SPAWN_POINT, *LP_SPAWN_POINT;
+	vec3_t VAngles;
+} P_DM_SPAWN, *LP_DM_SPAWN;
 
-typedef struct S_ITEM_INFO
+typedef struct S_DM_ITEM
 {
 	std::string Alias;
 	std::string Label;
 	int Enable;
 	int Bot;
 	int Slot;
-} P_ITEM_INFO, *LP_ITEM_INFO;
+} P_DM_ITEM, *LP_DM_ITEM;
 
 typedef struct S_PLAYER_INFO
 {
@@ -55,7 +55,6 @@ public:
 	bool SetPlayerPosition(CBasePlayer* Player);
 	void PlayerSpawn(CBasePlayer* Player);
 	void SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnimation);
-	void SendWeaponAnim(CBasePlayerWeapon* Weapon, int iAnim, int skiplocal);
 
 	bool CheckDistance(CBasePlayer* Player, vec3_t Origin, float Distance);
 
@@ -79,8 +78,8 @@ public:
 
 private:
 	bool m_Running;
-	std::vector<P_SPAWN_POINT> m_Spawns;
-	std::vector<P_ITEM_INFO> m_Items;
+	std::vector<P_DM_SPAWN> m_Spawns;
+	std::vector<P_DM_ITEM> m_Items;
 	std::map<int, P_PLAYER_INFO> m_Info;
 };
 

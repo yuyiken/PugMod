@@ -33,19 +33,20 @@ void CPugDeathmatch::LoadSpawns()
 	this->m_Spawns.clear();
 
 	char Path[MAX_PATH] = { 0 };
+
 	g_engfuncs.pfnGetGameDir(Path);
 
-	Q_sprintf(Path, "%s/addons/pugmod/cfg/spawns/%s.txt", Path,STRING(gpGlobals->mapname));
-	
+	Q_sprintf(Path, "%s/addons/pugmod/cfg/spawns/%s.cfg", Path, STRING(gpGlobals->mapname));
+
 	std::ifstream File(Path);
 
 	if (File)
 	{
 		auto LineCount = 1;
 
-		std::string Line = "";
+		std::string Line;
 
-		P_SPAWN_POINT Info;
+		P_DM_SPAWN Info;
 
 		while (std::getline(File, Line))
 		{
@@ -67,7 +68,7 @@ void CPugDeathmatch::LoadSpawns()
 	}
 	else
 	{
-		gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Failed to read file: %s", __func__, Path);
+		gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Failed to read file: %s", Plugin_info.logtag, Path);
 	}
 }
 
@@ -79,7 +80,7 @@ void CPugDeathmatch::LoadItems()
 
 	g_engfuncs.pfnGetGameDir(Path);
 
-	Q_sprintf(Path, "%s/addons/pugmod/cfg/weapons.txt", Path);
+	Q_sprintf(Path, "%s/addons/pugmod/cfg/weapons.cfg", Path);
 
 	std::ifstream File(Path);
 
@@ -87,9 +88,9 @@ void CPugDeathmatch::LoadItems()
 	{
 		auto LineCount = 1;
 
-		std::string Line = "";
+		std::string Line;
 
-		P_ITEM_INFO Info;
+		P_DM_ITEM Info;
 
 		while (std::getline(File, Line))
 		{
@@ -97,13 +98,11 @@ void CPugDeathmatch::LoadItems()
 			
 			if (Row >> std::quoted(Info.Alias) >> std::quoted(Info.Label) >> Info.Enable >> Info.Bot >> Info.Slot)
 			{
-				Info.Alias = "weapon_" + Info.Alias;
-
 				this->m_Items.push_back(Info);
 			}
 			else
 			{
-				gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Line %d of the weapons file is incorrect.", Plugin_info.logtag, LineCount);
+				gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Line %d of %s file is incorrect.", Plugin_info.logtag, LineCount, Path);
 			}
 
 			LineCount++;
@@ -113,7 +112,7 @@ void CPugDeathmatch::LoadItems()
 	}
 	else
 	{
-		gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Failed to read file: %s", __func__, Path);
+		gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Failed to read file: %s", Plugin_info.logtag, Path);
 	}
 }
 
