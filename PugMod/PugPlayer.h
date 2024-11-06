@@ -12,19 +12,20 @@ typedef struct S_PLAYER
 
 	time_t ConnectTime;
 	int Status; // 0 Disconnected, 1 Connecting, 2 In Server, 3 InGame
-	int TeamIndex;
+	TeamName TeamIndex;
 
-	bool DM_HideMenu;
-	std::map<int, int> DM_WeaponState;
-	std::map<int, WeaponSlotInfo*> DM_LastWeapon;
+	P_DM_INFO DeathMatch;
 } P_PLAYER, *LP_PLAYER;
 
 class CPugPlayer
 {
 public:
+	void ServerActivate();
+
 	LP_PLAYER Get(const char* Auth);
 	LP_PLAYER Get(edict_t* pEntity);
 	LP_PLAYER Get(int EntityIndex);
+	LP_PLAYER Get(CBasePlayer* Player);
 
 	void Connect(edict_t* pEntity, const char* pszName, const char* pszAddress);
 	void PutInServer(edict_t* pEntity);

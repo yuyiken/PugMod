@@ -10,8 +10,6 @@ void CPugDeathmatch::ServerActivate()
 
 	this->m_Items.clear();
 
-	//this->m_Info.clear();
-
 	this->LoadSpawns();
 
 	this->LoadItems();
@@ -24,8 +22,6 @@ void CPugDeathmatch::ServerDeactivate()
 	this->m_Spawns.clear();
 
 	this->m_Items.clear();
-
-	//this->m_Info.clear();
 }
 
 void CPugDeathmatch::LoadSpawns()
@@ -142,7 +138,7 @@ bool CPugDeathmatch::CheckDistance(CBasePlayer* Player, vec3_t Origin, float Dis
 
 			if (Target)
 			{
-				if (Target->IsPlayer())
+				if (Target->IsPlayer() || Target->IsBot())
 				{
 					if (Target->entindex() != Player->entindex())
 					{
@@ -216,7 +212,7 @@ bool CPugDeathmatch::AddAccount(CBasePlayer* Player, int Amount, RewardType Type
 {
 	if (this->m_Running)
 	{
-		if (this->m_Running && Type == RT_PLAYER_BOUGHT_SOMETHING)
+		if (Type == RT_PLAYER_BOUGHT_SOMETHING)
 		{
 			return true;
 		}
@@ -281,11 +277,16 @@ void CPugDeathmatch::SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnimati
 			{
 				if ((Player->m_pActiveItem->m_iId == WEAPON_USP) || (Player->m_pActiveItem->m_iId == WEAPON_GLOCK18) || (Player->m_pActiveItem->m_iId == WEAPON_FAMAS) || (Player->m_pActiveItem->m_iId == WEAPON_M4A1))
 				{
-					CBasePlayerWeapon* PlayerWeapon = static_cast<CBasePlayerWeapon*>(Player->m_pActiveItem);
+					CBasePlayerWeapon* Weapon = static_cast<CBasePlayerWeapon*>(Player->m_pActiveItem);
 
-					if (PlayerWeapon)
+					if (Weapon)
 					{
-						this->SetWeaponState(Player->entindex(), PlayerWeapon);
+						auto PlayerInfo = gPugPlayer.Get(Player->entindex());
+
+						if (PlayerInfo)
+						{
+							PlayerInfo->DeathMatch.State[Weapon->m_iId] = Weapon->m_iWeaponState;
+						}
 					}
 				}
 			}
@@ -308,42 +309,43 @@ void CPugDeathmatch::EquipItem(CBasePlayer* Player, WeaponSlotInfo* Item)
 {
 	if (this->m_Running)
 	{
-		if (Player && Item)
+		if (Player)
 		{
-			auto AutoWepSwitch = Player->m_iAutoWepSwitch;
-
-			Player->m_iAutoWepSwitch = 1;
-
-			auto PlayerItem = static_cast<CBasePlayerItem*>(Player->CSPlayer()->GiveNamedItemEx(Item->weaponName));
-
-			if (PlayerItem)
+			if (Item)
 			{
-				Player->GiveAmmo(PlayerItem->CSPlayerItem()->m_ItemInfo.iMaxAmmo1, const_cast<char*>(PlayerItem->CSPlayerItem()->m_ItemInfo.pszAmmo1), -1);
+				auto AutoWepSwitch = Player->m_iAutoWepSwitch;
 
-				if (Item->slot == 2)
-				{
-					this->m_Info[Player->entindex()].LastSecondary = Item;
-				}
-				else
-				{
-					this->m_Info[Player->entindex()].LastPrimary = Item;
-				}
-			}
+				Player->m_iAutoWepSwitch = 1;
 
-			if (Player->m_pActiveItem)
-			{
-				if (Player->m_pActiveItem->m_iId == WEAPON_USP || Player->m_pActiveItem->m_iId == WEAPON_GLOCK18 || Player->m_pActiveItem->m_iId == WEAPON_FAMAS || Player->m_pActiveItem->m_iId == WEAPON_M4A1)
-				{
-					auto Weapon = static_cast<CBasePlayerWeapon*>(Player->m_pActiveItem);
+				auto Weapon = static_cast<CBasePlayerItem*>(Player->CSPlayer()->GiveNamedItemEx(Item->weaponName));
 
-					if (Weapon)
+				if (Weapon)
+				{
+					Player->GiveAmmo(Weapon->CSPlayerItem()->m_ItemInfo.iMaxAmmo1, const_cast<char*>(Weapon->CSPlayerItem()->m_ItemInfo.pszAmmo1), -1);
+
+					auto PlayerInfo = gPugPlayer.Get(Player->entindex());
+
+					if (PlayerInfo)
 					{
-						Weapon->m_iWeaponState = this->m_Info[Player->entindex()].WeaponState[Weapon->m_iId];
+						PlayerInfo->DeathMatch.Last[Item->slot] = Item;
+
+						if (Player->m_pActiveItem)
+						{
+							if ((Player->m_pActiveItem->m_iId == WEAPON_USP) || (Player->m_pActiveItem->m_iId == WEAPON_GLOCK18) || (Player->m_pActiveItem->m_iId == WEAPON_FAMAS) || (Player->m_pActiveItem->m_iId == WEAPON_M4A1))
+							{
+								auto Weapon = static_cast<CBasePlayerWeapon*>(Player->m_pActiveItem);
+
+								if (Weapon)
+								{
+									Weapon->m_iWeaponState = PlayerInfo->DeathMatch.State[Weapon->m_iId];
+								}
+							}
+						}
 					}
 				}
-			}
 
-			Player->m_iAutoWepSwitch = AutoWepSwitch;
+				Player->m_iAutoWepSwitch = AutoWepSwitch;
+			}
 		}
 	}
 }
@@ -383,35 +385,25 @@ void CPugDeathmatch::EquipRandom(CBasePlayer* Player, int Slot)
 	}
 }
 
-bool CPugDeathmatch::EquipLast(CBasePlayer* Player)
+void CPugDeathmatch::EquipLast(CBasePlayer* Player)
 {
 	if (this->m_Running)
 	{
-		if (!FNullEnt(Player))
+		auto PlayerInfo = gPugPlayer.Get(Player);
+
+		if (PlayerInfo)
 		{
-			auto Result = false;
-
-			auto EntityIndex = Player->entindex();
-
-			if (this->m_Info[EntityIndex].LastSecondary)
+			if (PlayerInfo->DeathMatch.Last[2])
 			{
-				Result = true;
-
-				this->EquipItem(Player, this->m_Info[EntityIndex].LastSecondary);
+				this->EquipItem(Player, PlayerInfo->DeathMatch.Last[2]);
 			}
 
-			if (this->m_Info[EntityIndex].LastPrimary)
+			if (PlayerInfo->DeathMatch.Last[1])
 			{
-				Result = true;
-
-				this->EquipItem(Player, this->m_Info[EntityIndex].LastPrimary);
+				this->EquipItem(Player, PlayerInfo->DeathMatch.Last[1]);
 			}
-
-			return Result;
 		}
 	}
-
-	return false;
 }
 
 bool CPugDeathmatch::SetHideMenu(CBasePlayer* Player, bool HideMenu)

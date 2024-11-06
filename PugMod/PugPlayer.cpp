@@ -2,6 +2,11 @@
 
 CPugPlayer gPugPlayer;
 
+void CPugPlayer::ServerActivate()
+{
+	this->m_Players.clear();
+}
+
 LP_PLAYER CPugPlayer::Get(const char* Auth)
 {
 	if (Auth)
@@ -33,6 +38,16 @@ LP_PLAYER CPugPlayer::Get(int EntityIndex)
 	return this->Get(INDEXENT(EntityIndex));
 }
 
+LP_PLAYER CPugPlayer::Get(CBasePlayer* Player)
+{
+	if (Player)
+	{
+		return this->Get(Player->entindex());
+	}
+
+	return nullptr;
+}
+
 void CPugPlayer::Connect(edict_t* pEntity, const char* pszName, const char* pszAddress)
 {
 	if (!FNullEnt(pEntity))
@@ -55,7 +70,7 @@ void CPugPlayer::Connect(edict_t* pEntity, const char* pszName, const char* pszA
 
 				this->m_Players[Auth].ConnectTime = time(0);
 				this->m_Players[Auth].Status = 1;
-				this->m_Players[Auth].TeamIndex = 0;
+				this->m_Players[Auth].TeamIndex = UNASSIGNED;
 			}
 		}
 	}
@@ -76,7 +91,7 @@ void CPugPlayer::PutInServer(edict_t* pEntity)
 
 				this->m_Players[Auth].ConnectTime = time(0);
 				this->m_Players[Auth].Status = 2;
-				this->m_Players[Auth].TeamIndex = 0;
+				this->m_Players[Auth].TeamIndex = UNASSIGNED;
 			}
 		}
 	}

@@ -57,6 +57,8 @@ void DLL_POST_ServerActivate(edict_t* pEdictList, int edictCount, int clientMax)
 
 	gPugTask.ServerActivate();
 
+	gPugPlayer.ServerActivate();
+
 	gPugMod.ServerActivate();
 
 	gPugDeathmatch.ServerActivate();

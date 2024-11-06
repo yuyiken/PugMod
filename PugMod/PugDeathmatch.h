@@ -19,22 +19,12 @@ typedef struct S_DM_ITEM
 	int Slot;
 } P_DM_ITEM, *LP_DM_ITEM;
 
-//typedef struct S_PLAYER_INFO
-//{
-//	bool HideMenu;
-//	std::map<int, int> WeaponState;
-//
-//	WeaponSlotInfo* LastPrimary;
-//	WeaponSlotInfo* LastSecondary;
-//
-//	void Reset()
-//	{
-//		this->HideMenu = false;
-//		this->WeaponState.clear();
-//		this->LastPrimary = nullptr;
-//		this->LastSecondary = nullptr;
-//	}
-//} P_PLAYER_INFO, *LP_PLAYER_INFO;
+typedef struct S_DM_INFO
+{
+	bool EquipMenu;
+	std::map<int, int> State;
+	std::map<int, WeaponSlotInfo*> Last;
+} P_DM_INFO, *LP_DM_INFO;
 
 class CPugDeathmatch
 {
@@ -60,7 +50,7 @@ public:
 
 	void EquipItem(CBasePlayer* Player, WeaponSlotInfo* Item);
 	void EquipRandom(CBasePlayer* Player, int Slot);
-	bool EquipLast(CBasePlayer* Player);
+	void EquipLast(CBasePlayer* Player);
 
 	bool SetHideMenu(CBasePlayer* Player, bool HideMenu);
 	bool GetHideMenu(int EntityIndex);
