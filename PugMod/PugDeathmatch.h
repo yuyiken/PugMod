@@ -19,24 +19,22 @@ typedef struct S_DM_ITEM
 	int Slot;
 } P_DM_ITEM, *LP_DM_ITEM;
 
-typedef struct S_PLAYER_INFO
-{
-	bool HideMenu;
-	std::map<int, int> WeaponState;
-	std::map<int, int> WeaponAnim;
-
-	WeaponSlotInfo* LastPrimary;
-	WeaponSlotInfo* LastSecondary;
-
-	void Reset()
-	{
-		this->HideMenu = false;
-		this->WeaponState.clear();
-		this->WeaponAnim.clear();
-		this->LastPrimary = nullptr;
-		this->LastSecondary = nullptr;
-	}
-} P_PLAYER_INFO, *LP_PLAYER_INFO;
+//typedef struct S_PLAYER_INFO
+//{
+//	bool HideMenu;
+//	std::map<int, int> WeaponState;
+//
+//	WeaponSlotInfo* LastPrimary;
+//	WeaponSlotInfo* LastSecondary;
+//
+//	void Reset()
+//	{
+//		this->HideMenu = false;
+//		this->WeaponState.clear();
+//		this->LastPrimary = nullptr;
+//		this->LastSecondary = nullptr;
+//	}
+//} P_PLAYER_INFO, *LP_PLAYER_INFO;
 
 class CPugDeathmatch
 {
@@ -50,15 +48,15 @@ public:
 	void Init();
 	void Stop();
 
+	bool CheckDistance(CBasePlayer* Player, vec3_t Origin, float Distance);
+
+	bool SetPosition(CBasePlayer* Player);
 	bool AddAccount(CBasePlayer* Player, int Amount, RewardType Type, bool bTrackChange);
 	bool HasRestrictItem(CBasePlayer* Player, ItemID ItemIndex, ItemRestType RestType);
-	bool SetPlayerPosition(CBasePlayer* Player);
 	void PlayerSpawn(CBasePlayer* Player);
 	void SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnimation);
 
-	bool CheckDistance(CBasePlayer* Player, vec3_t Origin, float Distance);
-
-	void ResetPlayer(CBasePlayer* Player);
+	void GetIntoGame(CBasePlayer* Player);
 
 	void EquipItem(CBasePlayer* Player, WeaponSlotInfo* Item);
 	void EquipRandom(CBasePlayer* Player, int Slot);
@@ -80,7 +78,7 @@ private:
 	bool m_Running;
 	std::vector<P_DM_SPAWN> m_Spawns;
 	std::vector<P_DM_ITEM> m_Items;
-	std::map<int, P_PLAYER_INFO> m_Info;
+	//std::map<int, P_PLAYER_INFO> m_Info;
 };
 
 extern CPugDeathmatch gPugDeathmatch;

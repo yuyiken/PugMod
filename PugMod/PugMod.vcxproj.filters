@@ -46,6 +46,9 @@
     <ClCompile Include="PugServerCmd.cpp">
       <Filter>PugMod\PugServerCmd</Filter>
     </ClCompile>
+    <ClCompile Include="PugPlayer.cpp">
+      <Filter>PugMod\PugPlayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MetaDLL.h">
@@ -92,6 +95,9 @@
     </ClInclude>
     <ClInclude Include="PugServerCmd.h">
       <Filter>PugMod\PugServerCmd</Filter>
+    </ClInclude>
+    <ClInclude Include="PugPlayer.h">
+      <Filter>PugMod\PugPlayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +157,9 @@
     </Filter>
     <Filter Include="PugMod\PugServerCmd">
       <UniqueIdentifier>{dd9401ac-913f-4a5f-8eac-fa91f2f394fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PugMod\PugPlayer">
+      <UniqueIdentifier>{12f5c259-4a15-4f80-baf7-e1bf5bd55bdc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

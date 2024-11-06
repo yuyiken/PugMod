@@ -121,7 +121,7 @@ bool CReGameDLL::CBasePlayer_HasRestrictItem(IReGameHook_CBasePlayer_HasRestrict
 
 edict_t* CReGameDLL::CSGameRules_GetPlayerSpawnSpot(IReGameHook_CSGameRules_GetPlayerSpawnSpot* chain, CBasePlayer* Player)
 {
-	if (gPugDeathmatch.SetPlayerPosition(Player))
+	if (gPugDeathmatch.SetPosition(Player))
 	{
 		return nullptr;
 	}
@@ -133,9 +133,11 @@ bool CReGameDLL::CBasePlayer_GetIntoGame(IReGameHook_CBasePlayer_GetIntoGame* ch
 {
 	auto Result = chain->callNext(Player);
 
-	gPugMod.PlayerGetIntoGame(Player);
+	gPugPlayer.GetIntoGame(Player);
 
-	gPugDeathmatch.ResetPlayer(Player);
+	gPugMod.GetIntoGame(Player);
+
+	gPugDeathmatch.GetIntoGame(Player);
 
 	return Result;
 }

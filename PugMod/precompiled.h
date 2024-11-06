@@ -84,5 +84,6 @@
 #include "PugClientCmd.h"
 #include "PugServerCmd.h"
 #include "PugDeathmatch.h"
+#include "PugPlayer.h"
 #include "PugTask.h"
 #include "PugUtil.h"

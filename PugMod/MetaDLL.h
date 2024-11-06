@@ -8,4 +8,6 @@ void DLL_PRE_ClientCommand(edict_t* pEntity);
 void DLL_POST_ServerActivate(edict_t* pEdictList, int edictCount, int clientMax);
 void DLL_POST_ServerDeactivate(void);
 void DLL_POST_StartFrame();
+BOOL DLL_POST_ClientConnect(edict_t* pEntity, const char* pszName, const char* pszAddress, char szRejectReason[128]);
+void DLL_POST_ClientPutInServer(edict_t* pEntity);
 #pragma endregion

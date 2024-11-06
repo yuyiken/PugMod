@@ -10,7 +10,7 @@ void CPugDeathmatch::ServerActivate()
 
 	this->m_Items.clear();
 
-	this->m_Info.clear();
+	//this->m_Info.clear();
 
 	this->LoadSpawns();
 
@@ -25,7 +25,7 @@ void CPugDeathmatch::ServerDeactivate()
 
 	this->m_Items.clear();
 
-	this->m_Info.clear();
+	//this->m_Info.clear();
 }
 
 void CPugDeathmatch::LoadSpawns()
@@ -58,7 +58,7 @@ void CPugDeathmatch::LoadSpawns()
 			}
 			else
 			{
-				gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Line %d of the %s spawns file is incorrect.", Plugin_info.logtag, LineCount, STRING(gpGlobals->mapname));
+				gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Linha %d do arquivo %s incorreta.", Plugin_info.logtag, LineCount, STRING(gpGlobals->mapname));
 			}
 
 			LineCount++;
@@ -68,7 +68,7 @@ void CPugDeathmatch::LoadSpawns()
 	}
 	else
 	{
-		gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Failed to read file: %s", Plugin_info.logtag, Path);
+		gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Falha ao abrir: %s", Plugin_info.logtag, Path);
 	}
 }
 
@@ -102,7 +102,7 @@ void CPugDeathmatch::LoadItems()
 			}
 			else
 			{
-				gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Line %d of %s file is incorrect.", Plugin_info.logtag, LineCount, Path);
+				gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Linha %d do arquivo %s incorreta.", Plugin_info.logtag, LineCount, STRING(gpGlobals->mapname));
 			}
 
 			LineCount++;
@@ -112,7 +112,7 @@ void CPugDeathmatch::LoadItems()
 	}
 	else
 	{
-		gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Failed to read file: %s", Plugin_info.logtag, Path);
+		gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] Falha ao abrir: %s", Plugin_info.logtag, Path);
 	}
 }
 
@@ -128,6 +128,88 @@ void CPugDeathmatch::Stop()
 	this->m_Running = false;
 
 	gPugUtil.SayText(nullptr, PRINT_TEAM_DEFAULT, "^4[%s]^1 Modo ^3Deathmatch^1 desativado.", Plugin_info.logtag);
+}
+
+bool CPugDeathmatch::CheckDistance(CBasePlayer* Player, vec3_t Origin, float Distance)
+{
+	if (this->m_Running)
+	{
+		edict_t* pEntity = nullptr;
+
+		while (!FNullEnt(pEntity = g_engfuncs.pfnFindEntityInSphere(pEntity, Origin, Distance)))
+		{
+			auto Target = UTIL_PlayerByIndexSafe(ENTINDEX(pEntity));
+
+			if (Target)
+			{
+				if (Target->IsPlayer())
+				{
+					if (Target->entindex() != Player->entindex())
+					{
+						if (Target->IsAlive())
+						{
+							return false;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+bool CPugDeathmatch::SetPosition(CBasePlayer* Player)
+{
+	if (this->m_Running)
+	{
+		if (this->m_Spawns.size())
+		{
+			do
+			{
+				auto Spawn = std::next(std::begin(this->m_Spawns), (std::rand() % this->m_Spawns.size()));
+
+				if (!Spawn->Vecs.IsZero())
+				{
+					if (this->CheckDistance(Player, Spawn->Vecs, SPAWN_POINT_MIN_DISTANCE))
+					{
+						Player->edict()->v.origin = Spawn->Vecs + Vector(0.0f, 0.0f, 1.0f);
+
+						Player->edict()->v.angles = Spawn->Angles;
+
+						Player->edict()->v.v_angle = Spawn->VAngles;
+
+						Player->edict()->v.v_angle.z = 0;
+
+						Player->edict()->v.angles = Player->edict()->v.v_angle;
+
+						Player->edict()->v.velocity = Vector(0.0f, 0.0f, 0.0f);
+
+						Player->edict()->v.punchangle = Vector(0.0f, 0.0f, 0.0f);
+
+						Player->edict()->v.fixangle = 1;
+
+						Player->m_bloodColor = BLOOD_COLOR_RED;
+
+						Player->m_modelIndexPlayer = Player->edict()->v.modelindex;
+
+						if (Player->edict()->v.flags & FL_DUCKING)
+						{
+							g_engfuncs.pfnSetSize(Player->edict(), VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX);
+						}
+						else
+						{
+							g_engfuncs.pfnSetSize(Player->edict(), VEC_HULL_MIN, VEC_HULL_MAX);
+						}
+
+						return true;
+					}
+				}
+			} while (true);
+		}
+	}
+
+	return false;
 }
 
 bool CPugDeathmatch::AddAccount(CBasePlayer* Player, int Amount, RewardType Type, bool bTrackChange)
@@ -163,60 +245,6 @@ bool CPugDeathmatch::HasRestrictItem(CBasePlayer* Player, ItemID ItemIndex, Item
 	}
 
 	return false;
-}
-
-bool CPugDeathmatch::SetPlayerPosition(CBasePlayer* Player)
-{
-    if (this->m_Running)
-    {
-        if (this->m_Spawns.size())
-        {
-            do
-            {
-                auto Spawn = std::next(std::begin(this->m_Spawns), (std::rand() % this->m_Spawns.size()));
-
-                if (!Spawn->Vecs.IsZero())
-                {
-                    if (this->CheckDistance(Player, Spawn->Vecs, SPAWN_POINT_MIN_DISTANCE))
-                    {
-                        Player->edict()->v.origin = Spawn->Vecs + Vector(0.0f, 0.0f, 1.0f);
-
-                        Player->edict()->v.angles = Spawn->Angles;
-
-                        Player->edict()->v.v_angle = Spawn->VAngles;
-
-                        Player->edict()->v.v_angle.z = 0;
-
-                        Player->edict()->v.angles = Player->edict()->v.v_angle;
-
-                        Player->edict()->v.velocity = Vector(0.0f, 0.0f, 0.0f);
-
-                        Player->edict()->v.punchangle = Vector(0.0f, 0.0f, 0.0f);
-
-                        Player->edict()->v.fixangle = 1;
-
-                        Player->m_bloodColor = BLOOD_COLOR_RED;
-
-                        Player->m_modelIndexPlayer = Player->edict()->v.modelindex;
-
-                        if (Player->edict()->v.flags & FL_DUCKING)
-                        {
-                            g_engfuncs.pfnSetSize(Player->edict(), VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX);
-                        }
-                        else
-                        {
-                            g_engfuncs.pfnSetSize(Player->edict(), VEC_HULL_MIN, VEC_HULL_MAX);
-                        }
-
-                        return true;
-                    }
-                }
-            }
-			while (true);
-        }
-    }
-
-    return false;
 }
 
 void CPugDeathmatch::PlayerSpawn(CBasePlayer* Player)
@@ -265,41 +293,10 @@ void CPugDeathmatch::SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnimati
 	}
 }
 
-bool CPugDeathmatch::CheckDistance(CBasePlayer* Player, vec3_t Origin, float Distance)
+void CPugDeathmatch::GetIntoGame(CBasePlayer* Player)
 {
 	if (this->m_Running)
 	{
-		edict_t* pEntity = nullptr;
-
-		while (!FNullEnt(pEntity = g_engfuncs.pfnFindEntityInSphere(pEntity, Origin, Distance)))
-		{
-			auto Target = UTIL_PlayerByIndexSafe(ENTINDEX(pEntity));
-
-			if (Target)
-			{
-				if (Target->IsPlayer())
-				{
-					if (Target->entindex() != Player->entindex())
-					{
-						if (Target->IsAlive())
-						{
-							return false;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return true;
-}
-
-void CPugDeathmatch::ResetPlayer(CBasePlayer* Player)
-{
-	if (this->m_Running)
-	{
-		this->m_Info[Player->entindex()].Reset();
-
 		if (!Player->IsBot())
 		{
 			gPugUtil.SayText(Player->edict(), PRINT_TEAM_DEFAULT, "^4[%s]^1 Pressione ^3'G'^1 ou digite ^3'guns'^1 no chat para habilitar o menu de armas.", Plugin_info.logtag);

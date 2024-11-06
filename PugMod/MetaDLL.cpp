@@ -40,6 +40,10 @@ C_DLLEXPORT int GetEntityAPI2_Post(DLL_FUNCTIONS* pFunctionTable, int* interface
 
 	gDLL_FunctionTable_Post.pfnStartFrame = DLL_POST_StartFrame;
 
+	gDLL_FunctionTable_Post.pfnClientConnect = DLL_POST_ClientConnect;
+
+	gDLL_FunctionTable_Post.pfnClientPutInServer = DLL_POST_ClientPutInServer;
+
 	memcpy(pFunctionTable, &gDLL_FunctionTable_Post, sizeof(DLL_FUNCTIONS));
 
 	return 1;
@@ -78,6 +82,22 @@ void DLL_POST_StartFrame()
 	gPugCurl.StartFrame();
 
 	gPugTask.ServerFrame();
+
+	RETURN_META(MRES_IGNORED);
+}
+
+BOOL DLL_POST_ClientConnect(edict_t* pEntity, const char* pszName, const char* pszAddress, char szRejectReason[128])
+{
+	gPugPlayer.Connect(pEntity, pszName, pszAddress);
+
+	RETURN_META_VALUE(MRES_IGNORED, TRUE);
+
+	return TRUE;
+}
+
+void DLL_POST_ClientPutInServer(edict_t* pEntity)
+{
+	gPugPlayer.PutInServer(pEntity);
 
 	RETURN_META(MRES_IGNORED);
 }

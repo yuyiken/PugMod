@@ -16,13 +16,13 @@ class CPugMod
 public:
 	void ServerActivate();
 	void ServerDeactivate();
+
 	void SetState(int State);
 
-	void PlayerGetIntoGame(CBasePlayer* Player);
-	bool PlayerJoinTeam(CBasePlayer* Player, int Slot);
+	void GetIntoGame(CBasePlayer* Player);
+	void JoinTeam(CBasePlayer* Player);
 
 	int m_State;
-
 	int m_ScoreTR;
 	int m_scoreCT;
 };

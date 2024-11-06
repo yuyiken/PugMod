@@ -23,6 +23,7 @@ void CPugMod::SetState(int State)
 	{
 		case STATE_DEAD:
 		{
+			gPugTask.Create(TASK_CHANGE_STATE, 2.0, false, STATE_DEATHMATCH);
 			break;
 		}
 		case STATE_DEATHMATCH:
@@ -44,26 +45,19 @@ void CPugMod::SetState(int State)
 	}
 }
 
-void CPugMod::PlayerGetIntoGame(CBasePlayer* Player)
+void CPugMod::GetIntoGame(CBasePlayer* Player)
 {
-	if (this->m_State == STATE_DEAD)
+	if (this->m_State != STATE_DEAD)
 	{
-		auto PlayerCount = gPugUtil.GetPlayerCount();
-
-		if (std::accumulate(std::begin(PlayerCount), std::end(PlayerCount), 0) == 1)
+		if (!Player->IsBot())
 		{
-			gPugTask.Create(TASK_CHANGE_STATE, 2.0, false, STATE_DEATHMATCH);
+			gPugUtil.SayText(Player->edict(), PRINT_TEAM_DEFAULT, "^4[%s]^1 %s Build %s (^3%s^1)", Plugin_info.logtag, Plugin_info.name, Plugin_info.date, Plugin_info.author);
+			gPugUtil.SayText(Player->edict(), PRINT_TEAM_DEFAULT, "^4[%s]^1 Digite ^4.help^1 para lista de comandos.", Plugin_info.logtag);
 		}
-	}
-
-	if (!Player->IsBot())
-	{
-		gPugUtil.SayText(Player->edict(), PRINT_TEAM_DEFAULT, "^4[%s]^1 %s Build %s (^3%s^1)", Plugin_info.logtag, Plugin_info.name, Plugin_info.date, Plugin_info.author);
-		gPugUtil.SayText(Player->edict(), PRINT_TEAM_DEFAULT, "^4[%s]^1 Digite ^4.help^1 para lista de comandos.", Plugin_info.logtag);
 	}
 }
 
-bool CPugMod::PlayerJoinTeam(CBasePlayer* Player, int Slot)
+void CPugMod::JoinTeam(CBasePlayer* Player)
 {
 	if (Player->m_iTeam == UNASSIGNED)
 	{
@@ -73,6 +67,4 @@ bool CPugMod::PlayerJoinTeam(CBasePlayer* Player, int Slot)
 			gPugUtil.TeamInfo(Player->edict(), MAX_CLIENTS + CT + 1, "CT");
 		}
 	}
-
-	return false;
 }
