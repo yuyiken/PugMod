@@ -328,23 +328,23 @@ void CPugUtil::TeamInfo(edict_t* pEntity, int playerIndex, const char* pszTeamNa
 	}
 }
 
-void CPugUtil::SendDeathMessage(edict_t* pEntity, CBasePlayer* pKiller, CBasePlayer* pVictim, CBasePlayer* pAssister, entvars_t* pevInflictor, const char* killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
+void CPugUtil::SendDeathMessage(edict_t* Dest, CBaseEntity* Killer, CBasePlayer* Victim, CBasePlayer* Assister, entvars_t* pevInflictor, const char* killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
 {
 	static int iDeathMsg;
-
+	
 	if (iDeathMsg || (iDeathMsg = gpMetaUtilFuncs->pfnGetUserMsgID(&Plugin_info, "DeathMsg", NULL)))
 	{
-		if (FNullEnt(pEntity))
+		if (FNullEnt(Dest))
 		{
 			g_engfuncs.pfnMessageBegin(MSG_ALL, iDeathMsg, nullptr, nullptr);
 		}
 		else
 		{
-			g_engfuncs.pfnMessageBegin(MSG_ONE, iDeathMsg, nullptr, pEntity);
+			g_engfuncs.pfnMessageBegin(MSG_ONE, iDeathMsg, nullptr, Dest);
 		}
 
-		g_engfuncs.pfnWriteByte((pKiller && pKiller->IsPlayer()) ? pKiller->entindex() : 0);
-		g_engfuncs.pfnWriteByte(pVictim->entindex());
+		g_engfuncs.pfnWriteByte((Killer && Killer->IsPlayer()) ? Killer->entindex() : 0);
+		g_engfuncs.pfnWriteByte(Victim->entindex());
 		g_engfuncs.pfnWriteByte((iRarityOfKill & 0x001));
 		g_engfuncs.pfnWriteString(killerWeaponName);
 
@@ -354,14 +354,14 @@ void CPugUtil::SendDeathMessage(edict_t* pEntity, CBasePlayer* pKiller, CBasePla
 
 			if (iDeathMessageFlags & 0x001)
 			{
-				g_engfuncs.pfnWriteCoord(pVictim->pev->origin.x);
-				g_engfuncs.pfnWriteCoord(pVictim->pev->origin.y);
-				g_engfuncs.pfnWriteCoord(pVictim->pev->origin.z);
+				g_engfuncs.pfnWriteCoord(Victim->pev->origin.x);
+				g_engfuncs.pfnWriteCoord(Victim->pev->origin.y);
+				g_engfuncs.pfnWriteCoord(Victim->pev->origin.z);
 			}
 
 			if (iDeathMessageFlags & 0x002)
 			{
-				g_engfuncs.pfnWriteByte((pAssister && pAssister->IsPlayer()) ? pAssister->entindex() : 0);
+				g_engfuncs.pfnWriteByte((Assister && Assister->IsPlayer()) ? Assister->entindex() : 0);
 			}
 
 			if (iDeathMessageFlags & 0x004)
@@ -372,24 +372,4 @@ void CPugUtil::SendDeathMessage(edict_t* pEntity, CBasePlayer* pKiller, CBasePla
 
 		g_engfuncs.pfnMessageEnd();
 	}
-}
-
-std::array<int, SPECTATOR + 1U> CPugUtil::GetPlayerCount()
-{
-	std::array<int, SPECTATOR + 1U> PlayerCount = { 0 };
-
-	for (int i = 1; i <= gpGlobals->maxClients; ++i)
-	{
-		auto Player = UTIL_PlayerByIndexSafe(i);
-
-		if (Player)
-		{
-			if (!Player->IsDormant())
-			{
-				PlayerCount[Player->m_iTeam]++;
-			}
-		}
-	}
-
-	return PlayerCount;
 }

@@ -312,25 +312,16 @@ bool CPugDeathmatch::SendDeathMessage(CBaseEntity* Killer, CBasePlayer* Victim, 
 				{
 					if (Killer->IsPlayer())
 					{
-						auto Player = static_cast<CBasePlayer*>(Killer);
+						auto PugPlayer = gPugPlayer.Get(Killer->edict());
 
-						if (Player)
+						if (PugPlayer)
 						{
-							auto PugPlayer = gPugPlayer.Get(Player);
-
-							if (PugPlayer)
+							if (PugPlayer->DeathMatch.HideKillFeed > 0) // Disable this do not affect plugin 
 							{
-								if (PugPlayer->DeathMatch.HideKillFeed > 0) // Disable this do not affect plugin 
-								{
-									gPugUtil.SendDeathMessage(Player->edict(), Player, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
+								//UTIL_DeathMsg(msgid, MSG_ONE, killer, killer, victim, headshot, killerWeaponName);
+								//(const msgid, dest, const receiver, const killer, const victim, const headshot, const weaponName[])
 
-									if (Player->entindex() != Victim->entindex())
-									{
-										gPugUtil.SendDeathMessage(Victim->edict(), Player, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
-									}
-
-									return true;
-								}
+								gPugUtil.SendDeathMessage(Killer->edict(), Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
 							}
 						}
 					}

@@ -24,7 +24,7 @@ public:
     hudtextparms_t HudParam(int red, int green, int blue, float x, float y, int effects, float fxtime, float holdtime, float fadeintime, float fadeouttime, int channel);
     void HudMessage(edict_t* pEntity, hudtextparms_t textparms, const char* Format, ...);
     void TeamInfo(edict_t* pEntity, int playerIndex, const char* pszTeamName);
-    void SendDeathMessage(edict_t* pEntity, CBasePlayer* pKiller, CBasePlayer* pVictim, CBasePlayer* pAssister, entvars_t* pevInflictor, const char* killerWeaponName, int iDeathMessageFlags, int iRarityOfKill);
+    void SendDeathMessage(edict_t* pEntity, CBaseEntity* pKiller, CBasePlayer* pVictim, CBasePlayer* pAssister, entvars_t* pevInflictor, const char* killerWeaponName, int iDeathMessageFlags, int iRarityOfKill);
 
     std::array<int, SPECTATOR + 1U> GetPlayerCount();
 };
