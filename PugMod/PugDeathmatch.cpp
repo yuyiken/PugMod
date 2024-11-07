@@ -312,18 +312,51 @@ bool CPugDeathmatch::SendDeathMessage(CBaseEntity* Killer, CBasePlayer* Victim, 
 				{
 					if (Killer->IsPlayer())
 					{
-						auto PugPlayer = gPugPlayer.Get(Killer->edict());
+						auto PugKiller = gPugPlayer.Get(Killer->edict());
 
-						if (PugPlayer)
+						if (PugKiller)
 						{
-							if (PugPlayer->DeathMatch.HideKillFeed > 0) // Disable this do not affect plugin 
+							if (PugKiller->DeathMatch.HideKillFeed > 0)
 							{
-								//UTIL_DeathMsg(msgid, MSG_ONE, killer, killer, victim, headshot, killerWeaponName);
-								//(const msgid, dest, const receiver, const killer, const victim, const headshot, const weaponName[])
-
-								gPugUtil.SendDeathMessage(Killer->edict(), Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
+								gPugUtil.DeathMsg(Killer->edict(), Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
 							}
 						}
+
+						auto PugVictim = gPugPlayer.Get(Killer->edict());
+
+						if (PugVictim)
+						{
+							if (PugVictim->DeathMatch.HideKillFeed > 0)
+							{
+								gPugUtil.DeathMsg(Victim->edict(), Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
+							}
+						}
+
+						for (int i = 1; i <= gpGlobals->maxClients; ++i)
+						{
+							auto Player = UTIL_PlayerByIndexSafe(i);
+
+							if (Player)
+							{
+								if (!Player->IsDormant())
+								{
+									if (Player->IsPlayer() && !Player->IsBot())
+									{
+										auto Temp = gPugPlayer.Get(Player->edict());
+
+										if (Temp)
+										{
+											if (Temp->DeathMatch.HideKillFeed)
+											{
+												gPugUtil.DeathMsg(Player->edict(), Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
+											}
+										}
+									}
+								}
+							}
+						}
+
+						return true;
 					}
 				}
 			}

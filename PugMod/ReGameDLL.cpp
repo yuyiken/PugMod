@@ -183,8 +183,10 @@ void CReGameDLL::CBasePlayer_SwitchTeam(IReGameHook_CBasePlayer_SwitchTeam* chai
 
 void CReGameDLL::CSGameRules_SendDeathMessage(IReGameHook_CSGameRules_SendDeathMessage* chain, CBaseEntity* Killer, CBasePlayer* Victim, CBasePlayer* Assister, entvars_t* pevInflictor, const char* killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
 {
-	if (!gPugDeathmatch.SendDeathMessage(Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill))
+	if (gPugDeathmatch.SendDeathMessage(Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill))
 	{
-		chain->callNext(Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
+		return;
 	}
+
+	chain->callNext(Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
 }

@@ -63,6 +63,32 @@ LP_PLAYER CPugPlayer::Get(CBasePlayer* Player)
 	return nullptr;
 }
 
+std::vector<P_PLAYER> CPugPlayer::Get(int Status, bool IncludeBots)
+{
+	std::vector<P_PLAYER> Players;
+
+	for (auto const &Player : this->m_Players)
+	{
+		if (!FNullEnt(Player.second.Entity))
+		{
+			if (Player.second.Status == Status)
+			{
+				if (!(Player.second.Entity->v.flags & FL_DORMANT))
+				{
+					if (!IncludeBots && (Player.second.Entity->v.flags & FL_FAKECLIENT))
+					{
+						continue;
+					}
+					
+					Players.push_back(Player.second);
+				}
+			}
+		}
+	}
+
+	return Players;
+}
+
 void CPugPlayer::Connect(edict_t* pEntity, const char* pszName, const char* pszAddress)
 {
 	if (!FNullEnt(pEntity))
@@ -180,5 +206,13 @@ void CPugPlayer::SwitchTeam(CBasePlayer* Player)
 				}
 			}
 		}
+	}
+}
+
+void CPugPlayer::Disconnected(edict_t* pEntity)
+{
+	if (!FNullEnt(pEntity))
+	{
+		// Disconnect things from here
 	}
 }

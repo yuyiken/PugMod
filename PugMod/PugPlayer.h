@@ -11,7 +11,7 @@ typedef struct S_PLAYER
 	std::string Auth;
 
 	time_t ConnectTime;
-	int Status; // 0 Disconnected, 1 Connecting, 2 In Server, 3 InGame
+	int Status;				// 0 Disconnected, 1 Connecting, 2 In Server, 3 InGame
 	TeamName TeamIndex;
 
 	P_DM_INFO DeathMatch;
@@ -29,11 +29,14 @@ public:
 	LP_PLAYER Get(int EntityIndex);
 	LP_PLAYER Get(CBasePlayer* Player);
 
+	std::vector<P_PLAYER> Get(int Status, bool IncludeBots);
+
 	void Connect(edict_t* pEntity, const char* pszName, const char* pszAddress);
 	void PutInServer(edict_t* pEntity);
 	void GetIntoGame(CBasePlayer* Player);
 	void JoinTeam(CBasePlayer* Player);
 	void SwitchTeam(CBasePlayer* Player);
+	void Disconnected(edict_t* pEntity);
 
 private:
 	std::map<std::string, P_PLAYER> m_Players;
