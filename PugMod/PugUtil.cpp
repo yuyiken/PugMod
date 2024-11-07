@@ -2,31 +2,6 @@
 
 CPugUtil gPugUtil;
 
-cvar_t* CPugUtil::CvarRegister(std::string Name, std::string Value)
-{
-	cvar_t* Pointer = g_engfuncs.pfnCVarGetPointer(Name.c_str());
-
-	if (!Pointer)
-	{
-		this->m_CvarData[Name].name = Name.c_str();
-
-		this->m_CvarData[Name].string = "";
-
-		this->m_CvarData[Name].flags = (FCVAR_SERVER | FCVAR_PROTECTED | FCVAR_SPONLY | FCVAR_UNLOGGED);
-
-		g_engfuncs.pfnCVarRegister(&this->m_CvarData[Name]);
-
-		Pointer = g_engfuncs.pfnCVarGetPointer(this->m_CvarData[Name].name);
-
-		if (Pointer)
-		{
-			g_engfuncs.pfnCvar_DirectSet(Pointer, Value.c_str());
-		}
-	}
-
-	return Pointer;
-}
-
 void CPugUtil::ServerCommand(const char* Format, ...)
 {
 	char Command[255] = { 0 };
@@ -144,31 +119,6 @@ int CPugUtil::ParseColors(char* Buffer)
 						offs++;
 						break;
 					}
-					// For menu system
-					case 'w': // w Character: White text on menu
-					{
-						c = '\w';
-						offs++;
-						break;
-					}
-					case 'y': // y Character: Yellow text on menu
-					{
-						c = '\t';
-						offs++;
-						break;
-					}
-					case 'r': // r Character: Red text on menu
-					{
-						c = '\r';
-						offs++;
-						break;
-					}
-					case 'R': // R Character: Right align text on menu
-					{
-						c = '\R';
-						offs++;
-						break;
-					}
 				}
 			}
 
@@ -179,6 +129,21 @@ int CPugUtil::ParseColors(char* Buffer)
 	}
 
 	return offs;
+}
+
+void CPugUtil::ReplaceAll(std::string& String, const std::string& From, const std::string& To)
+{
+	if (!From.empty())
+	{
+		size_t StartPos = 0;
+
+		while ((StartPos = String.find(From, StartPos)) != std::string::npos)
+		{
+			String.replace(StartPos, From.length(), To);
+
+			StartPos += To.length();
+		}
+	}
 }
 
 void CPugUtil::SayText(edict_t* pEntity, int Sender, const char* Format, ...)
@@ -359,6 +324,52 @@ void CPugUtil::TeamInfo(edict_t* pEntity, int playerIndex, const char* pszTeamNa
 		g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgTeamInfo, nullptr, pEntity);
 		g_engfuncs.pfnWriteByte(playerIndex);
 		g_engfuncs.pfnWriteString(pszTeamName);
+		g_engfuncs.pfnMessageEnd();
+	}
+}
+
+void CPugUtil::SendDeathMessage(edict_t* pEntity, CBasePlayer* pKiller, CBasePlayer* pVictim, CBasePlayer* pAssister, entvars_t* pevInflictor, const char* killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
+{
+	static int iDeathMsg;
+
+	if (iDeathMsg || (iDeathMsg = gpMetaUtilFuncs->pfnGetUserMsgID(&Plugin_info, "DeathMsg", NULL)))
+	{
+		if (FNullEnt(pEntity))
+		{
+			g_engfuncs.pfnMessageBegin(MSG_ALL, iDeathMsg, nullptr, nullptr);
+		}
+		else
+		{
+			g_engfuncs.pfnMessageBegin(MSG_ONE, iDeathMsg, nullptr, pEntity);
+		}
+
+		g_engfuncs.pfnWriteByte((pKiller && pKiller->IsPlayer()) ? pKiller->entindex() : 0);
+		g_engfuncs.pfnWriteByte(pVictim->entindex());
+		g_engfuncs.pfnWriteByte((iRarityOfKill & 0x001));
+		g_engfuncs.pfnWriteString(killerWeaponName);
+
+		if (iDeathMessageFlags > 0)
+		{
+			g_engfuncs.pfnWriteLong(iDeathMessageFlags);
+
+			if (iDeathMessageFlags & 0x001)
+			{
+				g_engfuncs.pfnWriteCoord(pVictim->pev->origin.x);
+				g_engfuncs.pfnWriteCoord(pVictim->pev->origin.y);
+				g_engfuncs.pfnWriteCoord(pVictim->pev->origin.z);
+			}
+
+			if (iDeathMessageFlags & 0x002)
+			{
+				g_engfuncs.pfnWriteByte((pAssister && pAssister->IsPlayer()) ? pAssister->entindex() : 0);
+			}
+
+			if (iDeathMessageFlags & 0x004)
+			{
+				g_engfuncs.pfnWriteByte(iRarityOfKill);
+			}
+		}
+
 		g_engfuncs.pfnMessageEnd();
 	}
 }

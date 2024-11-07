@@ -14,9 +14,9 @@ constexpr auto PRINT_RADIO = 5;
 class CPugUtil
 {
 public:
-    cvar_t* CvarRegister(std::string Name, std::string Value);
     void ServerCommand(const char* Format, ...);
     int ParseColors(char* szBuffer);
+    void ReplaceAll(std::string& String, const std::string& From, const std::string& To);
     void ClientPrint(edict_t* pEntity, int msg_dest, const char* Format, ...);
     void SayText(edict_t* pEntity, int Sender, const char* Format, ...);
     unsigned short FixedUnsigned16(float value, float scale);
@@ -24,10 +24,9 @@ public:
     hudtextparms_t HudParam(int red, int green, int blue, float x, float y, int effects, float fxtime, float holdtime, float fadeintime, float fadeouttime, int channel);
     void HudMessage(edict_t* pEntity, hudtextparms_t textparms, const char* Format, ...);
     void TeamInfo(edict_t* pEntity, int playerIndex, const char* pszTeamName);
-    std::array<int, SPECTATOR + 1U> GetPlayerCount();
+    void SendDeathMessage(edict_t* pEntity, CBasePlayer* pKiller, CBasePlayer* pVictim, CBasePlayer* pAssister, entvars_t* pevInflictor, const char* killerWeaponName, int iDeathMessageFlags, int iRarityOfKill);
 
-public:
-    std::map<std::string, cvar_t> m_CvarData;
+    std::array<int, SPECTATOR + 1U> GetPlayerCount();
 };
 
 extern CPugUtil gPugUtil;

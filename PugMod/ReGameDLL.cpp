@@ -51,6 +51,10 @@ bool CReGameDLL::Init()
 										this->m_Hookchains->CBasePlayer_SetAnimation()->registerHook(this->CBasePlayer_SetAnimation);
 
 										this->m_Hookchains->HandleMenu_ChooseTeam()->registerHook(this->HandleMenu_ChooseTeam);
+
+										this->m_Hookchains->CBasePlayer_SwitchTeam()->registerHook(this->CBasePlayer_SwitchTeam);
+
+										this->m_Hookchains->CSGameRules_SendDeathMessage()->registerHook(this->CSGameRules_SendDeathMessage);
 									}
 								}
 
@@ -87,6 +91,10 @@ bool CReGameDLL::Stop()
 		this->m_Hookchains->CBasePlayer_SetAnimation()->unregisterHook(this->CBasePlayer_SetAnimation);
 
 		this->m_Hookchains->HandleMenu_ChooseTeam()->unregisterHook(this->HandleMenu_ChooseTeam);
+
+		this->m_Hookchains->CBasePlayer_SwitchTeam()->unregisterHook(this->CBasePlayer_SwitchTeam);
+
+		this->m_Hookchains->CSGameRules_SendDeathMessage()->unregisterHook(this->CSGameRules_SendDeathMessage);
 	}
 	
 	return false;
@@ -158,10 +166,25 @@ void CReGameDLL::CBasePlayer_SetAnimation(IReGameHook_CBasePlayer_SetAnimation* 
 
 BOOL CReGameDLL::HandleMenu_ChooseTeam(IReGameHook_HandleMenu_ChooseTeam* chain, CBasePlayer* Player, int Slot)
 {
-	if (gPugMod.PlayerJoinTeam(Player, Slot))
+	if (gPugMod.JoinTeam(Player, Slot))
 	{
 		Slot = 0;
 	}
 
 	return chain->callNext(Player, Slot);
+}
+
+void CReGameDLL::CBasePlayer_SwitchTeam(IReGameHook_CBasePlayer_SwitchTeam* chain, CBasePlayer* Player)
+{
+	chain->callNext(Player);
+
+	gPugPlayer.SwitchTeam(Player);
+}
+
+void CReGameDLL::CSGameRules_SendDeathMessage(IReGameHook_CSGameRules_SendDeathMessage* chain, CBaseEntity* Killer, CBasePlayer* Victim, CBasePlayer* Assister, entvars_t* pevInflictor, const char* killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
+{
+	if (!gPugDeathmatch.SendDeathMessage(Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill))
+	{
+		chain->callNext(Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
+	}
 }

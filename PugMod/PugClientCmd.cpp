@@ -30,7 +30,7 @@ bool CPugClientCmd::Command(edict_t* pEntity)
 					}
 					else if (!Q_strcmp(pCmd, "drop"))
 					{
-						if (gPugDeathmatch.SetHideMenu(Player, false))
+						if (gPugDeathmatch.SetEquipMenu(Player, true))
 						{
 							return true;
 						}
@@ -43,12 +43,18 @@ bool CPugClientCmd::Command(edict_t* pEntity)
 						{
 							if (pArg1[0u] != '\0')
 							{
-								if (!Q_strcmp(pArg1, "guns"))
+								if (!Q_strcmp(pArg1, "/guns"))
 								{
-									if (gPugDeathmatch.SetHideMenu(Player, false))
+									if (gPugDeathmatch.SetEquipMenu(Player, true))
 									{
 										return true;
 									}
+								}
+
+								if (!Q_strcmp(pArg1, "/menu"))
+								{
+									gPugDeathmatch.OptionMenu(Player->entindex());
+									return true;
 								}
 							}
 						}

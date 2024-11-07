@@ -7,6 +7,21 @@ void CPugPlayer::ServerActivate()
 	this->m_Players.clear();
 }
 
+const char* CPugPlayer::GetAuthId(edict_t* pEntity)
+{
+	if (!FNullEnt(pEntity))
+	{
+		if (!(pEntity->v.flags & FL_FAKECLIENT))
+		{
+			return g_engfuncs.pfnGetPlayerAuthId(pEntity);
+		}
+
+		return STRING(pEntity->v.netname);
+	}
+
+	return nullptr;
+}
+
 LP_PLAYER CPugPlayer::Get(const char* Auth)
 {
 	if (Auth)
@@ -15,7 +30,7 @@ LP_PLAYER CPugPlayer::Get(const char* Auth)
 		{
 			if (this->m_Players.find(Auth) != this->m_Players.end())
 			{
-				this->m_Players[Auth];
+				return &this->m_Players[Auth];
 			}
 		}
 	}
@@ -27,7 +42,7 @@ LP_PLAYER CPugPlayer::Get(edict_t* pEntity)
 {
 	if (!FNullEnt(pEntity))
 	{
-		return this->Get(g_engfuncs.pfnGetPlayerAuthId(pEntity));
+		return this->Get(this->GetAuthId(pEntity));
 	}
 
 	return nullptr;
@@ -52,7 +67,7 @@ void CPugPlayer::Connect(edict_t* pEntity, const char* pszName, const char* pszA
 {
 	if (!FNullEnt(pEntity))
 	{
-		auto Auth = g_engfuncs.pfnGetPlayerAuthId(pEntity);
+		auto Auth = this->GetAuthId(pEntity);
 
 		if (Auth)
 		{
@@ -80,7 +95,7 @@ void CPugPlayer::PutInServer(edict_t* pEntity)
 {
 	if (!FNullEnt(pEntity))
 	{
-		auto Auth = g_engfuncs.pfnGetPlayerAuthId(pEntity);
+		auto Auth = this->GetAuthId(pEntity);
 
 		if (Auth)
 		{
@@ -105,7 +120,7 @@ void CPugPlayer::GetIntoGame(CBasePlayer* Player)
 
 		if (!FNullEnt(pEntity))
 		{
-			auto Auth = g_engfuncs.pfnGetPlayerAuthId(Player->edict());
+			auto Auth = this->GetAuthId(pEntity);
 
 			if (Auth)
 			{
@@ -114,6 +129,8 @@ void CPugPlayer::GetIntoGame(CBasePlayer* Player)
 					this->m_Players[Auth].Name = STRING(pEntity->v.netname);
 					this->m_Players[Auth].Status = 3;
 					this->m_Players[Auth].TeamIndex = Player->m_iTeam;
+
+					this->m_Players[Auth].DeathMatch.Reset();
 				}
 			}
 		}
@@ -128,7 +145,30 @@ void CPugPlayer::JoinTeam(CBasePlayer* Player)
 
 		if (!FNullEnt(pEntity))
 		{
-			auto Auth = g_engfuncs.pfnGetPlayerAuthId(Player->edict());
+			auto Auth = this->GetAuthId(pEntity);
+
+			if (Auth)
+			{
+				if (Auth[0u] != '\0')
+				{
+					this->m_Players[Auth].Name = STRING(pEntity->v.netname);
+					this->m_Players[Auth].Status = 3;
+					this->m_Players[Auth].TeamIndex = Player->m_iTeam;
+				}
+			}
+		}
+	}
+}
+
+void CPugPlayer::SwitchTeam(CBasePlayer* Player)
+{
+	if (Player)
+	{
+		auto pEntity = Player->edict();
+
+		if (!FNullEnt(pEntity))
+		{
+			auto Auth = this->GetAuthId(pEntity);
 
 			if (Auth)
 			{

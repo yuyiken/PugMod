@@ -24,6 +24,29 @@ typedef struct S_DM_INFO
 	bool EquipMenu;
 	std::map<int, int> State;
 	std::map<int, WeaponSlotInfo*> Last;
+
+	int HideKillFeed;
+	int HitIndicator;
+	int HSOnlyMode;
+	int HudKDRatio;
+	int KillFade;
+	int KillSound;
+	int MoneyFrag;
+
+	void Reset()
+	{
+		this->EquipMenu = true;
+		this->State.clear();
+		this->Last.clear();
+		
+		this->HideKillFeed = (int)(gPugCvar.m_DM_HideKillFeed->value);
+		this->HitIndicator = (int)(gPugCvar.m_DM_HitIndicator->value);
+		this->HSOnlyMode = (int)(gPugCvar.m_DM_HSOnlyMode->value);
+		this->HudKDRatio = (int)(gPugCvar.m_DM_HudKDRatio->value);
+		this->KillFade = (int)(gPugCvar.m_DM_KillFade->value);
+		this->KillSound = (int)(gPugCvar.m_DM_KillSound->value);
+		this->MoneyFrag = (int)(gPugCvar.m_DM_MoneyFrag->value);
+	}
 } P_DM_INFO, *LP_DM_INFO;
 
 class CPugDeathmatch
@@ -45,6 +68,7 @@ public:
 	bool HasRestrictItem(CBasePlayer* Player, ItemID ItemIndex, ItemRestType RestType);
 	void PlayerSpawn(CBasePlayer* Player);
 	void SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnimation);
+	bool SendDeathMessage(CBaseEntity* Killer, CBasePlayer* Victim, CBasePlayer* Assister, entvars_t* pevInflictor, const char* killerWeaponName, int iDeathMessageFlags, int iRarityOfKill);
 
 	void GetIntoGame(CBasePlayer* Player);
 
@@ -52,11 +76,7 @@ public:
 	void EquipRandom(CBasePlayer* Player, int Slot);
 	void EquipLast(CBasePlayer* Player);
 
-	bool SetHideMenu(CBasePlayer* Player, bool HideMenu);
-	bool GetHideMenu(int EntityIndex);
-
-	void SetWeaponState(int EntityIndex, CBasePlayerWeapon* Weapon);
-	int GetWeaponState(int EntityIndex, int WeaponIndex);
+	bool SetEquipMenu(CBasePlayer* Player, bool EquipMenu);
 
 	void EquipMenu(int EntityIndex);
 	static void EquipMenuHandle(int EntityIndex, P_MENU_ITEM Item);
@@ -64,11 +84,13 @@ public:
 	void WeaponMenu(int EntityIndex, int Slot);
 	static void WeaponMenuHandle(int EntityIndex, P_MENU_ITEM Item);
 
+	void OptionMenu(int EntityIndex);
+	static void OptionMenuHandle(int EntityIndex, P_MENU_ITEM Item);
+
 private:
 	bool m_Running;
 	std::vector<P_DM_SPAWN> m_Spawns;
 	std::vector<P_DM_ITEM> m_Items;
-	//std::map<int, P_PLAYER_INFO> m_Info;
 };
 
 extern CPugDeathmatch gPugDeathmatch;

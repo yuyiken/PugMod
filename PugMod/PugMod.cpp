@@ -23,7 +23,7 @@ void CPugMod::SetState(int State)
 	{
 		case STATE_DEAD:
 		{
-			gPugTask.Create(TASK_CHANGE_STATE, 2.0, false, STATE_DEATHMATCH);
+			gPugTask.Create(TASK_CHANGE_STATE, 5.0, false, STATE_DEATHMATCH);
 			break;
 		}
 		case STATE_DEATHMATCH:
@@ -57,7 +57,7 @@ void CPugMod::GetIntoGame(CBasePlayer* Player)
 	}
 }
 
-void CPugMod::JoinTeam(CBasePlayer* Player)
+bool CPugMod::JoinTeam(CBasePlayer* Player, int Slot)
 {
 	if (Player->m_iTeam == UNASSIGNED)
 	{
@@ -67,4 +67,6 @@ void CPugMod::JoinTeam(CBasePlayer* Player)
 			gPugUtil.TeamInfo(Player->edict(), MAX_CLIENTS + CT + 1, "CT");
 		}
 	}
+
+	return false;
 }

@@ -22,6 +22,8 @@ class CPugPlayer
 public:
 	void ServerActivate();
 
+	const char* GetAuthId(edict_t* pEntity);
+
 	LP_PLAYER Get(const char* Auth);
 	LP_PLAYER Get(edict_t* pEntity);
 	LP_PLAYER Get(int EntityIndex);
@@ -31,6 +33,7 @@ public:
 	void PutInServer(edict_t* pEntity);
 	void GetIntoGame(CBasePlayer* Player);
 	void JoinTeam(CBasePlayer* Player);
+	void SwitchTeam(CBasePlayer* Player);
 
 private:
 	std::map<std::string, P_PLAYER> m_Players;

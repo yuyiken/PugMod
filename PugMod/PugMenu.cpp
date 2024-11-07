@@ -240,11 +240,15 @@ void CPugMenu::ShowMenu(int EntityIndex, int Slots, int Time, std::string Text)
 				{
 					Player->m_iMenu = Menu_OFF;
 
+					gPugUtil.ReplaceAll(Text, "^w", "\\w");
+					gPugUtil.ReplaceAll(Text, "^y", "\\y");
+					gPugUtil.ReplaceAll(Text, "^r", "\\r");
+					gPugUtil.ReplaceAll(Text, "^R", "\\R");
+					gPugUtil.ReplaceAll(Text, "^n", "\n");
+
 					char BufferMenu[MAX_BUFFER_MENU * 6] = { 0 };
 
 					Text.copy(BufferMenu, Text.length() + 1);
-
-					gPugUtil.ParseColors(BufferMenu);
 
 					char* pMenuList = BufferMenu;
 					char* aMenuList = BufferMenu;

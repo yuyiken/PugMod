@@ -20,7 +20,7 @@ public:
 	void SetState(int State);
 
 	void GetIntoGame(CBasePlayer* Player);
-	void JoinTeam(CBasePlayer* Player);
+	bool JoinTeam(CBasePlayer* Player, int Slot);
 
 	int m_State;
 	int m_ScoreTR;
