@@ -26,28 +26,12 @@ typedef struct S_DM_INFO
 	std::map<int, WeaponSlotInfo*> Last;
 	std::map<int, int> Option;
 
-	//int HideKillFeed;
-	//int HitIndicator;
-	//int HSOnlyMode;
-	//int HudKDRatio;
-	//int KillFade;
-	//int KillSound;
-	//int MoneyFrag;
-
 	void Reset()
 	{
 		this->EquipMenu = true;
 		this->State.clear();
 		this->Last.clear();
 		this->Option.clear();
-
-		this->Option[0] = (int)(gPugCvar.m_DM_HideKillFeed->value);
-		this->Option[1] = (int)(gPugCvar.m_DM_HitIndicator->value);
-		this->Option[2] = (int)(gPugCvar.m_DM_HSOnlyMode->value);
-		this->Option[3] = (int)(gPugCvar.m_DM_HudKDRatio->value);
-		this->Option[4] = (int)(gPugCvar.m_DM_KillFade->value);
-		this->Option[5] = (int)(gPugCvar.m_DM_KillSound->value);
-		this->Option[6] = (int)(gPugCvar.m_DM_MoneyFrag->value);
 	}
 } P_DM_INFO, *LP_DM_INFO;
 

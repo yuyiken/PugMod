@@ -161,9 +161,25 @@ void CPugDeathmatch::GetIntoGame(CBasePlayer* Player)
 {
 	if (this->m_Running)
 	{
-		if (!Player->IsBot())
+		if (Player)
 		{
-			gPugUtil.SayText(Player->edict(), PRINT_TEAM_DEFAULT, "^4[%s]^1 Pressione ^3'G'^1 ou digite ^3'guns'^1 no chat para habilitar o menu de armas.", Plugin_info.logtag);
+			auto pPlayer = gPugPlayer.Get(Player->edict());
+
+			if (pPlayer)
+			{
+				pPlayer->DeathMatch.Option[0] = (int)(gPugCvar.m_DM_HideKillFeed->value);
+				pPlayer->DeathMatch.Option[1] = (int)(gPugCvar.m_DM_HitIndicator->value);
+				pPlayer->DeathMatch.Option[2] = (int)(gPugCvar.m_DM_HSOnlyMode->value);
+				pPlayer->DeathMatch.Option[3] = (int)(gPugCvar.m_DM_HudKDRatio->value);
+				pPlayer->DeathMatch.Option[4] = (int)(gPugCvar.m_DM_KillFade->value);
+				pPlayer->DeathMatch.Option[5] = (int)(gPugCvar.m_DM_KillSound->value);
+				pPlayer->DeathMatch.Option[6] = (int)(gPugCvar.m_DM_MoneyFrag->value);
+			}
+
+			if (!Player->IsBot())
+			{
+				gPugUtil.SayText(Player->edict(), PRINT_TEAM_DEFAULT, "^4[%s]^1 Pressione ^3'G'^1 ou digite ^3'guns'^1 no chat para habilitar o menu de armas.", Plugin_info.logtag);
+			}
 		}
 	}
 }
@@ -268,11 +284,11 @@ void CPugDeathmatch::PlayerSpawn(CBasePlayer* Player)
 		}
 		else
 		{
-			auto PugPlayer = gPugPlayer.Get(Player);
+			auto pPlayer = gPugPlayer.Get(Player);
 
-			if (PugPlayer)
+			if (pPlayer)
 			{
-				if (PugPlayer->DeathMatch.EquipMenu)
+				if (pPlayer->DeathMatch.EquipMenu)
 				{
 					this->EquipMenu(Player->entindex());
 				}
@@ -299,11 +315,11 @@ void CPugDeathmatch::SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnimati
 
 					if (Weapon)
 					{
-						auto PugPlayer = gPugPlayer.Get(Player->entindex());
+						auto pPlayer = gPugPlayer.Get(Player->entindex());
 
-						if (PugPlayer)
+						if (pPlayer)
 						{
-							PugPlayer->DeathMatch.State[Weapon->m_iId] = Weapon->m_iWeaponState;
+							pPlayer->DeathMatch.State[Weapon->m_iId] = Weapon->m_iWeaponState;
 						}
 					}
 				}
@@ -398,11 +414,11 @@ void CPugDeathmatch::TakeDamage(CBasePlayer* Player, entvars_t* pevInflictor, en
 							{
 								if (gReGameDLL.m_Rules->FPlayerCanTakeDamage(Player, Attacker))
 								{
-									auto PugPlayer = gPugPlayer.Get(Attacker->edict());
+									auto pPlayer = gPugPlayer.Get(Attacker->edict());
 
-									if (PugPlayer)
+									if (pPlayer)
 									{
-										switch (PugPlayer->DeathMatch.Option[1])
+										switch (pPlayer->DeathMatch.Option[1])
 										{
 											case 1:
 											{
@@ -528,21 +544,21 @@ void CPugDeathmatch::EquipItem(CBasePlayer* Player, WeaponSlotInfo* Item)
 				{
 					Player->GiveAmmo(PlayerItem->CSPlayerItem()->m_ItemInfo.iMaxAmmo1, const_cast<char*>(PlayerItem->CSPlayerItem()->m_ItemInfo.pszAmmo1), -1);
 
-					auto PugPlayer = gPugPlayer.Get(Player->entindex());
+					auto pPlayer = gPugPlayer.Get(Player->entindex());
 
-					if (PugPlayer)
+					if (pPlayer)
 					{
-						PugPlayer->DeathMatch.Last[Item->slot] = Item;
+						pPlayer->DeathMatch.Last[Item->slot] = Item;
 
 						if (Player->m_pActiveItem)
 						{
 							if ((Player->m_pActiveItem->m_iId == WEAPON_USP) || (Player->m_pActiveItem->m_iId == WEAPON_GLOCK18) || (Player->m_pActiveItem->m_iId == WEAPON_FAMAS) || (Player->m_pActiveItem->m_iId == WEAPON_M4A1))
 							{
-								auto PlayerWeapon = static_cast<CBasePlayerWeapon*>(Player->m_pActiveItem);
+								auto Weapon = static_cast<CBasePlayerWeapon*>(Player->m_pActiveItem);
 
-								if (PlayerWeapon)
+								if (Weapon)
 								{
-									PlayerWeapon->m_iWeaponState = PugPlayer->DeathMatch.State[PlayerWeapon->m_iId];
+									Weapon->m_iWeaponState = pPlayer->DeathMatch.State[Weapon->m_iId];
 								}
 							}
 						}
@@ -594,18 +610,18 @@ void CPugDeathmatch::EquipLast(CBasePlayer* Player)
 {
 	if (this->m_Running)
 	{
-		auto PugPlayer = gPugPlayer.Get(Player);
+		auto pPlayer = gPugPlayer.Get(Player);
 
-		if (PugPlayer)
+		if (pPlayer)
 		{
-			if (PugPlayer->DeathMatch.Last[2])
+			if (pPlayer->DeathMatch.Last[2])
 			{
-				this->EquipItem(Player, PugPlayer->DeathMatch.Last[2]);
+				this->EquipItem(Player, pPlayer->DeathMatch.Last[2]);
 			}
 
-			if (PugPlayer->DeathMatch.Last[1])
+			if (pPlayer->DeathMatch.Last[1])
 			{
-				this->EquipItem(Player, PugPlayer->DeathMatch.Last[1]);
+				this->EquipItem(Player, pPlayer->DeathMatch.Last[1]);
 			}
 		}
 	}
@@ -615,9 +631,9 @@ bool CPugDeathmatch::SetEquipMenu(CBasePlayer* Player, bool ShowMenu)
 {
 	if (this->m_Running)
 	{
-		auto PugPlayer = gPugPlayer.Get(Player);
+		auto pPlayer = gPugPlayer.Get(Player);
 
-		if (PugPlayer)
+		if (pPlayer)
 		{
 			if (ShowMenu)
 			{
@@ -628,7 +644,7 @@ bool CPugDeathmatch::SetEquipMenu(CBasePlayer* Player, bool ShowMenu)
 				gPugUtil.SayText(Player->edict(), PRINT_TEAM_DEFAULT, "^4[%s]^1 Pressione ^3'G'^1 ou digite ^3'guns'^1 no chat para habilitar o menu de armas.", Plugin_info.logtag);
 			}
 
-			PugPlayer->DeathMatch.EquipMenu = ShowMenu;
+			pPlayer->DeathMatch.EquipMenu = ShowMenu;
 
 			return true;
 		}
@@ -641,15 +657,15 @@ void CPugDeathmatch::EquipMenu(int EntityIndex)
 {
 	if (this->m_Running)
 	{
-		auto PugPlayer = gPugPlayer.Get(EntityIndex);
+		auto pPlayer = gPugPlayer.Get(EntityIndex);
 
-		if (PugPlayer)
+		if (pPlayer)
 		{
 			gPugMenu[EntityIndex].Create("CSDM: Equipamentos", false, (void*)this->EquipMenuHandle);
 
 			gPugMenu[EntityIndex].AddItem("1", "Novas Armas", false);
 
-			if (PugPlayer->DeathMatch.Last[1] || PugPlayer->DeathMatch.Last[2])
+			if (pPlayer->DeathMatch.Last[1] || pPlayer->DeathMatch.Last[2])
 			{
 				gPugMenu[EntityIndex].AddItem("2", "Setup Anterior", false);
 				gPugMenu[EntityIndex].AddItem("3", "2 + Ocultar Menu", false);
@@ -742,13 +758,13 @@ void CPugDeathmatch::OptionMenu(int EntityIndex)
 	{
 		gPugMenu[EntityIndex].Create("CSDM: Opções", true, (void*)this->OptionMenuHandle);
 
-		auto PugPlayer = gPugPlayer.Get(EntityIndex);
+		auto pPlayer = gPugPlayer.Get(EntityIndex);
 
-		if (PugPlayer)
+		if (pPlayer)
 		{
 			std::string Text;
 
-			for (auto const& Option : PugPlayer->DeathMatch.Option)
+			for (auto const& Option : pPlayer->DeathMatch.Option)
 			{
 				if (Option.second)
 				{
@@ -773,45 +789,45 @@ void CPugDeathmatch::OptionMenuHandle(int EntityIndex, P_MENU_ITEM Item)
 
 	if (Player)
 	{
-		auto PugPlayer = gPugPlayer.Get(Player);
+		auto pPlayer = gPugPlayer.Get(Player);
 
-		if (PugPlayer)
+		if (pPlayer)
 		{
 			switch (std::stoi(Item.Info))
 			{
 				case 0:
 				{
-					PugPlayer->DeathMatch.Option[0] ^= 1;
+					pPlayer->DeathMatch.Option[0] ^= 1;
 					break;
 				}
 				case 1:
 				{
-					PugPlayer->DeathMatch.Option[1] = (PugPlayer->DeathMatch.Option[1] < 4 ? (PugPlayer->DeathMatch.Option[1]+1) : 0);
+					pPlayer->DeathMatch.Option[1] = (pPlayer->DeathMatch.Option[1] < 4 ? (pPlayer->DeathMatch.Option[1]+1) : 0);
 					break;
 				}
 				case 2:
 				{
-					PugPlayer->DeathMatch.Option[2] ^= 1;
+					pPlayer->DeathMatch.Option[2] ^= 1;
 					break;
 				}
 				case 3:
 				{
-					PugPlayer->DeathMatch.Option[3] ^= 1;
+					pPlayer->DeathMatch.Option[3] ^= 1;
 					break;
 				}
 				case 4:
 				{
-					PugPlayer->DeathMatch.Option[4] ^= 1;
+					pPlayer->DeathMatch.Option[4] ^= 1;
 					break;
 				}
 				case 5:
 				{
-					PugPlayer->DeathMatch.Option[5] ^= 1;
+					pPlayer->DeathMatch.Option[5] ^= 1;
 					break;
 				}
 				case 6:
 				{
-					PugPlayer->DeathMatch.Option[6] ^= 1;
+					pPlayer->DeathMatch.Option[6] ^= 1;
 					break;
 				}
 			}

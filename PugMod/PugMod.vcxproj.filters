@@ -137,9 +137,6 @@
     <Filter Include="PugMod\PugTask">
       <UniqueIdentifier>{befb0be6-27b7-4731-a65e-f010770cdc02}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PugMod\PugWarmup">
-      <UniqueIdentifier>{ff847c80-72a5-486e-ad64-135106813cfe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="PugMod\PugCvars">
       <UniqueIdentifier>{f07941e2-705b-4b8d-88a3-f5f80a97c627}</UniqueIdentifier>
     </Filter>
