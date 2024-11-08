@@ -24,28 +24,30 @@ typedef struct S_DM_INFO
 	bool EquipMenu;
 	std::map<int, int> State;
 	std::map<int, WeaponSlotInfo*> Last;
+	std::map<int, int> Option;
 
-	int HideKillFeed;
-	int HitIndicator;
-	int HSOnlyMode;
-	int HudKDRatio;
-	int KillFade;
-	int KillSound;
-	int MoneyFrag;
+	//int HideKillFeed;
+	//int HitIndicator;
+	//int HSOnlyMode;
+	//int HudKDRatio;
+	//int KillFade;
+	//int KillSound;
+	//int MoneyFrag;
 
 	void Reset()
 	{
 		this->EquipMenu = true;
 		this->State.clear();
 		this->Last.clear();
-		
-		this->HideKillFeed = (int)(gPugCvar.m_DM_HideKillFeed->value);
-		this->HitIndicator = (int)(gPugCvar.m_DM_HitIndicator->value);
-		this->HSOnlyMode = (int)(gPugCvar.m_DM_HSOnlyMode->value);
-		this->HudKDRatio = (int)(gPugCvar.m_DM_HudKDRatio->value);
-		this->KillFade = (int)(gPugCvar.m_DM_KillFade->value);
-		this->KillSound = (int)(gPugCvar.m_DM_KillSound->value);
-		this->MoneyFrag = (int)(gPugCvar.m_DM_MoneyFrag->value);
+		this->Option.clear();
+
+		this->Option[0] = (int)(gPugCvar.m_DM_HideKillFeed->value);
+		this->Option[1] = (int)(gPugCvar.m_DM_HitIndicator->value);
+		this->Option[2] = (int)(gPugCvar.m_DM_HSOnlyMode->value);
+		this->Option[3] = (int)(gPugCvar.m_DM_HudKDRatio->value);
+		this->Option[4] = (int)(gPugCvar.m_DM_KillFade->value);
+		this->Option[5] = (int)(gPugCvar.m_DM_KillSound->value);
+		this->Option[6] = (int)(gPugCvar.m_DM_MoneyFrag->value);
 	}
 } P_DM_INFO, *LP_DM_INFO;
 
@@ -63,14 +65,15 @@ public:
 
 	bool CheckDistance(CBasePlayer* Player, vec3_t Origin, float Distance);
 
+	void GetIntoGame(CBasePlayer* Player);
 	bool SetPosition(CBasePlayer* Player);
 	bool AddAccount(CBasePlayer* Player, int Amount, RewardType Type, bool bTrackChange);
 	bool HasRestrictItem(CBasePlayer* Player, ItemID ItemIndex, ItemRestType RestType);
 	void PlayerSpawn(CBasePlayer* Player);
 	void SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnimation);
 	bool SendDeathMessage(CBaseEntity* Killer, CBasePlayer* Victim, CBasePlayer* Assister, entvars_t* pevInflictor, const char* killerWeaponName, int iDeathMessageFlags, int iRarityOfKill);
-
-	void GetIntoGame(CBasePlayer* Player);
+	void TakeDamage(CBasePlayer* Player, entvars_t* pevInflictor, entvars_t* pevAttacker, float& flDamage, int bitsDamageType);
+	void PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_t* pevInflictor);
 
 	void EquipItem(CBasePlayer* Player, WeaponSlotInfo* Item);
 	void EquipRandom(CBasePlayer* Player, int Slot);
@@ -91,6 +94,9 @@ private:
 	bool m_Running;
 	std::vector<P_DM_SPAWN> m_Spawns;
 	std::vector<P_DM_ITEM> m_Items;
+
+	const std::array<std::string, 9U> m_HitGroup = { "Acerto", "Cabeça", "Peito", "Estômago", "Braço Esquerdo", "Braço Direito", "Perna Esquerda", "Perna Direita", "Escudo" };
+	const std::array<std::string, 7U> m_Option = { "Ocultar Kill Feed", "Indicador de acerto", "Modo Headshot", "Exibir Stats", "Piscar Tela ao matar", "Som ao matar", "Frags no dinheiro" };
 };
 
 extern CPugDeathmatch gPugDeathmatch;

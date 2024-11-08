@@ -140,7 +140,7 @@ bool CPugDeathmatch::CheckDistance(CBasePlayer* Player, vec3_t Origin, float Dis
 
 			if (Target)
 			{
-				if (Target->IsPlayer() || Target->IsBot())
+				if (Target->IsPlayer())
 				{
 					if (Target->entindex() != Player->entindex())
 					{
@@ -155,6 +155,17 @@ bool CPugDeathmatch::CheckDistance(CBasePlayer* Player, vec3_t Origin, float Dis
 	}
 
 	return true;
+}
+
+void CPugDeathmatch::GetIntoGame(CBasePlayer* Player)
+{
+	if (this->m_Running)
+	{
+		if (!Player->IsBot())
+		{
+			gPugUtil.SayText(Player->edict(), PRINT_TEAM_DEFAULT, "^4[%s]^1 Pressione ^3'G'^1 ou digite ^3'guns'^1 no chat para habilitar o menu de armas.", Plugin_info.logtag);
+		}
+	}
 }
 
 bool CPugDeathmatch::SetPosition(CBasePlayer* Player)
@@ -203,7 +214,8 @@ bool CPugDeathmatch::SetPosition(CBasePlayer* Player)
 						return true;
 					}
 				}
-			} while (true);
+			}
+			while (true);
 		}
 	}
 
@@ -316,17 +328,17 @@ bool CPugDeathmatch::SendDeathMessage(CBaseEntity* Killer, CBasePlayer* Victim, 
 
 						if (PugKiller)
 						{
-							if (PugKiller->DeathMatch.HideKillFeed > 0)
+							if (PugKiller->DeathMatch.Option[0])
 							{
 								gPugUtil.DeathMsg(Killer->edict(), Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
 							}
 						}
 
-						auto PugVictim = gPugPlayer.Get(Killer->edict());
+						auto PugVictim = gPugPlayer.Get(Victim->edict());
 
 						if (PugVictim)
 						{
-							if (PugVictim->DeathMatch.HideKillFeed > 0)
+							if (PugVictim->DeathMatch.Option[0])
 							{
 								gPugUtil.DeathMsg(Victim->edict(), Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
 							}
@@ -346,7 +358,7 @@ bool CPugDeathmatch::SendDeathMessage(CBaseEntity* Killer, CBasePlayer* Victim, 
 
 										if (Temp)
 										{
-											if (Temp->DeathMatch.HideKillFeed)
+											if (!Temp->DeathMatch.Option[0])
 											{
 												gPugUtil.DeathMsg(Player->edict(), Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
 											}
@@ -366,13 +378,134 @@ bool CPugDeathmatch::SendDeathMessage(CBaseEntity* Killer, CBasePlayer* Victim, 
 	return false;
 }
 
-void CPugDeathmatch::GetIntoGame(CBasePlayer* Player)
+void CPugDeathmatch::TakeDamage(CBasePlayer* Player, entvars_t* pevInflictor, entvars_t* pevAttacker, float& flDamage, int bitsDamageType)
 {
 	if (this->m_Running)
 	{
-		if (!Player->IsBot())
+		if (gPugCvar.m_DM_HitIndicator->value > 0.0f)
 		{
-			gPugUtil.SayText(Player->edict(), PRINT_TEAM_DEFAULT, "^4[%s]^1 Pressione ^3'G'^1 ou digite ^3'guns'^1 no chat para habilitar o menu de armas.", Plugin_info.logtag);
+			auto Attacker = UTIL_PlayerByIndexSafe(ENTINDEX(pevAttacker));
+
+			if (Attacker)
+			{
+				if (!Attacker->IsBot())
+				{
+					if (Player->entindex() != Attacker->entindex())
+					{
+						if (Player->IsPlayer() && Attacker->IsPlayer())
+						{
+							if (gReGameDLL.m_Rules)
+							{
+								if (gReGameDLL.m_Rules->FPlayerCanTakeDamage(Player, Attacker))
+								{
+									auto PugPlayer = gPugPlayer.Get(Attacker->edict());
+
+									if (PugPlayer)
+									{
+										switch (PugPlayer->DeathMatch.Option[1])
+										{
+											case 1:
+											{
+												gPugUtil.HudMessage(Attacker->edict(), gPugUtil.HudParam(0, 255, 255, -1.0f, 0.55f, 0, 0.75f, 0.75f, 0.0f, 0.0f, 3), "*");
+												break;
+											}
+											case 2:
+											{
+												gPugUtil.HudMessage(Attacker->edict(), gPugUtil.HudParam(0, 255, 255, -1.0f, -1.0f, 0, 0.75f, 0.75f, 0.0f, 0.0f, 3), ">\x20\x20\x20\x20\x20\x20\x20\x20\x20<");
+												break;
+											}
+											case 3:
+											{
+												gPugUtil.HudMessage(Attacker->edict(), gPugUtil.HudParam(0, 255, 255, -1.0f, 0.55f, 0, 0.75f, 0.75f, 0.0f, 0.0f, 3), "%d", static_cast<int>(flDamage));
+												break;
+											}
+											case 4:
+											{
+												gPugUtil.HudMessage(Attacker->edict(), gPugUtil.HudParam(0, 255, 255, -1.0f, 0.55f, 0, 0.75f, 0.75f, 0.0f, 0.0f, 3), this->m_HitGroup[Player->m_LastHitGroup].c_str());
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void CPugDeathmatch::PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_t* pevInflictor)
+{
+	if (this->m_Running)
+	{
+		auto Killer = UTIL_PlayerByIndexSafe(ENTINDEX(pevKiller));
+
+		if (Killer)
+		{
+			if (Victim->entindex() != Killer->entindex())
+			{
+				if (Victim->IsPlayer() && Killer->IsPlayer())
+				{
+					auto RestoreHealth = gPugCvar.m_DM_KillHP->value;
+
+					auto HeadshotCheck = 1.0f;
+
+					if (Victim->m_bHeadshotKilled)
+					{
+						//this->m_Headshots[Killer->entindex()]++;
+
+						HeadshotCheck = 2.0f;
+
+						if (gPugCvar.m_DM_KillHPHS->value > 0.0f)
+						{
+							RestoreHealth = gPugCvar.m_DM_KillHPHS->value;
+						}
+					}
+
+					if (RestoreHealth > 0.0f)
+					{
+						Killer->edict()->v.health = clamp(Killer->edict()->v.health + RestoreHealth, 1.0f, 100.0f);
+					}
+
+					if (gPugCvar.m_DM_KillRepairArmor->value == HeadshotCheck)
+					{
+						Killer->edict()->v.armorvalue = 100.0f;
+					}
+
+					if (gPugCvar.m_DM_KillFade->value == HeadshotCheck)
+					{
+						//gCSDM_Util.ScreenFade(Killer->edict(), BIT(10), BIT(10), 0x0000, 0, 0, 200, 75);
+					}
+
+					if (gPugCvar.m_DM_KillSound->value == HeadshotCheck)
+					{
+						g_engfuncs.pfnClientCommand(Killer->edict(), "%s", "spk \"sound/fvox/blip.wav\"\n");
+					}
+
+					//if (gPugCvar.m_DM_KillReload->value == HeadshotCheck)
+					//{
+					//	if (Killer->m_pActiveItem)
+					//	{
+					//		if (Killer->m_pActiveItem->iItemSlot() == PRIMARY_WEAPON_SLOT || Killer->m_pActiveItem->iItemSlot() == PISTOL_SLOT)
+					//		{
+					//			Killer->CSPlayer()->ReloadWeapons(Killer->m_pActiveItem, true, true);
+					//		}
+					//	}
+					//}
+
+					if (gPugCvar.m_DM_KillHealedMsg->value)
+					{
+						auto Value = (int)(Killer->edict()->v.health - (float)(Killer->m_iLastClientHealth));
+
+						if (Value > 0)
+						{
+							gPugUtil.HudMessage(Killer->edict(), gPugUtil.HudParam(0, 255, 255, -1.0f, 0.8f, 0, 1.0f, 1.0f, 0.0f, 0.0f, 1), "+%d HP", Value);
+						}
+					}
+				}
+			}
 		}
 	}
 }
@@ -613,13 +746,21 @@ void CPugDeathmatch::OptionMenu(int EntityIndex)
 
 		if (PugPlayer)
 		{
-			gPugMenu[EntityIndex].AddItem("1", (PugPlayer->DeathMatch.HideKillFeed ? "Ocultar Kill Feed^R^yS" : "Ocultar Kill Feed^R^rN"));
-			gPugMenu[EntityIndex].AddItem("2", (PugPlayer->DeathMatch.HitIndicator ? "Indicador de acerto^R^yS" : "Indicador de acerto^R^rN"));
-			gPugMenu[EntityIndex].AddItem("3", (PugPlayer->DeathMatch.HSOnlyMode ? "Modo Headshot^R^yS" : "Modo Headshot^R^rN"));
-			gPugMenu[EntityIndex].AddItem("4", (PugPlayer->DeathMatch.HudKDRatio ? "Exibir estatísticas^R^yS" : "Exibir estatísticas^R^rN"));
-			gPugMenu[EntityIndex].AddItem("5", (PugPlayer->DeathMatch.KillFade ? "Piscar Tela ao matar^R^yS" : "Piscar Tela ao matar^R^rN"));
-			gPugMenu[EntityIndex].AddItem("6", (PugPlayer->DeathMatch.KillSound ? "Som ao matar^R^yS" : "Som ao matar^R^rN"));
-			gPugMenu[EntityIndex].AddItem("7", (PugPlayer->DeathMatch.MoneyFrag ? "Frags no dinheiro^R^yS" : "Frags no dinheiro^R^rN"));
+			std::string Text;
+
+			for (auto const& Option : PugPlayer->DeathMatch.Option)
+			{
+				if (Option.second)
+				{
+					Text = this->m_Option[Option.first] + "^R^y" + std::to_string(Option.second);
+				}
+				else
+				{
+					Text = this->m_Option[Option.first] + "^R^r" + std::to_string(Option.second);
+				}
+
+				gPugMenu[EntityIndex].AddItem(std::to_string(Option.first), Text);
+			}
 		}
 
 		gPugMenu[EntityIndex].Show(EntityIndex);
@@ -638,39 +779,39 @@ void CPugDeathmatch::OptionMenuHandle(int EntityIndex, P_MENU_ITEM Item)
 		{
 			switch (std::stoi(Item.Info))
 			{
+				case 0:
+				{
+					PugPlayer->DeathMatch.Option[0] ^= 1;
+					break;
+				}
 				case 1:
 				{
-					PugPlayer->DeathMatch.HideKillFeed ^= 1;
+					PugPlayer->DeathMatch.Option[1] = (PugPlayer->DeathMatch.Option[1] < 4 ? (PugPlayer->DeathMatch.Option[1]+1) : 0);
 					break;
 				}
 				case 2:
 				{
-					PugPlayer->DeathMatch.HitIndicator ^= 1;
+					PugPlayer->DeathMatch.Option[2] ^= 1;
 					break;
 				}
 				case 3:
 				{
-					PugPlayer->DeathMatch.HSOnlyMode ^= 1;
+					PugPlayer->DeathMatch.Option[3] ^= 1;
 					break;
 				}
 				case 4:
 				{
-					PugPlayer->DeathMatch.HudKDRatio ^= 1;
+					PugPlayer->DeathMatch.Option[4] ^= 1;
 					break;
 				}
 				case 5:
 				{
-					PugPlayer->DeathMatch.KillFade ^= 1;
+					PugPlayer->DeathMatch.Option[5] ^= 1;
 					break;
 				}
 				case 6:
 				{
-					PugPlayer->DeathMatch.KillSound ^= 1;
-					break;
-				}
-				case 7:
-				{
-					PugPlayer->DeathMatch.MoneyFrag ^= 1;
+					PugPlayer->DeathMatch.Option[6] ^= 1;
 					break;
 				}
 			}

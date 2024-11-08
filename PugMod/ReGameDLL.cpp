@@ -55,6 +55,10 @@ bool CReGameDLL::Init()
 										this->m_Hookchains->CBasePlayer_SwitchTeam()->registerHook(this->CBasePlayer_SwitchTeam);
 
 										this->m_Hookchains->CSGameRules_SendDeathMessage()->registerHook(this->CSGameRules_SendDeathMessage);
+
+										this->m_Hookchains->CBasePlayer_TakeDamage()->registerHook(this->CBasePlayer_TakeDamage);
+
+										this->m_Hookchains->CSGameRules_PlayerKilled()->registerHook(this->CSGameRules_PlayerKilled);
 									}
 								}
 
@@ -95,6 +99,10 @@ bool CReGameDLL::Stop()
 		this->m_Hookchains->CBasePlayer_SwitchTeam()->unregisterHook(this->CBasePlayer_SwitchTeam);
 
 		this->m_Hookchains->CSGameRules_SendDeathMessage()->unregisterHook(this->CSGameRules_SendDeathMessage);
+
+		this->m_Hookchains->CBasePlayer_TakeDamage()->unregisterHook(this->CBasePlayer_TakeDamage);
+
+		this->m_Hookchains->CSGameRules_PlayerKilled()->unregisterHook(this->CSGameRules_PlayerKilled);
 	}
 	
 	return false;
@@ -189,4 +197,20 @@ void CReGameDLL::CSGameRules_SendDeathMessage(IReGameHook_CSGameRules_SendDeathM
 	}
 
 	chain->callNext(Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
+}
+
+BOOL CReGameDLL::CBasePlayer_TakeDamage(IReGameHook_CBasePlayer_TakeDamage* chain, CBasePlayer* Player, entvars_t* pevInflictor, entvars_t* pevAttacker, float& flDamage, int bitsDamageType)
+{
+	auto Result = chain->callNext(Player, pevInflictor, pevAttacker, flDamage, bitsDamageType);
+
+	gPugDeathmatch.TakeDamage(Player, pevInflictor, pevAttacker, flDamage, bitsDamageType);
+
+	return Result;
+}
+
+void CReGameDLL::CSGameRules_PlayerKilled(IReGameHook_CSGameRules_PlayerKilled* chain, CBasePlayer* Victim, entvars_t* pevKiller, entvars_t* pevInflictor)
+{
+	chain->callNext(Victim, pevKiller, pevInflictor);
+
+	gPugDeathmatch.PlayerKilled(Victim, pevKiller, pevInflictor);
 }

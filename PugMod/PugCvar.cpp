@@ -38,13 +38,13 @@ void CPugCvar::ServerActivate()
 	this->m_DM_Enable = this->Register("pug_dm_enable", "1");
 
 	// Ocultar kill feed de outros jogadores
-	this->m_DM_HideKillFeed = this->Register("pug_dm_hide_kill_feed", "1");
+	this->m_DM_HideKillFeed = this->Register("pug_dm_hide_kill_feed", "0");
 
 	// Indicador de acertos na tela: 0 Inativo, 1 Exibir ponto (*), 2 Indicador de mira (>   <), 3 Exibir dano, 4 Hitbox
-	this->m_DM_HitIndicator = this->Register("pug_dm_hit_indicator", "0");
+	this->m_DM_HitIndicator = this->Register("pug_dm_hit_indicator", "3");
 
 	// Somente aceita acertos na cabeça
-	this->m_DM_HSOnlyMode = this->Register("pug_dm_hs_mode", "0");
+	this->m_DM_HSOnlyMode = this->Register("pug_dm_hs_mode", "1");
 
 	// Exibir Taxa de mortes / frags e taxa de HS no hud
 	this->m_DM_HudKDRatio = this->Register("pug_dm_hud_kd_ratio", "1");
@@ -65,10 +65,10 @@ void CPugCvar::ServerActivate()
 	this->m_DM_KillHealedMsg = this->Register("pug_dm_kill_hp_msg ", "1");
 
 	// Ativar som ao realizar frag: 0 Inativo, 1 Ativo, 2 Apenas HS
-	this->m_DM_KillSound = this->Register("pug_dm_kill_sound", "1");
+	this->m_DM_KillSound = this->Register("pug_dm_kill_sound", "2");
 
 	// Exibe frags no lugar do dinheiro
-	this->m_DM_MoneyFrag = this->Register("csdm_money_as_frags", "0");
+	this->m_DM_MoneyFrag = this->Register("csdm_money_as_frags", "1");
 }
 
 cvar_t* CPugCvar::Register(const char* Name, const char* Value)

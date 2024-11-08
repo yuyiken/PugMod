@@ -133,6 +133,8 @@ void CPugPlayer::PutInServer(edict_t* pEntity)
 				this->m_Players[Auth].ConnectTime = time(0);
 				this->m_Players[Auth].Status = 2;
 				this->m_Players[Auth].TeamIndex = UNASSIGNED;
+
+				this->m_Players[Auth].DeathMatch.Reset();
 			}
 		}
 	}
@@ -155,8 +157,6 @@ void CPugPlayer::GetIntoGame(CBasePlayer* Player)
 					this->m_Players[Auth].Name = STRING(pEntity->v.netname);
 					this->m_Players[Auth].Status = 3;
 					this->m_Players[Auth].TeamIndex = Player->m_iTeam;
-
-					this->m_Players[Auth].DeathMatch.Reset();
 				}
 			}
 		}
