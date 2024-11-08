@@ -8,40 +8,74 @@ void CPugCvar::ServerActivate()
 	this->m_SvRestart = this->Register("sv_restart", "0");
 
 	// Log Tag
+	//
+	// Padrão: "PUG"
 	this->m_LogTag = this->Register("pug_log_tag", "PUG");
 
 	// Mínimo de jogadores para iniciar uma partida
+	//
+	// Padrão: "10"
 	this->m_PlayersMin = this->Register("pug_players_min", "10");
 
 	// Máximo de jogadores em jogo
+	//
+	// Padrão: "10"
 	this->m_PlayersMax = this->Register("pug_players_max", "10");
 
 	// Total de rounds
+	//
+	// Padrão: "30"
 	this->m_Rounds = this->Register("pug_rounds", "30");
 
 	// Total de rounds em overtime
+	//
+	// Padrão: "6"
 	this->m_RoundsOT = this->Register("pug_rounds_ot", "6");
 
-	// Tipo do overtime: 0 Votação, 1 ogar Overtime, 2 Permitir empate, 3 Morte súbita
+	// Tipo do overtime
+	// 
+	// 0 Votação
+	// 1 Jogar overtime
+	// 2 Permitir empate
+	// 3 Morte súbita
+	//
+	// Padrão: "0"
 	this->m_OvertimeType = this->Register("pug_ot_type", "0");
 
-	// Modo de times: 0 Votação, 1 Capitães, 2 Misturar Times, 3 Nenhum, 3 Balancear Skill, 4 Trocar Times, 5 Round Faca
+	// Modo de times
+	// 
+	// 0 Votação
+	// 1 Capitães
+	// 2 Misturar Times
+	// 3 Nenhum
+	// 4 Balancear Skill
+	// 5 Trocar Times
+	// 6 Round Faca
+	//
+	// Padrão: "0"
 	this->m_TeamType = this->Register("pug_team_type", "0");
 
-	// Configuração incial
-	this->m_Config[STATE_DEAD] = this->Register("pug_cfg_main", "pugmod.cfg");
-
-	// Deathmatch
-	this->m_Config[STATE_DEATHMATCH] = this->Register("pug_cfg_deathmatch", "deathmatch.cfg");
-
 	// Ativar modo Deathmatch
+	// Se inativo, será o modo aquecimento comum
+	//
+	// Padrão: "1"
 	this->m_DM_Enable = this->Register("pug_dm_enable", "1");
 
 	// Ocultar kill feed de outros jogadores
+	//
+	// Padrão: "0"
 	this->m_DM_HideKillFeed = this->Register("pug_dm_hide_kill_feed", "0");
 
-	// Indicador de acertos na tela: 0 Inativo, 1 Exibir ponto (*), 2 Indicador de mira (>   <), 3 Exibir dano, 4 Hitbox
-	this->m_DM_HitIndicator = this->Register("pug_dm_hit_indicator", "3");
+	// Indicador de acertos na tela
+	// 
+	// 0 Inativo
+	// 1 Exibir ponto (*)
+	// 2 Indicador de mira (>   <)
+	// 3 Exibir dano
+	// 4 Local do acerto
+	//
+	// Padrão: "0"
+	this->m_DM_HitIndicator = this->Register("pug_dm_hit_indicator", "0");
 
 	// Somente aceita acertos na cabeça
 	this->m_DM_HSOnlyMode = this->Register("pug_dm_hs_mode", "1");

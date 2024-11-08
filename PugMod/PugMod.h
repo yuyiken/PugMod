@@ -4,13 +4,6 @@ constexpr int STATE_DEAD = 0;
 constexpr int STATE_DEATHMATCH = 1;
 constexpr int STATE_END = 2;
 
-const char PUG_MOD_STATES_STR[][16] =
-{
-	"Morto",
-	"Deathmatch",
-	"Fim"
-};
-
 class CPugMod
 {
 public:
@@ -25,6 +18,8 @@ public:
 	int m_State;
 	int m_ScoreTR;
 	int m_scoreCT;
+
+	std::array<std::string, STATE_END + 1U> m_Config = { "pugmod.cfg", "deathmatch.cfg", "end.cfg"};
 };
 
 extern CPugMod gPugMod;

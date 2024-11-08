@@ -33,15 +33,9 @@ void CPugMod::SetState(int State)
 		}
 	}
 
-	if (gPugCvar.m_Config[State])
+	if (!this->m_Config[State].empty())
 	{
-		if (gPugCvar.m_Config[State]->string)
-		{
-			if (gPugCvar.m_Config[State]->string[0] != '\0')
-			{
-				gPugUtil.ServerCommand("exec addons/pugmod/cfg/%s", gPugCvar.m_Config[this->m_State]->string);
-			}
-		}
+		gPugUtil.ServerCommand("exec addons/pugmod/cfg/%s", this->m_Config[State].c_str());
 	}
 }
 

@@ -14,7 +14,6 @@ public:
 	cvar_t* m_RoundsOT;
 	cvar_t* m_OvertimeType;
 	cvar_t* m_TeamType;
-	std::array<cvar_t*, STATE_END + 1> m_Config;
 
 	cvar_t* m_DM_Enable;
 	cvar_t* m_DM_HideKillFeed;
