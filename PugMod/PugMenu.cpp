@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "PugMenu.h"
 
 std::array<CPugMenu, MAX_CLIENTS + 1> gPugMenu;
 
@@ -28,21 +29,41 @@ void CPugMenu::Create(std::string Title, bool Exit, void* CallbackFunction)
 	this->m_Func = CallbackFunction;
 }
 
-void CPugMenu::AddItem(std::string Info, std::string Text)
+void CPugMenu::AddItem(int Info, std::string Text)
 {
-	this->AddItem(Info, Text, false, "");
+	this->AddItem(Info, Text, false, 0);
 }
 
-void CPugMenu::AddItem(std::string Info, std::string Text, bool Disabled)
+void CPugMenu::AddItem(int Info, std::string Text, bool Disabled)
 {
-	this->AddItem(Info, Text, Disabled, "");
+	this->AddItem(Info, Text, Disabled, 0);
 }
 
-void CPugMenu::AddItem(std::string Info, std::string Text, bool Disabled, std::string Parameter)
+void CPugMenu::AddItem(int Info, std::string Text, bool Disabled, int Extra)
 {
-	P_MENU_ITEM ItemData = { Info, Text, Disabled, Parameter };
+	P_MENU_ITEM ItemData = { Info, Text, Disabled, Extra };
 
 	this->m_Data.push_back(ItemData);
+}
+
+void CPugMenu::AddItemFormat(int Info, bool Disabled, int Extra, const char *Format, ...)
+{
+	va_list argList;
+
+	va_start(argList, Format);
+
+	char Buffer[128] = { 0 };
+
+	int Length = vsnprintf(Buffer, sizeof(Buffer), Format, argList);
+
+	va_end(argList);
+
+	if (Buffer[0] != '\0')
+	{
+		P_MENU_ITEM ItemData = { Info, std::string(Buffer), Disabled, Extra };
+
+		this->m_Data.push_back(ItemData);
+	}
 }
 
 void CPugMenu::Show(int EntityIndex)
@@ -67,7 +88,7 @@ void CPugMenu::Hide(int EntityIndex)
 		{
 			static int iMsgShowMenu;
 
-			if (iMsgShowMenu || (iMsgShowMenu = gpMetaUtilFuncs->pfnGetUserMsgID(&Plugin_info, "ShowMenu", NULL)))
+			if (iMsgShowMenu || (iMsgShowMenu = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "ShowMenu", NULL)))
 			{
 				g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgShowMenu, nullptr, Player->edict());
 				g_engfuncs.pfnWriteShort(0);
@@ -174,7 +195,7 @@ void CPugMenu::Display(int EntityIndex, int Page)
 		End = this->m_Data.size();
 	}
 
-	int Slots = MENU_KEY_0;
+	int Slots = MENU_KEY_0; // MENU_KEY_0
 	int BitSum = 0;
 
 	for (unsigned int b = Start; b < End; b++)
@@ -190,15 +211,15 @@ void CPugMenu::Display(int EntityIndex, int Page)
 
 	if (End != this->m_Data.size())
 	{
-		Slots |= MENU_KEY_9;
+		Slots |= MENU_KEY_9; // MENU_KEY_9;
 
 		if (Page)
 		{
-			MenuText += "\n\\r9.\\w Avançar\n\\r0.\\w Voltar";
+			MenuText += "\n\\r9.\\w Próxmo\n\\r0.\\w Voltar";
 		}
 		else
 		{
-			MenuText += "\n\\r9.\\w Avançar";
+			MenuText += "\n\\r9.\\w Próxmo";
 
 			if (this->m_Exit)
 			{
@@ -224,6 +245,21 @@ void CPugMenu::Display(int EntityIndex, int Page)
 	this->ShowMenu(EntityIndex, Slots, -1, MenuText);
 }
 
+void CPugMenu::ReplaceAll(std::string& String, const std::string& From, const std::string& To)
+{
+	if (!From.empty())
+	{
+		size_t StartPos = 0;
+
+		while ((StartPos = String.find(From, StartPos)) != std::string::npos)
+		{
+			String.replace(StartPos, From.length(), To);
+
+			StartPos += To.length();
+		}
+	}
+}
+
 void CPugMenu::ShowMenu(int EntityIndex, int Slots, int Time, std::string Text)
 {
 	auto Player = UTIL_PlayerByIndexSafe(EntityIndex);
@@ -236,15 +272,14 @@ void CPugMenu::ShowMenu(int EntityIndex, int Slots, int Time, std::string Text)
 			{
 				static int iMsgShowMenu;
 
-				if (iMsgShowMenu || (iMsgShowMenu = gpMetaUtilFuncs->pfnGetUserMsgID(&Plugin_info, "ShowMenu", NULL)))
+				if (iMsgShowMenu || (iMsgShowMenu = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "ShowMenu", NULL)))
 				{
 					Player->m_iMenu = Menu_OFF;
 
-					gPugUtil.ReplaceAll(Text, "^w", "\\w");
-					gPugUtil.ReplaceAll(Text, "^y", "\\y");
-					gPugUtil.ReplaceAll(Text, "^r", "\\r");
-					gPugUtil.ReplaceAll(Text, "^R", "\\R");
-					gPugUtil.ReplaceAll(Text, "^n", "\n");
+                    this->ReplaceAll(Text, "^w", "\\w");
+                    this->ReplaceAll(Text, "^y", "\\y");
+                    this->ReplaceAll(Text, "^r", "\\r");
+                    this->ReplaceAll(Text, "^R", "\\R");
 
 					char BufferMenu[MAX_BUFFER_MENU * 6] = { 0 };
 

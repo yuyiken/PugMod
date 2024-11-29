@@ -1,19 +1,23 @@
 #pragma once
+
 class CPugCvar
 {
 public:
 	void ServerActivate();
 	cvar_t* Register(const char* Name, const char* Value);
 
-	cvar_t* m_SvRestart;
+	cvar_t* m_Tag;
+	cvar_t* m_CmdPrefixPlayer;
+	cvar_t* m_CmdPrefixAdmin;
 
-	cvar_t* m_LogTag;
 	cvar_t* m_PlayersMin;
 	cvar_t* m_PlayersMax;
 	cvar_t* m_Rounds;
 	cvar_t* m_RoundsOT;
 	cvar_t* m_OvertimeType;
+	cvar_t* m_WarmupTimeLimit;
 	cvar_t* m_TeamType;
+	cvar_t* m_RestrictItem;
 
 	cvar_t* m_DM_Enable;
 	cvar_t* m_DM_HideKillFeed;

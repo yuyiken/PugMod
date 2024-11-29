@@ -1,66 +1,23 @@
 #include "precompiled.h"
+#include "PugUtil.h"
 
 CPugUtil gPugUtil;
 
 void CPugUtil::ServerCommand(const char* Format, ...)
 {
-	char Command[255] = { 0 };
+	static char szCmd[255] = { 0 };
 
 	va_list	ArgPtr;
 
 	va_start(ArgPtr, Format);
 
-	vsnprintf(Command, sizeof(Command), Format, ArgPtr);
+	vsnprintf(szCmd, sizeof(szCmd), Format, ArgPtr);
 
 	va_end(ArgPtr);
 
-	Q_strncat(Command, "\n", 1);
+	strcat(szCmd, "\n");
 
-	g_engfuncs.pfnServerCommand(Command);
-}
-
-void CPugUtil::ClientPrint(edict_t* pEntity, int msg_dest, const char* Format, ...)
-{
-	va_list argList;
-
-	va_start(argList, Format);
-
-	char Buffer[188] = { 0 };
-
-	int Length = vsnprintf(Buffer, sizeof(Buffer), Format, argList);
-
-	va_end(argList);
-
-	if (msg_dest == PRINT_CONSOLE)
-	{
-		if (Length > 125)
-		{
-			Length = 125;
-		}
-
-		Buffer[Length++] = '\n';
-		Buffer[Length++] = '\n';
-		Buffer[Length] = 0;
-	}
-
-	static int iMsgTextMsg;
-
-	if (iMsgTextMsg || (iMsgTextMsg = gpMetaUtilFuncs->pfnGetUserMsgID(&Plugin_info, "TextMsg", NULL)))
-	{
-		if (pEntity)
-		{
-			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgTextMsg, NULL, pEntity);
-		}
-		else
-		{
-			g_engfuncs.pfnMessageBegin(MSG_BROADCAST, iMsgTextMsg, NULL, NULL);
-		}
-
-		g_engfuncs.pfnWriteByte(msg_dest);
-		g_engfuncs.pfnWriteString("%s");
-		g_engfuncs.pfnWriteString(Buffer);
-		g_engfuncs.pfnMessageEnd();
-	}
+	g_engfuncs.pfnServerCommand(szCmd);
 }
 
 int CPugUtil::ParseColors(char* Buffer)
@@ -71,7 +28,7 @@ int CPugUtil::ParseColors(char* Buffer)
 
 	if (len > 0)
 	{
-		char c = '\0';
+		int c;
 
 		for (size_t i = 0; i < len; i++)
 		{
@@ -81,44 +38,19 @@ int CPugUtil::ParseColors(char* Buffer)
 			{
 				c = Buffer[++i];
 
-				switch (c)
+				if (c == 'n' || c == 't' || (c >= '1' && c <= '4'))
 				{
-					case '1': // Default chat text color
+					switch (c)
 					{
-						c = '\x01';
-						offs++;
-						break;
+						case '1': c = '\x01'; break;
+						case '2': c = '\x02'; break;
+						case '3': c = '\x03'; break;
+						case '4': c = '\x04'; break;
+						case 'n': c = '\n'; break;
+						case 't': c = '\t'; break;
 					}
-					case '2': // ?
-					{
-						c = '\x02';
-						offs++;
-						break;
-					}
-					case '3': // ?
-					{
-						c = '\x03';
-						offs++;
-						break;
-					}
-					case '4': // Green chat text color
-					{
-						c = '\x04';
-						offs++;
-						break;
-					}
-					case 'n': // New Line Character
-					{
-						c = '\n';
-						offs++;
-						break;
-					}
-					case 't': // TAB Character
-					{
-						c = '\t';
-						offs++;
-						break;
-					}
+
+					offs++;
 				}
 			}
 
@@ -131,32 +63,17 @@ int CPugUtil::ParseColors(char* Buffer)
 	return offs;
 }
 
-void CPugUtil::ReplaceAll(std::string& String, const std::string& From, const std::string& To)
-{
-	if (!From.empty())
-	{
-		size_t StartPos = 0;
-
-		while ((StartPos = String.find(From, StartPos)) != std::string::npos)
-		{
-			String.replace(StartPos, From.length(), To);
-
-			StartPos += To.length();
-		}
-	}
-}
-
 void CPugUtil::SayText(edict_t* pEntity, int Sender, const char* Format, ...)
 {
 	static int iMsgSayText;
 
-	if (iMsgSayText || (iMsgSayText = gpMetaUtilFuncs->pfnGetUserMsgID(&Plugin_info, "SayText", NULL)))
+	if (iMsgSayText || (iMsgSayText = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "SayText", NULL)))
 	{
-		char Buffer[191] = { 0 };
+		char szText[191] = { 0 };
 
 		va_list vArgList;
 		va_start(vArgList, Format);
-		Q_vsnprintf(Buffer, sizeof(Buffer), Format, vArgList);
+		Q_vsnprintf(szText, sizeof(szText), Format, vArgList);
 		va_end(vArgList);
 
 		if (Sender < PRINT_TEAM_BLUE || Sender > gpGlobals->maxClients)
@@ -168,7 +85,7 @@ void CPugUtil::SayText(edict_t* pEntity, int Sender, const char* Format, ...)
 			Sender = abs(Sender) + MAX_CLIENTS;
 		}
 
-		this->ParseColors(Buffer);
+		this->ParseColors(szText);
 
 		if (!FNullEnt(pEntity))
 		{
@@ -177,7 +94,7 @@ void CPugUtil::SayText(edict_t* pEntity, int Sender, const char* Format, ...)
 				g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgSayText, nullptr, pEntity);
 				g_engfuncs.pfnWriteByte(Sender ? Sender : ENTINDEX(pEntity));
 				g_engfuncs.pfnWriteString("%s");
-				g_engfuncs.pfnWriteString(Buffer);
+				g_engfuncs.pfnWriteString(szText);
 				g_engfuncs.pfnMessageEnd();
 			}
 		}
@@ -194,7 +111,7 @@ void CPugUtil::SayText(edict_t* pEntity, int Sender, const char* Format, ...)
 						g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgSayText, nullptr, pTempEntity);
 						g_engfuncs.pfnWriteByte(Sender ? Sender : i);
 						g_engfuncs.pfnWriteString("%s");
-						g_engfuncs.pfnWriteString(Buffer);
+						g_engfuncs.pfnWriteString(szText);
 						g_engfuncs.pfnMessageEnd();
 					}
 				}
@@ -203,144 +120,290 @@ void CPugUtil::SayText(edict_t* pEntity, int Sender, const char* Format, ...)
 	}
 }
 
-unsigned short CPugUtil::FixedUnsigned16(float value, float scale)
+void CPugUtil::ClientPrint(edict_t* pEntity, int iMsgDest, const char* Format, ...)
 {
-	int output = value * scale;
-
-	if (output < 0)
+	if (!FNullEnt(pEntity))
 	{
-		output = 0;
+		if (pEntity->v.flags & FL_FAKECLIENT)
+		{
+			return;
+		}
 	}
 
-	if (output > USHRT_MAX)
-	{
-		output = USHRT_MAX;
-	}
-
-	return (unsigned short)output;
-}
-
-short CPugUtil::FixedSigned16(float value, float scale)
-{
-	int output = value * scale;
-
-	if (output > SHRT_MAX)
-	{
-		output = SHRT_MAX;
-	}
-
-	if (output < SHRT_MIN)
-	{
-		output = SHRT_MIN;
-	}
-
-	return (short)output;
-}
-
-hudtextparms_t CPugUtil::HudParam(int red, int green, int blue, float x, float y, int effects, float fxtime, float holdtime, float fadeintime, float fadeouttime, int channel)
-{
-	hudtextparms_t hud;
-
-	hud.r1 = static_cast<byte>(red);
-	hud.g1 = static_cast<byte>(green);
-	hud.b1 = static_cast<byte>(blue);
-	hud.a1 = 0xFF;
-	hud.r2 = 0xFF;
-	hud.g2 = 0xFF;
-	hud.b2 = 0xFF;
-	hud.a2 = 0xFF;
-	hud.x = x;
-	hud.y = y;
-	hud.effect = effects;
-	hud.fxTime = fxtime;
-	hud.holdTime = holdtime;
-	hud.fadeinTime = fadeintime;
-	hud.fadeoutTime = fadeouttime;
-	hud.channel = channel;
-
-	return hud;
-}
-
-void CPugUtil::HudMessage(edict_t* pEntity, hudtextparms_t textparms, const char* Format, ...)
-{
 	va_list argList;
 
 	va_start(argList, Format);
 
-	char Buffer[511] = { 0 };
+	char Buffer[188] = { 0 };
 
-	vsnprintf(Buffer, sizeof(Buffer), Format, argList);
+	int Length = vsnprintf(Buffer, sizeof(Buffer), Format, argList);
 
 	va_end(argList);
 
-	this->ParseColors(Buffer);
-
-	if (pEntity)
+	if (iMsgDest == PRINT_CONSOLE)
 	{
-		g_engfuncs.pfnMessageBegin(MSG_ONE_UNRELIABLE, SVC_TEMPENTITY, NULL, pEntity);
-	}
-	else
-	{
-		g_engfuncs.pfnMessageBegin(MSG_BROADCAST, SVC_TEMPENTITY, NULL, NULL);
-	}
+		if (Length > 125)
+		{
+			Length = 125;
+		}
 
-	g_engfuncs.pfnWriteByte(TE_TEXTMESSAGE);
-	g_engfuncs.pfnWriteByte(textparms.channel & 0xFF);
-
-	g_engfuncs.pfnWriteShort(this->FixedSigned16(textparms.x, BIT(13)));
-	g_engfuncs.pfnWriteShort(this->FixedSigned16(textparms.y, BIT(13)));
-
-	g_engfuncs.pfnWriteByte(textparms.effect);
-
-	g_engfuncs.pfnWriteByte(textparms.r1);
-	g_engfuncs.pfnWriteByte(textparms.g1);
-	g_engfuncs.pfnWriteByte(textparms.b1);
-	g_engfuncs.pfnWriteByte(textparms.a1);
-
-	g_engfuncs.pfnWriteByte(textparms.r2);
-	g_engfuncs.pfnWriteByte(textparms.g2);
-	g_engfuncs.pfnWriteByte(textparms.b2);
-	g_engfuncs.pfnWriteByte(textparms.a2);
-
-	g_engfuncs.pfnWriteShort(this->FixedUnsigned16(textparms.fadeinTime, BIT(8)));
-	g_engfuncs.pfnWriteShort(this->FixedUnsigned16(textparms.fadeoutTime, BIT(8)));
-	g_engfuncs.pfnWriteShort(this->FixedUnsigned16(textparms.holdTime, BIT(8)));
-
-	if (textparms.effect == 2)
-	{
-		g_engfuncs.pfnWriteShort(this->FixedUnsigned16(textparms.fxTime, BIT(8)));
+		Buffer[Length++] = '\n';
+		Buffer[Length++] = '\n';
+		Buffer[Length] = 0;
 	}
 
-	g_engfuncs.pfnWriteString(Buffer);
-	g_engfuncs.pfnMessageEnd();
-}
+	static int iMsgTextMsg;
 
-void CPugUtil::TeamInfo(edict_t* pEntity, int playerIndex, const char* pszTeamName)
-{
-	static int iMsgTeamInfo;
-
-	if (iMsgTeamInfo || (iMsgTeamInfo = gpMetaUtilFuncs->pfnGetUserMsgID(&Plugin_info, "TeamInfo", NULL)))
+	if (iMsgTextMsg || (iMsgTextMsg = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "TextMsg", NULL)))
 	{
-		g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgTeamInfo, nullptr, pEntity);
-		g_engfuncs.pfnWriteByte(playerIndex);
-		g_engfuncs.pfnWriteString(pszTeamName);
+		if (!FNullEnt(pEntity))
+		{
+			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgTextMsg, nullptr, pEntity);
+		}
+		else
+		{
+			g_engfuncs.pfnMessageBegin(MSG_BROADCAST, iMsgTextMsg, nullptr, nullptr);
+		}
+
+		g_engfuncs.pfnWriteByte(iMsgDest);
+		g_engfuncs.pfnWriteString("%s");
+		g_engfuncs.pfnWriteString(Buffer);
 		g_engfuncs.pfnMessageEnd();
 	}
 }
 
-void CPugUtil::DeathMsg(edict_t* pEntity, CBaseEntity* pKiller, CBasePlayer* pVictim, CBasePlayer* pAssister, entvars_t* pevInflictor, const char* killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
+unsigned short CPugUtil::FixedUnsigned16(float Value, float Scale)
 {
+	int Result = Value * Scale;
+
+	if (Result < 0)
+	{
+		Result = 0;
+	}
+
+	if (Result > USHRT_MAX)
+	{
+		Result = USHRT_MAX;
+	}
+
+	return (unsigned short)Result;
+}
+
+short CPugUtil::FixedSigned16(float Value, float Scale)
+{
+	int Result = Value * Scale;
+
+	if (Result > SHRT_MAX)
+	{
+		Result = SHRT_MAX;
+	}
+
+	if (Result < SHRT_MIN)
+	{
+		Result = SHRT_MIN;
+	}
+
+	return (short)Result;
+}
+
+hudtextparms_t CPugUtil::SetHud(vec3_t FromColor, vec3_t ToColor, float X, float Y, int Effect, float FxTime, float HoldTime, float FadeInTime, float FadeOutTime, int Channel)
+{
+	hudtextparms_t TextParams;
+
+	TextParams.r1 = static_cast<byte>(ToColor.x);
+	TextParams.g1 = static_cast<byte>(ToColor.y);
+	TextParams.b1 = static_cast<byte>(ToColor.z);
+	TextParams.a1 = 0xFF;
+
+	TextParams.r2 = static_cast<byte>(FromColor.x);
+	TextParams.g2 = static_cast<byte>(FromColor.y);
+	TextParams.b2 = static_cast<byte>(FromColor.z);
+	TextParams.a2 = 0xFF;
+
+	TextParams.x = X;
+	TextParams.y = Y;
+
+	TextParams.effect = Effect;
+	TextParams.fxTime = FxTime;
+	TextParams.holdTime = HoldTime;
+	TextParams.fadeinTime = FadeInTime;
+	TextParams.fadeoutTime = FadeOutTime;
+	TextParams.channel = Channel;
+
+	return TextParams;
+}
+
+void CPugUtil::SendHud(edict_t *pEntity, const hudtextparms_t &TextParams, const char *Format, ...)
+{
+	if (!FNullEnt(pEntity))
+	{
+		if (pEntity->v.flags & FL_FAKECLIENT)
+		{
+			return;
+		}
+	}
+
+	static char szString[511] = { 0 };
+
+	va_list ArgPtr;
+
+	va_start(ArgPtr, Format);
+
+	vsnprintf(szString, sizeof(szString), Format, ArgPtr);
+
+	va_end(ArgPtr);
+
+	if (!FNullEnt(pEntity))
+	{
+		g_engfuncs.pfnMessageBegin(MSG_ONE_UNRELIABLE, SVC_TEMPENTITY, nullptr, pEntity);
+	}
+	else
+	{
+		g_engfuncs.pfnMessageBegin(MSG_BROADCAST, SVC_TEMPENTITY, nullptr, nullptr);
+	}
+
+	g_engfuncs.pfnWriteByte(TE_TEXTMESSAGE);
+	g_engfuncs.pfnWriteByte(TextParams.channel & 0xFF);
+
+	g_engfuncs.pfnWriteShort(this->FixedSigned16(TextParams.x, BIT(13)));
+	g_engfuncs.pfnWriteShort(this->FixedSigned16(TextParams.y, BIT(13)));
+
+	g_engfuncs.pfnWriteByte(TextParams.effect);
+
+	g_engfuncs.pfnWriteByte(TextParams.r1);
+	g_engfuncs.pfnWriteByte(TextParams.g1);
+	g_engfuncs.pfnWriteByte(TextParams.b1);
+	g_engfuncs.pfnWriteByte(TextParams.a1);
+
+	g_engfuncs.pfnWriteByte(TextParams.r2);
+	g_engfuncs.pfnWriteByte(TextParams.g2);
+	g_engfuncs.pfnWriteByte(TextParams.b2);
+	g_engfuncs.pfnWriteByte(TextParams.a2);
+
+	g_engfuncs.pfnWriteShort(this->FixedUnsigned16(TextParams.fadeinTime, BIT(8)));
+	g_engfuncs.pfnWriteShort(this->FixedUnsigned16(TextParams.fadeoutTime, BIT(8)));
+	g_engfuncs.pfnWriteShort(this->FixedUnsigned16(TextParams.holdTime, BIT(8)));
+
+	if (TextParams.effect == 2)
+	{
+		g_engfuncs.pfnWriteShort(this->FixedUnsigned16(TextParams.fxTime, BIT(8)));
+	}
+
+	g_engfuncs.pfnWriteString(szString);
+	g_engfuncs.pfnMessageEnd();
+}
+
+void CPugUtil::SendDHud(edict_t *pEntity, const hudtextparms_t &TextParams, const char *Format, ...)
+{
+	if (!FNullEnt(pEntity))
+	{
+		if (pEntity->v.flags & FL_FAKECLIENT)
+		{
+			return;
+		}
+	}
+
+	static char Text[128] = {0};
+
+	va_list ArgPtr;
+
+	va_start(ArgPtr, Format);
+
+	int Length = vsnprintf(Text, sizeof(Text), Format, ArgPtr);
+
+	va_end(ArgPtr);
+
+	if (!FNullEnt(pEntity))
+	{
+		g_engfuncs.pfnMessageBegin(MSG_ONE_UNRELIABLE, SVC_DIRECTOR, nullptr, pEntity);
+	}
+	else
+	{
+		g_engfuncs.pfnMessageBegin(MSG_BROADCAST, SVC_DIRECTOR, nullptr, nullptr);
+	}
+
+	g_engfuncs.pfnWriteByte(Length + 31);
+	g_engfuncs.pfnWriteByte(6);
+	g_engfuncs.pfnWriteByte(TextParams.effect);
+	g_engfuncs.pfnWriteLong(TextParams.b1 + (TextParams.g1 << 8) + (TextParams.r1 << 16));
+	g_engfuncs.pfnWriteLong((*((int32_t *)&TextParams.x)));
+	g_engfuncs.pfnWriteLong((*((int32_t *)&TextParams.y)));
+	g_engfuncs.pfnWriteLong((*((int32_t *)&TextParams.fadeinTime)));
+	g_engfuncs.pfnWriteLong((*((int32_t *)&TextParams.fadeoutTime)));
+	g_engfuncs.pfnWriteLong((*((int32_t *)&TextParams.holdTime)));
+	g_engfuncs.pfnWriteLong((*((int32_t *)&TextParams.fxTime)));
+	g_engfuncs.pfnWriteString(Text);
+	g_engfuncs.pfnMessageEnd();
+}
+
+void CPugUtil::ScreenFade(edict_t *pEntity, unsigned short Duration, unsigned short HoldTime, short FadeFlags, short Red, short Green, short Blue, short Alpha)
+{
+	if (!FNullEnt(pEntity))
+	{
+		if (pEntity->v.flags & FL_FAKECLIENT)
+		{
+			return;
+		}
+
+		static int iMsgScreenFade;
+
+		if (iMsgScreenFade || (iMsgScreenFade = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "ScreenFade", NULL)))
+		{
+			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgScreenFade, nullptr, pEntity);
+			g_engfuncs.pfnWriteShort(Duration);
+			g_engfuncs.pfnWriteShort(HoldTime);
+			g_engfuncs.pfnWriteShort(FadeFlags);
+			g_engfuncs.pfnWriteByte(Red);
+			g_engfuncs.pfnWriteByte(Green);
+			g_engfuncs.pfnWriteByte(Blue);
+			g_engfuncs.pfnWriteByte(Alpha);
+			g_engfuncs.pfnMessageEnd();
+		}
+	}
+}
+
+void CPugUtil::TeamInfo(edict_t *pEntity, int playerIndex, const char *pszTeamName)
+{
+	if (!FNullEnt(pEntity))
+	{
+		if (pEntity->v.flags & FL_FAKECLIENT)
+		{
+			return;
+		}
+
+		static int iMsgTeamInfo;
+
+		if (iMsgTeamInfo || (iMsgTeamInfo = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "TeamInfo", NULL)))
+		{
+			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgTeamInfo, nullptr, pEntity);
+			g_engfuncs.pfnWriteByte(playerIndex);
+			g_engfuncs.pfnWriteString(pszTeamName);
+			g_engfuncs.pfnMessageEnd();
+		}
+	}
+}
+
+void CPugUtil::SendDeathMsg(edict_t *pEntity, CBaseEntity *pKiller, CBasePlayer *pVictim, CBasePlayer *pAssister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
+{
+	if (!FNullEnt(pEntity))
+	{
+		if (pEntity->v.flags & FL_FAKECLIENT)
+		{
+			return;
+		}
+	}
+
 	static int iDeathMsg;
 	
 	if (iDeathMsg || (iDeathMsg = gpMetaUtilFuncs->pfnGetUserMsgID(&Plugin_info, "DeathMsg", NULL)))
 	{
-		if (FNullEnt(pEntity))
+		if (!FNullEnt(pEntity))
 		{
-			g_engfuncs.pfnMessageBegin(MSG_ALL, iDeathMsg, nullptr, nullptr);
+			g_engfuncs.pfnMessageBegin(MSG_ONE, iDeathMsg, nullptr, pEntity);
 		}
 		else
 		{
-			g_engfuncs.pfnMessageBegin(MSG_ONE, iDeathMsg, nullptr, pEntity);
+			g_engfuncs.pfnMessageBegin(MSG_ALL, iDeathMsg, nullptr, nullptr);
 		}
 
 		g_engfuncs.pfnWriteByte((pKiller && pKiller->IsPlayer()) ? pKiller->entindex() : 0);
@@ -372,4 +435,45 @@ void CPugUtil::DeathMsg(edict_t* pEntity, CBaseEntity* pKiller, CBasePlayer* pVi
 
 		g_engfuncs.pfnMessageEnd();
 	}
+}
+
+std::vector<CBasePlayer *> CPugUtil::GetPlayers(bool InGame, bool Bots)
+{
+	std::vector<CBasePlayer *> Players = {};
+
+	for (int i = 1; i <= gpGlobals->maxClients; ++i)
+	{
+		auto Player = UTIL_PlayerByIndexSafe(i);
+
+		if (Player)
+		{
+			if (!Player->IsDormant())
+			{
+				if ((Player->edict()->v.flags & FL_PROXY) == FL_PROXY)
+				{
+					continue;
+				}
+
+				if (InGame)
+				{
+					if ((Player->m_iTeam != TERRORIST) && (Player->m_iTeam != CT))
+					{
+						continue;
+					}
+				}
+
+				if (!Bots)
+				{
+					if (Player->IsBot())
+					{
+						continue;
+					}
+				}
+
+				Players.push_back(Player);
+			}
+		}
+	}
+
+	return Players;
 }

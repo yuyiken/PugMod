@@ -1,26 +1,32 @@
 #pragma once
 
-constexpr auto TASK_CHANGE_STATE = 1;
+enum E_TASK_ID
+{
+    TASK_CHANGE_STATE = 1,
+    TASK_PUG_TIMER = 2,
+    TASK_TEST_ID
+};
 
 typedef struct S_TASK
 {
-	int Index;
-	float NextTime;
-	bool Repeat;
-	int Parameter;
+    float   Delay;
+    float   Time;
+    bool    Loop;
+    int     Parameter;
 } P_TASK, *LP_TASK;
 
 class CPugTask
 {
 public:
-	void ServerActivate();
-	void ServerDeactivate();
-	void Create(int Index, float Delay, bool Repeat, int Parameter);
-	void Remove(int Index);
-	void ServerFrame();
+    void ServerActivate();
+    void ServerDeactivate();
+    
+    void Set(int Index, float Delay, bool Loop, int Parameter);
+    void Remove(int Index);
+    void StartFrame();
 
 private:
-	std::map<int, P_TASK> m_Data;
+    std::map<int, P_TASK> m_Data;
 };
 
 extern CPugTask gPugTask;

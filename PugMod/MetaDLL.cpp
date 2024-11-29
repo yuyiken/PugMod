@@ -1,26 +1,31 @@
 #include "precompiled.h"
 
-// DLL PRE Functions Table
-DLL_FUNCTIONS gDLL_FunctionTable_Pre;
+CMetaDLL gMetaDLL;
 
-// DLL POST Functions Table
-DLL_FUNCTIONS gDLL_FunctionTable_Post;
-
-#pragma region DLL_PRE
-C_DLLEXPORT int GetEntityAPI2(DLL_FUNCTIONS* pFunctionTable, int* interfaceVersion)
+#pragma region META_DLL_PRE
+C_DLLEXPORT int GetEntityAPI2(DLL_FUNCTIONS *pFunctionTable, int *interfaceVersion)
 {
-	memset(&gDLL_FunctionTable_Pre, 0, sizeof(DLL_FUNCTIONS));
+	memset(&gMetaDLL.m_FunctionTable_Pre, 0, sizeof(DLL_FUNCTIONS));
 
-	gDLL_FunctionTable_Pre.pfnClientCommand = DLL_PRE_ClientCommand;
+	gMetaDLL.m_FunctionTable_Pre.pfnClientDisconnect = gMetaDLL.PRE_ClientDisconnect;
 
-	memcpy(pFunctionTable, &gDLL_FunctionTable_Pre, sizeof(DLL_FUNCTIONS));
+	gMetaDLL.m_FunctionTable_Pre.pfnClientCommand = gMetaDLL.PRE_ClientCommand;
+
+	memcpy(pFunctionTable, &gMetaDLL.m_FunctionTable_Pre, sizeof(DLL_FUNCTIONS));
 
 	return 1;
 }
 
-void DLL_PRE_ClientCommand(edict_t* pEntity)
+void CMetaDLL::PRE_ClientDisconnect(edict_t *pEntity)
 {
-	if (gPugClientCmd.Command(pEntity))
+	gPugPlayer.ClientDisconnect(pEntity);
+
+	RETURN_META(MRES_IGNORED);
+}
+
+void CMetaDLL::PRE_ClientCommand(edict_t *pEntity)
+{
+	if (gPugPlayer.ClientCommand(pEntity))
 	{
 		RETURN_META(MRES_SUPERCEDE);
 	}
@@ -29,78 +34,87 @@ void DLL_PRE_ClientCommand(edict_t* pEntity)
 }
 #pragma endregion
 
-#pragma region DLL_POST
-C_DLLEXPORT int GetEntityAPI2_Post(DLL_FUNCTIONS* pFunctionTable, int* interfaceVersion)
+#pragma region META_DLL_POST
+C_DLLEXPORT int GetEntityAPI2_Post(DLL_FUNCTIONS *pFunctionTable, int *interfaceVersion)
 {
-	memset(&gDLL_FunctionTable_Post, 0, sizeof(DLL_FUNCTIONS));
+	memset(&gMetaDLL.m_FunctionTable_Post, 0, sizeof(DLL_FUNCTIONS));
 
-	gDLL_FunctionTable_Post.pfnServerActivate = DLL_POST_ServerActivate;
+	gMetaDLL.m_FunctionTable_Post.pfnServerActivate = gMetaDLL.POST_ServerActivate;
 
-	gDLL_FunctionTable_Post.pfnServerDeactivate = DLL_POST_ServerDeactivate;
+	gMetaDLL.m_FunctionTable_Post.pfnServerDeactivate = gMetaDLL.POST_ServerDeactivate;
 
-	gDLL_FunctionTable_Post.pfnStartFrame = DLL_POST_StartFrame;
+	gMetaDLL.m_FunctionTable_Post.pfnStartFrame = gMetaDLL.POST_StartFrame;
 
-	gDLL_FunctionTable_Post.pfnClientConnect = DLL_POST_ClientConnect;
+	gMetaDLL.m_FunctionTable_Post.pfnClientPutInServer = gMetaDLL.POST_ClientPutInServer;
 
-	gDLL_FunctionTable_Post.pfnClientPutInServer = DLL_POST_ClientPutInServer;
-
-	memcpy(pFunctionTable, &gDLL_FunctionTable_Post, sizeof(DLL_FUNCTIONS));
+	memcpy(pFunctionTable, &gMetaDLL.m_FunctionTable_Post, sizeof(DLL_FUNCTIONS));
 
 	return 1;
 }
 
-void DLL_POST_ServerActivate(edict_t* pEdictList, int edictCount, int clientMax)
+void CMetaDLL::POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 {
-	gPugCvar.ServerActivate();
-
-	gPugCurl.ServerActivate();
-
 	gPugTask.ServerActivate();
 
-	gPugPlayer.ServerActivate();
-
-	gPugMod.ServerActivate();
+	gPugCvar.ServerActivate();
 
 	gPugDeathmatch.ServerActivate();
+
+	gPugServerCmd.ServerActivate();
+
+	gPugMod.ServerActivate();
 
 	RETURN_META(MRES_IGNORED);
 }
 
-void DLL_POST_ServerDeactivate(void)
+void CMetaDLL::POST_ServerDeactivate()
 {
-	gPugCurl.ServerDeactivate();
-
 	gPugTask.ServerDeactivate();
 
 	gPugMod.ServerDeactivate();
 
-	gPugDeathmatch.ServerDeactivate();
+	RETURN_META(MRES_IGNORED);
+}
+
+void CMetaDLL::POST_StartFrame()
+{
+	gPugTask.StartFrame();
+
+	gPugMod.ServerDeactivate();
 
 	RETURN_META(MRES_IGNORED);
 }
 
-void DLL_POST_StartFrame()
-{
-	gPugCurl.StartFrame();
-
-	gPugTask.ServerFrame();
-
-	RETURN_META(MRES_IGNORED);
-}
-
-BOOL DLL_POST_ClientConnect(edict_t* pEntity, const char* pszName, const char* pszAddress, char szRejectReason[128])
-{
-	gPugPlayer.Connect(pEntity, pszName, pszAddress);
-
-	RETURN_META_VALUE(MRES_IGNORED, TRUE);
-
-	return TRUE;
-}
-
-void DLL_POST_ClientPutInServer(edict_t* pEntity)
+void CMetaDLL::POST_ClientPutInServer(edict_t *pEntity)
 {
 	gPugPlayer.PutInServer(pEntity);
-
+	
 	RETURN_META(MRES_IGNORED);
+}
+#pragma endregion
+
+#pragma region NEW_DLL_PRE
+C_DLLEXPORT int GetNewDLLFunctions(NEW_DLL_FUNCTIONS *pNewFunctionTable, int *interfaceVersion)
+{
+	memset(&gMetaDLL.m_NewFunctionTable_Pre, 0, sizeof(NEW_DLL_FUNCTIONS));
+
+	// Here
+
+	memcpy(pNewFunctionTable, &gMetaDLL.m_NewFunctionTable_Pre, sizeof(NEW_DLL_FUNCTIONS));
+
+	return 1;
+}
+#pragma endregion
+
+#pragma region NEW_DLL_POST
+C_DLLEXPORT int GetNewDLLFunctions_Post(NEW_DLL_FUNCTIONS *pNewFunctionTable, int *interfaceVersion)
+{
+	memset(&gMetaDLL.m_NewFunctionTable_Post, 0, sizeof(NEW_DLL_FUNCTIONS));
+
+	// Here
+
+	memcpy(pNewFunctionTable, &gMetaDLL.m_NewFunctionTable_Post, sizeof(NEW_DLL_FUNCTIONS));
+
+	return 1;
 }
 #pragma endregion

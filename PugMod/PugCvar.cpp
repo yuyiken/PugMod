@@ -4,105 +4,176 @@ CPugCvar gPugCvar;
 
 void CPugCvar::ServerActivate()
 {
-	// sv_restart
-	this->m_SvRestart = this->Register("sv_restart", "0");
-
 	// Log Tag
 	//
-	// Padrão: "PUG"
-	this->m_LogTag = this->Register("pug_log_tag", "PUG");
+	// PadrÃ£o: "PUG"
+	this->m_Tag = this->Register("pug_tag", "PUG");
 
-	// Mínimo de jogadores para iniciar uma partida
+	// Prefixo do comando via say (Jogador)
 	//
-	// Padrão: "10"
+	// PadrÃ£o: "."
+	this->m_CmdPrefixPlayer = this->Register("pug_cmd_prefix_player", ".");
+
+	// Prefixo do comando via say (Admin)
+	//
+	// PadrÃ£o: "!"
+	this->m_CmdPrefixAdmin = this->Register("pug_cmd_prefix_admin", "!");
+
+	// MÃ­nimo de jogadores para iniciar uma partida
+	//
+	// PadrÃ£o: "10"
 	this->m_PlayersMin = this->Register("pug_players_min", "10");
 
-	// Máximo de jogadores em jogo
+	// MÃ¡ximo de jogadores em jogo
 	//
-	// Padrão: "10"
+	// PadrÃ£o: "10"
 	this->m_PlayersMax = this->Register("pug_players_max", "10");
 
 	// Total de rounds
 	//
-	// Padrão: "30"
+	// PadrÃ£o: "30"
 	this->m_Rounds = this->Register("pug_rounds", "30");
 
 	// Total de rounds em overtime
 	//
-	// Padrão: "6"
+	// PadrÃ£o: "6"
 	this->m_RoundsOT = this->Register("pug_rounds_ot", "6");
 
 	// Tipo do overtime
 	// 
-	// 0 Votação
+	// 0 VotaÃ§Ã£o
 	// 1 Jogar overtime
 	// 2 Permitir empate
-	// 3 Morte súbita
+	// 3 Morte sÃºbita
 	//
-	// Padrão: "0"
+	// PadrÃ£o: "0"
 	this->m_OvertimeType = this->Register("pug_ot_type", "0");
+
+	// Tempo em segundos para iniciar a partida no modo aquecimento
+	// Contagem a partir do momento em que todos jogadores estiverem no jogo
+	//
+	// PadrÃ£o: "60.0"
+	this->m_WarmupTimeLimit = this->Register("pug_warmup_time_limit", "60.0");
 
 	// Modo de times
 	// 
-	// 0 Votação
-	// 1 Capitães
+	// 0 VotaÃ§Ã£o
+	// 1 CapitÃ£es
 	// 2 Misturar Times
 	// 3 Nenhum
 	// 4 Balancear Skill
 	// 5 Trocar Times
 	// 6 Round Faca
 	//
-	// Padrão: "0"
+	// PadrÃ£o: "0"
 	this->m_TeamType = this->Register("pug_team_type", "0");
 
-	// Ativar modo Deathmatch
-	// Se inativo, será o modo aquecimento comum
+	// Restringir armas
+	// Cada posiÃ§Ã£o Ã© um item (Ver enum ItemID para as posiÃ§Ãµes)
 	//
-	// Padrão: "1"
+	// 0 Inativo
+	// 1 Ativo
+	//
+	// PadrÃ£o: "000000000000000000000000000000000000000"
+	this->m_RestrictItem = this->Register("pug_restrict_item", "000000000000000000000000000000000000000");
+
+	// Ativar modo Deathmatch
+	// Se inativo, serÃ¡ o modo aquecimento comum
+    //
+    // 0 Inativo
+    // 1 Ativo
+	//
+	// PadrÃ£o: "1"
 	this->m_DM_Enable = this->Register("pug_dm_enable", "1");
 
 	// Ocultar kill feed de outros jogadores
+    //
+    // 0 Inativo
+    // 1 Ativo
 	//
-	// Padrão: "0"
+	// PadrÃ£o: "0"
 	this->m_DM_HideKillFeed = this->Register("pug_dm_hide_kill_feed", "0");
 
 	// Indicador de acertos na tela
 	// 
 	// 0 Inativo
-	// 1 Exibir ponto (*)
-	// 2 Indicador de mira (>   <)
-	// 3 Exibir dano
-	// 4 Local do acerto
+	// 1 Ativo
 	//
-	// Padrão: "0"
-	this->m_DM_HitIndicator = this->Register("pug_dm_hit_indicator", "0");
+	// PadrÃ£o: "1"
+	this->m_DM_HitIndicator = this->Register("pug_dm_hit_indicator", "1");
 
-	// Somente aceita acertos na cabeça
-	this->m_DM_HSOnlyMode = this->Register("pug_dm_hs_mode", "1");
+	// Somente aceita acertos na cabeÃ§a
+    //
+    // 0 Inativo
+    // 1 Ativo
+	//
+	// PadrÃ£o: "0"
+	this->m_DM_HSOnlyMode = this->Register("pug_dm_hs_mode", "0");
 
 	// Exibir Taxa de mortes / frags e taxa de HS no hud
+    //
+    // 0 Inativo
+    // 1 Ativo
+	//
+	// PadrÃ£o: "1"
 	this->m_DM_HudKDRatio = this->Register("pug_dm_hud_kd_ratio", "1");
 
-	// Pisca a tela ao matar outro jogador: 1 Ativar, 2 Somente no HS
-	this->m_DM_KillFade = this->Register("pug_dm_kill_fade", "1");
+	// Pisca a tela ao matar outro jogador
+    //
+    // 0 Inativo
+    // 1 Ativo
+    // 2 Somente no HS
+	//
+	// PadrÃ£o: "2"
+	this->m_DM_KillFade = this->Register("pug_dm_kill_fade", "2");
 
-	// Recuperar vida após frag
+	// Recuperar vida apÃ³s frag
+    //
+    // 0 Inativo
+    //
+	// PadrÃ£o: "15"
 	this->m_DM_KillHP = this->Register("pug_dm_kill_hp", "15");
 
-	// Recuperar vida após frag (HS)
+	// Recuperar vida apÃ³s frag (HS)
+    //
+    // 0 Inativo
+    //
+	// PadrÃ£o: "40"
 	this->m_DM_KillHPHS = this->Register("pug_dm_kill_hp_hs", "40");
 
-	// Recuperar armadura após frag: 0 Inativo, 1 Ativo, 2 Apenas no HS
+	// Recuperar armadura apÃ³s frag
+    //
+    // 0 Inativo
+    // 1 Ativo
+    // 2 Somente no HS
+	//
+	// PadrÃ£o: "1"
 	this->m_DM_KillRepairArmor = this->Register("pug_dm_kill_repair_armor ", "1");
 
-	// Exibir HP recuperado após frag
+	// Exibir HP recuperado apÃ³s frag
+    //
+    // 0 Inativo
+    // 1 Ativo
+	//
+	// PadrÃ£o: "1"
 	this->m_DM_KillHealedMsg = this->Register("pug_dm_kill_hp_msg ", "1");
 
-	// Ativar som ao realizar frag: 0 Inativo, 1 Ativo, 2 Apenas HS
+	// Ativar som ao realizar frag
+    //
+    // 0 Inativo
+    // 1 Ativo
+    // 2 Somente no HS
+	//
+	// PadrÃ£o: "2"
 	this->m_DM_KillSound = this->Register("pug_dm_kill_sound", "2");
 
 	// Exibe frags no lugar do dinheiro
-	this->m_DM_MoneyFrag = this->Register("csdm_money_as_frags", "1");
+    //
+    // 0 Inativo
+    // 1 Ativo
+	//
+	// PadrÃ£o: "1"
+	this->m_DM_MoneyFrag = this->Register("pug_dm_money_frag", "0");
 }
 
 cvar_t* CPugCvar::Register(const char* Name, const char* Value)
@@ -113,7 +184,7 @@ cvar_t* CPugCvar::Register(const char* Name, const char* Value)
 	{
 		this->m_Data[Name].name = Name;
 
-		this->m_Data[Name].string = "";
+		this->m_Data[Name].string = strdup(Value);
 
 		this->m_Data[Name].flags = (FCVAR_SERVER | FCVAR_PROTECTED | FCVAR_SPONLY | FCVAR_UNLOGGED);
 

@@ -2,33 +2,30 @@
 
 #define MENU_PAGE_OPTION 7
 
-typedef struct S_MENU_ITEM
+typedef struct S_MENU_ITEM 
 {
-	std::string		Info;
-	std::string		Text;
-	bool			Disabled;
-	std::string		Parameter;
+	int			Info;
+	std::string Text;
+	bool		Disabled;
+	int			Extra;
 } P_MENU_ITEM, *LP_MENU_ITEM;
 
 class CPugMenu
 {
 public:
 	void Clear();
-
 	void Create(std::string Title, bool Exit, void* CallbackFunction);
-
-	void AddItem(std::string Info, std::string Text);
-	void AddItem(std::string Info, std::string Text, bool Disabled);
-	void AddItem(std::string Info, std::string Text, bool Disabled, std::string Parameter);
-
-	void Show(int EntityIndex);
-	void Hide(int EntityIndex);
-
+	void AddItem(int Info, std::string Text);
+	void AddItem(int Info, std::string Text, bool Disabled);
+	void AddItem(int Info, std::string Text, bool Disabled, int Extra);
+    void AddItemFormat(int Info, bool Disabled, int Extra, const char *Format, ...);
+    void Show(int EntityIndex);
+    void Hide(int EntityIndex);
 	bool Handle(int EntityIndex, int Key);
-
 	void Display(int EntityIndex, int Page);
 	void ShowMenu(int EntityIndex, int Slots, int Time, std::string Text);
-
+    void ReplaceAll(std::string& String, const std::string& From, const std::string& To);
+	
 private:
 	std::string m_Text;
 	std::vector<P_MENU_ITEM> m_Data;

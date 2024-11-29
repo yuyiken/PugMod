@@ -14,17 +14,20 @@ constexpr auto PRINT_RADIO = 5;
 class CPugUtil
 {
 public:
-    void ServerCommand(const char* Format, ...);
-    int ParseColors(char* szBuffer);
-    void ReplaceAll(std::string& String, const std::string& From, const std::string& To);
-    void ClientPrint(edict_t* pEntity, int msg_dest, const char* Format, ...);
-    void SayText(edict_t* pEntity, int Sender, const char* Format, ...);
-    unsigned short FixedUnsigned16(float value, float scale);
-    short FixedSigned16(float value, float scale);
-    hudtextparms_t HudParam(int red, int green, int blue, float x, float y, int effects, float fxtime, float holdtime, float fadeintime, float fadeouttime, int channel);
-    void HudMessage(edict_t* pEntity, hudtextparms_t textparms, const char* Format, ...);
-    void TeamInfo(edict_t* pEntity, int playerIndex, const char* pszTeamName);
-    void DeathMsg(edict_t* pEntity, CBaseEntity* pKiller, CBasePlayer* pVictim, CBasePlayer* pAssister, entvars_t* pevInflictor, const char* killerWeaponName, int iDeathMessageFlags, int iRarityOfKill);
+    void ServerCommand(const char *Format, ...);
+    int ParseColors(char *Buffer);
+    void SayText(edict_t *pEntity, int Sender, const char *Format, ...);
+    void ClientPrint(edict_t *pEntity, int iMsgDest, const char *Format, ...);
+    unsigned short FixedUnsigned16(float Value, float Scale);
+    short FixedSigned16(float Value, float Scale);
+    hudtextparms_t SetHud(vec3_t FromColor, vec3_t ToColor, float X, float Y, int Effect, float FxTime, float HoldTime, float FadeInTime, float FadeOutTime, int Channel);
+    void SendHud(edict_t *pEntity, const hudtextparms_t &TextParams, const char *Format, ...);
+    void SendDHud(edict_t* pEntity, const hudtextparms_t &TextParams, const char *Format, ...);
+    void ScreenFade(edict_t *pEntity, unsigned short Duration, unsigned short HoldTime, short FadeFlags, short Red, short Green, short Blue, short Alpha);
+    void TeamInfo(edict_t *pEntity, int playerIndex, const char *pszTeamName);
+    void SendDeathMsg(edict_t* pEntity, CBaseEntity* pKiller, CBasePlayer* pVictim, CBasePlayer* pAssister, entvars_t* pevInflictor, const char* killerWeaponName, int iDeathMessageFlags, int iRarityOfKill);
+    std::vector<CBasePlayer*> GetPlayers(bool InGame, bool Bots);
+
 };
 
 extern CPugUtil gPugUtil;

@@ -1,16 +1,10 @@
 #pragma once
 
-class CReAPI
-{
-public:
-	bool Init();
-	bool Stop();
+extern IRehldsApi *g_RehldsApi;
+extern const RehldsFuncs_t *g_RehldsFuncs;
+extern IRehldsServerData *g_RehldsData;
+extern IRehldsHookchains *g_RehldsHookchains;
+extern IRehldsServerStatic *g_RehldsSvs;
 
-	IRehldsApi* m_API;
-	const RehldsFuncs_t* m_Funcs;
-	IRehldsServerData* m_Data;
-	IRehldsHookchains* m_Hookchains;
-	IRehldsServerStatic* m_Server_Static;
-};
-
-extern CReAPI gReAPI;
+extern bool ReAPI_Init();
+extern bool ReAPI_Stop();

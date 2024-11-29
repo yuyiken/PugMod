@@ -3,7 +3,10 @@
 class CPugServerCmd
 {
 public:
-	void ServerActivate();
+    void ServerActivate();
+
+    static void Status();
+    static void AddWeapon();
 };
 
 extern CPugServerCmd gPugServerCmd;

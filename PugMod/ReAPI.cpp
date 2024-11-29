@@ -1,9 +1,13 @@
 #include "precompiled.h"
 #include "interface.cpp"
 
-CReAPI gReAPI;
+IRehldsApi *g_RehldsApi;
+const RehldsFuncs_t *g_RehldsFuncs;
+IRehldsServerData *g_RehldsData;
+IRehldsHookchains *g_RehldsHookchains;
+IRehldsServerStatic *g_RehldsSvs;
 
-bool CReAPI::Init()
+bool ReAPI_Init()
 {
 	if (g_engfuncs.pfnIsDedicatedServer())
 	{
@@ -21,21 +25,23 @@ bool CReAPI::Init()
 			{
 				int retCode = 0;
 
-				this->m_API = (IRehldsApi*)ifaceFactory(VREHLDS_HLDS_API_VERSION, &retCode);
+				g_RehldsApi = (IRehldsApi *)ifaceFactory(VREHLDS_HLDS_API_VERSION, &retCode);
 
-				if (this->m_API)
+				if (g_RehldsApi)
 				{
-					if (this->m_API->GetMajorVersion() == REHLDS_API_VERSION_MAJOR)
+					if (g_RehldsApi->GetMajorVersion() == REHLDS_API_VERSION_MAJOR)
 					{
-						if (this->m_API->GetMinorVersion() >= REHLDS_API_VERSION_MINOR)
+						if (g_RehldsApi->GetMinorVersion() >= REHLDS_API_VERSION_MINOR)
 						{
-							this->m_Funcs = this->m_API->GetFuncs();
+							g_RehldsFuncs = g_RehldsApi->GetFuncs();
 
-							this->m_Data = this->m_API->GetServerData();
+							g_RehldsData = g_RehldsApi->GetServerData();
 
-							this->m_Hookchains = this->m_API->GetHookchains();
+							g_RehldsHookchains = g_RehldsApi->GetHookchains();
 
-							this->m_Server_Static = this->m_API->GetServerStatic();
+							g_RehldsSvs = g_RehldsApi->GetServerStatic();
+
+							gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] ReHLDS API Loaded: %d.%d", Plugin_info.logtag, REHLDS_API_VERSION_MAJOR, REHLDS_API_VERSION_MINOR);
 
 							return true;
 						}
@@ -45,13 +51,17 @@ bool CReAPI::Init()
 		}
 	}
 
-	gpMetaUtilFuncs->pfnLogConsole(&Plugin_info, "[%s] ReHLDS API failed to load.", Plugin_info.logtag);
+	gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] ReHLDS API failed to load.", Plugin_info.logtag);
 
 	return false;
 }
 
-bool CReAPI::Stop()
+bool ReAPI_Stop()
 {
-	return false;
-}
+	if (g_RehldsHookchains)
+	{
+		
+	}
 
+	return true;
+}

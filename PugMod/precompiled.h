@@ -1,36 +1,34 @@
 #pragma once
 
-// Disable security function warnings (MSVC)
-#ifndef _CRT_SECURE_NO_WARNINGS
+// Windows Build
+#ifdef _WIN32
 #define _CRT_SECURE_NO_WARNINGS
+#undef UNICODE
+#undef _UNICODE
 #endif
 
-// If is not MSVC build
+// Linux Build
 #ifndef _WIN32
-#define _GLIBCXX_USE_CXX11_ABI		0
-#define _stricmp					strcasecmp
-#define _strnicmp					strncasecmp
-#define _strdup						strdup
-#define _unlink						unlink
-#define _vsnprintf					vsnprintf
-#define _write						write
-#define _close						close
-#define _acces						access
-#define _vsnwprintf					vswprintf
-#else
-// cURL Library windows library
-#pragma comment(lib,"ws2_32.lib")
-#pragma comment(lib,"wldap32.lib")
-#pragma comment(lib,"advapi32.lib")
-#pragma comment(lib,"crypt32.lib")
-#pragma comment(lib,"normaliz.lib")
+#define _GLIBCXX_USE_CXX11_ABI 0
+#define _stricmp strcasecmp
+#define _strnicmp strncasecmp
+#define _strdup strdup
+#define _unlink unlink
+#define _vsnprintf vsnprintf
+#define _write write
+#define _close close
+#define _acces access
+#define _vsnwprintf vswprintf
 #endif
 
-// System Includes
+// Standard library
 #include <string>
 #include <array>
 #include <map>
+#include <unordered_map>
 #include <vector>
+#include <random>
+#include <regex>
 
 // System Includes
 #ifndef _WIN32
@@ -41,20 +39,12 @@
 #include <direct.h>
 #endif
 
-// cURL sources
-#ifndef CURL_STATICLIB
-#define CURL_STATICLIB
-#endif
-
-// cURL sources
-#include <curl/curl.h>
-
 // CSSDK
 #include <extdll.h>
 #include <eiface.h>
 
 // MetaMod SDK
-#include <meta_api.h> 
+#include <meta_api.h>
 
 // ReHLDS Api
 #include <rehlds_api.h>
@@ -73,17 +63,15 @@
 #include "ReAPI.h"
 #include "ReGameDLL.h"
 
-// JSON
-#include "include/json.hpp"
-
-// Pug Mod
-#include "PugMod.h"
+// Pickup Game Mod
 #include "PugCvar.h"
-#include "PugCurl.h"
+#include "PugMod.h"
 #include "PugMenu.h"
-#include "PugClientCmd.h"
-#include "PugServerCmd.h"
 #include "PugDeathmatch.h"
 #include "PugPlayer.h"
+#include "PugPlayerMenu.h"
+#include "PugServerCmd.h"
 #include "PugTask.h"
+#include "PugTimer.h"
+#include "PugTraceLine.h"
 #include "PugUtil.h"

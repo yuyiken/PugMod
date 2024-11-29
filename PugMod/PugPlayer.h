@@ -1,45 +1,41 @@
 #pragma once
 
-typedef struct S_PLAYER
+typedef struct S_PLAYER_INFO
 {
-	int EntityIndex;
-	int UserIndex;
-	edict_t* Entity;
+    P_PLAYER_DM m_DM;
 
-	std::string Name;
-	std::string Address;
-	std::string Auth;
-
-	time_t ConnectTime;
-	int Status;				// 0 Disconnected, 1 Connecting, 2 In Server, 3 InGame
-	TeamName TeamIndex;
-
-	P_DM_INFO DeathMatch;
-} P_PLAYER, *LP_PLAYER;
+    void Clear()
+    {
+        this->m_DM.Clear();
+    }
+} P_PLAYER_INFO, *LP_PLAYER_INFO;
 
 class CPugPlayer
 {
 public:
-	void ServerActivate();
+    LP_PLAYER_INFO GetInfo(int EntityIndex);
 
-	const char* GetAuthId(edict_t* pEntity);
+    void PutInServer(edict_t *pEntity);
+    void ClientDisconnect(edict_t *pEntity);
 
-	LP_PLAYER Get(const char* Auth);
-	LP_PLAYER Get(edict_t* pEntity);
-	LP_PLAYER Get(int EntityIndex);
-	LP_PLAYER Get(CBasePlayer* Player);
-
-	std::vector<P_PLAYER> Get(int Status, bool IncludeBots);
-
-	void Connect(edict_t* pEntity, const char* pszName, const char* pszAddress);
-	void PutInServer(edict_t* pEntity);
-	void GetIntoGame(CBasePlayer* Player);
-	void JoinTeam(CBasePlayer* Player);
-	void SwitchTeam(CBasePlayer* Player);
-	void Disconnected(edict_t* pEntity);
+    bool HandleMenu_ChooseTeam(CBasePlayer *Player, int Slot);
+    void GetIntoGame(CBasePlayer *Player);
+    void UpdateClientData(CBasePlayer *Player);
+    bool AddAccount(CBasePlayer *Player, int Amount, RewardType Type, bool TrackChange);
+    bool HasRestrictItem(CBasePlayer *Player, ItemID item, ItemRestType type);
+    bool GetPlayerSpawnSpot(CBasePlayer *Player);
+    void PlayerSpawn(CBasePlayer *Player);
+    void GiveDefaultItems(CBasePlayer *Player);
+    bool FPlayerCanTakeDamage(CBasePlayer *Player, CBaseEntity *Entity);
+    void TakeDamage(CBasePlayer *Player, entvars_t *pevInflictor, entvars_t *pevAttacker, float &flDamage, int bitsDamageType);
+    void Killed(CBasePlayer *Victim, entvars_t *pevKiller, entvars_t *pevInflictor);
+    bool SendDeathMessage(CBaseEntity *Killer, CBasePlayer *Victim, CBasePlayer *Assister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill);
+    bool ClientCommand(edict_t *pEntity);
+    void SetAnimation(CBasePlayer *Player, PLAYER_ANIM playerAnimation);
+    bool ShowVGUIMenu(CBasePlayer *Player, int MenuType, int BitMask, char *szOldMenu);
 
 private:
-	std::map<std::string, P_PLAYER> m_Players;
+    std::array<P_PLAYER_INFO, MAX_CLIENTS + 1> m_Info;
 };
 
 extern CPugPlayer gPugPlayer;
