@@ -1,0 +1,332 @@
+#include "precompiled.h"
+
+CPugVoteTeam gPugVoteTeam;
+
+void CPugVoteTeam::ServerActivate()
+{
+    this->m_Run = false;
+
+    this->m_NextFrame = 0.0f;
+
+    this->m_Time = 0;
+
+    this->m_VoteList.push_back({VOTE_TEAM_CAPTAIN, 0, "Capitaes"});
+    this->m_VoteList.push_back({VOTE_TEAM_RANDOM, 0, "Misturar Times"});
+    this->m_VoteList.push_back({VOTE_TEAM_UNSORTED, 0, "Sem Sorteio"});
+    this->m_VoteList.push_back({VOTE_TEAM_SKILL_BALANCE, 0, "Balancear Skill"});
+    this->m_VoteList.push_back({VOTE_TEAM_SWAP_SIDES, 0, "Trocar Times"});
+    this->m_VoteList.push_back({VOTE_TEAM_KNIFE_ROUND, 0, "Round Faca"});
+}
+
+void CPugVoteTeam::ServerDeactivate()
+{
+    this->m_Run = false;
+
+    this->m_NextFrame = 0.0f;
+
+    this->m_Time = 0;
+
+    this->m_VoteList.clear();
+}
+
+void CPugVoteTeam::Init()
+{
+    if (gPugCvar.m_TeamType->value > 0.0f)
+    {
+        this->ChangeTeam(static_cast<int>(gPugCvar.m_TeamType->value));
+    }
+    else
+    {
+        this->m_Run = true;
+
+        this->m_NextFrame = 0.0f;
+
+        this->m_Time = time(nullptr) + static_cast<time_t>(gPugCvar.m_VoteDelay->value);
+
+        if (g_pGameRules)
+        {
+            if (gPugCvar.m_MpFreezeTime)
+            {
+                g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_MpFreezeTime, "120.0");
+            }
+
+            CSGameRules()->m_flRestartRoundTime = (gpGlobals->time + 0.1);
+            CSGameRules()->m_bCompleteReset = true;
+        }
+
+        auto MenuFlags = 0;
+
+        if (gPugCvar.m_TeamOption->string)
+        {
+            if (gPugCvar.m_TeamOption->string[0] != '\0')
+            {
+                MenuFlags = gPugAdmin.ReadFlags(gPugCvar.m_TeamOption->string);
+            }
+        }
+
+        auto Players = gPugUtil.GetPlayers(true, false);
+
+        for (auto const &Player : Players)
+        {
+            gPugMenu[Player->entindex()].Create("Modo de jogo:", false, E_MENU::ME_VOTE_TEAM);
+
+            for (auto i = 0; i < this->m_VoteList.size(); ++i)
+            {
+                this->m_VoteList[i].Votes = 0;
+
+                if (MenuFlags == 0 || (MenuFlags & BIT(i)))
+                {
+                    gPugMenu[Player->entindex()].AddItem(i, this->m_VoteList[i].Name, false, 0);
+                }
+            }
+
+            gPugUtil.ClientCommand(Player->edict(), g_VoteTeam_Sound[g_engfuncs.pfnRandomLong(0, 1)]);
+
+            gPugMenu[Player->entindex()].Show(Player);
+        }
+
+        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Iniciando a escolha dos times.", gPugCvar.m_Tag->string);
+    }
+}
+
+void CPugVoteTeam::Stop()
+{
+    this->m_Run = false;
+
+    this->m_NextFrame = 0.0f;
+
+    this->m_Time = 0;
+
+    auto Winner = this->GetWinner();
+
+    gPugUtil.ClientCommand(nullptr, g_VoteTeam_Sound[2]);
+
+    if (Winner.Votes)
+    {
+        this->ChangeTeam(Winner.Index);
+    }
+    else
+    {
+        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A escolha falhou: ^3Nenhum voto.", gPugCvar.m_Tag->string);
+
+        this->ChangeTeam(VOTE_TEAM_RANDOM);
+    }
+}
+
+void CPugVoteTeam::ChangeTeam(int Type)
+{
+    auto NewState = (gPugCvar.m_KnifeRound->value) ? STATE_KNIFE_ROUND : STATE_FIRST_HALF;
+
+    switch(Type)
+    {
+        case VOTE_TEAM_CAPTAIN:
+        {
+            NewState = STATE_CAPTAIN;
+            break;
+        }
+        case VOTE_TEAM_RANDOM:
+        {
+            this->TeamsRamdomize();
+
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Organizando os jogadores automaticamente.", gPugCvar.m_Tag->string);
+            break;
+        }
+        case VOTE_TEAM_UNSORTED:
+        {
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Os times já estão definidos.", gPugCvar.m_Tag->string);
+            break;
+        }
+        case VOTE_TEAM_SKILL_BALANCE:
+        {
+            this->TeamsOptimize();
+
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Organizando os jogadores por skill.", gPugCvar.m_Tag->string);
+            break;
+        }
+        case VOTE_TEAM_SWAP_SIDES:
+        {
+            if (g_pGameRules)
+            {
+                CSGameRules()->SwapAllPlayers();
+            }
+            
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Trocando o lado dos times.", gPugCvar.m_Tag->string);
+            break;
+        }
+        case VOTE_TEAM_KNIFE_ROUND:
+        {
+            NewState = STATE_KNIFE_ROUND;
+            break;
+        }
+    }
+
+    gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, NewState);
+}
+
+P_VOTE_TEAM_INFO CPugVoteTeam::GetWinner()
+{
+    P_VOTE_TEAM_INFO Winner = {};
+
+    if (!this->m_VoteList.empty())
+    {
+        for (auto const& Item : this->m_VoteList)
+        {
+            if (Item.Votes >= Winner.Votes)
+            {
+                Winner = Item;
+            }
+            else if (Item.Votes == Winner.Votes)
+            {
+                if (g_engfuncs.pfnRandomLong(0, 1))
+                {
+                    Winner = Item;
+                }
+            }
+        }
+    }
+
+    return Winner;
+}
+
+void CPugVoteTeam::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
+{
+    if (this->m_Run)
+    {
+        if (Player)
+        {
+            if (Item.Info < this->m_VoteList.size())
+            {
+                this->m_VoteList[Item.Info].Votes += 1;
+                
+                gPugUtil.PrintColor
+                (
+                    nullptr,
+                    E_PRINT_TEAM::DEFAULT,
+                    "^4[%s]^1 ^3%s^1 escolheu ^3%s^1.",
+                    gPugCvar.m_Tag->string,
+                    STRING(Player->edict()->v.netname),
+                    this->m_VoteList[Item.Info].Name.c_str()
+                );
+            }
+        }
+    }
+}
+
+void CPugVoteTeam::StartFrame()
+{
+    if (this->m_Run)
+    {
+        if (gpGlobals->time >= this->m_NextFrame)
+        {
+            if (!this->m_VoteList.empty())
+            {
+                auto RemainTime = (this->m_Time - time(nullptr));
+
+                if (RemainTime > 0)
+                {
+                    struct tm *tm_info = localtime(&RemainTime);
+
+                    if (tm_info)
+                    {
+                        char szTime[32] = { 0 };
+
+                        strftime(szTime, sizeof(szTime), "%M:%S", tm_info);
+                        
+                        gPugUtil.SendHud(nullptr, g_VoteTeam_HudParam[0], "Escolha dos Times: %s", szTime);
+                    }
+
+                    std::string VoteList = "";
+
+                    for (const auto &Item : this->m_VoteList)
+                    {
+                        if (Item.Votes)
+                        {
+                            VoteList += "[" + std::to_string(Item.Votes) + "] " + Item.Name + "\n";
+                        }
+                    }
+
+                    if (!VoteList.empty())
+                    {
+                        gPugUtil.SendHud(nullptr, g_VoteTeam_HudParam[1], VoteList.c_str());
+                    }
+                    else
+                    {
+                        gPugUtil.SendHud(nullptr, g_VoteTeam_HudParam[1], "Nenhum voto registrado.");
+                    }
+                }
+                else
+                {
+                    this->Stop();
+                }
+            }
+
+            this->m_NextFrame = (gpGlobals->time + 0.9f);
+        }
+    }
+}
+
+void CPugVoteTeam::TeamsRamdomize()
+{
+    auto Players = gPugUtil.GetPlayers(true, true);
+
+    if (Players.size())
+    {
+        TeamName Team = static_cast<TeamName>(g_engfuncs.pfnRandomLong(TERRORIST, CT));
+
+        do
+        {
+            auto i = g_engfuncs.pfnRandomLong(0, Players.size() - 1);
+
+			Players[i]->edict()->v.deadflag = DEAD_DEAD;
+
+			Players[i]->CSPlayer()->JoinTeam(Team);
+
+			Players[i]->edict()->v.deadflag = DEAD_NO;
+
+            Players.erase(Players.begin() + i);
+
+            Team = static_cast<TeamName>(Team % CT + TERRORIST);
+        }
+        while (Players.size());
+    }
+}
+
+void CPugVoteTeam::TeamsOptimize()
+{
+	auto Players = gPugUtil.GetPlayers(true, true);
+
+    if (Players.size())
+    {
+        std::array<float, MAX_CLIENTS + 1> Skills = {};
+
+        std::array<float, MAX_CLIENTS + 1> Sorted = {};
+
+        for (auto const & Player : Players)
+        {
+            Sorted[Player->entindex()] = Skills[Player->entindex()] = (Player->edict()->v.frags ? (100.0f * Player->edict()->v.frags / (Player->edict()->v.frags + static_cast<float>(Player->m_iDeaths))) : 0.0f);
+        }
+
+        std::sort(Sorted.begin(), Sorted.end(), std::greater<float>());
+
+        TeamName Team = static_cast<TeamName>(g_engfuncs.pfnRandomLong(TERRORIST, CT));
+
+        for (size_t i = 0; i < Sorted.size(); i++)
+        {
+            for (size_t j = 0;j < Players.size(); ++j)
+            {
+                if (Skills[j] == Sorted[i])
+                {
+                    Players[j]->edict()->v.deadflag = DEAD_DEAD;
+
+                    Players[j]->CSPlayer()->JoinTeam(Team);
+
+                    Players[j]->edict()->v.deadflag = DEAD_NO;
+
+                    Players.erase(Players.begin() + j);
+
+                    Team = static_cast<TeamName>(Team % CT + TERRORIST);
+                }
+            }
+        }
+    }
+}

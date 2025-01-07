@@ -1,5 +1,4 @@
 #include "precompiled.h"
-#include "PugMenu.h"
 
 std::array<CPugMenu, MAX_CLIENTS + 1> gPugMenu;
 
@@ -13,304 +12,333 @@ void CPugMenu::Clear()
 
 	this->m_Exit = false;
 
-	this->m_Func = nullptr;
+	this->m_Handle = 0;
 }
 
-void CPugMenu::Create(std::string Title, bool Exit, void* CallbackFunction)
+void CPugMenu::Create(std::string Title, bool Exit, int HandleType)
 {
-	this->Clear();
+    this->m_Text = Title;
 
-	this->m_Text = Title;
+    this->m_Data.clear();
 
-	this->m_Page = -1;
+    this->m_Page = -1;
 
-	this->m_Exit = Exit;
+    this->m_Exit = Exit;
 
-	this->m_Func = CallbackFunction;
-}
-
-void CPugMenu::AddItem(int Info, std::string Text)
-{
-	this->AddItem(Info, Text, false, 0);
-}
-
-void CPugMenu::AddItem(int Info, std::string Text, bool Disabled)
-{
-	this->AddItem(Info, Text, Disabled, 0);
+    this->m_Handle = HandleType;
 }
 
 void CPugMenu::AddItem(int Info, std::string Text, bool Disabled, int Extra)
 {
-	P_MENU_ITEM ItemData = { Info, Text, Disabled, Extra };
-
-	this->m_Data.push_back(ItemData);
+    this->m_Data.push_back({Info, Text, Disabled, Extra});
 }
 
 void CPugMenu::AddItemFormat(int Info, bool Disabled, int Extra, const char *Format, ...)
 {
-	va_list argList;
+    va_list argList;
 
-	va_start(argList, Format);
+    va_start(argList, Format);
 
-	char Buffer[128] = { 0 };
+    char Buffer[128] = {0};
 
-	int Length = vsnprintf(Buffer, sizeof(Buffer), Format, argList);
+    int Length = vsnprintf(Buffer, sizeof(Buffer), Format, argList);
 
-	va_end(argList);
+    va_end(argList);
 
-	if (Buffer[0] != '\0')
-	{
-		P_MENU_ITEM ItemData = { Info, std::string(Buffer), Disabled, Extra };
+    if (Buffer[0] != '\0')
+    {
+        P_MENU_ITEM ItemData = {Info, std::string(Buffer), Disabled, Extra};
 
-		this->m_Data.push_back(ItemData);
-	}
+        this->m_Data.push_back(ItemData);
+    }
 }
 
-void CPugMenu::Show(int EntityIndex)
+void CPugMenu::Show(CBasePlayer *Player)
 {
-	if (this->m_Data.size())
-	{
-		this->Display(EntityIndex, 0);
-	}
+    if (this->m_Data.size())
+    {
+        this->Display(Player, 0);
+    }
 }
 
-void CPugMenu::Hide(int EntityIndex)
+void CPugMenu::Hide(CBasePlayer *Player)
 {
-	this->m_Page = -1;
+    this->m_Page = -1;
 
-	auto Player = UTIL_PlayerByIndexSafe(EntityIndex);
+    if (Player)
+    {
+        Player->m_iMenu = Menu_OFF;
 
-	if (Player)
-	{
-		Player->m_iMenu = Menu_OFF;
+        if (!Player->IsDormant() && !Player->IsBot())
+        {
+            static int iMsgShowMenu;
 
-		if (!Player->IsDormant() && !Player->IsBot())
-		{
-			static int iMsgShowMenu;
-
-			if (iMsgShowMenu || (iMsgShowMenu = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "ShowMenu", NULL)))
-			{
-				g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgShowMenu, nullptr, Player->edict());
-				g_engfuncs.pfnWriteShort(0);
-				g_engfuncs.pfnWriteChar(0);
-				g_engfuncs.pfnWriteByte(0);
-				g_engfuncs.pfnWriteString("");
-				g_engfuncs.pfnMessageEnd();
-			}
-		}
-	}
+            if (iMsgShowMenu || (iMsgShowMenu = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "ShowMenu", NULL)))
+            {
+                g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgShowMenu, nullptr, Player->edict());
+                g_engfuncs.pfnWriteShort(0);
+                g_engfuncs.pfnWriteChar(0);
+                g_engfuncs.pfnWriteByte(0);
+                g_engfuncs.pfnWriteString("");
+                g_engfuncs.pfnMessageEnd();
+            }
+        }
+    }
 }
 
-bool CPugMenu::Handle(int EntityIndex, int Key)
+bool CPugMenu::Handle(CBasePlayer *Player, int Key)
 {
-	if (this->m_Page != -1)
-	{
-		auto Player = UTIL_PlayerByIndexSafe(EntityIndex);
+    if (this->m_Page != -1)
+    {
+        if (Player)
+        {
+            if (Player->m_iMenu == Menu_OFF)
+            {
+                if (Key == 9)
+                {
+                    this->Display(Player, ++this->m_Page);
 
-		if (Player)
-		{
-			if (Player->m_iMenu == Menu_OFF)
-			{
-				if (Key == 9)
-				{
-					this->Display(EntityIndex, ++this->m_Page);
-				}
-				else if (Key == 10)
-				{
-					this->Display(EntityIndex, --this->m_Page);
-				}
-				else
-				{
-					unsigned int ItemIndex = (Key + (this->m_Page * this->m_PageOption)) - 1;
+                    gPugUtil.ClientCommand(Player->edict(), g_Menu_Sound[0]);
+                }
+                else if (Key == 10)
+                {
+                    this->Display(Player, --this->m_Page);
 
-					if (ItemIndex < this->m_Data.size())
-					{
-						this->Hide(EntityIndex);
+                    gPugUtil.ClientCommand(Player->edict(), g_Menu_Sound[0]);
+                }
+                else
+                {
+                    unsigned int ItemId = (Key + (this->m_Page * this->m_MaxPageOption)) - 1;
 
-						if (this->m_Func)
-						{
-							((void(*)(int, P_MENU_ITEM))this->m_Func)(EntityIndex, this->m_Data[ItemIndex]);
-						}
-					}
-				}
+                    if (ItemId < this->m_Data.size())
+                    {
+                        if (this->m_Data[ItemId].Disabled)
+                        {
+                            gPugUtil.ClientCommand(Player->edict(), g_Menu_Sound[2]);
+                        }
+                        else
+                        {
+                            gPugUtil.ClientCommand(Player->edict(), g_Menu_Sound[1]);
+                        }
 
-				return true;
-			}
-			else
-			{
-				this->m_Page = -1;
-			}
-		}
-	}
+                        this->Hide(Player);
 
-	return false;
+                        switch (this->m_Handle)
+                        {
+                            case E_MENU::DM_OPTIONS:
+                            {
+                                gPugDM.MenuOptionHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::DM_EQUIP:
+                            {
+                                gPugDM.MenuHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::DM_WEAPONS:
+                            {
+                                gPugDM.MenuEquipHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::ME_VOTE_MAP:
+                            {
+                                gPugVoteMap.MenuHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::ME_VOTE_TEAM:
+                            {
+                                gPugVoteTeam.MenuHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::CP_CAPTAIN_MENU:
+                            {
+                                gPugCaptain.MenuHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::ME_VOTE_SWAP_TEAM:
+                            {
+                                gPugVoteSwapTeam.MenuHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                return true;
+            }
+            else
+            {
+                this->m_Page = -1;
+            }
+        }
+    }
+
+    return false;
 }
 
-void CPugMenu::Display(int EntityIndex, int Page)
+void CPugMenu::Display(CBasePlayer *Player, int Page)
 {
-	if (Page < 0)
-	{
-		Page = 0;
+    if (Page < 0)
+    {
+        Page = 0;
 
-		this->m_Page = 0;
+        this->m_Page = 0;
 
-		if (this->m_Exit)
-		{
-			this->m_Page = -1;
-			return;
-		}
-	}
-	else
-	{
-		this->m_Page = Page;
-	}
+        if (this->m_Exit)
+        {
+            this->m_Page = -1;
+            return;
+        }
+    }
+    else
+    {
+        this->m_Page = Page;
+    }
 
-	unsigned int Start = (Page * this->m_PageOption);
+    unsigned int Start = (Page * this->m_MaxPageOption);
 
-	if (Start >= this->m_Data.size())
-	{
-		Start = Page = this->m_Page = 0;
-	}
+    if (Start >= this->m_Data.size())
+    {
+        Start = Page = this->m_Page = 0;
+    }
 
-	auto PageCount = (int)this->m_Data.size() > this->m_PageOption ? (this->m_Data.size() / this->m_PageOption + ((this->m_Data.size() % this->m_PageOption) ? 1 : 0)) : 1;
+    auto PageCount = (int)this->m_Data.size() > this->m_MaxPageOption ? (this->m_Data.size() / this->m_MaxPageOption + ((this->m_Data.size() % this->m_MaxPageOption) ? 1 : 0)) : 1;
 
-	std::string MenuText = "";
+    std::string MenuText = "";
 
-	MenuText = "\\y" + this->m_Text;
+    MenuText = "\\y" + this->m_Text;
 
-	if (PageCount > 1)
-	{
-		MenuText += "\\R";
-		MenuText += std::to_string(Page + 1);
-		MenuText += "/";
-		MenuText += std::to_string(PageCount);
-	}
+    if (PageCount > 1)
+    {
+        MenuText += "\\R";
+        MenuText += std::to_string(Page + 1);
+        MenuText += "/";
+        MenuText += std::to_string(PageCount);
+    }
 
-	MenuText += "\n\\w\n";
+    MenuText += "\n\\w\n";
 
-	unsigned int End = (Start + this->m_PageOption);
+    unsigned int End = (Start + this->m_MaxPageOption);
 
-	if (End > this->m_Data.size())
-	{
-		End = this->m_Data.size();
-	}
+    if (End > this->m_Data.size())
+    {
+        End = this->m_Data.size();
+    }
 
-	int Slots = MENU_KEY_0; // MENU_KEY_0
-	int BitSum = 0;
+    int Slots = MENU_KEY_0; // MENU_KEY_0
+    int BitSum = 0;
 
-	for (unsigned int b = Start; b < End; b++)
-	{
-		Slots |= (1 << BitSum);
+    for (unsigned int b = Start; b < End; b++)
+    {
+        Slots |= (1 << BitSum);
 
-		MenuText += "\\r";
-		MenuText += std::to_string(++BitSum);
-		MenuText += this->m_Data[b].Disabled ? ".\\d " : ".\\w ";
-		MenuText += this->m_Data[b].Text;
-		MenuText += "\n";
-	}
+        MenuText += "\\r";
+        MenuText += std::to_string(++BitSum);
+        MenuText += this->m_Data[b].Disabled ? ".\\d " : ".\\w ";
+        MenuText += this->m_Data[b].Text;
+        MenuText += "\n";
+    }
 
-	if (End != this->m_Data.size())
-	{
-		Slots |= MENU_KEY_9; // MENU_KEY_9;
+    if (End != this->m_Data.size())
+    {
+        Slots |= MENU_KEY_9; // MENU_KEY_9;
 
-		if (Page)
-		{
-			MenuText += "\n\\r9.\\w Próxmo\n\\r0.\\w Voltar";
-		}
-		else
-		{
-			MenuText += "\n\\r9.\\w Próxmo";
+        if (Page)
+        {
+            MenuText += "\n\\r9.\\w Próxmo\n\\r0.\\w Voltar";
+        }
+        else
+        {
+            MenuText += "\n\\r9.\\w Próxmo";
 
-			if (this->m_Exit)
-			{
-				MenuText += "\n\\r0.\\w Sair";
-			}
-		}
-	}
-	else
-	{
-		if (Page)
-		{
-			MenuText += "\n\\r0.\\w Voltar";
-		}
-		else
-		{
-			if (this->m_Exit)
-			{
-				MenuText += "\n\\r0.\\w Sair";
-			}
-		}
-	}
+            if (this->m_Exit)
+            {
+                MenuText += "\n\\r0.\\w Sair";
+            }
+        }
+    }
+    else
+    {
+        if (Page)
+        {
+            MenuText += "\n\\r0.\\w Voltar";
+        }
+        else
+        {
+            if (this->m_Exit)
+            {
+                MenuText += "\n\\r0.\\w Sair";
+            }
+        }
+    }
 
-	this->ShowMenu(EntityIndex, Slots, -1, MenuText);
+    this->ShowMenu(Player, Slots, -1, MenuText);
 }
 
-void CPugMenu::ReplaceAll(std::string& String, const std::string& From, const std::string& To)
+void CPugMenu::ReplaceAll(std::string &String, const std::string &From, const std::string &To)
 {
-	if (!From.empty())
-	{
-		size_t StartPos = 0;
+    if (!From.empty())
+    {
+        size_t StartPos = 0;
 
-		while ((StartPos = String.find(From, StartPos)) != std::string::npos)
-		{
-			String.replace(StartPos, From.length(), To);
+        while ((StartPos = String.find(From, StartPos)) != std::string::npos)
+        {
+            String.replace(StartPos, From.length(), To);
 
-			StartPos += To.length();
-		}
-	}
+            StartPos += To.length();
+        }
+    }
 }
 
-void CPugMenu::ShowMenu(int EntityIndex, int Slots, int Time, std::string Text)
+void CPugMenu::ShowMenu(CBasePlayer *Player, int Slots, int Time, std::string Text)
 {
-	auto Player = UTIL_PlayerByIndexSafe(EntityIndex);
+    if (Player)
+    {
+        if (!Player->IsDormant())
+        {
+            if (!Player->IsBot())
+            {
+                static int iMsgShowMenu;
 
-	if (Player)
-	{
-		if (!Player->IsDormant())
-		{
-			if (!Player->IsBot())
-			{
-				static int iMsgShowMenu;
-
-				if (iMsgShowMenu || (iMsgShowMenu = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "ShowMenu", NULL)))
-				{
-					Player->m_iMenu = Menu_OFF;
+                if (iMsgShowMenu || (iMsgShowMenu = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "ShowMenu", NULL)))
+                {
+                    Player->m_iMenu = Menu_OFF;
 
                     this->ReplaceAll(Text, "^w", "\\w");
                     this->ReplaceAll(Text, "^y", "\\y");
                     this->ReplaceAll(Text, "^r", "\\r");
                     this->ReplaceAll(Text, "^R", "\\R");
 
-					char BufferMenu[MAX_BUFFER_MENU * 6] = { 0 };
+                    char BufferMenu[MAX_BUFFER_MENU * 6] = {0};
 
-					Text.copy(BufferMenu, Text.length() + 1);
+                    Text.copy(BufferMenu, Text.length() + 1);
 
-					char* pMenuList = BufferMenu;
-					char* aMenuList = BufferMenu;
+                    char *pMenuList = BufferMenu;
+                    char *aMenuList = BufferMenu;
 
-					int iCharCount = 0;
+                    int iCharCount = 0;
 
-					while (pMenuList && *pMenuList)
-					{
-						char szChunk[MAX_BUFFER_MENU + 1] = { 0 };
+                    while (pMenuList && *pMenuList)
+                    {
+                        char szChunk[MAX_BUFFER_MENU + 1] = {0};
 
-						strncpy(szChunk, pMenuList, MAX_BUFFER_MENU);
+                        strncpy(szChunk, pMenuList, MAX_BUFFER_MENU);
 
-						szChunk[MAX_BUFFER_MENU] = 0;
+                        szChunk[MAX_BUFFER_MENU] = 0;
 
-						iCharCount += strlen(szChunk);
+                        iCharCount += strlen(szChunk);
 
-						pMenuList = aMenuList + iCharCount;
+                        pMenuList = aMenuList + iCharCount;
 
-						g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgShowMenu, nullptr, Player->edict());
-						g_engfuncs.pfnWriteShort(Slots);
-						g_engfuncs.pfnWriteChar(Time);
-						g_engfuncs.pfnWriteByte(*pMenuList ? TRUE : FALSE);
-						g_engfuncs.pfnWriteString(szChunk);
-						g_engfuncs.pfnMessageEnd();
-					}
-				}
-			}
-		}
-	}
+                        g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgShowMenu, nullptr, Player->edict());
+                        g_engfuncs.pfnWriteShort(Slots);
+                        g_engfuncs.pfnWriteChar(Time);
+                        g_engfuncs.pfnWriteByte(*pMenuList ? TRUE : FALSE);
+                        g_engfuncs.pfnWriteString(szChunk);
+                        g_engfuncs.pfnMessageEnd();
+                    }
+                }
+            }
+        }
+    }
 }

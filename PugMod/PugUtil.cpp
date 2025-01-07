@@ -3,67 +3,88 @@
 
 CPugUtil gPugUtil;
 
-void CPugUtil::ServerCommand(const char* Format, ...)
+const char* CPugUtil::GetPath()
 {
-	static char szCmd[255] = { 0 };
-
-	va_list	ArgPtr;
-
-	va_start(ArgPtr, Format);
-
-	vsnprintf(szCmd, sizeof(szCmd), Format, ArgPtr);
-
-	va_end(ArgPtr);
-
-	strcat(szCmd, "\n");
-
-	g_engfuncs.pfnServerCommand(szCmd);
-}
-
-int CPugUtil::ParseColors(char* Buffer)
-{
-	size_t len = strlen(Buffer);
-
-	int offs = 0;
-
-	if (len > 0)
+	if (this->m_Path.empty())
 	{
-		int c;
+		std::string GameDir = gpMetaUtilFuncs->pfnGetGameInfo(PLID, GINFO_GAMEDIR);
 
-		for (size_t i = 0; i < len; i++)
+		if (!GameDir.empty())
 		{
-			c = Buffer[i];
+			this->m_Path = gpMetaUtilFuncs->pfnGetPluginPath(PLID);
 
-			if (c == '^' && (i != len - 1))
+			if (!this->m_Path.empty())
 			{
-				c = Buffer[++i];
+				this->m_Path.erase(0, GameDir.length() + 1U);
 
-				if (c == 'n' || c == 't' || (c >= '1' && c <= '4'))
+				std::replace(this->m_Path.begin(), this->m_Path.end(), (char)(92), (char)(47));
+
+				this->m_Path.erase(this->m_Path.find_last_of((char)(47)), this->m_Path.length());
+
+				while (std::count(this->m_Path.begin(), this->m_Path.end(), (char)(47)) > 1)
 				{
-					switch (c)
-					{
-						case '1': c = '\x01'; break;
-						case '2': c = '\x02'; break;
-						case '3': c = '\x03'; break;
-						case '4': c = '\x04'; break;
-						case 'n': c = '\n'; break;
-						case 't': c = '\t'; break;
-					}
-
-					offs++;
+					this->m_Path.erase(this->m_Path.find_last_of((char)(47)), this->m_Path.length());
 				}
 			}
-
-			Buffer[i - offs] = c;
 		}
-
-		Buffer[len - offs] = '\0';
 	}
 
-	return offs;
+	return this->m_Path.c_str();
 }
 
-void CPugUtil::SayText(edict_t* pEntity, int Sender, const char* Format, ...)
+void CPugUtil::ServerCommand(const char *Format, ...)
+{
+	static char Command[255] = { 0 };
+
+	va_list	ArgList;
+
+	va_start(ArgList, Format);
+
+	vsnprintf(Command, sizeof(Command), Format, ArgList);
+
+	va_end(ArgList);
+
+	strcat(Command, "\n");
+
+	g_engfuncs.pfnServerCommand(Command);
+}
+
+bool CPugUtil::IsNetClient(edict_t *pEntity)
+{
+	if (!FNullEnt(pEntity))
+	{
+		if (pEntity->free == TRUE)
+		{
+			return false;
+		}
+
+		if (pEntity->pvPrivateData == NULL)
+		{
+			return false;
+		}
+
+		if ((pEntity->v.flags & FL_DORMANT) == FL_DORMANT)
+		{
+			return false;
+		}
+
+		if ((pEntity->v.flags & FL_PROXY) == FL_PROXY)
+		{
+			return false;
+		}
+
+		if ((pEntity->v.flags & FL_FAKECLIENT) == FL_FAKECLIENT)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+    return false;
+}
+
+void CPugUtil::PrintColor(edict_t* pEntity, int Sender, const char* Format, ...)
 {
 	static int iMsgSayText;
 
@@ -72,64 +93,110 @@ void CPugUtil::SayText(edict_t* pEntity, int Sender, const char* Format, ...)
 		char szText[191] = { 0 };
 
 		va_list vArgList;
+
 		va_start(vArgList, Format);
-		Q_vsnprintf(szText, sizeof(szText), Format, vArgList);
+
+		vsnprintf(szText, sizeof(szText), Format, vArgList);
+
 		va_end(vArgList);
 
-		if (Sender < PRINT_TEAM_BLUE || Sender > gpGlobals->maxClients)
+		if (Sender < E_PRINT_TEAM::BLUE || Sender > gpGlobals->maxClients)
 		{
-			Sender = PRINT_TEAM_DEFAULT;
+			Sender = E_PRINT_TEAM::DEFAULT;
 		}
-		else if (Sender < PRINT_TEAM_DEFAULT)
+		else if (Sender < E_PRINT_TEAM::DEFAULT)
 		{
 			Sender = abs(Sender) + MAX_CLIENTS;
 		}
 
-		this->ParseColors(szText);
+		this->ParseColor(szText);
 
-		if (!FNullEnt(pEntity))
+		if (this->IsNetClient(pEntity))
 		{
-			if (!(pEntity->v.flags & FL_FAKECLIENT))
-			{
-				g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgSayText, nullptr, pEntity);
-				g_engfuncs.pfnWriteByte(Sender ? Sender : ENTINDEX(pEntity));
-				g_engfuncs.pfnWriteString("%s");
-				g_engfuncs.pfnWriteString(szText);
-				g_engfuncs.pfnMessageEnd();
-			}
+			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgSayText, nullptr, pEntity);
+			g_engfuncs.pfnWriteByte(Sender ? Sender : ENTINDEX(pEntity));
+			g_engfuncs.pfnWriteString("%s");
+			g_engfuncs.pfnWriteString(szText);
+			g_engfuncs.pfnMessageEnd();
 		}
 		else
 		{
 			for (int i = 1; i <= gpGlobals->maxClients; ++i)
 			{
-				edict_t* pTempEntity = INDEXENT(i);
+				pEntity = INDEXENT(i);
 
-				if (!FNullEnt(pTempEntity))
+				if (this->IsNetClient(pEntity))
 				{
-					if (!(pTempEntity->v.flags & FL_FAKECLIENT))
-					{
-						g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgSayText, nullptr, pTempEntity);
-						g_engfuncs.pfnWriteByte(Sender ? Sender : i);
-						g_engfuncs.pfnWriteString("%s");
-						g_engfuncs.pfnWriteString(szText);
-						g_engfuncs.pfnMessageEnd();
-					}
+					g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgSayText, nullptr, pEntity);
+					g_engfuncs.pfnWriteByte(Sender ? Sender : i);
+					g_engfuncs.pfnWriteString("%s");
+					g_engfuncs.pfnWriteString(szText);
+					g_engfuncs.pfnMessageEnd();
 				}
 			}
 		}
 	}
 }
 
-void CPugUtil::ClientPrint(edict_t* pEntity, int iMsgDest, const char* Format, ...)
+void CPugUtil::TeamInfo(edict_t *pEntity, int playerIndex, const char *pszTeamName)
 {
-	if (!FNullEnt(pEntity))
+	if (this->IsNetClient(pEntity))
 	{
-		if (pEntity->v.flags & FL_FAKECLIENT)
+		static int iMsgTeamInfo;
+
+		if (iMsgTeamInfo || (iMsgTeamInfo = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "TeamInfo", NULL)))
 		{
-			return;
+			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgTeamInfo, nullptr, pEntity);
+			g_engfuncs.pfnWriteByte(playerIndex);
+			g_engfuncs.pfnWriteString(pszTeamName);
+			g_engfuncs.pfnMessageEnd();
 		}
 	}
+}
 
+void CPugUtil::ParseColor(char* Buffer)
+{
+	size_t Length = strlen(Buffer);
+
+	int Offset = 0;
+
+	if (Length > 0)
+	{
+		int Character;
+
+		for (size_t i = 0; i < Length; i++)
+		{
+			Character = Buffer[i];
+
+			if (Character == '^' && (i != Length - 1))
+			{
+				Character = Buffer[++i];
+
+				if (Character == 'n' || Character == 't' || (Character >= '1' && Character <= '4'))
+				{
+					switch (Character)
+					{
+						case '1': Character = '\x01'; break;
+						case '2': Character = '\x02'; break;
+						case '3': Character = '\x03'; break;
+						case '4': Character = '\x04'; break;
+						case 'n': Character = '\n'; break;
+						case 't': Character = '\t'; break;
+					}
+
+					Offset++;
+				}
+			}
+
+			Buffer[i - Offset] = Character;
+		}
+
+		Buffer[Length - Offset] = '\0';
+	}
+}
+
+void CPugUtil::ClientPrint(edict_t *pEntity, int iMsgDest, const char *Format, ...)
+{
 	va_list argList;
 
 	va_start(argList, Format);
@@ -140,7 +207,7 @@ void CPugUtil::ClientPrint(edict_t* pEntity, int iMsgDest, const char* Format, .
 
 	va_end(argList);
 
-	if (iMsgDest == PRINT_CONSOLE)
+	if (iMsgDest == E_PRINT::CONSOLE)
 	{
 		if (Length > 125)
 		{
@@ -156,7 +223,7 @@ void CPugUtil::ClientPrint(edict_t* pEntity, int iMsgDest, const char* Format, .
 
 	if (iMsgTextMsg || (iMsgTextMsg = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "TextMsg", NULL)))
 	{
-		if (!FNullEnt(pEntity))
+		if (this->IsNetClient(pEntity))
 		{
 			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgTextMsg, nullptr, pEntity);
 		}
@@ -169,6 +236,38 @@ void CPugUtil::ClientPrint(edict_t* pEntity, int iMsgDest, const char* Format, .
 		g_engfuncs.pfnWriteString("%s");
 		g_engfuncs.pfnWriteString(Buffer);
 		g_engfuncs.pfnMessageEnd();
+	}
+}
+
+void CPugUtil::ClientCommand(edict_t *pEntity, const char *Format, ...)
+{
+	static char Command[256] = { 0 };
+
+	va_list	ArgList;
+
+	va_start(ArgList, Format);
+
+	vsnprintf(Command, sizeof(Command), Format, ArgList);
+
+	va_end(ArgList);
+
+	strcat(Command, "\n");
+
+	if (this->IsNetClient(pEntity))
+	{
+		g_engfuncs.pfnClientCommand(pEntity, Command);
+	}
+	else
+	{
+		for (int i = 1; i <= gpGlobals->maxClients; ++i)
+		{
+			pEntity = INDEXENT(i);
+
+			if (this->IsNetClient(pEntity))
+			{
+				g_engfuncs.pfnClientCommand(pEntity, Command);
+			}
+		}
 	}
 }
 
@@ -235,14 +334,6 @@ hudtextparms_t CPugUtil::SetHud(vec3_t FromColor, vec3_t ToColor, float X, float
 
 void CPugUtil::SendHud(edict_t *pEntity, const hudtextparms_t &TextParams, const char *Format, ...)
 {
-	if (!FNullEnt(pEntity))
-	{
-		if (pEntity->v.flags & FL_FAKECLIENT)
-		{
-			return;
-		}
-	}
-
 	static char szString[511] = { 0 };
 
 	va_list ArgPtr;
@@ -253,7 +344,7 @@ void CPugUtil::SendHud(edict_t *pEntity, const hudtextparms_t &TextParams, const
 
 	va_end(ArgPtr);
 
-	if (!FNullEnt(pEntity))
+	if (this->IsNetClient(pEntity))
 	{
 		g_engfuncs.pfnMessageBegin(MSG_ONE_UNRELIABLE, SVC_TEMPENTITY, nullptr, pEntity);
 	}
@@ -295,14 +386,6 @@ void CPugUtil::SendHud(edict_t *pEntity, const hudtextparms_t &TextParams, const
 
 void CPugUtil::SendDHud(edict_t *pEntity, const hudtextparms_t &TextParams, const char *Format, ...)
 {
-	if (!FNullEnt(pEntity))
-	{
-		if (pEntity->v.flags & FL_FAKECLIENT)
-		{
-			return;
-		}
-	}
-
 	static char Text[128] = {0};
 
 	va_list ArgPtr;
@@ -313,7 +396,7 @@ void CPugUtil::SendDHud(edict_t *pEntity, const hudtextparms_t &TextParams, cons
 
 	va_end(ArgPtr);
 
-	if (!FNullEnt(pEntity))
+	if (this->IsNetClient(pEntity))
 	{
 		g_engfuncs.pfnMessageBegin(MSG_ONE_UNRELIABLE, SVC_DIRECTOR, nullptr, pEntity);
 	}
@@ -336,68 +419,13 @@ void CPugUtil::SendDHud(edict_t *pEntity, const hudtextparms_t &TextParams, cons
 	g_engfuncs.pfnMessageEnd();
 }
 
-void CPugUtil::ScreenFade(edict_t *pEntity, unsigned short Duration, unsigned short HoldTime, short FadeFlags, short Red, short Green, short Blue, short Alpha)
-{
-	if (!FNullEnt(pEntity))
-	{
-		if (pEntity->v.flags & FL_FAKECLIENT)
-		{
-			return;
-		}
-
-		static int iMsgScreenFade;
-
-		if (iMsgScreenFade || (iMsgScreenFade = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "ScreenFade", NULL)))
-		{
-			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgScreenFade, nullptr, pEntity);
-			g_engfuncs.pfnWriteShort(Duration);
-			g_engfuncs.pfnWriteShort(HoldTime);
-			g_engfuncs.pfnWriteShort(FadeFlags);
-			g_engfuncs.pfnWriteByte(Red);
-			g_engfuncs.pfnWriteByte(Green);
-			g_engfuncs.pfnWriteByte(Blue);
-			g_engfuncs.pfnWriteByte(Alpha);
-			g_engfuncs.pfnMessageEnd();
-		}
-	}
-}
-
-void CPugUtil::TeamInfo(edict_t *pEntity, int playerIndex, const char *pszTeamName)
-{
-	if (!FNullEnt(pEntity))
-	{
-		if (pEntity->v.flags & FL_FAKECLIENT)
-		{
-			return;
-		}
-
-		static int iMsgTeamInfo;
-
-		if (iMsgTeamInfo || (iMsgTeamInfo = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "TeamInfo", NULL)))
-		{
-			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgTeamInfo, nullptr, pEntity);
-			g_engfuncs.pfnWriteByte(playerIndex);
-			g_engfuncs.pfnWriteString(pszTeamName);
-			g_engfuncs.pfnMessageEnd();
-		}
-	}
-}
-
 void CPugUtil::SendDeathMsg(edict_t *pEntity, CBaseEntity *pKiller, CBasePlayer *pVictim, CBasePlayer *pAssister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
 {
-	if (!FNullEnt(pEntity))
-	{
-		if (pEntity->v.flags & FL_FAKECLIENT)
-		{
-			return;
-		}
-	}
-
 	static int iDeathMsg;
 	
-	if (iDeathMsg || (iDeathMsg = gpMetaUtilFuncs->pfnGetUserMsgID(&Plugin_info, "DeathMsg", NULL)))
+	if (iDeathMsg || (iDeathMsg = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "DeathMsg", NULL)))
 	{
-		if (!FNullEnt(pEntity))
+		if (this->IsNetClient(pEntity))
 		{
 			g_engfuncs.pfnMessageBegin(MSG_ONE, iDeathMsg, nullptr, pEntity);
 		}
@@ -437,6 +465,27 @@ void CPugUtil::SendDeathMsg(edict_t *pEntity, CBaseEntity *pKiller, CBasePlayer 
 	}
 }
 
+void CPugUtil::ScreenFade(edict_t *pEntity, unsigned short Duration, unsigned short HoldTime, short FadeFlags, short Red, short Green, short Blue, short Alpha)
+{
+	if (this->IsNetClient(pEntity))
+	{
+		static int iMsgScreenFade;
+
+		if (iMsgScreenFade || (iMsgScreenFade = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "ScreenFade", NULL)))
+		{
+			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgScreenFade, nullptr, pEntity);
+			g_engfuncs.pfnWriteShort(Duration);
+			g_engfuncs.pfnWriteShort(HoldTime);
+			g_engfuncs.pfnWriteShort(FadeFlags);
+			g_engfuncs.pfnWriteByte(Red);
+			g_engfuncs.pfnWriteByte(Green);
+			g_engfuncs.pfnWriteByte(Blue);
+			g_engfuncs.pfnWriteByte(Alpha);
+			g_engfuncs.pfnMessageEnd();
+		}
+	}
+}
+
 std::vector<CBasePlayer *> CPugUtil::GetPlayers(bool InGame, bool Bots)
 {
 	std::vector<CBasePlayer *> Players = {};
@@ -449,28 +498,60 @@ std::vector<CBasePlayer *> CPugUtil::GetPlayers(bool InGame, bool Bots)
 		{
 			if (!Player->IsDormant())
 			{
-				if ((Player->edict()->v.flags & FL_PROXY) == FL_PROXY)
+				if
+				(
+					((Player->edict()->v.flags & FL_PROXY) == FL_PROXY) ||
+					(InGame && (Player->m_iTeam != TERRORIST) && (Player->m_iTeam != CT)) ||
+					(!Bots && Player->IsBot())
+				)
 				{
 					continue;
 				}
 
-				if (InGame)
-				{
-					if ((Player->m_iTeam != TERRORIST) && (Player->m_iTeam != CT))
-					{
-						continue;
-					}
-				}
-
-				if (!Bots)
-				{
-					if (Player->IsBot())
-					{
-						continue;
-					}
-				}
-
 				Players.push_back(Player);
+			}
+		}
+	}
+
+	return Players;
+}
+
+std::vector<CBasePlayer *> CPugUtil::GetPlayers(TeamName Team)
+{
+	std::vector<CBasePlayer *> Players = {};
+
+	for (int i = 1; i <= gpGlobals->maxClients; ++i)
+	{
+		auto Player = UTIL_PlayerByIndex(i);
+
+		if (Player)
+		{
+			if (!Player->IsDormant())
+			{
+				if (Player->m_iTeam == Team)
+				{
+					Players.push_back(Player);
+				}
+			}
+		}
+	}
+
+	return Players;
+}
+
+std::map<int, std::vector<CBasePlayer *>> CPugUtil::GetPlayers()
+{
+	std::map<int, std::vector<CBasePlayer *>> Players = {};
+
+	for (int i = 1; i <= gpGlobals->maxClients; ++i)
+	{
+		auto Player = UTIL_PlayerByIndexSafe(i);
+
+		if (Player)
+		{
+			if (!Player->IsDormant())
+			{
+				Players[Player->m_iTeam].push_back(Player);
 			}
 		}
 	}

@@ -2,13 +2,13 @@
 
 CPugTraceLine gPugTraceLine;
 
-void CPugTraceLine::TraceLine(const float *vStart, const float *vEnd, int fNoMonsters, edict_t *pentToSkip, TraceResult *ptr)
+void CPugTraceLine::TraceLine(const float* vStart, const float* vEnd, int fNoMonsters, edict_t* pentToSkip, TraceResult* pTraceResult)
 {
 	if ((fNoMonsters == dont_ignore_monsters) && (gpGlobals->trace_flags != FTRACE_FLASH))
 	{
 		if (!FNullEnt(pentToSkip))
         {
-            auto Player = UTIL_PlayerByIndexSafe(g_engfuncs.pfnIndexOfEdict(pentToSkip));
+            auto Player = UTIL_PlayerByIndexSafe(ENTINDEX(pentToSkip));
 
             if (Player)
             {
@@ -27,15 +27,15 @@ void CPugTraceLine::TraceLine(const float *vStart, const float *vEnd, int fNoMon
                                     Distance = (MAX_ID_RANGE / 2.0f);
                                 }
 
-                                auto trResult = this->GetUserAiming(pentToSkip, Distance);
+                                auto trEnd = this->GetUserAiming(pentToSkip, Distance);
 
-                                if (!FNullEnt(trResult.pHit))
+                                if (!FNullEnt(trEnd.pHit))
                                 {
                                     g_engfuncs.pfnMakeVectors(pentToSkip->v.v_angle);
 
-                                    auto vEndRes = (Vector)vStart + gpGlobals->v_forward * 9999.0f;
+                                    auto vEndResult = (Vector)vStart + gpGlobals->v_forward * 9999.0f;
 
-                                    g_engfuncs.pfnTraceLine(vStart, vEndRes, fNoMonsters, pentToSkip, ptr);
+                                    g_engfuncs.pfnTraceLine(vStart, vEndResult, fNoMonsters, pentToSkip, pTraceResult);
                                 }
                             }
                         }
@@ -46,22 +46,22 @@ void CPugTraceLine::TraceLine(const float *vStart, const float *vEnd, int fNoMon
     }
 }
 
-TraceResult CPugTraceLine::GetUserAiming(edict_t *pEntity, float DistanceLimit)
+TraceResult CPugTraceLine::GetUserAiming(edict_t *pEntity, float fDistanceLimit)
 {
-    TraceResult Result = {};
+	TraceResult trEnd;
 
-    if (!FNullEnt(pEntity))
+	if (!FNullEnt(pEntity))
     {
-        Vector v_forward;
+        Vector vForward;
 
-        Vector v_src = pEntity->v.origin + pEntity->v.view_ofs;
+        Vector vSource = pEntity->v.origin + pEntity->v.view_ofs;
 
-        g_engfuncs.pfnAngleVectors(pEntity->v.v_angle, v_forward, nullptr, nullptr);
+        g_engfuncs.pfnAngleVectors(pEntity->v.v_angle, vForward, NULL, NULL);
 
-        Vector v_dest = v_src + v_forward * DistanceLimit;
+        Vector vDest = vSource + vForward * fDistanceLimit;
+        
+        g_engfuncs.pfnTraceLine(vSource, vDest, dont_ignore_monsters, pEntity, &trEnd);
+	}
 
-        g_engfuncs.pfnTraceLine(v_src, v_dest, dont_ignore_monsters, pEntity, &Result);
-    }
-
-    return Result;
+	return trEnd;
 }

@@ -4,20 +4,35 @@ class CPugCvar
 {
 public:
 	void ServerActivate();
-	cvar_t* Register(const char* Name, const char* Value);
+
+	cvar_t* Register(const char *pszName, const char *pszValue);
+
+	cvar_t* m_SvRestart;
+	cvar_t* m_AllowSpectators;
+	cvar_t* m_MpMaxMoney;
+	cvar_t* m_MpFreezeTime;
+	cvar_t* m_AutoTeamJoin;
+	cvar_t* m_HumansJoinTeam;
+	cvar_t* m_BotJoinTeam;
 
 	cvar_t* m_Tag;
 	cvar_t* m_CmdPrefixPlayer;
 	cvar_t* m_CmdPrefixAdmin;
-
 	cvar_t* m_PlayersMin;
 	cvar_t* m_PlayersMax;
 	cvar_t* m_Rounds;
 	cvar_t* m_RoundsOT;
 	cvar_t* m_OvertimeType;
-	cvar_t* m_WarmupTimeLimit;
+	cvar_t* m_ReadyType;
+	cvar_t* m_ReadyList;
+	cvar_t* m_ReadyTimeLimit;
 	cvar_t* m_TeamType;
+	cvar_t* m_TeamOption;
 	cvar_t* m_RestrictItem;
+	cvar_t* m_VoteDelay;
+	cvar_t* m_VoteMap;
+	cvar_t* m_LastMap;
+	cvar_t* m_KnifeRound;
 
 	cvar_t* m_DM_Enable;
 	cvar_t* m_DM_HideKillFeed;

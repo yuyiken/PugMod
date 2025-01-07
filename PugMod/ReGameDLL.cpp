@@ -37,35 +37,42 @@ bool ReGameDLL_Init()
 
 									g_ReGameHookchains = g_ReGameApi->GetHookchains();
 
-									g_ReGameHookchains->InstallGameRules()->registerHook(ReGameDLL_InstallGameRules);
+									if (g_ReGameHookchains)
+									{
+										g_ReGameHookchains->InstallGameRules()->registerHook(ReGameDLL_InstallGameRules);
 
-									g_ReGameHookchains->HandleMenu_ChooseTeam()->registerHook(ReGameDLL_HandleMenu_ChooseTeam);
+										g_ReGameHookchains->CBasePlayer_UpdateClientData()->registerHook(ReGameDLL_CBasePlayer_UpdateClientData);
 
-									g_ReGameHookchains->CBasePlayer_GetIntoGame()->registerHook(ReGameDLL_CBasePlayer_GetIntoGame);
+										g_ReGameHookchains->HandleMenu_ChooseTeam()->registerHook(ReGameDLL_HandleMenu_ChooseTeam);
 
-									g_ReGameHookchains->CBasePlayer_UpdateClientData()->registerHook(ReGameDLL_CBasePlayer_UpdateClientData);
+										g_ReGameHookchains->CBasePlayer_GetIntoGame()->registerHook(ReGameDLL_CBasePlayer_GetIntoGame);
 
-									g_ReGameHookchains->CBasePlayer_AddAccount()->registerHook(ReGameDLL_CBasePlayer_AddAccount);
+										g_ReGameHookchains->CSGameRules_RestartRound()->registerHook(ReGameDLL_CSGameRules_RestartRound);
 
-									g_ReGameHookchains->CBasePlayer_HasRestrictItem()->registerHook(ReGameDLL_CBasePlayer_HasRestrictItem);
+										g_ReGameHookchains->CSGameRules_GetPlayerSpawnSpot()->registerHook(ReGameDLL_CSGameRules_GetPlayerSpawnSpot);
 
-									g_ReGameHookchains->CSGameRules_GetPlayerSpawnSpot()->registerHook(ReGameDLL_CSGameRules_GetPlayerSpawnSpot);
+										g_ReGameHookchains->CSGameRules_PlayerSpawn()->registerHook(ReGameDLL_CSGameRules_PlayerSpawn);
 
-									g_ReGameHookchains->CSGameRules_PlayerSpawn()->registerHook(ReGameDLL_CSGameRules_PlayerSpawn);
+										g_ReGameHookchains->CBasePlayer_GiveDefaultItems()->registerHook(ReGameDLL_CBasePlayer_GiveDefaultItems);
 
-									g_ReGameHookchains->CBasePlayer_GiveDefaultItems()->registerHook(ReGameDLL_CBasePlayer_GiveDefaultItems);
+										g_ReGameHookchains->ShowVGUIMenu()->registerHook(ReGameDLL_ShowVGUIMenu);
 
-									g_ReGameHookchains->CSGameRules_FPlayerCanTakeDamage()->registerHook(ReGameDLL_CSGameRules_FPlayerCanTakeDamage);
+										g_ReGameHookchains->CSGameRules_FPlayerCanTakeDamage()->registerHook(ReGameDLL_CSGameRules_FPlayerCanTakeDamage);
 
-									g_ReGameHookchains->CBasePlayer_TakeDamage()->registerHook(ReGameDLL_CBasePlayer_TakeDamage);
+										g_ReGameHookchains->CBasePlayer_TakeDamage()->registerHook(ReGameDLL_CBasePlayer_TakeDamage);
 
-									g_ReGameHookchains->CSGameRules_PlayerKilled()->registerHook(ReGameDLL_CSGameRules_PlayerKilled);
+										g_ReGameHookchains->CSGameRules_SendDeathMessage()->registerHook(ReGameDLL_CSGameRules_SendDeathMessage);
 
-									g_ReGameHookchains->CSGameRules_SendDeathMessage()->registerHook(ReGameDLL_CSGameRules_SendDeathMessage);
+										g_ReGameHookchains->CBasePlayer_AddAccount()->registerHook(ReGameDLL_CBasePlayer_AddAccount);
 
-									g_ReGameHookchains->CBasePlayer_SetAnimation()->registerHook(ReGameDLL_CBasePlayer_SetAnimation);
+										g_ReGameHookchains->CBasePlayer_SetAnimation()->registerHook(ReGameDLL_CBasePlayer_SetAnimation);
 
-									g_ReGameHookchains->ShowVGUIMenu()->registerHook(ReGameDLL_ShowVGUIMenu);
+										g_ReGameHookchains->CBasePlayer_HasRestrictItem()->registerHook(ReGameDLL_CBasePlayer_HasRestrictItem);
+
+										g_ReGameHookchains->CSGameRules_OnRoundFreezeEnd()->registerHook(ReGameDLL_CSGameRules_OnRoundFreezeEnd);
+
+										g_ReGameHookchains->RoundEnd()->registerHook(ReGameDLL_RoundEnd);
+									}
 
 									gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] ReGameDLL API Loaded: %d.%d", Plugin_info.logtag, REGAMEDLL_API_VERSION_MAJOR, REGAMEDLL_API_VERSION_MINOR);
 
@@ -90,15 +97,13 @@ bool ReGameDLL_Stop()
 	{
 		g_ReGameHookchains->InstallGameRules()->unregisterHook(ReGameDLL_InstallGameRules);
 
+		g_ReGameHookchains->CBasePlayer_UpdateClientData()->unregisterHook(ReGameDLL_CBasePlayer_UpdateClientData);
+
 		g_ReGameHookchains->HandleMenu_ChooseTeam()->unregisterHook(ReGameDLL_HandleMenu_ChooseTeam);
 
 		g_ReGameHookchains->CBasePlayer_GetIntoGame()->unregisterHook(ReGameDLL_CBasePlayer_GetIntoGame);
 
-		g_ReGameHookchains->CBasePlayer_UpdateClientData()->unregisterHook(ReGameDLL_CBasePlayer_UpdateClientData);
-
-		g_ReGameHookchains->CBasePlayer_AddAccount()->unregisterHook(ReGameDLL_CBasePlayer_AddAccount);
-
-		g_ReGameHookchains->CBasePlayer_HasRestrictItem()->unregisterHook(ReGameDLL_CBasePlayer_HasRestrictItem);
+		g_ReGameHookchains->CSGameRules_RestartRound()->unregisterHook(ReGameDLL_CSGameRules_RestartRound);
 
 		g_ReGameHookchains->CSGameRules_GetPlayerSpawnSpot()->unregisterHook(ReGameDLL_CSGameRules_GetPlayerSpawnSpot);
 
@@ -106,17 +111,23 @@ bool ReGameDLL_Stop()
 
 		g_ReGameHookchains->CBasePlayer_GiveDefaultItems()->unregisterHook(ReGameDLL_CBasePlayer_GiveDefaultItems);
 
+		g_ReGameHookchains->ShowVGUIMenu()->unregisterHook(ReGameDLL_ShowVGUIMenu);
+
 		g_ReGameHookchains->CSGameRules_FPlayerCanTakeDamage()->unregisterHook(ReGameDLL_CSGameRules_FPlayerCanTakeDamage);
 
 		g_ReGameHookchains->CBasePlayer_TakeDamage()->unregisterHook(ReGameDLL_CBasePlayer_TakeDamage);
 
-		g_ReGameHookchains->CSGameRules_PlayerKilled()->unregisterHook(ReGameDLL_CSGameRules_PlayerKilled);
-
 		g_ReGameHookchains->CSGameRules_SendDeathMessage()->unregisterHook(ReGameDLL_CSGameRules_SendDeathMessage);
+
+		g_ReGameHookchains->CBasePlayer_AddAccount()->unregisterHook(ReGameDLL_CBasePlayer_AddAccount);
 
 		g_ReGameHookchains->CBasePlayer_SetAnimation()->unregisterHook(ReGameDLL_CBasePlayer_SetAnimation);
 
-		g_ReGameHookchains->ShowVGUIMenu()->unregisterHook(ReGameDLL_ShowVGUIMenu);
+		g_ReGameHookchains->CBasePlayer_HasRestrictItem()->unregisterHook(ReGameDLL_CBasePlayer_HasRestrictItem);
+
+		g_ReGameHookchains->CSGameRules_OnRoundFreezeEnd()->unregisterHook(ReGameDLL_CSGameRules_OnRoundFreezeEnd);
+
+		g_ReGameHookchains->RoundEnd()->unregisterHook(ReGameDLL_RoundEnd);
 	}
 
 	return true;
@@ -134,11 +145,19 @@ CGameRules *ReGameDLL_InstallGameRules(IReGameHook_InstallGameRules *chain)
 	return Result;
 }
 
+void ReGameDLL_CBasePlayer_UpdateClientData(IReGameHook_CBasePlayer_UpdateClientData *chain, CBasePlayer *Player)
+{
+	chain->callNext(Player);
+
+	gPugDM.UpdateClientData(Player);
+}
+
 BOOL ReGameDLL_HandleMenu_ChooseTeam(IReGameHook_HandleMenu_ChooseTeam *chain, CBasePlayer *Player, int Slot)
 {
-	if (gPugPlayer.HandleMenu_ChooseTeam(Player, Slot))
+	if (gPugMod.ChooseTeam(Player, Slot))
 	{
 		Slot = 0;
+		return FALSE;
 	}
 
 	return chain->callNext(Player, Slot);
@@ -148,43 +167,31 @@ bool ReGameDLL_CBasePlayer_GetIntoGame(IReGameHook_CBasePlayer_GetIntoGame *chai
 {
 	auto Result = chain->callNext(Player);
 
-	gPugPlayer.GetIntoGame(Player);
+	gPugMod.GetIntoGame(Player);
+
+	gPugReady.GetIntoGame(Player);
+
+	gPugDM.GetIntoGame(Player);
 
 	return Result;
 }
 
-void ReGameDLL_CBasePlayer_UpdateClientData(IReGameHook_CBasePlayer_UpdateClientData *chain, CBasePlayer *Player)
+void ReGameDLL_CSGameRules_RestartRound(IReGameHook_CSGameRules_RestartRound *chain)
 {
-	chain->callNext(Player);
+	gPugReady.RestartRound();
 
-	gPugPlayer.UpdateClientData(Player);
-}
+	gPugTimer.RestartRound();
 
-void ReGameDLL_CBasePlayer_AddAccount(IReGameHook_CBasePlayer_AddAccount *chain, CBasePlayer *Player, int Amount, RewardType Type, bool TrackChange)
-{
-	if(gPugPlayer.AddAccount(Player, Amount, Type, TrackChange))
-	{
-		Amount = 0;
-	}
+	gPugMod.RestartRound();
 
-	chain->callNext(Player, Amount, Type, TrackChange);
-}
-
-bool ReGameDLL_CBasePlayer_HasRestrictItem(IReGameHook_CBasePlayer_HasRestrictItem *chain, CBasePlayer *Player, ItemID ItemIndex, ItemRestType RestType)
-{
-	if (gPugPlayer.HasRestrictItem(Player, ItemIndex, RestType))
-	{
-		return true;
-	}
-
-	return chain->callNext(Player, ItemIndex, RestType);
+	chain->callNext();
 }
 
 edict_t *ReGameDLL_CSGameRules_GetPlayerSpawnSpot(IReGameHook_CSGameRules_GetPlayerSpawnSpot *chain, CBasePlayer *Player)
 {
 	auto Result = chain->callNext(Player);
 
-	if (gPugPlayer.GetPlayerSpawnSpot(Player))
+	if (gPugDM.GetPlayerSpawnSpot(Player))
 	{
 		return nullptr;
 	}
@@ -196,19 +203,31 @@ void ReGameDLL_CSGameRules_PlayerSpawn(IReGameHook_CSGameRules_PlayerSpawn *chai
 {
 	chain->callNext(Player);
 
-	gPugPlayer.PlayerSpawn(Player);
+	gPugDM.PlayerSpawn(Player);
+
+	gPugReady.PlayerSpawn(Player);
 }
 
 void ReGameDLL_CBasePlayer_GiveDefaultItems(IReGameHook_CBasePlayer_GiveDefaultItems *chain, CBasePlayer *Player)
 {
 	chain->callNext(Player);
 
-	gPugPlayer.GiveDefaultItems(Player);
+	gPugDM.GiveDefaultItems(Player);
 }
 
-BOOL ReGameDLL_CSGameRules_FPlayerCanTakeDamage(IReGameHook_CSGameRules_FPlayerCanTakeDamage *chain,  CBasePlayer *Player, CBaseEntity *Entity)
+void ReGameDLL_ShowVGUIMenu(IReGameHook_ShowVGUIMenu *chain, CBasePlayer *Player, int MenuType, int BitMask, char *pszMenuText)
 {
-	if(gPugPlayer.FPlayerCanTakeDamage(Player, Entity))
+	if(gPugDM.ShowVGUIMenu(Player, MenuType, BitMask, pszMenuText))
+	{
+		return;
+	}
+
+	chain->callNext(Player, MenuType, BitMask, pszMenuText);
+}
+
+BOOL ReGameDLL_CSGameRules_FPlayerCanTakeDamage(IReGameHook_CSGameRules_FPlayerCanTakeDamage *chain, CBasePlayer *Player, CBaseEntity *Entity)
+{
+	if (gPugDM.FPlayerCanTakeDamage(Player, Entity))
 	{
 		return FALSE;
 	}
@@ -220,41 +239,60 @@ BOOL ReGameDLL_CBasePlayer_TakeDamage(IReGameHook_CBasePlayer_TakeDamage *chain,
 {
 	auto Result = chain->callNext(Player, pevInflictor, pevAttacker, flDamage, bitsDamageType);
 
-	gPugPlayer.TakeDamage(Player, pevInflictor, pevAttacker, flDamage, bitsDamageType);
+	gPugDM.TakeDamage(Player, pevInflictor, pevAttacker, flDamage, bitsDamageType);
 
 	return Result;
 }
 
-void ReGameDLL_CSGameRules_PlayerKilled(IReGameHook_CSGameRules_PlayerKilled *chain, CBasePlayer *Victim, entvars_t *pevKiller, entvars_t *pevInflictor)
+void ReGameDLL_CSGameRules_SendDeathMessage(IReGameHook_CSGameRules_SendDeathMessage *chain, CBaseEntity *KillerBaseEntity, CBasePlayer *Victim, CBasePlayer *Assister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
 {
-	chain->callNext(Victim, pevKiller, pevInflictor);
-
-	gPugPlayer.Killed(Victim, pevKiller, pevInflictor);
-}
-
-void ReGameDLL_CSGameRules_SendDeathMessage(IReGameHook_CSGameRules_SendDeathMessage* chain, CBaseEntity* Killer, CBasePlayer* Victim, CBasePlayer* Assister, entvars_t* pevInflictor, const char* killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
-{
-	if (gPugDeathmatch.SendDeathMessage(Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill))
+	if (gPugDM.SendDeathMessage(KillerBaseEntity, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill))
 	{
 		return;
 	}
 
-	chain->callNext(Killer, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
+	chain->callNext(KillerBaseEntity, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
+}
+
+void ReGameDLL_CBasePlayer_AddAccount(IReGameHook_CBasePlayer_AddAccount *chain, CBasePlayer *Player, int Amount, RewardType Type, bool TrackChange)
+{
+	if(gPugDM.AddAccount(Player, Amount, Type, TrackChange))
+	{
+		Amount = 0;
+	}
+
+	chain->callNext(Player, Amount, Type, TrackChange);
 }
 
 void ReGameDLL_CBasePlayer_SetAnimation(IReGameHook_CBasePlayer_SetAnimation *chain, CBasePlayer *Player, PLAYER_ANIM playerAnimation)
 {
 	chain->callNext(Player, playerAnimation);
 
-	gPugPlayer.SetAnimation(Player, playerAnimation);
+	gPugDM.SetAnimation(Player, playerAnimation);
 }
 
-void ReGameDLL_ShowVGUIMenu(IReGameHook_ShowVGUIMenu *chain, CBasePlayer *Player, int MenuType, int BitMask, char *szOldMenu)
+bool ReGameDLL_CBasePlayer_HasRestrictItem(IReGameHook_CBasePlayer_HasRestrictItem *chain, CBasePlayer *Player, ItemID ItemIndex, ItemRestType RestType)
 {
-	if(gPugPlayer.ShowVGUIMenu(Player, MenuType, BitMask, szOldMenu))
+	if (gPugMod.HasRestrictItem(Player, ItemIndex, RestType))
 	{
-		return;
+		return true;
 	}
 
-	chain->callNext(Player, MenuType, BitMask, szOldMenu);
+	return chain->callNext(Player, ItemIndex, RestType);
+}
+
+void ReGameDLL_CSGameRules_OnRoundFreezeEnd(IReGameHook_CSGameRules_OnRoundFreezeEnd *chain)
+{
+	chain->callNext();
+
+	gPugMod.RoundStart();
+}
+
+bool ReGameDLL_RoundEnd(IReGameHook_RoundEnd *chain, int winStatus, ScenarioEventEndRound event, float tmDelay)
+{
+	auto Result = chain->callNext(winStatus, event, tmDelay);
+
+	gPugMod.RoundEnd(winStatus, event, tmDelay);
+
+	return Result;
 }

@@ -41,6 +41,11 @@ bool ReAPI_Init()
 
 							g_RehldsSvs = g_RehldsApi->GetServerStatic();
 
+							if (g_RehldsHookchains)
+							{
+								g_RehldsHookchains->SV_DropClient()->registerHook(ReAPI_SV_DropClient);
+							}
+
 							gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] ReHLDS API Loaded: %d.%d", Plugin_info.logtag, REHLDS_API_VERSION_MAJOR, REHLDS_API_VERSION_MINOR);
 
 							return true;
@@ -60,8 +65,23 @@ bool ReAPI_Stop()
 {
 	if (g_RehldsHookchains)
 	{
-		
+		g_RehldsHookchains->SV_DropClient()->unregisterHook(ReAPI_SV_DropClient);
 	}
 
 	return true;
+}
+
+void ReAPI_SV_DropClient(IRehldsHook_SV_DropClient *chain, IGameClient *client, bool crash, const char *Reason)
+{
+	if (client)
+	{
+		if (!FNullEnt(client->GetEdict()))
+		{
+			gPugMod.DropClient(client->GetEdict());
+
+			gPugCaptain.DropClient(client->GetEdict());
+		}
+	}
+	
+	chain->callNext(client, crash, Reason);
 }

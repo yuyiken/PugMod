@@ -1,18 +1,18 @@
 #pragma once
 
-enum E_TASK_ID
+enum E_TASK
 {
-    TASK_CHANGE_STATE = 1,
-    TASK_PUG_TIMER = 2,
-    TASK_TEST_ID
+    SET_STATE,
+    VOTE_MAP_CHANGE,
+    CAPTAIN_MENU,
 };
 
 typedef struct S_TASK
 {
-    float   Delay;
-    float   Time;
-    bool    Loop;
-    int     Parameter;
+    float Delay;
+    float Time;
+    bool Loop;
+    int Parameter;
 } P_TASK, *LP_TASK;
 
 class CPugTask
@@ -20,13 +20,14 @@ class CPugTask
 public:
     void ServerActivate();
     void ServerDeactivate();
-    
-    void Set(int Index, float Delay, bool Loop, int Parameter);
+
+    void Create(int Index, float Delay, bool Loop, int Parameter);
     void Remove(int Index);
+    void Execute(int Index);
     void StartFrame();
 
 private:
-    std::map<int, P_TASK> m_Data;
+    std::map<int, P_TASK> m_Task;
 };
 
 extern CPugTask gPugTask;

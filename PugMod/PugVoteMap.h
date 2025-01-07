@@ -1,16 +1,46 @@
 #pragma once
 
+constexpr std::array<hudtextparms_t, 2> g_VoteMap_HudParam =
+{{
+    {0.23f, 0.02f, 2, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0.0f, 0.0f, 0.93f, 0.93f, 1},
+    {0.23f, 0.05f, 2, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0.0f, 0.0f, 0.93f, 0.93f, 2},
+}};
+
+constexpr std::array<const char*, 3> g_VoteMap_Sound =
+{
+    "spk gman/gman_Choose1",
+    "spk gman/gman_Choose2",
+    "spk scientist/letsgo"
+};
+
+typedef struct S_VOTE_MAP_INFO
+{
+    int Index;
+    int Votes;
+    std::string Name;
+    bool This;
+    bool Last;
+} P_VOTE_MAP_INFO, *LP_VOTE_MAP_INFO;
+
 class CPugVoteMap
 {
 public:
-    void AddMap(const char* MapName);
-
+    void ServerActivate();
+    void ServerDeactivate();
+    void AddMap(std::string Name);
     void Init();
     void Stop();
-    void Task();
+    P_VOTE_MAP_INFO GetWinner();
+    P_VOTE_MAP_INFO GetRandom();
+    void ChangeMap(int MapIndex);
+    void MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item);
+    void StartFrame();
 
 private:
-    std::map<std::string, int> m_MapList;
+    bool m_Run = false;
+    float m_NextFrame = 0.0f;
+    time_t m_Time = 0;
+    std::vector<P_VOTE_MAP_INFO> m_MapList = {};
 };
 
 extern CPugVoteMap gPugVoteMap;

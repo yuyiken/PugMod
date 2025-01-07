@@ -1,69 +1,74 @@
 #include "precompiled.h"
+#include "PugTask.h"
 
 CPugTask gPugTask;
 
 void CPugTask::ServerActivate()
 {
-    this->m_Data.clear();
+    this->m_Task.clear();
 }
 
 void CPugTask::ServerDeactivate()
 {
-    this->m_Data.clear();
+    this->m_Task.clear();
 }
 
-void CPugTask::Set(int Index, float Delay, bool Loop, int Parameter)
+void CPugTask::Create(int Index, float Delay, bool Loop, int Parameter)
 {
-    if (Delay > 0.0f)
-    {
-        this->m_Data[Index] = {Delay, (gpGlobals->time + Delay), Loop, Parameter};
-    }
+    this->m_Task[Index] = {Delay, (gpGlobals->time + Delay), Loop, Parameter};
 }
 
 void CPugTask::Remove(int Index)
 {
-    if (!this->m_Data.empty())
+    if (this->m_Task.find(Index) != this->m_Task.end())
     {
-        if (this->m_Data.find(Index) != this->m_Data.end())
+        this->m_Task[Index] = {0.0f, 0.0f, false, 0};
+    }
+}
+
+void CPugTask::Execute(int Index)
+{
+    if (this->m_Task.find(Index) != this->m_Task.end())
+    {
+        switch (Index)
         {
-            this->m_Data[Index] = {-1.0f, -1.0f, false, 0};
+            case E_TASK::SET_STATE:
+            {
+                gPugMod.SetState(this->m_Task[Index].Parameter);
+                break;
+            }
+            case E_TASK::VOTE_MAP_CHANGE:
+            {
+                gPugVoteMap.ChangeMap(this->m_Task[Index].Parameter);
+                break;
+            }
+            case E_TASK::CAPTAIN_MENU:
+            {
+                gPugCaptain.GetRandomPlayer(this->m_Task[Index].Parameter);
+                break;
+            }
         }
     }
 }
 
 void CPugTask::StartFrame()
 {
-    if (!this->m_Data.empty())
+    if (!this->m_Task.empty())
     {
-        for (auto it = this->m_Data.begin(); it != this->m_Data.end(); it++)
+        for (auto Task = this->m_Task.begin(); Task != this->m_Task.end(); Task++)
         {
-            if ((it->second.Delay > 0.0f) && (it->second.Time > 0.0f))
+            if  ((Task->second.Time > 0.0f) && (gpGlobals->time >= Task->second.Time))
             {
-                if  (gpGlobals->time >= it->second.Time)
+                if (Task->second.Loop)
                 {
-                    switch (it->first)
-                    {
-                        case TASK_CHANGE_STATE:
-                        {
-                            gPugMod.SetState(it->second.Parameter);
-                            break;
-                        }
-                        case TASK_PUG_TIMER:
-                        {
-                            gPugTimer.Task();
-                            break;
-                        }
-                    }
-
-                    if (it->second.Loop)
-                    {
-                        it->second.Time = (gpGlobals->time + it->second.Delay);
-                    }
-                    else
-                    {
-                        this->Remove(it->first);
-                    }
+                    Task->second.Time = (gpGlobals->time + Task->second.Delay);
                 }
+                else
+                {
+                    Task->second.Time = 0.0f;
+                }
+
+                this->Execute(Task->first);
             }
         }
     }

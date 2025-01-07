@@ -7,8 +7,8 @@
 class CPugTraceLine
 {
 public:
-    void TraceLine(const float *vStart, const float *vEnd, int fNoMonsters, edict_t *pentToSkip, TraceResult *ptr);
-    TraceResult GetUserAiming(edict_t *pEntity, float DistanceLimit);
+    void TraceLine(const float* vStart, const float* vEnd, int fNoMonsters, edict_t* pentToSkip, TraceResult* pTraceResult);
+    TraceResult GetUserAiming(edict_t *pEntity, float fDistanceLimit);
 };
 
 extern CPugTraceLine gPugTraceLine;

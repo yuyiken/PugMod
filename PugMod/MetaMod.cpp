@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#pragma region METAMOD
 plugin_info_t Plugin_info =
 {
 	META_INTERFACE_VERSION,
@@ -19,11 +20,11 @@ meta_globals_t *gpMetaGlobals;
 gamedll_funcs_t *gpGamedllFuncs;
 mutil_funcs_t *gpMetaUtilFuncs;
 META_FUNCTIONS gMetaFunctionTable;
-NEW_DLL_FUNCTIONS gMetaNewDLLFunctionTable;
 
 C_DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t *pengfuncsFromEngine, globalvars_t *pGlobals)
 {
 	memcpy(&g_engfuncs, pengfuncsFromEngine, sizeof(enginefuncs_t));
+	
 	gpGlobals = pGlobals;
 }
 
@@ -67,9 +68,222 @@ C_DLLEXPORT int Meta_Detach(PLUG_LOADTIME now, PL_UNLOAD_REASON reason)
 
 C_DLLEXPORT int Meta_Query(char *interfaceVersion, plugin_info_t **pPlugInfo, mutil_funcs_t *pMetaUtilFuncs)
 {
-	*pPlugInfo = &Plugin_info;
+	*pPlugInfo = PLID;
 
 	gpMetaUtilFuncs = pMetaUtilFuncs;
 
 	return TRUE;
 }
+#pragma endregion
+
+#pragma region META_DLL_PRE
+DLL_FUNCTIONS g_DLL_FunctionTable_Pre;
+
+C_DLLEXPORT int GetEntityAPI2(DLL_FUNCTIONS *pFunctionTable, int *interfaceVersion)
+{
+	memset(&g_DLL_FunctionTable_Pre, 0, sizeof(DLL_FUNCTIONS));
+
+	g_DLL_FunctionTable_Pre.pfnClientDisconnect = DLL_PRE_ClientDisconnect;
+
+	g_DLL_FunctionTable_Pre.pfnClientCommand = DLL_PRE_ClientCommand;
+
+	memcpy(pFunctionTable, &g_DLL_FunctionTable_Pre, sizeof(DLL_FUNCTIONS));
+
+	return 1;
+}
+
+void DLL_PRE_ClientDisconnect(edict_t *pEntity)
+{
+	gPugReady.Disconnect(pEntity);
+
+	RETURN_META(MRES_IGNORED);
+}
+
+void DLL_PRE_ClientCommand(edict_t *pEntity)
+{
+	if (gPugClientCmd.Command(pEntity))
+	{
+		RETURN_META(MRES_SUPERCEDE);
+	}
+
+	RETURN_META(MRES_IGNORED);
+}
+#pragma endregion
+
+#pragma region META_DLL_POST
+DLL_FUNCTIONS g_DLL_FunctionTable_Post;
+
+C_DLLEXPORT int GetEntityAPI2_Post(DLL_FUNCTIONS *pFunctionTable, int *interfaceVersion)
+{
+	memset(&g_DLL_FunctionTable_Post, 0, sizeof(DLL_FUNCTIONS));
+
+	g_DLL_FunctionTable_Post.pfnServerActivate = DLL_POST_ServerActivate;
+
+	g_DLL_FunctionTable_Post.pfnServerDeactivate = DLL_POST_ServerDeactivate;
+
+	g_DLL_FunctionTable_Post.pfnStartFrame = DLL_POST_StartFrame;
+
+	g_DLL_FunctionTable_Post.pfnClientConnect = DLL_POST_ClientConnect;
+
+	g_DLL_FunctionTable_Post.pfnClientPutInServer = DLL_POST_ClientPutInServer;
+
+	g_DLL_FunctionTable_Post.pfnClientUserInfoChanged = DLL_POST_ClientUserInfoChanged;
+
+	memcpy(pFunctionTable, &g_DLL_FunctionTable_Post, sizeof(DLL_FUNCTIONS));
+
+	return 1;
+}
+
+void DLL_POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
+{
+	gPugCvar.ServerActivate();
+
+	gPugTask.ServerActivate();
+
+	gPugAdmin.ServerActivate();
+
+	gPugServerCmd.ServerActivate();
+
+	gPugClientCmd.ServerActivate();
+
+	gPugDM.ServerActivate();
+
+	gPugMod.ServerActivate();
+
+	gPugReady.ServerActivate();
+
+	gPugTimer.ServerActivate();
+
+	gPugVoteMap.ServerActivate();
+
+	gPugVoteTeam.ServerActivate();
+
+	gPugCaptain.ServerActivate();
+
+	RETURN_META(MRES_IGNORED);
+}
+
+void DLL_POST_ServerDeactivate()
+{
+	gPugTask.ServerDeactivate();
+
+	gPugMod.ServerDeactivate();
+
+	gPugReady.ServerDeactivate();
+
+	gPugTimer.ServerDeactivate();
+
+	gPugDM.ServerDeactivate();
+
+	gPugVoteMap.ServerDeactivate();
+
+	gPugVoteTeam.ServerDeactivate();
+
+	gPugCaptain.ServerDeactivate();
+
+	RETURN_META(MRES_IGNORED);
+}
+
+void DLL_POST_StartFrame()
+{
+	gPugTask.StartFrame();
+
+	gPugReady.StartFrame();
+
+	gPugTimer.StartFrame();
+
+	gPugVoteMap.StartFrame();
+
+	gPugVoteTeam.StartFrame();
+
+	gPugCaptain.StartFrame();
+
+	gPugLO3.StartFrame();
+
+	RETURN_META(MRES_IGNORED);
+}
+
+qboolean DLL_POST_ClientConnect(edict_t *pEntity, const char *pszName, const char *pszAddress, char szRejectReason[128])
+{
+	RETURN_META_VALUE(MRES_IGNORED, 0);
+}
+
+void DLL_POST_ClientPutInServer(edict_t *pEntity)
+{
+	gPugAdmin.PutInServer(pEntity);
+
+	gPugReady.PutInServer(pEntity);
+
+	RETURN_META(MRES_IGNORED);
+}
+
+void DLL_POST_ClientUserInfoChanged(edict_t *pEntity, char *infobuffer)
+{
+	RETURN_META(MRES_IGNORED);
+}
+#pragma endregion
+
+#pragma region NEW_DLL_PRE
+NEW_DLL_FUNCTIONS g_DLL_NewFunctionTable_Pre;
+
+C_DLLEXPORT int GetNewDLLFunctions(NEW_DLL_FUNCTIONS *pNewFunctionTable, int *interfaceVersion)
+{
+	memset(&g_DLL_NewFunctionTable_Pre, 0, sizeof(NEW_DLL_FUNCTIONS));
+
+	// Here
+
+	memcpy(pNewFunctionTable, &g_DLL_NewFunctionTable_Pre, sizeof(NEW_DLL_FUNCTIONS));
+
+	return 1;
+}
+#pragma endregion
+
+#pragma region NEW_DLL_POST
+NEW_DLL_FUNCTIONS g_DLL_NewFunctionTable_Post;
+
+C_DLLEXPORT int GetNewDLLFunctions_Post(NEW_DLL_FUNCTIONS *pNewFunctionTable, int *interfaceVersion)
+{
+	memset(&g_DLL_NewFunctionTable_Post, 0, sizeof(NEW_DLL_FUNCTIONS));
+
+	// Here
+
+	memcpy(pNewFunctionTable, &g_DLL_NewFunctionTable_Post, sizeof(NEW_DLL_FUNCTIONS));
+
+	return 1;
+}
+#pragma endregion
+
+#pragma region ENGINE_PRE
+enginefuncs_t g_ENGINE_FunctionTable_Pre;
+
+C_DLLEXPORT int GetEngineFunctions(enginefuncs_t *pengfuncsFromEngine, int *interfaceVersion)
+{
+	memset(&g_ENGINE_FunctionTable_Pre, 0, sizeof(enginefuncs_t));
+
+	memcpy(pengfuncsFromEngine, &g_ENGINE_FunctionTable_Pre, sizeof(enginefuncs_t));
+
+	return 1;
+}
+#pragma endregion
+
+#pragma region ENGINE_POST
+enginefuncs_t g_ENGINE_FunctionTable_Post;
+
+C_DLLEXPORT int GetEngineFunctions_Post(enginefuncs_t *pengfuncsFromEngine, int *interfaceVersion)
+{
+	memset(&g_ENGINE_FunctionTable_Post, 0, sizeof(enginefuncs_t));
+
+	g_ENGINE_FunctionTable_Post.pfnTraceLine = ENGINE_POST_TraceLine;
+
+	memcpy(pengfuncsFromEngine, &g_ENGINE_FunctionTable_Post, sizeof(enginefuncs_t));
+
+	return 1;
+}
+
+void ENGINE_POST_TraceLine(const float *vStart, const float *vEnd, int fNoMonsters, edict_t *pentToSkip, TraceResult *pTraceResult)
+{
+	gPugTraceLine.TraceLine(vStart, vEnd, fNoMonsters, pentToSkip, pTraceResult);
+
+	RETURN_META(MRES_IGNORED);
+}
+#pragma endregion
