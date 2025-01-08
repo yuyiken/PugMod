@@ -1,5 +1,4 @@
 #include "precompiled.h"
-#include "PugUtil.h"
 
 CPugUtil gPugUtil;
 
@@ -111,13 +110,16 @@ void CPugUtil::PrintColor(edict_t* pEntity, int Sender, const char* Format, ...)
 
 		this->ParseColor(szText);
 
-		if (this->IsNetClient(pEntity))
+		if (!FNullEnt(pEntity))
 		{
-			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgSayText, nullptr, pEntity);
-			g_engfuncs.pfnWriteByte(Sender ? Sender : ENTINDEX(pEntity));
-			g_engfuncs.pfnWriteString("%s");
-			g_engfuncs.pfnWriteString(szText);
-			g_engfuncs.pfnMessageEnd();
+			if (!(pEntity->v.flags & FL_FAKECLIENT))
+			{
+				g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgSayText, nullptr, pEntity);
+				g_engfuncs.pfnWriteByte(Sender ? Sender : ENTINDEX(pEntity));
+				g_engfuncs.pfnWriteString("%s");
+				g_engfuncs.pfnWriteString(szText);
+				g_engfuncs.pfnMessageEnd();
+			}
 		}
 		else
 		{
@@ -140,7 +142,7 @@ void CPugUtil::PrintColor(edict_t* pEntity, int Sender, const char* Format, ...)
 
 void CPugUtil::TeamInfo(edict_t *pEntity, int playerIndex, const char *pszTeamName)
 {
-	if (this->IsNetClient(pEntity))
+	if (!FNullEnt(pEntity))
 	{
 		static int iMsgTeamInfo;
 
@@ -223,7 +225,7 @@ void CPugUtil::ClientPrint(edict_t *pEntity, int iMsgDest, const char *Format, .
 
 	if (iMsgTextMsg || (iMsgTextMsg = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "TextMsg", NULL)))
 	{
-		if (this->IsNetClient(pEntity))
+		if (!FNullEnt(pEntity))
 		{
 			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgTextMsg, nullptr, pEntity);
 		}
@@ -253,7 +255,7 @@ void CPugUtil::ClientCommand(edict_t *pEntity, const char *Format, ...)
 
 	strcat(Command, "\n");
 
-	if (this->IsNetClient(pEntity))
+	if (!FNullEnt(pEntity))
 	{
 		g_engfuncs.pfnClientCommand(pEntity, Command);
 	}
@@ -344,7 +346,7 @@ void CPugUtil::SendHud(edict_t *pEntity, const hudtextparms_t &TextParams, const
 
 	va_end(ArgPtr);
 
-	if (this->IsNetClient(pEntity))
+	if (!FNullEnt(pEntity))
 	{
 		g_engfuncs.pfnMessageBegin(MSG_ONE_UNRELIABLE, SVC_TEMPENTITY, nullptr, pEntity);
 	}
@@ -396,7 +398,7 @@ void CPugUtil::SendDHud(edict_t *pEntity, const hudtextparms_t &TextParams, cons
 
 	va_end(ArgPtr);
 
-	if (this->IsNetClient(pEntity))
+	if (!FNullEnt(pEntity))
 	{
 		g_engfuncs.pfnMessageBegin(MSG_ONE_UNRELIABLE, SVC_DIRECTOR, nullptr, pEntity);
 	}
@@ -425,7 +427,7 @@ void CPugUtil::SendDeathMsg(edict_t *pEntity, CBaseEntity *pKiller, CBasePlayer 
 	
 	if (iDeathMsg || (iDeathMsg = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "DeathMsg", NULL)))
 	{
-		if (this->IsNetClient(pEntity))
+		if (!FNullEnt(pEntity))
 		{
 			g_engfuncs.pfnMessageBegin(MSG_ONE, iDeathMsg, nullptr, pEntity);
 		}
@@ -467,7 +469,7 @@ void CPugUtil::SendDeathMsg(edict_t *pEntity, CBaseEntity *pKiller, CBasePlayer 
 
 void CPugUtil::ScreenFade(edict_t *pEntity, unsigned short Duration, unsigned short HoldTime, short FadeFlags, short Red, short Green, short Blue, short Alpha)
 {
-	if (this->IsNetClient(pEntity))
+	if (!FNullEnt(pEntity))
 	{
 		static int iMsgScreenFade;
 

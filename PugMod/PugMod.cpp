@@ -68,7 +68,6 @@ int CPugMod::SetState(int State)
         }
         case STATE_CAPTAIN:
         {
-            //gPugCaptain.Init();
             gPugLeader.Init();
             break;
         }
@@ -281,23 +280,23 @@ bool CPugMod::HasRestrictItem(CBasePlayer* Player, ItemID Item, ItemRestType Typ
         {
             if (gPugCvar.m_RestrictItem->string)
             {
-                if (Item != ITEM_NONE)
+                if (Item >= ITEM_SHIELDGUN && Item <= ITEM_BATTERY)
                 {
                     if (gPugCvar.m_RestrictItem->string[Item] != '0')
                     {
                         gPugUtil.ClientPrint(Player->edict(), E_PRINT::CENTER, "#Cstrike_TitlesTXT_Weapon_Not_Available");
                         return true;
                     }
-                }
-            }
-        }
 
-        if (this->m_State == STATE_KNIFE_ROUND)
-        {
-            if (Item != ITEM_KEVLAR && Item != ITEM_ASSAULT && Item != ITEM_KNIFE)
-            {
-                gPugUtil.ClientPrint(Player->edict(), E_PRINT::CENTER, "#Cstrike_TitlesTXT_Weapon_Not_Available");
-                return true;
+                    if (this->m_State == STATE_KNIFE_ROUND)
+                    {
+                        if ((Item != ITEM_KEVLAR) && (Item != ITEM_ASSAULT) && (Item != ITEM_KNIFE))
+                        {
+                            gPugUtil.ClientPrint(Player->edict(), E_PRINT::CENTER, "#Cstrike_TitlesTXT_Weapon_Not_Available");
+                            return true;
+                        }
+                    }
+                }
             }
         }
     }
