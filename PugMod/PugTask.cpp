@@ -1,5 +1,4 @@
 #include "precompiled.h"
-#include "PugTask.h"
 
 CPugTask gPugTask;
 
@@ -42,9 +41,9 @@ void CPugTask::Execute(int Index)
                 gPugVoteMap.ChangeMap(this->m_Task[Index].Parameter);
                 break;
             }
-            case E_TASK::CAPTAIN_MENU:
+            case E_TASK::LEADER_MENU:
             {
-                gPugCaptain.GetRandomPlayer(this->m_Task[Index].Parameter);
+                gPugLeader.GetRandomPlayer(this->m_Task[Index].Parameter);
                 break;
             }
         }

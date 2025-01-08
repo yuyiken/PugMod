@@ -150,9 +150,9 @@ bool CPugMenu::Handle(CBasePlayer *Player, int Key)
                                 gPugVoteTeam.MenuHandle(Player, this->m_Data[ItemId]);
                                 break;
                             }
-                            case E_MENU::CP_CAPTAIN_MENU:
+                            case E_MENU::CP_LEADER_MENU:
                             {
-                                gPugCaptain.MenuHandle(Player, this->m_Data[ItemId]);
+                                gPugLeader.MenuHandle(Player, this->m_Data[ItemId]);
                                 break;
                             }
                             case E_MENU::ME_VOTE_SWAP_TEAM:

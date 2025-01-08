@@ -10,7 +10,7 @@ void CPugVoteTeam::ServerActivate()
 
     this->m_Time = 0;
 
-    this->m_VoteList.push_back({VOTE_TEAM_CAPTAIN, 0, "Capitaes"});
+    this->m_VoteList.push_back({VOTE_TEAM_CAPTAIN, 0, "Capitães"});
     this->m_VoteList.push_back({VOTE_TEAM_RANDOM, 0, "Misturar Times"});
     this->m_VoteList.push_back({VOTE_TEAM_UNSORTED, 0, "Sem Sorteio"});
     this->m_VoteList.push_back({VOTE_TEAM_SKILL_BALANCE, 0, "Balancear Skill"});
@@ -197,16 +197,8 @@ void CPugVoteTeam::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
             if (Item.Info < this->m_VoteList.size())
             {
                 this->m_VoteList[Item.Info].Votes += 1;
-                
-                gPugUtil.PrintColor
-                (
-                    nullptr,
-                    E_PRINT_TEAM::DEFAULT,
-                    "^4[%s]^1 ^3%s^1 escolheu ^3%s^1.",
-                    gPugCvar.m_Tag->string,
-                    STRING(Player->edict()->v.netname),
-                    this->m_VoteList[Item.Info].Name.c_str()
-                );
+
+                gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 escolheu ^3%s^1.", gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), this->m_VoteList[Item.Info].Name.c_str());
             }
         }
     }

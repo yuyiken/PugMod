@@ -79,7 +79,7 @@ void ReAPI_SV_DropClient(IRehldsHook_SV_DropClient *chain, IGameClient *client, 
 		{
 			gPugMod.DropClient(client->GetEdict());
 
-			gPugCaptain.DropClient(client->GetEdict());
+			gPugLeader.DropClient(client->GetEdict());
 		}
 	}
 	

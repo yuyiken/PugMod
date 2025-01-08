@@ -14,7 +14,7 @@ enum E_MENU
     DM_WEAPONS,
     ME_VOTE_MAP,
     ME_VOTE_TEAM,
-    CP_CAPTAIN_MENU,
+    CP_LEADER_MENU,
     ME_VOTE_SWAP_TEAM
 };
 

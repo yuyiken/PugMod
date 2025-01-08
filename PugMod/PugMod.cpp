@@ -68,7 +68,8 @@ int CPugMod::SetState(int State)
         }
         case STATE_CAPTAIN:
         {
-            gPugCaptain.Init();
+            //gPugCaptain.Init();
+            gPugLeader.Init();
             break;
         }
         case STATE_KNIFE_ROUND:
