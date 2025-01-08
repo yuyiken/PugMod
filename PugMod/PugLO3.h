@@ -4,11 +4,11 @@ constexpr hudtextparms_t g_LO3_HudParam = {-1.0f, 0.2f, 2, 0x00, 0xFF, 0x00, 0xF
 
 constexpr std::array<const char*, 5> g_LO3_Message =
 {
-    "..:: VALENDO EM TRÊS RESTARTS ::..\n..:: FIQUE ATENTO ::..",
-    "..:: VALENDO EM TRÊS RESTARTS ::..",
-    "..:: VALENDO EM DOIS RESTARTS ::..",
-    "..:: VALENDO NO PRÓXIMO RESTART ::..",
-    "..:: A PARTIDA COMEÇOU ::..\n..:: BOA SORTE & DIVIRTA-SE ::.."
+    "VALENDO EM TRÊS RESTARTS\nFIQUE ATENTO",
+    "VALENDO EM TRÊS RESTARTS",
+    "VALENDO EM DOIS RESTARTS",
+    "VALENDO NO PRÓXIMO RESTART",
+    "A PARTIDA COMEÇOU\nBOA SORTE & DIVIRTA-SE"
 };
 
 constexpr std::array<const char*, 5> g_LO3_Sound =

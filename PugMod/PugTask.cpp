@@ -46,6 +46,11 @@ void CPugTask::Execute(int Index)
                 gPugLeader.GetRandomPlayer(this->m_Task[Index].Parameter);
                 break;
             }
+            case E_TASK::VOTE_SWAP_TEAM:
+            {
+                gPugVoteSwapTeam.Init(this->m_Task[Index].Parameter);
+                break;
+            }
         }
     }
 }

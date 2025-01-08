@@ -10,6 +10,8 @@ void CPugVoteMap::ServerActivate()
 
     this->m_Time = 0;
 
+    this->m_VotesLeft = 0;
+
     this->m_MapList.clear();
 
     gPugUtil.ServerCommand("exec %s/cfg/maplist.cfg", gPugUtil.GetPath());
@@ -22,6 +24,8 @@ void CPugVoteMap::ServerDeactivate()
     this->m_NextFrame = 0.0f;
 
     this->m_Time = 0;
+
+    this->m_VotesLeft = 0;
 
     this->m_MapList.clear();
 }
@@ -76,6 +80,8 @@ void CPugVoteMap::Init()
 
         auto Players = gPugUtil.GetPlayers(true, false);
 
+        this->m_VotesLeft = Players.size();
+
         for (auto const &Player : Players)
         {
             gPugMenu[Player->entindex()].Create("Escolha o mapa:", false, E_MENU::ME_VOTE_MAP);
@@ -101,37 +107,40 @@ void CPugVoteMap::Init()
 
 void CPugVoteMap::Stop()
 {
-    this->m_Run = false;
-
-    this->m_NextFrame = 0.0f;
-
-    auto Winner = this->GetWinner();
-
-    gPugUtil.ClientCommand(nullptr, g_VoteMap_Sound[2]);
-
-    if (Winner.Votes)
+    if (this->m_Run)
     {
-        gPugTask.Create(E_TASK::VOTE_MAP_CHANGE, 5.0f, false, Winner.Index);
+        this->m_Run = false;
 
-        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Alterando mapa para: ^3%s^1.", gPugCvar.m_Tag->string, Winner.Name.c_str());
-    }
-    else
-    {
-        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A escolha falhou: Nenhum voto.", gPugCvar.m_Tag->string);
+        this->m_NextFrame = 0.0f;
 
-        if (gPugUtil.GetPlayers(true, true).size() >= static_cast<size_t>(gPugCvar.m_PlayersMin->value))
+        auto Winner = this->GetWinner();
+
+        gPugUtil.ClientCommand(nullptr, g_VoteMap_Sound[2]);
+
+        if (Winner.Votes)
         {
-            gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, STATE_VOTEMAP);
+            gPugTask.Create(E_TASK::VOTE_MAP_CHANGE, 5.0f, false, Winner.Index);
 
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Reiniciando escolha do mapa.", gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Alterando mapa para: ^3%s^1.", gPugCvar.m_Tag->string, Winner.Name.c_str());
         }
         else
         {
-            auto Random = this->GetRandom();
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A escolha falhou: Nenhum voto.", gPugCvar.m_Tag->string);
 
-            gPugTask.Create(E_TASK::VOTE_MAP_CHANGE, 5.0f, false, Random.Index);
+            if (gPugUtil.GetPlayers(true, true).size() >= static_cast<size_t>(gPugCvar.m_PlayersMin->value))
+            {
+                gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, STATE_VOTEMAP);
 
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O Próximo mapa será: ^3%s^1.", gPugCvar.m_Tag->string, Random.Name.c_str());
+                gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Reiniciando escolha do mapa.", gPugCvar.m_Tag->string);
+            }
+            else
+            {
+                auto Random = this->GetRandom();
+
+                gPugTask.Create(E_TASK::VOTE_MAP_CHANGE, 5.0f, false, Random.Index);
+
+                gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O Próximo mapa será: ^3%s^1.", gPugCvar.m_Tag->string, Random.Name.c_str());
+            }
         }
     }
 }
@@ -193,17 +202,15 @@ void CPugVoteMap::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
         {
             if (Item.Info < this->m_MapList.size())
             {
+                this->m_VotesLeft -= 1;
                 this->m_MapList[Item.Info].Votes += 1;
-                
-                gPugUtil.PrintColor
-                (
-                    nullptr,
-                    E_PRINT_TEAM::DEFAULT,
-                    "^4[%s]^1 ^3%s^1 escolheu ^3%s^1.",
-                    gPugCvar.m_Tag->string,
-                    STRING(Player->edict()->v.netname),
-                    this->m_MapList[Item.Info].Name.c_str()
-                );
+
+                gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 escolheu ^3%s^1.", gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), this->m_MapList[Item.Info].Name.c_str());
+
+                if (this->m_VotesLeft < 1)
+                {
+                    this->Stop();
+                }
             }
         }
     }

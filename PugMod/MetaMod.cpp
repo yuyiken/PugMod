@@ -160,6 +160,8 @@ void DLL_POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 
 	gPugLeader.ServerActivate();
 
+	gPugVoteSwapTeam.ServerActivate();
+
 	RETURN_META(MRES_IGNORED);
 }
 
@@ -181,6 +183,8 @@ void DLL_POST_ServerDeactivate()
 
 	gPugLeader.ServerDeactivate();
 
+	gPugVoteSwapTeam.ServerActivate();
+
 	RETURN_META(MRES_IGNORED);
 }
 
@@ -197,6 +201,8 @@ void DLL_POST_StartFrame()
 	gPugVoteTeam.StartFrame();
 
 	gPugLeader.StartFrame();
+
+	gPugVoteSwapTeam.StartFrame();
 
 	gPugLO3.StartFrame();
 

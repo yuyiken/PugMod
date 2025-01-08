@@ -10,6 +10,8 @@ void CPugVoteTeam::ServerActivate()
 
     this->m_Time = 0;
 
+    this->m_VotesLeft = 0;
+
     this->m_VoteList.push_back({VOTE_TEAM_CAPTAIN, 0, "Capitães"});
     this->m_VoteList.push_back({VOTE_TEAM_RANDOM, 0, "Misturar Times"});
     this->m_VoteList.push_back({VOTE_TEAM_UNSORTED, 0, "Sem Sorteio"});
@@ -25,6 +27,8 @@ void CPugVoteTeam::ServerDeactivate()
     this->m_NextFrame = 0.0f;
 
     this->m_Time = 0;
+
+    this->m_VotesLeft = 0;
 
     this->m_VoteList.clear();
 }
@@ -54,17 +58,11 @@ void CPugVoteTeam::Init()
             CSGameRules()->m_bCompleteReset = true;
         }
 
-        auto MenuFlags = 0;
-
-        if (gPugCvar.m_TeamOption->string)
-        {
-            if (gPugCvar.m_TeamOption->string[0] != '\0')
-            {
-                MenuFlags = gPugAdmin.ReadFlags(gPugCvar.m_TeamOption->string);
-            }
-        }
-
         auto Players = gPugUtil.GetPlayers(true, false);
+
+        auto MenuFlags = gPugAdmin.ReadFlags(gPugCvar.m_TeamOption->string);
+
+        this->m_VotesLeft = Players.size();
 
         for (auto const &Player : Players)
         {
@@ -91,25 +89,30 @@ void CPugVoteTeam::Init()
 
 void CPugVoteTeam::Stop()
 {
-    this->m_Run = false;
-
-    this->m_NextFrame = 0.0f;
-
-    this->m_Time = 0;
-
-    auto Winner = this->GetWinner();
-
-    gPugUtil.ClientCommand(nullptr, g_VoteTeam_Sound[2]);
-
-    if (Winner.Votes)
+    if (this->m_Run)
     {
-        this->ChangeTeam(Winner.Index);
-    }
-    else
-    {
-        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A escolha falhou: ^3Nenhum voto.", gPugCvar.m_Tag->string);
+        this->m_Run = false;
 
-        this->ChangeTeam(VOTE_TEAM_RANDOM);
+        this->m_NextFrame = 0.0f;
+
+        this->m_Time = 0;
+
+        this->m_VotesLeft = 0;
+
+        auto Winner = this->GetWinner();
+
+        gPugUtil.ClientCommand(nullptr, g_VoteTeam_Sound[2]);
+
+        if (Winner.Votes)
+        {
+            this->ChangeTeam(Winner.Index);
+        }
+        else
+        {
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A escolha falhou: ^3Nenhum voto.", gPugCvar.m_Tag->string);
+
+            this->ChangeTeam(VOTE_TEAM_RANDOM);
+        }
     }
 }
 
@@ -196,9 +199,15 @@ void CPugVoteTeam::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
         {
             if (Item.Info < this->m_VoteList.size())
             {
+                this->m_VotesLeft -= 1;
                 this->m_VoteList[Item.Info].Votes += 1;
 
                 gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 escolheu ^3%s^1.", gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), this->m_VoteList[Item.Info].Name.c_str());
+
+                if (this->m_VotesLeft < 1)
+                {
+                    this->Stop();
+                }
             }
         }
     }

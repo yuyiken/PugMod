@@ -15,7 +15,7 @@ constexpr std::array<const char*, 3> g_VoteSwapTeam_Sound =
 
 typedef struct S_VOTE_SWAP_INFO
 {
-    TeamName Team;
+    int Team;
     int Votes;
     std::string Name;
 } P_VOTE_SWAP_INFO, *LP_VOTE_SWAP_INFO;
@@ -25,7 +25,7 @@ class CPugVoteSwapTeam
 public:
     void ServerActivate();
     void ServerDeactivate();
-    void Init(TeamName Team);
+    void Init(int Team);
     void Stop();
     P_VOTE_SWAP_INFO GetWinner();
     void MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item);
@@ -35,7 +35,8 @@ private:
     bool m_Run = false;
     float m_NextFrame = 0.0f;
     time_t m_Time = 0;
-    TeamName m_Team = UNASSIGNED;
+    int m_Team = UNASSIGNED;
+    int m_VotesLeft = 0;
     std::vector<P_VOTE_SWAP_INFO> m_VoteList = {};
 };
 

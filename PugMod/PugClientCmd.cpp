@@ -181,6 +181,7 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                 }
                                 case CMD_MENU:
                                 {
+                                    gPugUtil.ServerCommand("bot_kill");
                                     return true;
                                 }
                                 case CMD_GUNS:

@@ -5,6 +5,7 @@ enum E_TASK
     SET_STATE,
     VOTE_MAP_CHANGE,
     LEADER_MENU,
+    VOTE_SWAP_TEAM,
 };
 
 typedef struct S_TASK

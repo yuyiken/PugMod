@@ -203,6 +203,8 @@ void CPugLeader::GetPlayer(CBasePlayer* Leader, CBasePlayer* Target)
 	{
 		gPugTask.Remove(E_TASK::LEADER_MENU);
 
+		Leader->ClearConditions(BIT_LEADER_MENU);
+
 		gPugMenu[Leader->entindex()].Hide(Leader);
 
 		if (Target)
@@ -215,8 +217,6 @@ void CPugLeader::GetPlayer(CBasePlayer* Leader, CBasePlayer* Target)
 				{
 					Target->RoundRespawn();
 				}
-
-				Leader->ClearConditions(BIT_LEADER_MENU);
 
 				gPugUtil.PrintColor(nullptr, (Leader->m_iTeam == TERRORIST ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE), "^4[%s]^1 ^3%s^1 escolheu ^3%s^1", gPugCvar.m_Tag->string, STRING(Leader->edict()->v.netname), STRING(Target->edict()->v.netname));
 
@@ -279,6 +279,8 @@ void CPugLeader::Menu(CBasePlayer* Leader)
 
 		if (Players.size() >= 1)
 		{
+			Leader->SetConditions(BIT_LEADER_MENU);
+
 			if (Players.size() == 1 || Leader->IsBot())
 			{
 				gPugTask.Create(E_TASK::LEADER_MENU, 2.0f, false, Leader->entindex());
@@ -291,8 +293,6 @@ void CPugLeader::Menu(CBasePlayer* Leader)
 				{
 					gPugMenu[Leader->entindex()].AddItem(Player->entindex(), STRING(Player->edict()->v.netname), false, Player->m_iTeam);
 				}
-
-				Leader->SetConditions(BIT_LEADER_MENU);
 
 				gPugMenu[Leader->entindex()].Show(Leader);
 

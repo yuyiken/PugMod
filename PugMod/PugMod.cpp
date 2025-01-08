@@ -306,13 +306,39 @@ bool CPugMod::HasRestrictItem(CBasePlayer* Player, ItemID Item, ItemRestType Typ
 
 void CPugMod::DropClient(edict_t *pEntity)
 {
-    if (this->m_State >= STATE_KNIFE_ROUND && this->m_State <= STATE_OVERTIME)
+    if (this->m_State >= STATE_FIRST_HALF && this->m_State <= STATE_OVERTIME)
     {
-        auto Players = gPugUtil.GetPlayers(true, true);
+        auto Players = gPugUtil.GetPlayers();
 
-        if(Players.size() < static_cast<size_t>(gPugCvar.m_PlayersMin->value))
+        auto PlayersMin = static_cast<int>(gPugCvar.m_PlayersMin->value / 2.0f);
+
+        if((Players[TERRORIST].size() < PlayersMin) || (Players[CT].size() < PlayersMin))
         {
-            // Vote End Match
+            if (Players[SPECTATOR].size() < 1)
+            {
+                // gPugVoteEnd.Init();
+            }
+            else
+            {
+                auto Player = UTIL_PlayerByIndexSafe(ENTINDEX(pEntity));
+
+                for (auto const & Player : Players[SPECTATOR])
+                {
+                    Player->m_iNumSpawns = 0;
+                    Player->m_bTeamChanged = false;
+
+                    gPugUtil.ClientCommand(Player->edict(), "spk scientist/letsgo");
+
+                    if (Player)
+                    {
+                        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ATENÇÃO: Vaga disponível no time ^3%s.^1", gPugCvar.m_Tag->string, g_Pug_TeamId[Player->m_iTeam]);
+                    }
+                    else
+                    {
+                        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ATENÇÃO: Vaga disponível.", gPugCvar.m_Tag->string);
+                    }
+                }
+            }
         }
     }
 }
@@ -356,17 +382,19 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
             if (g_pGameRules)
             {
                 this->m_Score[this->m_State][TERRORIST] = CSGameRules()->m_iNumTerroristWins;
-                this->m_Score[this->m_State][CT] = CSGameRules()->m_iNumCTWins;
+                this->m_Score[this->m_State][CT]        = CSGameRules()->m_iNumCTWins;
 
                 if (this->m_State == STATE_KNIFE_ROUND)
                 {
-                    if (winStatus == WINSTATUS_TERRORISTS || winStatus == WINSTATUS_CTS)
+                    if (winStatus == WINSTATUS_DRAW)
                     {
-                        // Start Vote
+                        gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_FIRST_HALF);
+
+                        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O Round Faca falhou: ^3Nenhum vencedor declarado.^1", gPugCvar.m_Tag->string);
                     }
                     else
                     {
-                        // Continue tied
+                        gPugTask.Create(E_TASK::VOTE_SWAP_TEAM, 2.0f, false, (winStatus == WINSTATUS_DRAW) ? TERRORIST : CT);
                     }
                 }
                 else
@@ -412,7 +440,7 @@ void CPugMod::Scores(CBasePlayer *Player)
 
                 if (this->m_State != STATE_END)
                 {
-                    gPugUtil.PrintColor(Player->edict(), Color, "^4[%s]^1 The ^3%s^1 are winning: %d-%d", gPugCvar.m_Tag->string, g_Pug_TeamId[Winner], Score[Winner], Score[Losers]);
+                    gPugUtil.PrintColor(Player->edict(), Color, "^4[%s]^1 Os ^3%s^1 estão vencendo: %d-%d", gPugCvar.m_Tag->string, g_Pug_TeamId[Winner], Score[Winner], Score[Losers]);
                 }
                 else
                 {
@@ -427,7 +455,7 @@ void CPugMod::Scores(CBasePlayer *Player)
                 }
                 else
                 {
-                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O placar está empatado: %d-%d", gPugCvar.m_Tag->string, Score[TERRORIST], Score[CT]);
+                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Fim de jogo! O placar está empatado: %d-%d", gPugCvar.m_Tag->string, Score[TERRORIST], Score[CT]);
                 }
             }
         }
@@ -438,6 +466,40 @@ void CPugMod::Scores(CBasePlayer *Player)
     }
     else
     {
-        
+        if (this->m_State >= STATE_FIRST_HALF && this->m_State <= STATE_END)
+        {
+            auto Score = this->GetScore();
+
+            if (Score[TERRORIST] != Score[CT])
+            {
+                auto Winner = (Score[TERRORIST] > Score[CT]) ? TERRORIST : CT;
+
+                auto Losers = (Score[TERRORIST] > Score[CT]) ? CT : TERRORIST;
+
+                if (this->m_State != STATE_END)
+                {
+                    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Os %s estão vencendo: %d-%d", gPugCvar.m_Tag->string, g_Pug_TeamId[Winner], Score[Winner], Score[Losers]);
+                }
+                else
+                {
+                    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Fim de jogo! Os %s venceram a partida: %d-%d", gPugCvar.m_Tag->string, g_Pug_TeamId[Winner], Score[Winner], Score[Losers]);
+                }
+            }
+            else
+            {
+                if (this->m_State != STATE_END)
+                {
+                    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] O placar está empatado: %d-%d", gPugCvar.m_Tag->string, Score[TERRORIST], Score[CT]);
+                }
+                else
+                {
+                    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Fim de jogo! O placar está empatado: %d-%d", gPugCvar.m_Tag->string, Score[TERRORIST], Score[CT]);
+                }
+            }
+        }
+        else
+        {
+            gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Comando indisponível.", gPugCvar.m_Tag->string);
+        }
     }
 }

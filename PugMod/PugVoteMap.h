@@ -40,6 +40,7 @@ private:
     bool m_Run = false;
     float m_NextFrame = 0.0f;
     time_t m_Time = 0;
+    int m_VotesLeft = 0;
     std::vector<P_VOTE_MAP_INFO> m_MapList = {};
 };
 
