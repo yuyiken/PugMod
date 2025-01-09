@@ -34,48 +34,53 @@ void CPugVoteSwapTeam::CPugVoteSwapTeam::ServerDeactivate()
 
 void CPugVoteSwapTeam::Init(int Team)
 {
-    this->m_Run = true;
-
-    this->m_NextFrame = 0.0f;
-
-    this->m_Time = time(nullptr) + static_cast<time_t>(gPugCvar.m_VoteDelay->value);
-
-    this->m_Team = Team;
-
-    this->m_VotesLeft = 0;
-
-    this->m_VoteList.clear();
-
-    auto Players = gPugUtil.GetPlayers();
-
-    if (Players[Team].size() > 0)
+    if (!this->m_Run)
     {
-        this->m_VoteList.push_back({1, 0, "Terroristas"});
-        this->m_VoteList.push_back({2, 0, "Contra-Terroristas"});
-        
-        this->m_VotesLeft = Players[Team].size();
+        auto Players = gPugUtil.GetPlayers();
 
-        for (auto const &Player : Players[Team])
+        if (Players[Team].size() > 0)
         {
-            gPugMenu[Player->entindex()].Create("Escolha o Time:", false, E_MENU::ME_VOTE_SWAP_TEAM);
+            this->m_Run = true;
 
-            for (auto i = 0; i < this->m_VoteList.size(); ++i)
+            this->m_NextFrame = 0.0f;
+
+            this->m_Time = time(nullptr) + static_cast<time_t>(gPugCvar.m_VoteDelay->value);
+
+            this->m_Team = Team;
+
+            this->m_VotesLeft = 0;
+
+            this->m_VoteList.clear();
+            
+            this->m_VoteList.push_back({1, 0, "Terroristas"});
+            this->m_VoteList.push_back({2, 0, "Contra-Terroristas"});
+            
+            this->m_VotesLeft = Players[Team].size();
+
+            for (auto const &Player : Players[Team])
             {
-                this->m_VoteList[i].Votes = 0;
+                gPugMenu[Player->entindex()].Create("Escolha o Time:", false, E_MENU::ME_VOTE_SWAP_TEAM);
 
-                gPugMenu[Player->entindex()].AddItem(i, this->m_VoteList[i].Name, false, 0);
+                for (auto i = 0; i < this->m_VoteList.size(); ++i)
+                {
+                    this->m_VoteList[i].Votes = 0;
+
+                    gPugMenu[Player->entindex()].AddItem(i, this->m_VoteList[i].Name, false, 0);
+                }
+
+                gPugMenu[Player->entindex()].Show(Player);
+
+                gPugUtil.ClientCommand(Player->edict(), g_VoteMap_Sound[g_engfuncs.pfnRandomLong(0, 1)]);
             }
 
-            gPugMenu[Player->entindex()].Show(Player);
-
-            gPugUtil.ClientCommand(Player->edict(), g_VoteMap_Sound[g_engfuncs.pfnRandomLong(0, 1)]);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Os ^3%s^1 venceram: Iniciando a escolha do time.", gPugCvar.m_Tag->string, g_Pug_TeamId[Team]);
         }
+        else
+        {
+            gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_FIRST_HALF);
 
-        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Os ^3%s^1 venceram: Iniciando a escolha do time.", gPugCvar.m_Tag->string, g_Pug_TeamId[Team]);
-    }
-    else
-    {
-        gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_FIRST_HALF);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Nenhum vencedor: Iniciando ^3%s^1.", gPugCvar.m_Tag->string, g_Pug_String[STATE_FIRST_HALF]);
+        }
     }
 }
 

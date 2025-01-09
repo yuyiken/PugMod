@@ -13,11 +13,11 @@ constexpr std::array<const char*, 5> g_LO3_Message =
 
 constexpr std::array<const char*, 5> g_LO3_HudText =
 {
-    "VALENDO EM TRÊS RESTARTS\nFIQUE ATENTO",
-    "VALENDO EM TRÊS RESTARTS",
-    "VALENDO EM DOIS RESTARTS",
-    "VALENDO NO PRÓXIMO RESTART",
-    "A PARTIDA COMEÇOU\nBOA SORTE & DIVIRTA-SE"
+    "..:: PREPARE-SE ::..",
+    "..:: VALENDO EM TRÊS RESTARTS ::..",
+    "..:: VALENDO EM DOIS RESTARTS ::..",
+    "..:: VALENDO NO PRÓXIMO RESTART ::..",
+    "..:: A PARTIDA COMEÇOU ::..\n..:: BOA SORTE & DIVIRTA-SE ::.."
 };
 
 constexpr std::array<const char*, 5> g_LO3_Sound =

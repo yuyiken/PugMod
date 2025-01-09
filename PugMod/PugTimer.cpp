@@ -68,18 +68,20 @@ void CPugtimer::StartFrame()
             if (gpGlobals->time >= this->m_NextFrame)
             {
                 auto Needed = (static_cast<int>(gPugCvar.m_PlayersMin->value) - (CSGameRules()->m_iNumTerrorist + CSGameRules()->m_iNumCT));
-                
+
                 if (Needed > 0)
                 {
                     this->m_Time = time(nullptr);
 
+                    auto State = gPugMod.GetState();
+
                     if (Needed > 1)
                     {
-                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, "AQUECIMENTO\n%d JOGADORES NECESSÁRIOS", Needed);
+                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, "%s\n%d Jogadores Necessários", g_Pug_String[State], Needed);
                     }
                     else
                     {
-                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, "AQUECIMENTO\n%d JOGADOR NECESSÁRIO", Needed);
+                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, "%s\n%d Jogador Necessário", g_Pug_String[State], Needed);
                     }
                 }
                 else
