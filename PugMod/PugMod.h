@@ -18,6 +18,7 @@ enum E_PUG_STATE
 constexpr std::array<const char *, STATE_END + 1> g_Pug_Config = {"pugmod", "deathmatch", "votemap", "voteteam", "captain", "kniferound", "esl", "halftime", "esl", "esl-ot", "end"};
 constexpr std::array<const char *, STATE_END + 1> g_Pug_String = {"Morto", "Deathmatch", "Escolha do Mapa", "Escolha do Time", "Capitães", "Round Faca", "Primeiro Tempo", "Intervalo", "Segundo Tempo", "Overtime", "Fim"};
 constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamId = {"Unnasigned", "Terroristas", "Contra-Terroristas", "Espectadores"};
+constexpr std::array<const char *, 1> g_Pug_Sounds = {"spk scientist/letsgo"};
 
 class CPugMod
 {

@@ -204,8 +204,6 @@ void DLL_POST_StartFrame()
 
 	gPugVoteSwapTeam.StartFrame();
 
-	gPugLO3.StartFrame();
-
 	RETURN_META(MRES_IGNORED);
 }
 

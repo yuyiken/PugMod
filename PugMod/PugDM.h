@@ -42,7 +42,6 @@ typedef struct S_DM_INFO
     std::array<WeaponIdType, C4_SLOT + 1U> m_WeaponLast;
     std::map<int, int> m_WeaponState;
     float m_Headshots;
-    float m_NextHudTime;
 
     std::array<bool, DM_OPT_RESPAWN + 1> m_Option;
 
@@ -53,7 +52,6 @@ typedef struct S_DM_INFO
         this->m_WeaponState.clear();
 
         this->m_Headshots = 0.0f;
-        this->m_NextHudTime = 0.0f;
 
         this->m_Option.fill(false);
     }

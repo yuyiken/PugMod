@@ -154,6 +154,15 @@ void CPugCvar::ServerActivate()
     // Padrão: "0"
     this->m_KnifeRound = this->Register("pug_knife_round", "0");
 
+    // Questionar fim da partida ao desconectar um jogador
+    // Quando não houver espectadores
+    //
+    // 0 Inativo
+    // 1 Ativo
+    //
+    // Padrão: "1"
+    this->m_VoteEnd  = this->Register("pug_vote_end", "1");
+
     // Ativar modo Deathmatch
     // Se inativo, será o modo aquecimento comum
     //

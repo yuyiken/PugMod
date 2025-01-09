@@ -47,6 +47,8 @@ void CPugVoteTeam::Init()
 
         this->m_Time = time(nullptr) + static_cast<time_t>(gPugCvar.m_VoteDelay->value);
 
+        this->m_VotesLeft = 0;
+
         if (g_pGameRules)
         {
             if (gPugCvar.m_MpFreezeTime)
@@ -200,6 +202,7 @@ void CPugVoteTeam::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
             if (Item.Info < this->m_VoteList.size())
             {
                 this->m_VotesLeft -= 1;
+
                 this->m_VoteList[Item.Info].Votes += 1;
 
                 gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 escolheu ^3%s^1.", gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), this->m_VoteList[Item.Info].Name.c_str());

@@ -5,60 +5,45 @@ CPugLO3 gPugLO3;
 void CPugLO3::Init()
 {
     this->m_Run = true;
-
-    this->m_NextFrame = (gpGlobals->time + 3.0f);
     
     this->m_Restart = 0;
 
-    gPugUtil.ClientCommand(nullptr, g_LO3_Sound[0]);
-
-    gPugUtil.SendHud(nullptr, g_LO3_HudParam, g_LO3_Message[0]);
-
-    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Valendo em três restarts! ^3Fique atento !!", gPugCvar.m_Tag->string);
+    this->RestartRound();
 }
 
-void CPugLO3::Stop()
-{
-    this->m_Run = false;
-
-    this->m_NextFrame = 0.0f;
-
-    this->m_Restart = 0;
-
-    gPugUtil.ClientCommand(nullptr, g_LO3_Sound[4]);
-
-    gPugUtil.SendHud(nullptr, g_LO3_HudParam, g_LO3_Message[4]);
-
-    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3A partida começou! Boa Sorte & Divirta-se!!", gPugCvar.m_Tag->string);
-}
-
-void CPugLO3::StartFrame()
+void CPugLO3::RestartRound()
 {
     if (this->m_Run)
     {
-        if (gpGlobals->time >= this->m_NextFrame)
+        if (this->m_Restart <= 3)
         {
-            if (this->m_Restart < 3)
+            if (g_pGameRules)
             {
-                this->m_Restart += 1;
-
-                gPugUtil.ClientCommand(nullptr, g_LO3_Sound[this->m_Restart]);
-
-                if (g_pGameRules)
-                {
-                    CSGameRules()->m_bGameStarted = true;
-                    CSGameRules()->m_flRestartRoundTime = (gpGlobals->time + 2.0f);
-                    CSGameRules()->m_bCompleteReset = true;
-                }
-
-                gPugUtil.SendHud(nullptr, g_LO3_HudParam, g_LO3_Message[this->m_Restart]);
+                CSGameRules()->m_bGameStarted = true;
+                CSGameRules()->m_bCompleteReset = true;
+                CSGameRules()->m_flRestartRoundTime = (gpGlobals->time + 3.0f);
             }
-            else
-            {
-                this->Stop();
-            }
-
-            this->m_NextFrame = (gpGlobals->time + 3.0f);
         }
+        else
+        {
+            this->m_Run = false;
+        }
+
+        auto Players = gPugUtil.GetPlayers(false, false);
+
+        for (auto const & Player : Players)
+        {
+            gPugUtil.ScreenShake(Player->edict(), 2.0f, 2.0f, 2.0f);
+
+            gPugUtil.ScreenFade(Player->edict(), 2.0f, 2.0f, 0x0002, 0, 0, 200, 100);
+
+            gPugUtil.ClientCommand(Player->edict(), g_LO3_Sound[this->m_Restart]);
+
+            gPugUtil.SendHud(Player->edict(), g_LO3_HudParam, g_LO3_HudText[this->m_Restart]);
+
+            gPugUtil.PrintColor(Player->edict(), Player->entindex(), g_LO3_Message[this->m_Restart], gPugCvar.m_Tag->string);
+        }
+
+        this->m_Restart += 1;
     }
 }

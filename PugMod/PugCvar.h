@@ -33,6 +33,7 @@ public:
 	cvar_t* m_VoteMap;
 	cvar_t* m_LastMap;
 	cvar_t* m_KnifeRound;
+	cvar_t* m_VoteEnd;
 
 	cvar_t* m_DM_Enable;
 	cvar_t* m_DM_HideKillFeed;

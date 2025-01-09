@@ -34,10 +34,10 @@ public:
     void SendHud(edict_t *pEntity, const hudtextparms_t &TextParams, const char *Format, ...);
     void SendDHud(edict_t *pEntity, const hudtextparms_t &TextParams, const char *Format, ...);
     void SendDeathMsg(edict_t *pEntity, CBaseEntity *pKiller, CBasePlayer *pVictim, CBasePlayer *pAssister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill);
-    void ScreenFade(edict_t *pEntity, unsigned short Duration, unsigned short HoldTime, short FadeFlags, short Red, short Green, short Blue, short Alpha);
+    void ScreenFade(edict_t *pEntity, float Duration, float HoldTime, int FadeFlags, int Red, int Green, int Blue, int Alpha);
+    void ScreenShake(edict_t *pEntity, float Amplitude, float Duration, float Frequency);
     std::vector<CBasePlayer *> GetPlayers(bool InGame, bool Bots);
-    std::vector<CBasePlayer *> GetPlayers(TeamName Team);
-    std::map<int, std::vector<CBasePlayer *>> GetPlayers();
+    std::array<std::vector<CBasePlayer *>, SPECTATOR + 1> GetPlayers();
     
 private:
     std::string m_Path;

@@ -245,9 +245,9 @@ bool CPugMod::ChooseTeam(CBasePlayer *Player, int Slot)
 
 	if (Slot == MENU_SLOT_TEAM_TERRORIST || Slot == MENU_SLOT_TEAM_CT)
 	{
-        auto Players = gPugUtil.GetPlayers((TeamName)Slot);
+        auto Players = gPugUtil.GetPlayers();
 
-		if (Players.size() >= static_cast<size_t>(gPugCvar.m_PlayersMax->value / 2.0f))
+		if (Players[Slot].size() >= static_cast<size_t>(gPugCvar.m_PlayersMax->value / 2.0f))
 		{
 			gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Esse time já está completo.", gPugCvar.m_Tag->string);
 			return true;
@@ -310,34 +310,13 @@ void CPugMod::DropClient(edict_t *pEntity)
     {
         auto Players = gPugUtil.GetPlayers();
 
-        auto PlayersMin = static_cast<int>(gPugCvar.m_PlayersMin->value / 2.0f);
+        auto PlayersMin = static_cast<int>((gPugCvar.m_PlayersMin->value / 2.0f) - 1.0f);
 
         if((Players[TERRORIST].size() < PlayersMin) || (Players[CT].size() < PlayersMin))
         {
-            if (Players[SPECTATOR].size() < 1)
+            if (Players[SPECTATOR].size() < 2)
             {
-                // gPugVoteEnd.Init();
-            }
-            else
-            {
-                auto Player = UTIL_PlayerByIndexSafe(ENTINDEX(pEntity));
-
-                for (auto const & Player : Players[SPECTATOR])
-                {
-                    Player->m_iNumSpawns = 0;
-                    Player->m_bTeamChanged = false;
-
-                    gPugUtil.ClientCommand(Player->edict(), "spk scientist/letsgo");
-
-                    if (Player)
-                    {
-                        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ATENÇÃO: Vaga disponível no time ^3%s.^1", gPugCvar.m_Tag->string, g_Pug_TeamId[Player->m_iTeam]);
-                    }
-                    else
-                    {
-                        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ATENÇÃO: Vaga disponível.", gPugCvar.m_Tag->string);
-                    }
-                }
+                gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_END);
             }
         }
     }

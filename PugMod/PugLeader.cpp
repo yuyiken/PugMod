@@ -80,60 +80,63 @@ void CPugLeader::Init()
 
 void CPugLeader::Stop()
 {
-	this->m_Run = false;
-
-    this->m_NextFrame = 0.0f;
-
-	g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_AutoTeamJoin, "0");
-
-	g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_HumansJoinTeam, "any");
-
-	g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_BotJoinTeam, "any");
-
-	g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_AllowSpectators, "0");
-
-	auto Players = gPugUtil.GetPlayers();
-
-	if ((Players[TERRORIST].size() >= this->m_PlayersMin) && (Players[CT].size() >= this->m_PlayersMin))
+	if (this->m_Run)
 	{
-		if (gPugCvar.m_KnifeRound->value)
+		this->m_Run = false;
+
+		this->m_NextFrame = 0.0f;
+
+		g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_AutoTeamJoin, "0");
+
+		g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_HumansJoinTeam, "any");
+
+		g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_BotJoinTeam, "any");
+
+		g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_AllowSpectators, "0");
+
+		auto Players = gPugUtil.GetPlayers();
+
+		if ((Players[TERRORIST].size() >= this->m_PlayersMin) && (Players[CT].size() >= this->m_PlayersMin))
 		{
-			gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_KNIFE_ROUND);
+			if (gPugCvar.m_KnifeRound->value)
+			{
+				gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_KNIFE_ROUND);
+			}
+			else
+			{
+				gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_FIRST_HALF);
+			}
+
+			gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Os times estão completos.", gPugCvar.m_Tag->string);
 		}
 		else
 		{
-			gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_FIRST_HALF);
-		}
-
-        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Os times estão completos.", gPugCvar.m_Tag->string);
-	}
-	else
-	{
-		if (!this->m_Team.empty())
-		{
-			for (auto const & Backup : this->m_Team)
+			if (!this->m_Team.empty())
 			{
-				auto Player = UTIL_PlayerByIndexSafe(Backup.first);
-
-				if (Player)
+				for (auto const & Backup : this->m_Team)
 				{
-					if (Player->m_iTeam != Backup.second)
-					{
-						Player->edict()->v.deadflag = DEAD_DEAD;
-						
-						Player->CSPlayer()->JoinTeam(static_cast<TeamName>(Backup.second));
+					auto Player = UTIL_PlayerByIndexSafe(Backup.first);
 
-						Player->edict()->v.deadflag = DEAD_NO;
+					if (Player)
+					{
+						if (Player->m_iTeam != Backup.second)
+						{
+							Player->edict()->v.deadflag = DEAD_DEAD;
+							
+							Player->CSPlayer()->JoinTeam(static_cast<TeamName>(Backup.second));
+
+							Player->edict()->v.deadflag = DEAD_NO;
+						}
 					}
 				}
+
+				this->m_Team.clear();
 			}
 
-			this->m_Team.clear();
+			gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_DEATHMATCH);
+
+			gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Falha ao escolher: ^3Os times estão incompletos.^1", gPugCvar.m_Tag->string);
 		}
-
-		gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_DEATHMATCH);
-
-		gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Falha ao escolher: ^3Os times estão incompletos.^1", gPugCvar.m_Tag->string);
 	}
 }
 
@@ -159,15 +162,15 @@ void CPugLeader::DropClient(edict_t *pEntity)
 
 		if (Leader->HasConditions(BIT_LEADER_TYPE))
 		{
-			auto Players = gPugUtil.GetPlayers(SPECTATOR);
+			auto Players = gPugUtil.GetPlayers();
 
-			if (Players.size())
+			if (Players[SPECTATOR].size() > 0)
 			{
-				this->SetLeader(Players.at(0), Leader->m_iTeam);
+				this->SetLeader(Players[SPECTATOR].at(0), Leader->m_iTeam);
 
 				if (Leader->HasConditions(BIT_LEADER_MENU))
 				{
-					this->Menu(Players.at(0));
+					this->Menu(Players[SPECTATOR].at(0));
 				}
 			}
 			else
@@ -231,11 +234,11 @@ void CPugLeader::GetPlayer(CBasePlayer* Leader, CBasePlayer* Target)
 		}
 		else
 		{
-			auto Players = gPugUtil.GetPlayers(SPECTATOR);
+			auto Players = gPugUtil.GetPlayers();
 
-			if (Players.size())
+			if (Players[SPECTATOR].size() > 0)
 			{
-				this->GetPlayer(Leader, Players.at(0));
+				this->GetPlayer(Leader, Players[SPECTATOR].at(0));
 			}
 		}
 	}
@@ -275,13 +278,13 @@ void CPugLeader::Menu(CBasePlayer* Leader)
 {
     if (Leader)
     {
-        auto Players = gPugUtil.GetPlayers(SPECTATOR);
+		auto Players = gPugUtil.GetPlayers();
 
-		if (Players.size() >= 1)
+		if (Players[SPECTATOR].size() > 0)
 		{
 			Leader->SetConditions(BIT_LEADER_MENU);
 
-			if (Players.size() == 1 || Leader->IsBot())
+			if (Players[SPECTATOR].size() == 1 || Leader->IsBot())
 			{
 				gPugTask.Create(E_TASK::LEADER_MENU, 2.0f, false, Leader->entindex());
 			}
@@ -289,7 +292,7 @@ void CPugLeader::Menu(CBasePlayer* Leader)
 			{
 				gPugMenu[Leader->entindex()].Create("Jogadores:", false, E_MENU::CP_LEADER_MENU);
 
-				for (auto const& Player : Players)
+				for (auto const& Player : Players[SPECTATOR])
 				{
 					gPugMenu[Leader->entindex()].AddItem(Player->entindex(), STRING(Player->edict()->v.netname), false, Player->m_iTeam);
 				}

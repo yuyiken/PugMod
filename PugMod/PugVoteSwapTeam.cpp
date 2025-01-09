@@ -46,16 +46,16 @@ void CPugVoteSwapTeam::Init(int Team)
 
     this->m_VoteList.clear();
 
-    auto Players = gPugUtil.GetPlayers(static_cast<TeamName>(Team));
+    auto Players = gPugUtil.GetPlayers();
 
-    if (Players.size() > 0)
+    if (Players[Team].size() > 0)
     {
         this->m_VoteList.push_back({1, 0, "Terroristas"});
         this->m_VoteList.push_back({2, 0, "Contra-Terroristas"});
         
-        this->m_VotesLeft = Players.size();
+        this->m_VotesLeft = Players[Team].size();
 
-        for (auto const &Player : Players)
+        for (auto const &Player : Players[Team])
         {
             gPugMenu[Player->entindex()].Create("Escolha o Time:", false, E_MENU::ME_VOTE_SWAP_TEAM);
 

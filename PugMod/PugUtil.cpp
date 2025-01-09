@@ -467,22 +467,39 @@ void CPugUtil::SendDeathMsg(edict_t *pEntity, CBaseEntity *pKiller, CBasePlayer 
 	}
 }
 
-void CPugUtil::ScreenFade(edict_t *pEntity, unsigned short Duration, unsigned short HoldTime, short FadeFlags, short Red, short Green, short Blue, short Alpha)
+void CPugUtil::ScreenFade(edict_t *pEntity, float Duration, float HoldTime, int FadeFlags, int Red, int Green, int Blue, int Alpha)
 {
 	if (!FNullEnt(pEntity))
 	{
 		static int iMsgScreenFade;
 
-		if (iMsgScreenFade || (iMsgScreenFade = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "ScreenFade", NULL)))
+		if (iMsgScreenFade || (iMsgScreenFade = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "ScreenFade", nullptr)))
 		{
 			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgScreenFade, nullptr, pEntity);
-			g_engfuncs.pfnWriteShort(Duration);
-			g_engfuncs.pfnWriteShort(HoldTime);
+			g_engfuncs.pfnWriteShort(gPugUtil.FixedUnsigned16(Duration, BIT(12)));
+			g_engfuncs.pfnWriteShort(gPugUtil.FixedUnsigned16(HoldTime, BIT(12)));
 			g_engfuncs.pfnWriteShort(FadeFlags);
 			g_engfuncs.pfnWriteByte(Red);
 			g_engfuncs.pfnWriteByte(Green);
 			g_engfuncs.pfnWriteByte(Blue);
 			g_engfuncs.pfnWriteByte(Alpha);
+			g_engfuncs.pfnMessageEnd();
+		}
+	}
+}
+
+void CPugUtil::ScreenShake(edict_t *pEntity, float Amplitude, float Duration, float Frequency)
+{
+	if (!FNullEnt(pEntity))
+	{
+		static int iMsgScreenShake;
+
+		if (iMsgScreenShake || (iMsgScreenShake = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "ScreenShake", nullptr)))
+		{
+			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgScreenShake, nullptr, pEntity);
+			g_engfuncs.pfnWriteShort(gPugUtil.FixedUnsigned16(Amplitude, BIT(12)));
+			g_engfuncs.pfnWriteShort(gPugUtil.FixedUnsigned16(Duration, BIT(12)));
+			g_engfuncs.pfnWriteShort(gPugUtil.FixedUnsigned16(Frequency, BIT(8)));
 			g_engfuncs.pfnMessageEnd();
 		}
 	}
@@ -500,14 +517,25 @@ std::vector<CBasePlayer *> CPugUtil::GetPlayers(bool InGame, bool Bots)
 		{
 			if (!Player->IsDormant())
 			{
-				if
-				(
-					((Player->edict()->v.flags & FL_PROXY) == FL_PROXY) ||
-					(InGame && (Player->m_iTeam != TERRORIST) && (Player->m_iTeam != CT)) ||
-					(!Bots && Player->IsBot())
-				)
+				if ((Player->edict()->v.flags & FL_PROXY) == FL_PROXY)
 				{
 					continue;
+				}
+
+				if (InGame)
+				{
+					if ((Player->m_iTeam != TERRORIST) && (Player->m_iTeam != CT))
+					{
+						continue;
+					}
+				}
+
+				if (Bots == false)
+				{
+					if (Player->IsBot())
+					{
+						continue;
+					}
 				}
 
 				Players.push_back(Player);
@@ -518,32 +546,9 @@ std::vector<CBasePlayer *> CPugUtil::GetPlayers(bool InGame, bool Bots)
 	return Players;
 }
 
-std::vector<CBasePlayer *> CPugUtil::GetPlayers(TeamName Team)
+std::array<std::vector<CBasePlayer *>, SPECTATOR + 1> CPugUtil::GetPlayers()
 {
-	std::vector<CBasePlayer *> Players = {};
-
-	for (int i = 1; i <= gpGlobals->maxClients; ++i)
-	{
-		auto Player = UTIL_PlayerByIndex(i);
-
-		if (Player)
-		{
-			if (!Player->IsDormant())
-			{
-				if (Player->m_iTeam == Team)
-				{
-					Players.push_back(Player);
-				}
-			}
-		}
-	}
-
-	return Players;
-}
-
-std::map<int, std::vector<CBasePlayer *>> CPugUtil::GetPlayers()
-{
-	std::map<int, std::vector<CBasePlayer *>> Players = {};
+	std::array<std::vector<CBasePlayer *>, SPECTATOR + 1> Players = {};
 
 	for (int i = 1; i <= gpGlobals->maxClients; ++i)
 	{

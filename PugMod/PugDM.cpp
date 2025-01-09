@@ -328,7 +328,7 @@ bool CPugDM::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Victim
                 {
                     if (Victim->m_bHeadshotKilled && this->m_Info[KillerIndex].m_Option[DM_OPT_KILL_FADE])
                     {
-                        gPugUtil.ScreenFade(Killer->edict(), BIT(10), BIT(10), 0x0000, 0, 0, 200, 50);
+                        gPugUtil.ScreenFade(Killer->edict(), 0.8f, 0.8f, 0x0002, 0, 0, 200, 50);
                     }
 
                     if (Victim->m_bHeadshotKilled && this->m_Info[KillerIndex].m_Option[DM_OPT_KILL_SOUND])
@@ -389,25 +389,20 @@ void CPugDM::UpdateClientData(CBasePlayer *Player)
         {
             if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
             {
-                auto EntityIndex = Player->entindex();
-
-                if (EntityIndex > 0 && EntityIndex <= gpGlobals->maxClients)
+                if (this->m_Info[Player->entindex()].m_Option[DM_OPT_HUD_KD])
                 {
-                    if (this->m_Info[EntityIndex].m_Option[DM_OPT_HUD_KD])
+                    if (gpGlobals->time >= Player->m_iUpdateTime)
                     {
-                        if (gpGlobals->time >= this->m_Info[EntityIndex].m_NextHudTime)
-                        {
-                            gPugUtil.SendDHud
-                            (
-                                Player->edict(),
-                                g_DM_HudInfo,
-                                "KD: %.2f - HSP: %.2f%%",
-                                (Player->m_iDeaths > 0) ? (Player->edict()->v.frags / (float)(Player->m_iDeaths)) : (Player->edict()->v.frags > 0.0f ? 100.0f : 0.0f),
-                                (Player->edict()->v.frags > 0.0f) ? ((this->m_Info[EntityIndex].m_Headshots / Player->edict()->v.frags) * 100.0f) : 0.0f
-                            );
+                        gPugUtil.SendDHud
+                        (
+                            Player->edict(),
+                            g_DM_HudInfo,
+                            "KD: %.2f - HSP: %.2f%%",
+                            (Player->m_iDeaths > 0) ? (Player->edict()->v.frags / (float)(Player->m_iDeaths)) : (Player->edict()->v.frags > 0.0f ? 100.0f : 0.0f),
+                            (Player->edict()->v.frags > 0.0f) ? ((this->m_Info[Player->entindex()].m_Headshots / Player->edict()->v.frags) * 100.0f) : 0.0f
+                        );
 
-                            this->m_Info[EntityIndex].m_NextHudTime = (gpGlobals->time + 1.0f);
-                        }
+                        Player->m_iUpdateTime = static_cast<int>(gpGlobals->time + 1.0f);
                     }
                 }
             }
