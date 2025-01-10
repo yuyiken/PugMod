@@ -29,6 +29,8 @@ int CPugMod::SetState(int State)
 {
     this->m_State = State;
 
+    this->m_NextFrame = 0.0f;
+
     switch(this->m_State)
     {
         case STATE_DEAD:
@@ -98,21 +100,34 @@ int CPugMod::SetState(int State)
         }
         case STATE_HALFTIME:
         {
-            if (g_pGameRules)
+            this->SwapTeams();
+
+            auto Players = gPugUtil.GetPlayers(true, true);
+
+            if (Players.size() < static_cast<int>(gPugCvar.m_PlayersMin->value))
             {
-                CSGameRules()->SwapAllPlayers();
+                if (gPugCvar.m_ReadyType->value == 1.0f)
+                {
+                    gPugTimer.Init();
+                }
+                else if (gPugCvar.m_ReadyType->value == 2.0f)
+                {
+                    gPugReady.Init();
+                }
+            }
+            else
+            {
+                if (this->GetRound() < static_cast<int>(gPugCvar.m_Rounds->value))
+                {
+                    gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_SECOND_HALF);
+                }
+                else
+                {
+                    gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_OVERTIME);
+                }
             }
 
-            if (gPugCvar.m_ReadyType->value == 1.0f)
-            {
-                gPugTimer.Init();
-            }
-            else if (gPugCvar.m_ReadyType->value == 2.0f)
-            {
-                gPugReady.Init();
-            }
-
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 Iniciado: Prepare-se!!.", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 Iniciado: Prepare-se!!", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
             break;
         }
         case STATE_SECOND_HALF:
@@ -144,19 +159,19 @@ int CPugMod::SetState(int State)
     return this->m_State;
 }
 
-void CPugMod::NextState()
+void CPugMod::NextState(float Delay)
 {
     if (this->m_State == STATE_DEATHMATCH)
     {
         if (gPugCvar.m_VoteMap->value != 0.0f)
         {
-            this->SetState(STATE_VOTEMAP);
+            gPugTask.Create(E_TASK::SET_STATE, Delay, false, STATE_VOTEMAP);
 
             g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_VoteMap, "0");
         }
         else
         {
-            this->SetState(STATE_VOTETEAM);
+            gPugTask.Create(E_TASK::SET_STATE, Delay, false, STATE_VOTETEAM);
 
             g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_VoteMap, "1");
         }
@@ -165,31 +180,33 @@ void CPugMod::NextState()
     {
         if (this->GetRound() < static_cast<int>(gPugCvar.m_Rounds->value))
         {
-            this->SetState(STATE_SECOND_HALF);
+            gPugTask.Create(E_TASK::SET_STATE, Delay, false, STATE_SECOND_HALF);
         }
         else
         {
-            this->SetState(STATE_OVERTIME);
+            gPugTask.Create(E_TASK::SET_STATE, Delay, false, STATE_OVERTIME);
         }
     }
 }
 
-int CPugMod::GetRound()
+void CPugMod::SwapTeams()
 {
-    auto Result = 0;
-
-    for (int State = STATE_DEAD; State <= STATE_END; State++)
+    if (this->GetRound() != static_cast<int>(gPugCvar.m_Rounds->value))
     {
-        if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
+        if (g_pGameRules)
         {
-            for (int Team = TERRORIST; Team <= CT; Team++)
-            {
-                Result += this->m_Score[State][Team];
-            }
-        }
-    }
+            CSGameRules()->SwapAllPlayers();
 
-    return Result;
+            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_SvRestart, "1");
+        }
+
+        for (int State = STATE_DEAD; State <= STATE_END; State++)
+        {
+            SWAP(this->m_Score[State][TERRORIST], this->m_Score[State][CT]);
+        }
+
+        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Trocando times automaticamente.", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
+    }
 }
 
 std::array<int, SPECTATOR> CPugMod::GetScore()
@@ -208,6 +225,13 @@ std::array<int, SPECTATOR> CPugMod::GetScore()
     }
 
     return Result;
+}
+
+int CPugMod::GetRound()
+{
+    auto Score = this->GetScore();
+
+    return (Score[TERRORIST] + Score[CT]);
 }
 
 int CPugMod::GetWinner()
@@ -352,33 +376,72 @@ void CPugMod::DropClient(edict_t *pEntity)
     }
 }
 
+void CPugMod::HudMsg()
+{
+    if (this->m_State >= STATE_KNIFE_ROUND && this->m_State <= STATE_END)
+    {
+        auto Score = this->GetScore();
+
+        auto Round = (Score[TERRORIST] + Score[CT] + 1);
+
+        auto Total = static_cast<int>(gPugCvar.m_Rounds->value);
+
+        auto Quite = (Total / 2);
+
+        if (this->m_State == STATE_KNIFE_ROUND || this->m_State == STATE_FIRST_HALF)
+        {
+            if (Round == 1)
+            {
+                gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Iniciando:\n%s", g_Pug_String[this->m_State]);
+            }
+            else
+            {
+                if (Round < Quite)
+                {
+                    gPugUtil.SendHud(nullptr, g_Pug_HudParam, "%s\nRound %d\nTRs %d - %d CTs", g_Pug_String[this->m_State], Round, Score[TERRORIST], Score[CT]);
+                }
+                else if (Round == Quite)
+                {
+                    gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Último Round\n%s\nTRs %d - %d CTs", g_Pug_String[this->m_State], Score[TERRORIST], Score[CT]);
+                }
+            }
+        }
+        if (this->m_State == STATE_SECOND_HALF)
+        {
+            if (Score[TERRORIST] < Quite && Score[CT] < Quite)
+            {
+                gPugUtil.SendHud(nullptr, g_Pug_HudParam, "%s\nRound %d\nTRs %d - %d CTs", g_Pug_String[this->m_State], Round, Score[TERRORIST], Score[CT]);
+            }
+            else
+            {
+                gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Último Round GG\n%s\nTRs %d - %d CTs", g_Pug_String[this->m_State], Score[TERRORIST], Score[CT]);
+            }
+        }
+    }
+}
+
 void CPugMod::RestartRound()
 {
-    if (this->m_State != STATE_DEAD)
+    if (g_pGameRules)
     {
-        if (g_pGameRules)
+        if (CSGameRules()->m_bCompleteReset)
         {
-            if (CSGameRules()->m_bCompleteReset)
-            {
-                this->m_Score[this->m_State].fill(0);
-            }
+            this->m_Score[this->m_State].fill(0);
+        }
+        else
+        {
+            gPugTask.Create(E_TASK::SEND_HUDMESSAGE, 0.1f, false, 0);
         }
     }
 }
 
 void CPugMod::RoundStart()
 {
-    if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
+    if (this->m_State == STATE_KNIFE_ROUND || this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
     {
-        if (this->GetRound())
-        {
-            auto Players = gPugUtil.GetPlayers(false, false);
+        this->Scores(nullptr);
 
-            for (auto const & Player : Players)
-            {
-                this->Scores(Player);
-            }
-        }
+        gPugUtil.ClientPrint(nullptr, E_PRINT::CONSOLE, "[%s] Round %d Iniciado.", gPugCvar.m_Tag->string, this->GetRound());
     }
 }
 
@@ -388,23 +451,68 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
     {
         if (winStatus != WINSTATUS_NONE)
         {
+            auto Winner = (winStatus == WINSTATUS_TERRORISTS) ? TERRORIST : CT;
+
             if (g_pGameRules)
             {
                 this->m_Score[this->m_State][TERRORIST] = CSGameRules()->m_iNumTerroristWins;
                 this->m_Score[this->m_State][CT]        = CSGameRules()->m_iNumCTWins;
+            }
 
-                gPugUtil.ClientPrint(nullptr, E_PRINT::CONSOLE, "[%s] Round %d Ganho Por: %s", gPugCvar.m_Tag->string, this->GetRound(), g_Pug_TeamId[((winStatus == WINSTATUS_TERRORISTS) ? TERRORIST : CT)]);
+            gPugUtil.ClientPrint(nullptr, E_PRINT::CONSOLE, "[%s] Round %d Ganho Por: %s.", gPugCvar.m_Tag->string, this->GetRound(), g_Pug_TeamId[Winner]);
 
-                if (this->m_State == STATE_KNIFE_ROUND)
+            switch (this->m_State)
+            {
+                case STATE_KNIFE_ROUND:
                 {
-                    gPugTask.Create(E_TASK::VOTE_SWAP_TEAM, 2.0f, false, this->GetWinner());
+                    gPugTask.Create(E_TASK::VOTE_SWAP_TEAM, 1.0f, false, Winner);
+                    break;
                 }
-                else if (this->m_State == STATE_FIRST_HALF)
+                case STATE_FIRST_HALF:
                 {
-                    if (this->GetRound() >= static_cast<int>(gPugCvar.m_Rounds->value / 2.0f))
+                    auto Score = this->GetScore();
+
+                    if ((Score[TERRORIST] + Score[CT]) >= static_cast<int>(gPugCvar.m_Rounds->value / 2.0f))
                     {
-                        gPugTask.Create(E_TASK::SET_STATE, tmDelay + 2.0f, false, STATE_HALFTIME);
+                        gPugTask.Create(E_TASK::SET_STATE, tmDelay + 1.0f, false, STATE_HALFTIME);
                     }
+                    break;
+                }
+                case STATE_SECOND_HALF:
+                {
+                    auto Score = this->GetScore();
+
+                    auto Quite = static_cast<int>(gPugCvar.m_Rounds->value / 2.0f);
+
+                    if ((Score[TERRORIST] > Quite) || (Score[CT] > Quite))
+                    {
+                        gPugTask.Create(E_TASK::SET_STATE, tmDelay + 1.0f, false, STATE_END);
+                    }
+                    else if ((Score[TERRORIST] == Quite) && (Score[CT] == Quite))
+                    {
+                        switch (static_cast<int>(gPugCvar.m_OvertimeType->value))
+                        {
+                            case 0: // Vote
+                            {
+                                break;
+                            }
+                            case 1: // OT
+                            {
+                                gPugTask.Create(E_TASK::SET_STATE, tmDelay + 1.0f, false, STATE_HALFTIME);
+                                break;
+                            }
+                            case 2: // End Tied
+                            {
+                                gPugTask.Create(E_TASK::SET_STATE, tmDelay + 1.0f, false, STATE_END);
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                }
+                case STATE_OVERTIME:
+                {
+                    break;
                 }
             }
         }
@@ -424,42 +532,44 @@ void CPugMod::Status(CBasePlayer *Player)
 
 void CPugMod::Scores(CBasePlayer *Player)
 {
-    if (Player)
+    if (this->m_State >= STATE_FIRST_HALF && this->m_State <= STATE_END)
     {
-        if (this->m_State >= STATE_FIRST_HALF && this->m_State <= STATE_END)
+        auto pEntity = (Player ? Player->edict() : nullptr);
+
+        auto Score = this->GetScore();
+
+        if (Score[TERRORIST] != Score[CT])
         {
-            auto Score = this->GetScore();
+            auto Winner = (Score[TERRORIST] > Score[CT]) ? TERRORIST : CT;
 
-            if (Score[TERRORIST] != Score[CT])
+            auto Losers = (Score[TERRORIST] > Score[CT]) ? CT : TERRORIST;
+
+            auto Color = (Score[TERRORIST] > Score[CT]) ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE;
+
+            if (this->m_State != STATE_END)
             {
-                auto Winner = (Score[TERRORIST] > Score[CT]) ? TERRORIST : CT;
-
-                auto Losers = (Score[TERRORIST] > Score[CT]) ? CT : TERRORIST;
-
-                auto Color = (Score[TERRORIST] > Score[CT]) ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE;
-
-                if (this->m_State != STATE_END)
-                {
-                    gPugUtil.PrintColor(Player->edict(), Color, "^4[%s]^1 Os ^3%s^1 estão vencendo: %d-%d", gPugCvar.m_Tag->string, g_Pug_TeamId[Winner], Score[Winner], Score[Losers]);
-                }
-                else
-                {
-                    gPugUtil.PrintColor(Player->edict(), Color, "^4[%s]^1 Fim de jogo! Os ^3%s^1 venceram a partida: %d-%d", gPugCvar.m_Tag->string, g_Pug_TeamId[Winner], Score[Winner], Score[Losers]);
-                }
+                gPugUtil.PrintColor(pEntity, Color, "^4[%s]^1 Os ^3%s^1 estão vencendo: %d-%d", gPugCvar.m_Tag->string, g_Pug_TeamId[Winner], Score[Winner], Score[Losers]);
             }
             else
             {
-                if (this->m_State != STATE_END)
-                {
-                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O placar está empatado: %d-%d", gPugCvar.m_Tag->string, Score[TERRORIST], Score[CT]);
-                }
-                else
-                {
-                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Fim de jogo! O placar está empatado: %d-%d", gPugCvar.m_Tag->string, Score[TERRORIST], Score[CT]);
-                }
+                gPugUtil.PrintColor(pEntity, Color, "^4[%s]^1 Fim de jogo! Os ^3%s^1 venceram a partida: %d-%d", gPugCvar.m_Tag->string, g_Pug_TeamId[Winner], Score[Winner], Score[Losers]);
             }
         }
         else
+        {
+            if (this->m_State != STATE_END)
+            {
+                gPugUtil.PrintColor(pEntity, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O placar está empatado: %d-%d", gPugCvar.m_Tag->string, Score[TERRORIST], Score[CT]);
+            }
+            else
+            {
+                gPugUtil.PrintColor(pEntity, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Fim de jogo! O placar está empatado: %d-%d", gPugCvar.m_Tag->string, Score[TERRORIST], Score[CT]);
+            }
+        }
+    }
+    else
+    {
+        if (Player)
         {
             gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Comando indisponível.", gPugCvar.m_Tag->string);
         }

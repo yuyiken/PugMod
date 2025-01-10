@@ -51,6 +51,11 @@ void CPugTask::Execute(int Index)
                 gPugVoteSwapTeam.Init(this->m_Task[Index].Parameter);
                 break;
             }
+            case E_TASK::SEND_HUDMESSAGE:
+            {
+                gPugMod.HudMsg();
+                break;
+            }
         }
     }
 }

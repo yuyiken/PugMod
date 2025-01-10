@@ -41,7 +41,7 @@ void CPugtimer::Stop()
 
         gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todos os jogadores estão nos times e prontos!", gPugCvar.m_Tag->string);
 
-        gPugMod.NextState();
+        gPugMod.NextState(2.0f);
     }
 }
 

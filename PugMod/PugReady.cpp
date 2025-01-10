@@ -41,7 +41,7 @@ void CPugReady::Stop()
 
         this->m_Ready.fill(false);
 
-        gPugMod.NextState();
+        gPugMod.NextState(2.0);
     }
 }
 

@@ -15,9 +15,45 @@ enum E_PUG_STATE
     STATE_END
 };
 
-constexpr std::array<const char *, STATE_END + 1> g_Pug_Config = {"pugmod", "deathmatch", "votemap", "voteteam", "captain", "kniferound", "esl", "halftime", "esl", "esl-ot", "end"};
-constexpr std::array<const char *, STATE_END + 1> g_Pug_String = {"Morto", "Deathmatch", "Escolha do Mapa", "Escolha do Time", "Capitães", "Round Faca", "Primeiro Tempo", "Intervalo", "Segundo Tempo", "Overtime", "Fim"};
-constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamId = {"Unnasigned", "Terroristas", "Contra-Terroristas", "Espectadores"};
+constexpr std::array<const char *, STATE_END + 1> g_Pug_Config =
+{
+    "pugmod", 
+    "deathmatch", 
+    "votemap", 
+    "voteteam", 
+    "captain", 
+    "kniferound", 
+    "esl", 
+    "halftime", 
+    "esl", 
+    "esl-ot", 
+    "end"
+};
+
+constexpr std::array<const char *, STATE_END + 1> g_Pug_String =
+{
+    "Morto", 
+    "Deathmatch", 
+    "Escolha do Mapa", 
+    "Escolha do Time", 
+    "Capitães", 
+    "Round Faca", 
+    "Primeiro Tempo", 
+    "Intervalo", 
+    "Segundo Tempo", 
+    "Overtime", 
+    "Fim"
+};
+
+constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamId =
+{
+    "Unnasigned",
+    "Terroristas",
+    "Contra-Terroristas",
+    "Espectadores"
+};
+
+constexpr hudtextparms_t g_Pug_HudParam = {0.01f, 0.18f, 2, 0x00, 0xFF, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0.0f, 0.0f, 8.0f, 3.0f, 1};
 
 class CPugMod
 {
@@ -27,11 +63,11 @@ public:
 
     int GetState();
     int SetState(int State);
+    void NextState(float Delay);
+    void SwapTeams();
 
-    void NextState();
-
-    int GetRound();
     std::array<int, SPECTATOR> GetScore();
+    int GetRound();
     int GetWinner();
 
     bool ChooseTeam(CBasePlayer *Player, int Slot);
@@ -46,9 +82,12 @@ public:
     void Status(CBasePlayer *Player);
     void Scores(CBasePlayer *Player);
 
+    void HudMsg();
+
 private:
     int m_State = STATE_DEAD;
     std::array<std::array<int, SPECTATOR + 1>, STATE_END + 1> m_Score = {};
+    float m_NextFrame = 0.0f;
 };
 
 extern CPugMod gPugMod;

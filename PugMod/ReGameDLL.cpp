@@ -186,6 +186,8 @@ void ReGameDLL_CSGameRules_RestartRound(IReGameHook_CSGameRules_RestartRound *ch
 
 	chain->callNext();
 
+	gPugMod.RestartRound();
+
 	gPugLO3.RestartRound();
 }
 

@@ -486,6 +486,18 @@ void CPugUtil::ScreenFade(edict_t *pEntity, float Duration, float HoldTime, int 
 			g_engfuncs.pfnMessageEnd();
 		}
 	}
+	else
+	{
+		for (int i = 1; i <= gpGlobals->maxClients; ++i)
+		{
+			pEntity = INDEXENT(i);
+
+			if (this->IsNetClient(pEntity))
+			{
+				this->ScreenFade(pEntity, Duration, HoldTime, FadeFlags, Red, Green, Blue, Alpha);
+			}
+		}
+	}
 }
 
 void CPugUtil::ScreenShake(edict_t *pEntity, float Amplitude, float Duration, float Frequency)
@@ -501,6 +513,18 @@ void CPugUtil::ScreenShake(edict_t *pEntity, float Amplitude, float Duration, fl
 			g_engfuncs.pfnWriteShort(gPugUtil.FixedUnsigned16(Duration, BIT(12)));
 			g_engfuncs.pfnWriteShort(gPugUtil.FixedUnsigned16(Frequency, BIT(8)));
 			g_engfuncs.pfnMessageEnd();
+		}
+	}
+	else
+	{
+		for (int i = 1; i <= gpGlobals->maxClients; ++i)
+		{
+			pEntity = INDEXENT(i);
+
+			if (this->IsNetClient(pEntity))
+			{
+				this->ScreenShake(pEntity, Amplitude, Duration, Frequency);
+			}
 		}
 	}
 }
