@@ -376,50 +376,6 @@ void CPugMod::DropClient(edict_t *pEntity)
     }
 }
 
-void CPugMod::HudMsg()
-{
-    if (this->m_State >= STATE_KNIFE_ROUND && this->m_State <= STATE_END)
-    {
-        auto Score = this->GetScore();
-
-        auto Round = (Score[TERRORIST] + Score[CT] + 1);
-
-        auto Total = static_cast<int>(gPugCvar.m_Rounds->value);
-
-        auto Quite = (Total / 2);
-
-        if (this->m_State == STATE_KNIFE_ROUND || this->m_State == STATE_FIRST_HALF)
-        {
-            if (Round == 1)
-            {
-                gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Iniciando:\n%s", g_Pug_String[this->m_State]);
-            }
-            else
-            {
-                if (Round < Quite)
-                {
-                    gPugUtil.SendHud(nullptr, g_Pug_HudParam, "%s\nRound %d\nTRs %d - %d CTs", g_Pug_String[this->m_State], Round, Score[TERRORIST], Score[CT]);
-                }
-                else if (Round == Quite)
-                {
-                    gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Último Round\n%s\nTRs %d - %d CTs", g_Pug_String[this->m_State], Score[TERRORIST], Score[CT]);
-                }
-            }
-        }
-        else if (this->m_State == STATE_SECOND_HALF)
-        {
-            if (Score[TERRORIST] < Quite && Score[CT] < Quite)
-            {
-                gPugUtil.SendHud(nullptr, g_Pug_HudParam, "%s\nRound %d\nTRs %d - %d CTs", g_Pug_String[this->m_State], Round, Score[TERRORIST], Score[CT]);
-            }
-            else
-            {
-                gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Último Round\n%s\nTRs %d - %d CTs", g_Pug_String[this->m_State], Score[TERRORIST], Score[CT]);
-            }
-        }
-    }
-}
-
 void CPugMod::RestartRound()
 {
     if (g_pGameRules)
@@ -430,7 +386,7 @@ void CPugMod::RestartRound()
         }
         else
         {
-            gPugTask.Create(E_TASK::SEND_HUDMESSAGE, 0.1f, false, 0);
+            gPugTask.Create(E_TASK::ROUND_START_HUD, 1.0f, false, 0);
         }
     }
 }
@@ -572,6 +528,63 @@ void CPugMod::Scores(CBasePlayer *Player)
         if (Player)
         {
             gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Comando indisponível.", gPugCvar.m_Tag->string);
+        }
+    }
+}
+
+void CPugMod::SendHudMessage()
+{
+    if (this->m_State >= STATE_KNIFE_ROUND && this->m_State <= STATE_END)
+    {
+        auto Score = this->GetScore();
+
+        auto Round = (Score[TERRORIST] + Score[CT] + 1);
+
+        auto Total = static_cast<int>(gPugCvar.m_Rounds->value);
+
+        auto Quite = (Total / 2);
+
+        switch (this->m_State)
+        {
+            case STATE_FIRST_HALF:
+            {
+                if (Round > 1)
+                {
+                    if (Round < Quite)
+                    {
+                        gPugUtil.SendHud(nullptr, g_Pug_HudParam[0], "%s\nRound %d", g_Pug_String[this->m_State], Round);
+                    }
+                    else if (Round == Quite)
+                    {
+                        gPugUtil.ClientCommand(nullptr, "spk scientist/cough");
+
+                        gPugUtil.SendHud(nullptr, g_Pug_HudParam[0], "%s\nÚltimo Round", g_Pug_String[this->m_State]);
+                    }
+
+                    gPugUtil.SendHud(nullptr, g_Pug_HudParam[1], "\n\n%s %d\n%s %d", g_Pug_TeamId[TERRORIST], Score[TERRORIST], g_Pug_TeamId[CT], Score[CT]);
+                }
+                break;
+            }
+            case STATE_SECOND_HALF:
+            {
+                if (Score[TERRORIST] < Quite && Score[CT] < Quite)
+                {
+                    gPugUtil.SendHud(nullptr, g_Pug_HudParam[0], "%s\nRound %d", g_Pug_String[this->m_State], Round);
+                }
+                else if (Score[TERRORIST] == Quite || Score[CT] == Quite)
+                {
+                    gPugUtil.ClientCommand(nullptr, "spk scientist/cough");
+
+                    gPugUtil.SendHud(nullptr, g_Pug_HudParam[0], "%s\nÚltimo Round", g_Pug_String[this->m_State]);
+                }
+
+                gPugUtil.SendHud(nullptr, g_Pug_HudParam[1], "\n\n%s %d\n%s %d", g_Pug_TeamId[TERRORIST], Score[TERRORIST], g_Pug_TeamId[CT], Score[CT]);
+                break;
+            }
+            case STATE_OVERTIME:
+            {
+                break;
+            }
         }
     }
 }

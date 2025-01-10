@@ -29,19 +29,24 @@ void CPugLO3::RestartRound()
             this->m_Run = false;
         }
 
-        auto Players = gPugUtil.GetPlayers(false, false);
+        auto State = gPugMod.GetState();
 
-        for (auto Player : Players)
+        for (int i = 1; i <= gpGlobals->maxClients; ++i)
         {
-            gPugUtil.ScreenShake(Player->edict(), 2.0f, 2.0f, 2.0f);
+            auto pEntity = INDEXENT(i);
 
-            gPugUtil.ClientCommand(Player->edict(), g_LO3_Sound[this->m_Restart]);
+            if (gPugUtil.IsNetClient(pEntity))
+            {
+                gPugUtil.ScreenShake(pEntity, 2.0f, 2.0f, 2.0f);
 
-            gPugUtil.ScreenFade(Player->edict(), 2.0f, 2.0f, 0x0002, 0, 0, 200, 100);
+                gPugUtil.ClientCommand(pEntity, g_LO3_Sound[this->m_Restart]);
 
-            gPugUtil.SendHud(Player->edict(), g_LO3_HudParam, g_LO3_HudText[this->m_Restart]);
+                gPugUtil.ScreenFade(pEntity, 2.0f, 2.0f, 0x0002, 0, 0, 200, 100);
 
-            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, g_LO3_Message[this->m_Restart], gPugCvar.m_Tag->string);
+                gPugUtil.SendHud(pEntity, g_LO3_HudParam, g_LO3_HudText[this->m_Restart], g_Pug_String[State]);
+
+                gPugUtil.PrintColor(pEntity, E_PRINT_TEAM::DEFAULT, g_LO3_Message[this->m_Restart], gPugCvar.m_Tag->string, g_Pug_String[State]);
+            }
         }
 
         this->m_Restart += 1;

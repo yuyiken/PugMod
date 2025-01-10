@@ -8,7 +8,7 @@ constexpr std::array<hudtextparms_t, 4> g_ReadyList_HudParam =
     {0.58f, 0.02f, 2, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0.0f, 0.0f, 0.93f, 0.93f, 4},
 }};
 
-constexpr hudtextparms_t g_ReadyNum_HudParam = {0.01f, 0.18f, 2, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0.0f, 0.0f, 0.93f, 0.93f, 1};
+constexpr hudtextparms_t g_ReadyNum_HudParam = {0.01f, 0.20f, 2, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0.0f, 0.0f, 0.93f, 0.93f, 1};
 
 class CPugReady
 {
