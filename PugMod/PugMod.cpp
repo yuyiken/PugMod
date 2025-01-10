@@ -406,7 +406,7 @@ void CPugMod::HudMsg()
                 }
             }
         }
-        if (this->m_State == STATE_SECOND_HALF)
+        else if (this->m_State == STATE_SECOND_HALF)
         {
             if (Score[TERRORIST] < Quite && Score[CT] < Quite)
             {
@@ -414,7 +414,7 @@ void CPugMod::HudMsg()
             }
             else
             {
-                gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Último Round GG\n%s\nTRs %d - %d CTs", g_Pug_String[this->m_State], Score[TERRORIST], Score[CT]);
+                gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Último Round\n%s\nTRs %d - %d CTs", g_Pug_String[this->m_State], Score[TERRORIST], Score[CT]);
             }
         }
     }
