@@ -9,7 +9,8 @@ enum E_CLIENT_CMD_ID
     CMD_MENU,
     CMD_GUNS,
     CMD_RESPAWN,
-    CMD_RESET_SCORE,  
+    CMD_RESET_SCORE,
+    CMD_DM_SPAWN_EDITOR,
 };
 
 typedef struct S_CLIENT_CMD

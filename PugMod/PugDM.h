@@ -64,8 +64,10 @@ public:
     void ServerDeactivate();
     void SetSpawn(vec3_t Vecs, vec3_t Angles, int Team, vec3_t VAngles);
     void SetWeapon(std::string Name, std::string Label, int Bot);
+    void Load();
     void Init();
     void Stop();
+    std::map<size_t, P_SPAWN> GetSpawns();
     bool GetPlayerSpawnSpot(CBasePlayer *Player);
     bool CheckDistance(CBasePlayer *Player, vec3_t Origin, float Distance);
     void GetIntoGame(CBasePlayer *Player);
@@ -89,10 +91,11 @@ public:
     bool EquipRandomItem(CBasePlayer *Player, int Slot);
     bool Respawn(CBasePlayer *Player);
     bool ResetScore(CBasePlayer *Player);
-    bool IsPlayerStuck(edict_t *pEntity);
+    bool IsEntityStuck(edict_t *pEntity);
+
 private:
     bool m_Run = false;
-    std::vector<P_SPAWN> m_Spawn = {};
+    std::map<size_t, P_SPAWN> m_Spawn;
     std::vector<P_WEAPON> m_Weapon = {};
     std::map<int, P_DM_INFO> m_Info = {};
 };

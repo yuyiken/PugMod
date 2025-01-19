@@ -53,6 +53,7 @@
 #include "PugMod.h"
 #include "PugReady.h"
 #include "PugServerCmd.h"
+#include "PugSpawnEdit.h"
 #include "PugTask.h"
 #include "PugTimer.h"
 #include "PugTraceLine.h"

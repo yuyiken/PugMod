@@ -148,6 +148,8 @@ void DLL_POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 
 	gPugDM.ServerActivate();
 
+	gPugSpawnEdit.ServerActivate();
+
 	gPugMod.ServerActivate();
 
 	gPugReady.ServerActivate();
@@ -176,6 +178,8 @@ void DLL_POST_ServerDeactivate()
 	gPugTimer.ServerDeactivate();
 
 	gPugDM.ServerDeactivate();
+
+	gPugSpawnEdit.ServerDeactivate();
 
 	gPugVoteMap.ServerDeactivate();
 

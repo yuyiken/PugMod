@@ -1,30 +1,41 @@
 #include "precompiled.h"
-#include "PugDM.h"
 
 CPugDM gPugDM;
 
 void CPugDM::ServerActivate()
 {
     this->m_Run = false;
-    this->m_Spawn.clear();
-    this->m_Weapon.clear();
 
-    gPugUtil.ServerCommand("exec %s/spawns/%s.cfg", gPugUtil.GetPath(), STRING(gpGlobals->mapname));
-    gPugUtil.ServerCommand("exec %s/cfg/weaponlist.cfg", gPugUtil.GetPath());
+    this->Load();
 }
 
 void CPugDM::ServerDeactivate()
 {
     this->m_Run = false;
+
     this->m_Spawn.clear();
+
     this->m_Weapon.clear();
+}
+
+void CPugDM::Load()
+{
+    this->m_Spawn.clear();
+
+    this->m_Weapon.clear();
+
+    gPugUtil.ServerCommand("exec %s/spawns/%s.cfg", gPugUtil.GetPath(), STRING(gpGlobals->mapname));
+    
+    gPugUtil.ServerCommand("exec %s/cfg/weaponlist.cfg", gPugUtil.GetPath());
 }
 
 void CPugDM::SetSpawn(vec3_t Vecs, vec3_t Angles, int Team, vec3_t VAngles)
 {
     if (!Vecs.IsZero() && !Angles.IsZero())
     {
-        this->m_Spawn.push_back({Vecs, Angles, Team, VAngles});
+        P_SPAWN Spawn = {Vecs, Angles, Team, VAngles};
+
+        this->m_Spawn.insert(std::make_pair(this->m_Spawn.size(), Spawn));
     }
 }
 
@@ -78,6 +89,11 @@ void CPugDM::Stop()
     }
 }
 
+std::map<size_t, P_SPAWN> CPugDM::GetSpawns()
+{
+    return this->m_Spawn;
+}
+
 bool CPugDM::GetPlayerSpawnSpot(CBasePlayer *Player)
 {
     if (this->m_Run)
@@ -90,20 +106,20 @@ bool CPugDM::GetPlayerSpawnSpot(CBasePlayer *Player)
 
                 std::advance(Spawn, g_engfuncs.pfnRandomLong(0, this->m_Spawn.size()));
 
-                if (!Spawn->Vecs.IsZero())
+                if (!Spawn->second.Vecs.IsZero())
                 {
-                    if (this->CheckDistance(Player, Spawn->Vecs, SPAWN_POINT_MIN_DISTANCE))
+                    if (this->CheckDistance(Player, Spawn->second.Vecs, SPAWN_POINT_MIN_DISTANCE))
                     {
-                        Player->edict()->v.origin = Spawn->Vecs + Vector(0.0f, 0.0f, 1.0f);
+                        Player->edict()->v.origin = Spawn->second.Vecs + Vector(0.0f, 0.0f, 1.0f);
 
-                        if (!Spawn->Angles.IsZero())
+                        if (!Spawn->second.Angles.IsZero())
                         {
-                            Player->edict()->v.angles = Spawn->Angles;
+                            Player->edict()->v.angles = Spawn->second.Angles;
                         }
 
-                        if (!Spawn->VAngles.IsZero())
+                        if (!Spawn->second.VAngles.IsZero())
                         {
-                            Player->edict()->v.v_angle = Spawn->VAngles;
+                            Player->edict()->v.v_angle = Spawn->second.VAngles;
 
                             Player->edict()->v.v_angle.z = 0;
 
@@ -723,7 +739,7 @@ bool CPugDM::Respawn(CBasePlayer *Player)
         {
             if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
             {
-                if (!Player->IsAlive() || this->IsPlayerStuck(Player->edict()))
+                if (!Player->IsAlive() || this->IsEntityStuck(Player->edict()))
                 {
                     Player->RoundRespawn();
 
@@ -774,7 +790,8 @@ bool CPugDM::ResetScore(CBasePlayer *Player)
 
     return false;
 }
-bool CPugDM::IsPlayerStuck(edict_t *pEntity)
+
+bool CPugDM::IsEntityStuck(edict_t *pEntity)
 {
     if (!FNullEnt(pEntity))
     {

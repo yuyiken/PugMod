@@ -199,6 +199,11 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                     gPugDM.ResetScore(Player);
                                     return true;
                                 }
+                                case CMD_DM_SPAWN_EDITOR:
+                                {
+                                    gPugSpawnEdit.EditSpawns(Player);
+                                    return true;
+                                }
                             }
                         }
                     }

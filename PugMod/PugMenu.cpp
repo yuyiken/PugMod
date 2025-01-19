@@ -140,6 +140,21 @@ bool CPugMenu::Handle(CBasePlayer *Player, int Key)
                                 gPugDM.MenuEquipHandle(Player, this->m_Data[ItemId]);
                                 break;
                             }
+                            case E_MENU::DM_SPAWN_EDIT:
+                            {
+                                gPugSpawnEdit.MenuHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::DM_SPAWN_EDIT_ADD_SPAWN:
+                            {
+                                gPugSpawnEdit.AddSpawnMenuHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::DM_SPAWN_EDIT_DISCARD:
+                            {
+                                gPugSpawnEdit.DiscardChangesHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
                             case E_MENU::ME_VOTE_MAP:
                             {
                                 gPugVoteMap.MenuHandle(Player, this->m_Data[ItemId]);

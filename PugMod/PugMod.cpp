@@ -274,11 +274,13 @@ bool CPugMod::LastRound(int State)
 {
     auto Score = this->GetScore();
 
+    auto Quite = static_cast<int>(gPugCvar.m_Rounds->value / 2.0f);
+
     switch (State)
     {
         case STATE_FIRST_HALF:
         {
-            if ((Score[TERRORIST] + Score[CT] + 1) == static_cast<int>(gPugCvar.m_Rounds->value / 2.0f))
+            if ((Score[TERRORIST] + Score[CT] + 1) == Quite)
             {
                 return true;
             }
@@ -286,8 +288,6 @@ bool CPugMod::LastRound(int State)
         }
         case STATE_SECOND_HALF:
         {
-            auto Quite = static_cast<int>(gPugCvar.m_Rounds->value / 2.0f);
-
             if (Score[TERRORIST] == Quite || Score[CT] == Quite)
             {
                 return true;
@@ -366,7 +366,7 @@ void CPugMod::GetIntoGame(CBasePlayer *Player)
         {
             if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
             {
-                if (!Player->m_iLastAccount)
+                if (Player->m_iLastAccount < 1)
                 {
                     gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 %s Build %s (^3%s^1)", gPugCvar.m_Tag->string, Plugin_info.name, Plugin_info.date, Plugin_info.author);
                     gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Digite ^3%shelp^1 para lista de comandos.", gPugCvar.m_Tag->string, gPugCvar.m_CmdPrefixPlayer->string);

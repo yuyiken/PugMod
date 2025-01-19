@@ -190,6 +190,8 @@ void CPugVoteMap::ChangeMap(int MapIndex)
 {
     if (MapIndex < this->m_MapList.size())
     {
+        g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_VoteMap, "0");
+
         gPugUtil.ServerCommand("changelevel %s", this->m_MapList[MapIndex].Name.c_str());
     }
 }
