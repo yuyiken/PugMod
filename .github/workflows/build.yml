@@ -89,8 +89,11 @@ jobs:
     - name: Execute Build
       working-directory: ${{github.workspace}}
       run: |
-        # Open Directory
+        # Open directory
         cd ${{env.BUILD_PROJECT}}
+
+        # Make Release directory
+        mkdir ${{env.BUILD_CONFIGURATION}}
 
         # Execute Build
         msbuild ${{env.BUILD_PROJECT}}.vcxproj -property:configuration=${{env.BUILD_CONFIGURATION}} -nologo -verbosity:minimal
