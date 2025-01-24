@@ -1,6 +1,13 @@
 # HLDS Path
 $hldsPath = "D:\Files\Desktop\hlds";
 
+# Test HLDS Path
+if (!(Test-Path($hldsPath)))
+{
+    Write-Host("$($hldsPath) was not found.") -ForegroundColor yellow;
+    Exit 0
+}
+
 # Executable path
 $hldsExecutable = "D:\Files\Desktop\hlds\hlds.exe";
 

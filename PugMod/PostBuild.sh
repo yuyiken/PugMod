@@ -3,6 +3,12 @@
 # HLDS Path
 hldsPath="/home/eu/Desktop/27020";
 
+# Check HLDS Path
+if [ ! -d "$hldsPath" ]; then
+    echo "$hldsPath does not exist, exit."
+    exit
+fi
+
 # Get current directory name
 pluginName="${PWD##*/}"
 
