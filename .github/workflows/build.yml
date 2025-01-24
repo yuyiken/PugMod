@@ -15,19 +15,12 @@ jobs:
     - name: Setup Checkout
       uses: actions/checkout@v3
 
-    - name: Test
-      run: |
-        cd /usr/include
-        ls
-
     - name: Setup Packages
       run: yes | dnf -y --assumeyes --enablerepo=powertools install @'Development Tools' wget libgcc.i686 glibc.i686 glibc-devel.i686 glibc-static.i686 libstdc++.i686 libstdc++-devel.i686 libstdc++-static.i686
 
     - name: Run Build
       working-directory: ./PugMod
-      run: |
-        export CPATH=$CPATH:/usr/include/c++/8/i686-redhat-linux
-        make
+      run: make all
     
     - name: Move release file to publish
       run: |
