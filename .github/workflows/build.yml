@@ -16,13 +16,10 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Setup Repository
-      run: yes | yum -y --assumeyes config-manager --set-enabled powertools
-
-    - name: Update cache
-      run: yes | yum -y --assumeyes makecache
-
-    - name: Install build dependencies
-      run: yes | yum -y --assumeyes install @'Development Tools' wget libgcc.i686 glibc-devel.i686 glibc-static.i686 libstdc++-devel.i686 libstdc++-static.i686
+      run: |
+        yes | dnf -y --assumeyes config-manager --set-enabled powertools
+        yes | dnf -y --assumeyes makecache
+        yes | dnf -y --assumeyes install @'Development Tools' wget libgcc.i686 glibc-devel.i686 glibc-static.i686 libstdc++-devel.i686 libstdc++-static.i686
 
     - name: Run Build
       working-directory: ./PugMod
