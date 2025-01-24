@@ -301,9 +301,9 @@ void CPugVoteTeam::TeamsOptimize()
 
     if (Players.size())
     {
-        std::array<float, MAX_CLIENTS + 1> Skills = {};
+        std::array<float, MAX_CLIENTS + 1> Skills;
 
-        std::array<float, MAX_CLIENTS + 1> Sorted = {};
+        std::array<float, MAX_CLIENTS + 1> Sorted;
 
         for (auto const & Player : Players)
         {

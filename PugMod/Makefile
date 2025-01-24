@@ -30,7 +30,7 @@ INCLUDE=-I$(SRCDIR) -I$(METAMOD) -I$(SDK)/common -I$(SDK)/dlls -I$(SDK)/engine -
 default: prebuild all posbuild
 #
 # All: linux32
-all: $(BUILD_TARGET)
+all: prebuild $(BUILD_TARGET)
 #
 # Linux: prebuild, linux32, posbuild
 linux: prebuild $(BUILD_TARGET) posbuild

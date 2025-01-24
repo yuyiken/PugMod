@@ -228,7 +228,7 @@ void CPugMod::SwapTeams()
 
 std::array<int, SPECTATOR> CPugMod::GetScore()
 {
-    std::array<int, SPECTATOR> Result = {};
+    std::array<int, SPECTATOR> Result;
 
     for (int State = STATE_DEAD; State <= STATE_END; State++)
     {
