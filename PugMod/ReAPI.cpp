@@ -1,5 +1,9 @@
 #include "precompiled.h"
 
+#ifdef _WIN32
+#include "interface.cpp"
+#endif
+
 IRehldsApi *g_RehldsApi;
 const RehldsFuncs_t *g_RehldsFuncs;
 IRehldsServerData *g_RehldsData;
