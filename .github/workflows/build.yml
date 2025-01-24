@@ -1,10 +1,11 @@
-name: CentOS 7 Buld
+name: CentOS 7 Build
 on: [push]
 env:
   CONTAINER: centos:7
 
 jobs:
-  build:
+  linux:
+    name: Linux Build
     runs-on: ubuntu-latest
     steps:
 
@@ -24,28 +25,45 @@ jobs:
     - name: Start Docker Container
       run: |
         docker pull $CONTAINER
-        docker run --name build-container -d -v ${{ github.workspace }}:/workspace $CONTAINER tail -f /dev/null
+        docker run --name build-container -d -v ${{ github.workspace }}:/desktop $CONTAINER tail -f /dev/null
 
-    - name: Install Dependencies
+    - name: Install Development Tools Packages
       env:
         SCRIPT: |
+          # Replace mirror list with vault
           sed -i.bak 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
           sed -i.bak 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
+          # Update cache of repository
           yes | yum -y --assumeyes makecache
+
+          # Install packages
           yes | yum -y --assumeyes install @'Development Tools' libgcc.i686 glibc-devel.i686 glibc-static.i686 libstdc++-devel.i686 libgcc.i686 libstdc++-static.i686 wget
       run: docker exec build-container bash -c "$SCRIPT"
 
-    - name: Build
+    - name: Execute Build
       env:
         SCRIPT: |
-          cd /workspace/PugMod
+          # Open makefile directory
+          cd /desktop/PugMod
+
+          # Export C++ compiler path
           export CPATH=$CPATH:/usr/include/c++/4.8.5/i686-redhat-linux
+
+          # Make all (Without post build script)
           make all
+
+          # Make dlls path
+          mkdir -p ../cstrike/addons/pugmod/dlls
+
+          # Copy release file
+          cp ./Release/pugmod_mm.so ../cstrike/addons/pugmod/dlls
+
       run: docker exec build-container bash -c "$SCRIPT"
 
     - name: Deploy artifacts
       uses: actions/upload-artifact@v4
       with:
         name: linux32
-        path: ${{github.workspace}}/PugMod
+        path: ${{github.workspace}}/PugMod/cstrike
         
