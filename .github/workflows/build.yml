@@ -13,14 +13,16 @@ jobs:
     container: rockylinux:8
     steps:
     - name: Setup Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Setup Packages
+    - name: Setup packages
       run: yes | dnf -y --assumeyes --enablerepo=powertools install @'Development Tools' wget libgcc.i686 glibc.i686 glibc-devel.i686 glibc-static.i686 libstdc++.i686 libstdc++-devel.i686 libstdc++-static.i686
 
-    - name: Run Build
+    - name: Run build with export CPATH
       working-directory: ./PugMod
-      run: make all
+      run: |
+        export CPATH=$CPATH:/usr/include/c++/8/i686-redhat-linux
+        make all
     
     - name: Move release file to publish
       run: |
@@ -31,7 +33,7 @@ jobs:
         cp ./PugMod/Release/pugmod_mm.so publish/addons/pugmod/dlls
 
     - name: Deploy artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: linux32
         path: publish/*
