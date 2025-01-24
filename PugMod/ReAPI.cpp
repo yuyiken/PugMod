@@ -1,5 +1,4 @@
 #include "precompiled.h"
-
 #include "interface.cpp"
 
 IRehldsApi *g_RehldsApi;
