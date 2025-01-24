@@ -1,79 +1,51 @@
-name: Build C/C++
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+name: CentOS 7 Buld
+on: [push]
+env:
+  CONTAINER: centos:7
 
 jobs:
-  linux:
-    name: Linux Build
+  build:
     runs-on: ubuntu-latest
-    container: debian:9
-
-    env:
-      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-      ACTIONS_RUNNER_FORCED_INTERNAL_NODE_VERSION: node16
-      ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
-
     steps:
-    - name: Setup Checkout
-      uses: actions/checkout@v3
 
-    - name: Setup Packages
-      run: |
-        dpkg --add-architecture i386
-        apt-get update > /dev/null
-        apt-get install -qq -y wget unzip build-essential gcc-multilib g++-multilib libgcc1:i386 libcurl4-openssl-dev:i386 zlib1g-dev:i386 libssl-dev:i386 > /dev/null
-    
-    - name: Run build with export CPATH
-      working-directory: ./PugMod
-      run: make all
-    
-    - name: Move release file to publish
-      run: |
-        # Make Path
-        mkdir -p publish/addons/pugmod/dlls
+    - uses: actions/checkout@v4
 
-        # Copy released file to dlls
-        cp ./PugMod/Release/pugmod_mm.so publish/addons/pugmod/dlls
+    # We manually start a container and execute scripts in it instead of using `jobs.build.container`,
+    # otherwise we couldn't use GitHub-provided actions (checkout, cache, etc.) as they rely on Node20
+    # which would not necessarily be available on some containers (e.g., Ubuntu 18.04).
+    #
+    # See: https://github.com/actions/checkout/issues/1590
+    #
+    # If you need to pass environment variables from the GitHub host runner to the Docker container,
+    # you can do so by adding `-e MY_VAR` to the docker run command, for example:
+    #
+    #    docker run --name build-container -d -e GITHUB_REPOSITORY -v ...
+    #
+    - name: Start Docker Container
+      run: |
+        docker pull $CONTAINER
+        docker run --name build-container -d -v ${{ github.workspace }}:/workspace $CONTAINER tail -f /dev/null
+
+    - name: Install Dependencies
+      env:
+        SCRIPT: |
+          sed -i.bak 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+          sed -i.bak 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+          yes | yum -y --assumeyes makecache
+          yes | yum -y --assumeyes install @'Development Tools' libgcc.i686 glibc-devel.i686 glibc-static.i686 libstdc++-devel.i686 libgcc.i686 libstdc++-static.i686 wget
+      run: docker exec build-container bash -c "$SCRIPT"
+
+    - name: Build
+      env:
+        SCRIPT: |
+          cd /workspace/PugMod
+          export CPATH=$CPATH:/usr/include/c++/4.8.5/i686-redhat-linux
+          make all
+      run: docker exec build-container bash -c "$SCRIPT"
 
     - name: Deploy artifacts
       uses: actions/upload-artifact@v4
       with:
         name: linux32
-        path: publish/*
+        path: ${{github.workspace}}/PugMod
         
-  windows:
-    name: Windows Build
-    runs-on: windows-latest
-      
-    env:
-      SOLUTION_FILE_PATH: .
-      BUILD_CONFIGURATION: Release
-  
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v2
-
-    - name: Run Build
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
-
-    - name: Move release file to publish
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: |
-        # Make publish directory
-        mkdir publish\addons\pugmod\dlls
-
-        # Move released dll to publish
-        move ${{env.BUILD_CONFIGURATION}}\*.dll publish\addons\pugmod\dlls
-
-    - name: Deploy artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: win32
-        path: publish/*
