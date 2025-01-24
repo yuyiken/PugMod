@@ -104,7 +104,7 @@ int CPugMod::SetState(int State)
 
             auto Players = gPugUtil.GetPlayers(true, true);
 
-            if (Players.size() < static_cast<int>(gPugCvar.m_PlayersMin->value))
+            if (Players.size() < static_cast<size_t>(gPugCvar.m_PlayersMin->value))
             {
                 if (gPugCvar.m_ReadyType->value == 1.0f)
                 {
@@ -414,7 +414,7 @@ void CPugMod::DropClient(edict_t *pEntity)
     {
         auto Players = gPugUtil.GetPlayers();
 
-        auto PlayersMin = static_cast<int>((gPugCvar.m_PlayersMin->value / 2.0f) - 1.0f);
+        auto PlayersMin = static_cast<size_t>((gPugCvar.m_PlayersMin->value / 2.0f) - 1.0f);
 
         if((Players[TERRORIST].size() < PlayersMin) || (Players[CT].size() < PlayersMin))
         {

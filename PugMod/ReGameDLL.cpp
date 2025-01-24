@@ -11,7 +11,7 @@ bool ReGameDLL_Init()
 
 	if (szGameDLLModule)
 	{
-		auto GameModule = Sys_LoadModule(szGameDLLModule);
+		auto GameModule = Sys_GetModuleHandle(szGameDLLModule);
 
 		if (GameModule)
 		{

@@ -28,7 +28,7 @@ void CPugLeader::Init()
 {
 	auto Players = gPugUtil.GetPlayers(false, true);
 
-    this->m_PlayersMin = static_cast<int>(gPugCvar.m_PlayersMin->value / 2.0f);
+    this->m_PlayersMin = static_cast<unsigned short>(gPugCvar.m_PlayersMin->value / 2.0f);
 
 	if (Players.size() >= this->m_PlayersMin)
 	{

@@ -86,7 +86,7 @@ void CPugVoteMap::Init()
         {
             gPugMenu[Player->entindex()].Create("Escolha o mapa:", false, E_MENU::ME_VOTE_MAP);
 
-            for (auto i = 0; i < this->m_MapList.size(); ++i)
+            for (size_t i = 0; i < this->m_MapList.size(); ++i)
             {
                 this->m_MapList[i].Votes = 0;
 
@@ -186,7 +186,7 @@ P_VOTE_MAP_INFO CPugVoteMap::GetRandom()
     return Map;
 }
 
-void CPugVoteMap::ChangeMap(int MapIndex)
+void CPugVoteMap::ChangeMap(unsigned int MapIndex)
 {
     if (MapIndex < this->m_MapList.size())
     {
@@ -202,17 +202,14 @@ void CPugVoteMap::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
     {
         if (Player)
         {
-            if (Item.Info < this->m_MapList.size())
+            this->m_VotesLeft -= 1;
+            this->m_MapList[Item.Info].Votes += 1;
+
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 escolheu ^3%s^1.", gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), this->m_MapList[Item.Info].Name.c_str());
+
+            if (this->m_VotesLeft < 1)
             {
-                this->m_VotesLeft -= 1;
-                this->m_MapList[Item.Info].Votes += 1;
-
-                gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 escolheu ^3%s^1.", gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), this->m_MapList[Item.Info].Name.c_str());
-
-                if (this->m_VotesLeft < 1)
-                {
-                    this->Stop();
-                }
+                this->Stop();
             }
         }
     }

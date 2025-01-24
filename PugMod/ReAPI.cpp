@@ -1,5 +1,4 @@
 #include "precompiled.h"
-#include "interface.cpp"
 
 IRehldsApi *g_RehldsApi;
 const RehldsFuncs_t *g_RehldsFuncs;
@@ -12,9 +11,9 @@ bool ReAPI_Init()
 	if (g_engfuncs.pfnIsDedicatedServer())
 	{
 #ifdef WIN32
-		auto engineModule = Sys_LoadModule("swds.dll");
+		auto engineModule = Sys_GetModuleHandle("swds.dll");
 #else
-		auto engineModule = Sys_LoadModule("engine_i486.so");
+		auto engineModule = Sys_GetModuleHandle("engine_i486.so");
 #endif
 
 		if (engineModule)

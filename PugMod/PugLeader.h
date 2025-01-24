@@ -40,7 +40,7 @@ public:
 private:
     bool m_Run = false;
     float m_NextFrame = 0.0f;
-    int m_PlayersMin = 0;
+    unsigned short m_PlayersMin = 0;
     std::map<int, int> m_Team;
 };
 

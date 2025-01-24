@@ -13,6 +13,11 @@
 #define _vsnwprintf vswprintf
 #endif
 
+#ifdef _WIN32
+#pragma warning(disable: 4100)
+#pragma warning(disable: 4996)
+#endif
+
 // System
 #include <osconfig.h>
 

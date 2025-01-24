@@ -61,7 +61,7 @@ void CPugVoteSwapTeam::Init(int Team)
             {
                 gPugMenu[Player->entindex()].Create("Escolha o Time:", false, E_MENU::ME_VOTE_SWAP_TEAM);
 
-                for (auto i = 0; i < this->m_VoteList.size(); ++i)
+                for (size_t i = 0; i < this->m_VoteList.size(); ++i)
                 {
                     this->m_VoteList[i].Votes = 0;
 
@@ -152,18 +152,15 @@ void CPugVoteSwapTeam::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
     {
         if (Player)
         {
-            if (Item.Info < this->m_VoteList.size())
+            this->m_VotesLeft -= 1;
+
+            this->m_VoteList[Item.Info].Votes += 1;
+
+            gPugUtil.PrintColor(nullptr, (Item.Info == TERRORIST) ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE, "^4[%s]^1 ^3%s^1 escolheu ^3%s^1.", gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), this->m_VoteList[Item.Info].Name.c_str());
+
+            if (this->m_VotesLeft < 1)
             {
-                this->m_VotesLeft -= 1;
-
-                this->m_VoteList[Item.Info].Votes += 1;
-
-                gPugUtil.PrintColor(nullptr, (Item.Info == TERRORIST) ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE, "^4[%s]^1 ^3%s^1 escolheu ^3%s^1.", gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), this->m_VoteList[Item.Info].Name.c_str());
-
-                if (this->m_VotesLeft < 1)
-                {
-                    this->Stop();
-                }
+                this->Stop();
             }
         }
     }

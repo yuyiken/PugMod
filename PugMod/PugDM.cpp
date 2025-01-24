@@ -234,18 +234,15 @@ bool CPugDM::DropItem(CBasePlayer *Player)
             {
                 gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O menu de armas já está habilitado.", gPugCvar.m_Tag->string);
             }
-
-            if (Player->m_rgpPlayerItems)
+            
+            if(!Player->m_rgpPlayerItems[PISTOL_SLOT])
             {
-                if(!Player->m_rgpPlayerItems[PISTOL_SLOT])
-                {
-                    this->MenuEquip(Player, PISTOL_SLOT);
-                }
-                else if (!Player->m_rgpPlayerItems[PRIMARY_WEAPON_SLOT])
-                {
-                    this->MenuEquip(Player, PRIMARY_WEAPON_SLOT);
-                } 
-            }  
+                this->MenuEquip(Player, PISTOL_SLOT);
+            }
+            else if (!Player->m_rgpPlayerItems[PRIMARY_WEAPON_SLOT])
+            {
+                this->MenuEquip(Player, PRIMARY_WEAPON_SLOT);
+            } 
         }
 
         return true;
@@ -510,7 +507,7 @@ bool CPugDM::ShowVGUIMenu(CBasePlayer *Player, int MenuType, int BitMask, char *
     {
         if (MenuType == VGUI_Menu_Team)
         {
-            if (Player->m_iMenu = Menu_ChooseTeam)
+            if (Player->m_iMenu == Menu_ChooseTeam)
             {
                 if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
                 {

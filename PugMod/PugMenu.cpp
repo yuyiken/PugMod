@@ -41,7 +41,7 @@ void CPugMenu::AddItemFormat(int Info, bool Disabled, int Extra, const char *For
 
     char Buffer[128] = {0};
 
-    int Length = vsnprintf(Buffer, sizeof(Buffer), Format, argList);
+    vsnprintf(Buffer, sizeof(Buffer), Format, argList);
 
     va_end(argList);
 

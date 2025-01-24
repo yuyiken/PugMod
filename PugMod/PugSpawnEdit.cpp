@@ -462,8 +462,6 @@ void CPugSpawnEdit::AddSpawn(entvars_t v, int Team, float FixOrigin)
 {
 	P_SPAWN Info = {};
 
-	Q_memset(&Info, 0, sizeof(Info));
-
 	if (FixOrigin != 0.0f)
 	{
 		v.origin[2] += FixOrigin;
