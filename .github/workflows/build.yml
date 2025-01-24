@@ -37,7 +37,7 @@ jobs:
           # Update cache of repository
           yes | yum -y --assumeyes makecache
 
-          # Install packages
+          # Instal packages
           yes | yum -y --assumeyes install @'Development Tools' libgcc.i686 glibc-devel.i686 glibc-static.i686 libstdc++-devel.i686 libgcc.i686 libstdc++-static.i686 wget
       run: docker exec build-container bash -c "$SCRIPT"
 
@@ -65,5 +65,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: linux32
-        path: ${{github.workspace}}/PugMod/cstrike
+        path: ${{github.workspace}}
         
