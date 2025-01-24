@@ -77,7 +77,7 @@ jobs:
     runs-on: windows-latest
       
     env:
-      SOLUTION_FILE_PATH: .
+      BUILD_PROJECT: PugMod
       BUILD_CONFIGURATION: Release
   
     steps:
@@ -89,8 +89,11 @@ jobs:
     - name: Execute Build
       working-directory: ${{github.workspace}}
       run: |
+        # Open Directory
+        cd ${{env.BUILD_PROJECT}}
+
         # Execute Build
-        msbuild ${workspaceFolderBasename}.vcxproj -property:configuration=${{env.BUILD_CONFIGURATION}} -nologo -verbosity:minimal
+        msbuild ${{env.BUILD_PROJECT}}.vcxproj -property:configuration=${{env.BUILD_CONFIGURATION}} -nologo -verbosity:minimal
 
         # Make publish directory
         mkdir publish\addons\pugmod\dlls
