@@ -53,7 +53,7 @@ jobs:
           cd /desktop/PugMod
 
           # Make Release Directory
-          make -p Release
+          mkdir -p Release
 
           # Make linux (Without post build script)
           make linux
