@@ -27,11 +27,13 @@ jobs:
       run: yes | yum -y --assumeyes install @'Development Tools' glibc-devel.i686 libgcc.i686 libstdc++-devel.i686 libgcc.i686 wget
 
     - name: Fix CPATH C++
-      run: export CPATH=$CPATH:/usr/include/c++/8/i686-redhat-linux
+      run: 
 
-    - name: Run make build
+    - name: Run Build
       working-directory: ./PugMod
-      run: make
+      run: |
+        export CPATH=$CPATH:/usr/include/c++/8/i686-redhat-linux
+        make
     
     - name: Move release file to publish
       run: |
