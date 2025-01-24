@@ -15,11 +15,9 @@ jobs:
     - name: Setup Checkout
       uses: actions/checkout@v3
 
-    - name: Setup Repository
+    - name: Setup Packages
       run: |
-        yes | dnf -y --assumeyes config-manager --set-enabled powertools
-        yes | dnf -y --assumeyes makecache
-        yes | dnf -y --assumeyes install @'Development Tools' wget libgcc.i686 glibc-devel.i686 glibc-static.i686 libstdc++-devel.i686 libstdc++-static.i686
+        yes | dnf -y --assumeyes --enablerepo=powertools install @'Development Tools' wget libgcc.i686 glibc-devel.i686 glibc-static.i686 libstdc++-devel.i686 libstdc++-static.i686
 
     - name: Run Build
       working-directory: ./PugMod
