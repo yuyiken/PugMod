@@ -29,6 +29,8 @@ jobs:
     - name: Run build
       working-directory: ./PugMod
       run: |
+        ls /usr/include/c++
+        export CPATH=$CPATH:/usr/include/c++/4.8.5/i686-redhat-linux
         make
     
     - name: Move release file to publish
