@@ -27,13 +27,10 @@ SDK=include/cssdk
 INCLUDE=-I$(SRCDIR) -I$(METAMOD) -I$(SDK)/common -I$(SDK)/dlls -I$(SDK)/engine -I$(SDK)/game_shared -I$(SDK)/pm_shared -I$(SDK)/public
 #
 # Defult: prebuild, linux32, posbuild
-default: prebuild all posbuild
-#
-# All: linux32
-all: prebuild $(BUILD_TARGET)
+default: prebuild $(BUILD_TARGET) posbuild
 #
 # Linux: prebuild, linux32, posbuild
-linux: prebuild $(BUILD_TARGET) posbuild
+linux: $(BUILD_TARGET)
 #
 # Pre-build: Execute command
 prebuild:

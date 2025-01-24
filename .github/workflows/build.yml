@@ -1,3 +1,17 @@
+#
+# https://github.com/actions/checkout/issues/1590#issuecomment-2567109195
+#
+# We manually start a container and execute scripts in it instead of using `jobs.build.container`,
+# otherwise we couldn't use GitHub-provided actions (checkout, cache, etc.) as they rely on Node20
+# which would not necessarily be available on some containers (e.g., Ubuntu 18.04).
+#
+# See: https://github.com/actions/checkout/issues/1590
+#
+# If you need to pass environment variables from the GitHub host runner to the Docker container,
+# you can do so by adding `-e MY_VAR` to the docker run command, for example:
+#
+#    docker run --name build-container -d -e GITHUB_REPOSITORY -v ...
+#
 name: Action Build System
 on: [push]
 env:
@@ -11,17 +25,6 @@ jobs:
 
     - uses: actions/checkout@v4
 
-    # We manually start a container and execute scripts in it instead of using `jobs.build.container`,
-    # otherwise we couldn't use GitHub-provided actions (checkout, cache, etc.) as they rely on Node20
-    # which would not necessarily be available on some containers (e.g., Ubuntu 18.04).
-    #
-    # See: https://github.com/actions/checkout/issues/1590
-    #
-    # If you need to pass environment variables from the GitHub host runner to the Docker container,
-    # you can do so by adding `-e MY_VAR` to the docker run command, for example:
-    #
-    #    docker run --name build-container -d -e GITHUB_REPOSITORY -v ...
-    #
     - name: Start Docker Container
       run: |
         docker pull $CONTAINER
@@ -49,8 +52,11 @@ jobs:
           # Open makefile directory
           cd /desktop/PugMod
 
-          # Make all (Without post build script)
-          make all
+          # Make Release Directory
+          make -p Release
+
+          # Make linux (Without post build script)
+          make linux
 
           # Make dlls path
           mkdir -p ../cstrike/addons/pugmod/dlls
