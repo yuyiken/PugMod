@@ -40,7 +40,7 @@ jobs:
         SCRIPT: |
           cd /workspace/PugMod
           export CPATH=$CPATH:/usr/include/c++/4.8.5/i686-redhat-linux
-          make
+          make all
       run: docker exec build-container bash -c "$SCRIPT"
 
     - name: Deploy artifacts
