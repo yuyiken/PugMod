@@ -28,7 +28,7 @@ jobs:
     - name: Start Docker Container
       run: |
         docker pull $CONTAINER
-        docker run --name build-container -d -v ${{ github.workspace }}:/desktop $CONTAINER tail -f /dev/null
+        docker run --name build-container -d -v ${{github.workspace}}:/desktop $CONTAINER tail -f /dev/null
 
     - name: Install Development Tools Packages
       env:
@@ -72,3 +72,34 @@ jobs:
         name: linux32
         path: ${{github.workspace}}/cstrike
         
+  windows:
+    name: Windows Build
+    runs-on: windows-latest
+      
+    env:
+      SOLUTION_FILE_PATH: .
+      BUILD_CONFIGURATION: Release
+  
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Execute Build
+      working-directory: ${{github.workspace}}
+      run: |
+        # Execute Build
+        msbuild ${workspaceFolderBasename}.vcxproj -property:configuration=${{env.BUILD_CONFIGURATION}} -nologo -verbosity:minimal
+
+        # Make publish directory
+        mkdir publish\addons\pugmod\dlls
+
+        # Move released dll to publish
+        move ${{env.BUILD_CONFIGURATION}}\*.dll publish\addons\pugmod\dlls
+
+    - name: Deploy artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: win32
+        path: publish/*
