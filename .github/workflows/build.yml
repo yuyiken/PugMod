@@ -10,15 +10,10 @@ jobs:
   linux:
     name: Linux Build
     runs-on: ubuntu-latest
-    container: centos:8
+    container: rockylinux:8
     steps:
     - name: Setup Checkout
       uses: actions/checkout@v3
-
-    - name: Fix CentOS 8 EOL repositories
-      run: |
-        sed -i.bak 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-        sed -i.bak 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
 
     - name: Update cache
       run: yes | yum -y --assumeyes makecache
@@ -29,7 +24,6 @@ jobs:
     - name: Run Build
       working-directory: ./PugMod
       run: |
-        export CPATH=$CPATH:/usr/include/c++/8/i686-redhat-linux
         make
     
     - name: Move release file to publish
