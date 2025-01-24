@@ -10,19 +10,20 @@ jobs:
   linux:
     name: Linux Build
     runs-on: ubuntu-latest
-    container: rockylinux:8
+    container: debian:9
     steps:
     - name: Setup Checkout
       uses: actions/checkout@v4
 
-    - name: Setup packages
-      run: yes | dnf -y --assumeyes --enablerepo=powertools install @'Development Tools' wget libgcc.i686 glibc.i686 glibc-devel.i686 glibc-static.i686 libstdc++.i686 libstdc++-devel.i686 libstdc++-static.i686
-
+    - name: Setup Packages
+      run: |
+        dpkg --add-architecture i386
+        apt-get update > /dev/null
+        apt-get install -qq -y wget unzip build-essential gcc-multilib g++-multilib libgcc1:i386 libcurl4-openssl-dev:i386 zlib1g-dev:i386 libssl-dev:i386 > /dev/null
+    
     - name: Run build with export CPATH
       working-directory: ./PugMod
-      run: |
-        export CPATH=$CPATH:/usr/include/c++/8/i686-redhat-linux
-        make all
+      run: make all
     
     - name: Move release file to publish
       run: |
