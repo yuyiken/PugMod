@@ -13,7 +13,7 @@ jobs:
     container: debian:9
     steps:
     - name: Setup Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
 
     - name: Setup Packages
       run: |
