@@ -1,7 +1,7 @@
-name: CentOS 7 Build
+name: Action Build System
 on: [push]
 env:
-  CONTAINER: centos:7
+  CONTAINER: ubuntu:18.04
 
 jobs:
   linux:
@@ -30,15 +30,17 @@ jobs:
     - name: Install Development Tools Packages
       env:
         SCRIPT: |
-          # Replace mirror list with vault
-          sed -i.bak 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-          sed -i.bak 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+          # Add i386 architecture
+          dpkg --add-architecture i386
 
-          # Update cache of repository
-          yes | yum -y --assumeyes makecache
+          # Update repository
+          apt-get update > /dev/null
 
-          # Instal packages
-          yes | yum -y --assumeyes install @'Development Tools' libgcc.i686 glibc-devel.i686 glibc-static.i686 libstdc++-devel.i686 libgcc.i686 libstdc++-static.i686 wget
+          # Install build dependencies
+          apt-get install -qq -y wget unzip build-essential gcc-4.8-multilib g++-4.8-multilib libgcc1:i386 libcurl4-openssl-dev:i386 zlib1g-dev:i386 libssl-dev:i386 > /dev/null
+
+          # Update alternatives
+          update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 100 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8
       run: docker exec build-container bash -c "$SCRIPT"
 
     - name: Execute Build
@@ -46,9 +48,6 @@ jobs:
         SCRIPT: |
           # Open makefile directory
           cd /desktop/PugMod
-
-          # Export C++ compiler path
-          export CPATH=$CPATH:/usr/include/c++/4.8.5/i686-redhat-linux
 
           # Make all (Without post build script)
           make all
@@ -65,5 +64,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: linux32
-        path: ${{github.workspace}}
+        path: ${{github.workspace}}/cstrike
         
