@@ -107,7 +107,7 @@ void CPugReady::StartFrame()
         {
             std::string PlayerList[2];
 
-            std::array<short, 2> ReadyCount;
+            std::array<short, 2> ReadyCount = {};
             
             for (int i = 1; i <= gpGlobals->maxClients; ++i)
             {

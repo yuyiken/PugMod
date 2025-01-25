@@ -91,7 +91,7 @@ public:
 
 private:
     int m_State = STATE_DEAD;
-    std::array<std::array<int, SPECTATOR + 1>, STATE_END + 1> m_Score;
+    std::array<std::array<int, SPECTATOR + 1>, STATE_END + 1> m_Score = {};
     float m_NextFrame = 0.0f;
 };
 

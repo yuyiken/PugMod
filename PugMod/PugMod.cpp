@@ -31,6 +31,8 @@ int CPugMod::SetState(int State)
 
     this->m_NextFrame = 0.0f;
 
+    this->m_Score[this->m_State].fill(0);
+
     switch(this->m_State)
     {
         case STATE_DEAD:
@@ -77,8 +79,6 @@ int CPugMod::SetState(int State)
         }
         case STATE_KNIFE_ROUND:
         {
-            this->m_Score[this->m_State].fill(0);
-
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Round Faca: O ^3vencedor escolhe o time inicial.", gPugCvar.m_Tag->string);
 
             gPugLO3.Init();
@@ -91,8 +91,6 @@ int CPugMod::SetState(int State)
                 CSGameRules()->BalanceTeams();
             }
             
-            this->m_Score[this->m_State].fill(0);
-
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 Iniciado: Prepare-se !!", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
 
             gPugLO3.Init();
@@ -132,8 +130,6 @@ int CPugMod::SetState(int State)
         }
         case STATE_SECOND_HALF:
         {
-            this->m_Score[this->m_State].fill(0);
-
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 Iniciado: Prepare-se !!.", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
 
             gPugLO3.Init();
@@ -141,8 +137,6 @@ int CPugMod::SetState(int State)
         }
         case STATE_OVERTIME:
         {
-            this->m_Score[this->m_State].fill(0);
-
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 Iniciado: Prepare-se !!.", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
 
             gPugLO3.Init();
@@ -228,7 +222,7 @@ void CPugMod::SwapTeams()
 
 std::array<int, SPECTATOR> CPugMod::GetScore()
 {
-    std::array<int, SPECTATOR> Result;
+    std::array<int, SPECTATOR> Result = {};
 
     for (int State = STATE_DEAD; State <= STATE_END; State++)
     {

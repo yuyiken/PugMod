@@ -37,10 +37,10 @@ public:
     bool Command(edict_t *pEntity);
 
 private:
-    std::map<std::string, P_CLIENT_CMD> m_Data;
+    std::map<std::string, P_CLIENT_CMD> m_Data = {};
 
-    std::array<short, MAX_CLIENTS + 1> m_FloodCount;
-    std::array<float, MAX_CLIENTS + 1> m_FloodTimer;
+    std::array<short, MAX_CLIENTS + 1> m_FloodCount = {};
+    std::array<float, MAX_CLIENTS + 1> m_FloodTimer = {};
 };
 
 extern CPugClientCmd gPugClientCmd;

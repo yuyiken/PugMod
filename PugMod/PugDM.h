@@ -38,12 +38,12 @@ typedef struct S_WEAPON
 
 typedef struct S_DM_INFO
 {
-    bool m_HideMenu;
-    std::array<WeaponIdType, C4_SLOT + 1U> m_WeaponLast;
-    std::map<int, int> m_WeaponState;
-    float m_Headshots;
+    bool m_HideMenu = false;
+    std::array<WeaponIdType, C4_SLOT + 1U> m_WeaponLast  = {};
+    std::map<int, int> m_WeaponState  = {};
+    float m_Headshots = 0.0f;
 
-    std::array<bool, DM_OPT_RESPAWN + 1> m_Option;
+    std::array<bool, DM_OPT_RESPAWN + 1> m_Option = {};
 
     void Clear()
     {
@@ -95,7 +95,7 @@ public:
 
 private:
     bool m_Run = false;
-    std::map<size_t, P_SPAWN> m_Spawn;
+    std::map<size_t, P_SPAWN> m_Spawn = {};
     std::vector<P_WEAPON> m_Weapon = {};
     std::map<int, P_DM_INFO> m_Info = {};
 };

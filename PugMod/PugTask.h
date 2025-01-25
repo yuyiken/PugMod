@@ -29,7 +29,7 @@ public:
     void StartFrame();
 
 private:
-    std::map<int, P_TASK> m_Task;
+    std::map<int, P_TASK> m_Task = {};
 };
 
 extern CPugTask gPugTask;

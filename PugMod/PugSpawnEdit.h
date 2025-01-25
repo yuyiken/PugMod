@@ -27,10 +27,10 @@ public:
 	void Save(CBasePlayer* Player);
 
 private:
-	string_t m_InfoTarget;
-	std::map<size_t, P_SPAWN> m_Spawns;
-	std::map<int, edict_t*> m_Entities;
-	std::map<int, int> m_Marked;
+	string_t m_InfoTarget = 0;
+	std::map<size_t, P_SPAWN> m_Spawns = {};
+	std::map<int, edict_t*> m_Entities = {};
+	std::map<int, int> m_Marked = {};
 };
 
 extern CPugSpawnEdit gPugSpawnEdit;

@@ -47,8 +47,8 @@ public:
 	std::string GetFlags(edict_t* pEdict);
 
 private:
-	std::map<std::string, P_ADMIN> m_Data;
-	std::map<int, int> m_Flag;
+	std::map<std::string, P_ADMIN> m_Data = {};
+	std::map<int, int> m_Flag = {};
 };
 
 extern CPugAdmin gPugAdmin;

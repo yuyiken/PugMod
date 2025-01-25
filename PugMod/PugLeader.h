@@ -41,7 +41,7 @@ private:
     bool m_Run = false;
     float m_NextFrame = 0.0f;
     unsigned short m_PlayersMin = 0;
-    std::map<int, int> m_Team;
+    std::map<int, int> m_Team = {};
 };
 
 extern CPugLeader gPugLeader;

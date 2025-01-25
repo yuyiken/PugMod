@@ -49,7 +49,7 @@ public:
 	cvar_t* m_DM_MoneyFrag;
 
 public:
-	std::map<std::string, cvar_t> m_Data;
+	std::map<std::string, cvar_t> m_Data = {};
 };
 
 extern CPugCvar gPugCvar;
