@@ -24,5 +24,4 @@ void DLL_POST_ClientUserInfoChanged(edict_t *pEntity, char *infobuffer);
 #pragma endregion
 
 #pragma region ENGINE_POST
-void ENGINE_POST_TraceLine(const float *vStart, const float *vEnd, int fNoMonsters, edict_t *pentToSkip, TraceResult *pTraceResult);
 #pragma endregion

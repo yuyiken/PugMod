@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "PugUtil.h"
 
 CPugUtil gPugUtil;
 
@@ -527,6 +528,36 @@ void CPugUtil::ScreenShake(edict_t *pEntity, float Amplitude, float Duration, fl
 			}
 		}
 	}
+}
+
+void CPugUtil::DrawTracer(Vector Start, Vector End)
+{
+	g_engfuncs.pfnMessageBegin(MSG_BROADCAST, SVC_TEMPENTITY, Start, nullptr);
+	g_engfuncs.pfnWriteByte(TE_TRACER);
+	g_engfuncs.pfnWriteCoord(Start.x);
+	g_engfuncs.pfnWriteCoord(Start.y);
+	g_engfuncs.pfnWriteCoord(Start.z);
+	g_engfuncs.pfnWriteCoord(End.x);
+	g_engfuncs.pfnWriteCoord(End.y);
+	g_engfuncs.pfnWriteCoord(End.z);
+	g_engfuncs.pfnMessageEnd();
+}
+
+void CPugUtil::DrawLine(Vector Start, Vector End, int Life, int Red, int Green, int Blue)
+{
+	g_engfuncs.pfnMessageBegin(MSG_BROADCAST, SVC_TEMPENTITY, Start, nullptr);
+	g_engfuncs.pfnWriteByte(TE_LINE);
+	g_engfuncs.pfnWriteCoord(Start.x);
+	g_engfuncs.pfnWriteCoord(Start.y);
+	g_engfuncs.pfnWriteCoord(Start.z);
+	g_engfuncs.pfnWriteCoord(End.x);
+	g_engfuncs.pfnWriteCoord(End.y);
+	g_engfuncs.pfnWriteCoord(End.z);
+	g_engfuncs.pfnWriteShort(Life);
+	g_engfuncs.pfnWriteByte(Red);
+	g_engfuncs.pfnWriteByte(Green);
+	g_engfuncs.pfnWriteByte(Blue);
+	g_engfuncs.pfnMessageEnd();
 }
 
 std::vector<CBasePlayer *> CPugUtil::GetPlayers(bool InGame, bool Bots)
