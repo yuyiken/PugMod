@@ -75,10 +75,6 @@ jobs:
   windows:
     name: Windows Build
     runs-on: windows-latest
-      
-    env:
-      BUILD_PROJECT: PugMod
-      BUILD_CONFIGURATION: Release
   
     steps:
     - uses: actions/checkout@v4
@@ -90,25 +86,25 @@ jobs:
       working-directory: ${{github.workspace}}
       run: |
         # Open directory
-        cd ${{env.BUILD_PROJECT}}
+        cd pugmod
 
         # Make Release directory
-        mkdir ${{env.BUILD_CONFIGURATION}}
+        mkdir -p Release
 
         # Execute Build
-        msbuild ${{env.BUILD_PROJECT}}.vcxproj -property:configuration=${{env.BUILD_CONFIGURATION}} -nologo -verbosity:minimal
+        msbuild PugMod.vcxproj -property:configuration=Release -nologo -verbosity:minimal
 
         # Make publish directory
-        mkdir publish\addons\pugmod\dlls
+        mkdir -p ..\cstrike\addons\pugmod\dlls
 
         # Copy cstrike files to publish
         copy ..\cstrike\* publish -Recurse -Force
 
         # Move released dll to publish
-        copy ${{env.BUILD_CONFIGURATION}}\*.dll publish\addons\pugmod\dlls -Recurse -Force
+        copy Release\*.dll ..\cstrike\addons\pugmod\dlls -Recurse -Force
 
     - name: Deploy artifacts
       uses: actions/upload-artifact@v4
       with:
         name: win32
-        path: publish/*
+        path: ${{github.workspace}}/cstrike
