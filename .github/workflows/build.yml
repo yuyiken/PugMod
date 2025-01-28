@@ -65,6 +65,13 @@ jobs:
           cp ./Release/pugmod_mm.so ../cstrike/addons/pugmod/dlls
 
       run: docker exec build-container bash -c "$SCRIPT"
+
+    - name: Deploy artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux32
+        path: ${{github.workspace}}/cstrike
+        compression-level: 9
         
   windows:
     name: Windows Build
@@ -93,16 +100,12 @@ jobs:
         # Copy release file
         cp ./Release/pugmod_mm.dll ../cstrike/addons/pugmod/dlls
 
-  deploy:
-    name: Upload artifacts
-    runs-on: ubuntu-latest
-    needs: [linux, windows]
-
-    steps:
-    - name: Upload Artifacts
+    - name: Deploy artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: pugmod
-        path: .
+        name: win32
+        path: ${{github.workspace}}/cstrike
+        compression-level: 9
+
 
       
