@@ -53,7 +53,6 @@
 #include "PugClientCmd.h"
 #include "PugCvar.h"
 #include "PugDM.h"
-#include "PugFireBullets.h"
 #include "PugLeader.h"
 #include "PugLO3.h"
 #include "PugMod.h"
