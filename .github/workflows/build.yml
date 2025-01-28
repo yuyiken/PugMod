@@ -100,6 +100,7 @@ jobs:
   deploy:
     name: Upload artifacts
     runs-on: ubuntu-latest
+    needs: [linux, windows]
 
     steps:
     - name: Upload Artifacts
@@ -107,5 +108,5 @@ jobs:
       with:
         name: pugmod
         path: ${{github.workspace}}/cstrike
-        
+
       
