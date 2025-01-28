@@ -87,14 +87,11 @@ jobs:
         # Execute Build
         msbuild PugMod.vcxproj -property:configuration=Release -nologo -verbosity:minimal
 
-        # Make publish directory
-        mkdir -p ..\cstrike\addons\pugmod\dlls
+        # Make dlls path
+        mkdir -p ../cstrike/addons/pugmod/dlls
 
-        # Copy cstrike files to publish
-        copy ..\cstrike\* publish -Recurse -Force
-
-        # Move released dll to publish
-        copy Release\*.dll ..\cstrike\addons\pugmod\dlls -Recurse -Force
+        # Copy release file
+        cp ./Release/pugmod_mm.dll ../cstrike/addons/pugmod/dlls
 
   deploy:
     name: Upload artifacts
