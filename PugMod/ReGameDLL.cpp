@@ -72,8 +72,6 @@ bool ReGameDLL_Init()
 										g_ReGameHookchains->CSGameRules_OnRoundFreezeEnd()->registerHook(ReGameDLL_CSGameRules_OnRoundFreezeEnd);
 
 										g_ReGameHookchains->RoundEnd()->registerHook(ReGameDLL_RoundEnd);
-
-										// g_ReGameHookchains->CBaseEntity_FireBullets3()->registerHook(ReGameDLL_CBaseEntity_FireBullets3);
 									}
 
 									gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] ReGameDLL API Loaded: %d.%d", Plugin_info.logtag, REGAMEDLL_API_VERSION_MAJOR, REGAMEDLL_API_VERSION_MINOR);
@@ -130,8 +128,6 @@ bool ReGameDLL_Stop()
 		g_ReGameHookchains->CSGameRules_OnRoundFreezeEnd()->unregisterHook(ReGameDLL_CSGameRules_OnRoundFreezeEnd);
 
 		g_ReGameHookchains->RoundEnd()->unregisterHook(ReGameDLL_RoundEnd);
-
-		// g_ReGameHookchains->CBaseEntity_FireBullets3()->unregisterHook(ReGameDLL_CBaseEntity_FireBullets3);
 	}
 
 	return true;
@@ -304,46 +300,3 @@ bool ReGameDLL_RoundEnd(IReGameHook_RoundEnd *chain, int winStatus, ScenarioEven
 
 	return Result;
 }
-
-// Vector &ReGameDLL_CBaseEntity_FireBullets3(IReGameHook_CBaseEntity_FireBullets3 *chain, CBaseEntity *pEntity, Vector &vecSrc, Vector &vecDirShooting, float vecSpread, float flDistance, int iPenetration, int iBulletType, int iDamage, float flRangeModifier, entvars_t *pevAttacker, bool bPistol, int shared_rand)
-// {
-// 	if (pEntity)
-// 	{
-// 		if (/*(pEntity->pev->flags & FL_ONGROUND) &&*/ (pEntity->pev->flags & FL_DUCKING))
-// 		{
-// 			vecSpread = 0.0f;
-
-// 			gPugUtil.PrintColor(pEntity->edict(), E_PRINT_TEAM::RED, "^3SPREAD ZERO");
-// 		}
-// 		else
-// 		{
-// 			gPugUtil.PrintColor(pEntity->edict(), E_PRINT_TEAM::BLUE, "^4SPREAD NORMAL");
-// 		}
-// 	}
-
-// 	static Vector Result = {};
-
-// 	pEntity->pev->punchangle.x = 0;
-// 	pEntity->pev->punchangle.y = 0;
-// 	pEntity->pev->punchangle.z = 0;
-
-// 	pEntity->edict()->v.punchangle.x = 0;
-// 	pEntity->edict()->v.punchangle.y = 0;
-// 	pEntity->edict()->v.punchangle.z = 0;
-
-// 	Result = chain->callNext(pEntity, vecSrc, vecDirShooting, vecSpread, flDistance, iPenetration, iBulletType, iDamage, flRangeModifier, pevAttacker, bPistol, shared_rand);
-
-// 	Result.x = 0;
-// 	Result.y = 0;
-// 	Result.z = 0;
-
-// 	pEntity->pev->punchangle.x = 0;
-// 	pEntity->pev->punchangle.y = 0;
-// 	pEntity->pev->punchangle.z = 0;
-
-// 	pEntity->edict()->v.punchangle.x = 0;
-// 	pEntity->edict()->v.punchangle.y = 0;
-// 	pEntity->edict()->v.punchangle.z = 0;
-
-// 	return Result;
-// }
