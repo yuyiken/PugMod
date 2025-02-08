@@ -73,7 +73,7 @@ public:
     std::array<int, SPECTATOR> GetScore();
     int GetRound();
     int GetWinner();
-    bool LastRound(int State);
+    int GetRoundsLeft();
 
     bool ChooseTeam(CBasePlayer *Player, int Slot);
     void GetIntoGame(CBasePlayer *Player);

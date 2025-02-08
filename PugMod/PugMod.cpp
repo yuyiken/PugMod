@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "PugMod.h"
 
 CPugMod gPugMod;
 
@@ -264,37 +265,14 @@ int CPugMod::GetWinner()
     return UNASSIGNED;
 }
 
-bool CPugMod::LastRound(int State)
+int CPugMod::GetRoundsLeft()
 {
-    auto Score = this->GetScore();
-
-    auto Quite = static_cast<int>(gPugCvar.m_Rounds->value / 2.0f);
-
-    switch (State)
+    if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_HALFTIME)
     {
-        case STATE_FIRST_HALF:
-        {
-            if ((Score[TERRORIST] + Score[CT] + 1) == Quite)
-            {
-                return true;
-            }
-            break;
-        }
-        case STATE_SECOND_HALF:
-        {
-            if (Score[TERRORIST] == Quite || Score[CT] == Quite)
-            {
-                return true;
-            }
-            break;
-        }
-        case STATE_OVERTIME:
-        {
-            break;
-        }
+        return (static_cast<int>(gPugCvar.m_Rounds->value / 2.0f) - (this->m_Score[this->m_State][TERRORIST]+this->m_Score[this->m_State][CT]));
     }
 
-    return false;
+    return 0;
 }
 
 bool CPugMod::ChooseTeam(CBasePlayer *Player, int Slot)
@@ -598,11 +576,11 @@ void CPugMod::SendHudMessage()
 {
     if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
     {
-        if (this->m_Score[this->m_State][TERRORIST] + this->m_Score[this->m_State][CT])
-        {
-            auto Score = this->GetScore();
+        auto Score = this->GetScore();
 
-            if (!this->LastRound(this->m_State))
+        if ((Score[TERRORIST] > 0) || (Score[CT] > 0))
+        {
+            if (this->GetRoundsLeft() > 1)
             {
                 gPugUtil.SendHud(nullptr, g_Pug_HudParam[0], "%s\nRound %d", g_Pug_String[this->m_State], (Score[TERRORIST] + Score[CT] + 1));
             }
