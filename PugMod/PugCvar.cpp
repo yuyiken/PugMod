@@ -52,13 +52,13 @@ void CPugCvar::ServerActivate()
 
     // Total de rounds
     //
-    // Padrão: "30"
-    this->m_Rounds = this->Register("pug_rounds", "30");
+    // Padrão: "15"
+    this->m_Rounds = this->Register("pug_rounds", "15");
 
     // Total de rounds em overtime
     //
-    // Padrão: "6"
-    this->m_RoundsOT = this->Register("pug_rounds_ot", "6");
+    // Padrão: "3"
+    this->m_RoundsOT = this->Register("pug_rounds_ot", "3");
 
     // Tipo do overtime
     //
