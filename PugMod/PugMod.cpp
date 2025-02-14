@@ -64,6 +64,8 @@ int CPugMod::SetState(int State)
             gPugDM.Stop();
 
             gPugVoteMap.Init();
+
+            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_VoteMap, "0");
             break;
         }
         case STATE_VOTETEAM:
@@ -71,6 +73,8 @@ int CPugMod::SetState(int State)
             gPugDM.Stop();
 
             gPugVoteTeam.Init();
+
+            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_VoteMap, "1");
             break;
         }
         case STATE_CAPTAIN:
@@ -116,7 +120,14 @@ int CPugMod::SetState(int State)
             }
             else
             {
-                this->NextState(2.0f);
+                if (this->GetRound() < static_cast<int>(gPugCvar.m_Rounds->value * 2.0f))
+                {
+                    gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_SECOND_HALF);
+                }
+                else
+                {
+                    gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_OVERTIME);
+                }
             }
 
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 Iniciado: Prepare-se !!", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
@@ -164,36 +175,6 @@ int CPugMod::SetState(int State)
     return this->m_State;
 }
 
-void CPugMod::NextState(float Delay)
-{
-    if (this->m_State == STATE_DEATHMATCH)
-    {
-        if (gPugCvar.m_VoteMap->value != 0.0f)
-        {
-            gPugTask.Create(E_TASK::SET_STATE, Delay, false, STATE_VOTEMAP);
-
-            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_VoteMap, "0");
-        }
-        else
-        {
-            gPugTask.Create(E_TASK::SET_STATE, Delay, false, STATE_VOTETEAM);
-
-            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_VoteMap, "1");
-        }
-    }
-    else
-    {
-        if (this->GetRound() <= static_cast<int>(gPugCvar.m_Rounds->value))
-        {
-            gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_SECOND_HALF);
-        }
-        else
-        {
-            gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_SECOND_HALF);
-        }
-    }
-}
-
 void CPugMod::SwapTeams()
 {
     if (g_pGameRules)
@@ -233,7 +214,7 @@ int CPugMod::GetRound()
 {
     auto Score = this->GetScore();
 
-    return (Score[TERRORIST] + Score[CT]);
+    return (Score[TERRORIST] + Score[CT] + 1);
 }
 
 int CPugMod::GetWinner()
@@ -259,7 +240,7 @@ int CPugMod::GetRoundLeft()
 {
     if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_HALFTIME)
     {
-        return (static_cast<int>(gPugCvar.m_Rounds->value) - (this->m_Score[this->m_State][TERRORIST]+this->m_Score[this->m_State][CT]));
+        return (static_cast<int>(gPugCvar.m_Rounds->value) - this->GetRound());
     }
 
     return 0;
@@ -398,7 +379,10 @@ void CPugMod::RestartRound()
         }
         else
         {
-            gPugTask.Create(E_TASK::ROUND_START_HUD, 1.5f, false, 0);
+            if (CSGameRules()->m_iNumTerroristWins || CSGameRules()->m_iNumCTWins)
+            {
+                gPugTask.Create(E_TASK::ROUND_START_HUD, 1.0f, false, 0);
+            }
         }
     }
 }
@@ -568,20 +552,17 @@ void CPugMod::SendHudMessage()
     {
         auto Score = this->GetScore();
 
-        if ((Score[TERRORIST] > 0) || (Score[CT] > 0))
+        if (this->GetRoundLeft())
         {
-            if (this->GetRoundLeft() > 1)
-            {
-                gPugUtil.SendHud(nullptr, g_Pug_HudParam[0], "%s\nRound %d", g_Pug_String[this->m_State], (Score[TERRORIST] + Score[CT] + 1));
-            }
-            else
-            {
-                gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip, warning\"");
+            gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip\"");
 
-                gPugUtil.SendHud(nullptr, g_Pug_HudParam[0], "%s\nÚltimo Round", g_Pug_String[this->m_State]);
-            }
+            gPugUtil.SendHud(nullptr, g_Pug_HudParam, "%s\nTerroristas %d\nContra-Terroristas %d", g_Pug_String[this->m_State], Score[TERRORIST], Score[CT]);
+        }
+        else
+        {
+            gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip, warning\"");
 
-            gPugUtil.SendHud(nullptr, g_Pug_HudParam[1], "\n\n%s %d\n%s %d", g_Pug_TeamId[TERRORIST], Score[TERRORIST], g_Pug_TeamId[CT], Score[CT]);
+            gPugUtil.SendHud(nullptr, g_Pug_HudParam, "%s\nTerroristas %d\nContra-Terroristas %d\nÚltimo Round", g_Pug_String[this->m_State], Score[TERRORIST], Score[CT]);
         }
     }
 }

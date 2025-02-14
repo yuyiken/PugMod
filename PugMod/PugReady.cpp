@@ -41,7 +41,9 @@ void CPugReady::Stop()
 
         this->m_Ready.fill(false);
 
-        gPugMod.NextState(2.0);
+        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todos os jogadores estão prontos!", gPugCvar.m_Tag->string);
+
+        gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, gPugCvar.m_VoteMap->value ? STATE_VOTEMAP : STATE_VOTETEAM);
     }
 }
 
@@ -133,8 +135,6 @@ void CPugReady::StartFrame()
 
             if (ReadyCount[1] >= static_cast<int>(gPugCvar.m_PlayersMin->value))
             {
-                gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todos os jogadores estão prontos!", gPugCvar.m_Tag->string);
-
                 this->Stop();
             }
             else

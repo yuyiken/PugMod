@@ -39,9 +39,9 @@ void CPugtimer::Stop()
 
         this->m_Time = 0;
 
-        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todos os jogadores estão nos times e prontos!", gPugCvar.m_Tag->string);
+        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todos os jogadores estão prontos!", gPugCvar.m_Tag->string);
 
-        gPugMod.NextState(2.0f);
+        gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, gPugCvar.m_VoteMap->value ? STATE_VOTEMAP : STATE_VOTETEAM);
     }
 }
 
