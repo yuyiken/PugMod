@@ -556,13 +556,13 @@ void CPugMod::SendHudMessage()
         {
             gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip\"");
 
-            gPugUtil.SendHud(nullptr, g_Pug_HudParam, "%s\nTerroristas %d\nContra-Terroristas %d", g_Pug_String[this->m_State], Score[TERRORIST], Score[CT]);
+            gPugUtil.SendHud(nullptr, g_Pug_HudParam[0], "%s\nTerroristas %d\nContra-Terroristas %d", g_Pug_String[this->m_State], Score[TERRORIST], Score[CT]);
         }
         else
         {
             gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip, warning\"");
 
-            gPugUtil.SendHud(nullptr, g_Pug_HudParam, "%s\nTerroristas %d\nContra-Terroristas %d\nÚltimo Round", g_Pug_String[this->m_State], Score[TERRORIST], Score[CT]);
+            gPugUtil.SendHud(nullptr, g_Pug_HudParam[1], "%s\nTerroristas %d\nContra-Terroristas %d\nÚltimo Round", g_Pug_String[this->m_State], Score[TERRORIST], Score[CT]);
         }
     }
 }
