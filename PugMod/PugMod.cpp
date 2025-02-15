@@ -32,7 +32,7 @@ int CPugMod::SetState(int State)
 
     this->m_NextFrame = 0.0f;
 
-    this->m_Score[this->m_State].fill(0);
+    std::fill(this->m_Score[this->m_State].begin(), this->m_Score[this->m_State].end(), 0);
 
     switch(this->m_State)
     {
@@ -375,7 +375,7 @@ void CPugMod::RestartRound()
     {
         if (CSGameRules()->m_bCompleteReset)
         {
-            this->m_Score[this->m_State].fill(0);
+            std::fill(this->m_Score[this->m_State].begin(), this->m_Score[this->m_State].end(), 0);
         }
         else
         {
@@ -408,7 +408,11 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
         {
             auto Winner = (winStatus == WINSTATUS_TERRORISTS) ? TERRORIST : CT;
 
-            this->m_Score[this->m_State][Winner] += 1;
+            if (g_pGameRules)
+            {
+                this->m_Score[this->m_State][TERRORIST] = CSGameRules()->m_iNumTerroristWins;
+                this->m_Score[this->m_State][CT]        = CSGameRules()->m_iNumCTWins;
+            }
 
             gPugUtil.ClientPrint(nullptr, E_PRINT::CONSOLE, "[%s] Round %d Ganho Por: %s.", gPugCvar.m_Tag->string, this->GetRound(), g_Pug_TeamId[Winner]);
 
