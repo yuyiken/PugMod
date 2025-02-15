@@ -32,8 +32,6 @@ int CPugMod::SetState(int State)
 
     this->m_NextFrame = 0.0f;
 
-    std::fill(this->m_Score[this->m_State].begin(), this->m_Score[this->m_State].end(), 0);
-
     switch(this->m_State)
     {
         case STATE_DEAD:
@@ -84,6 +82,8 @@ int CPugMod::SetState(int State)
         }
         case STATE_KNIFE_ROUND:
         {
+            this->m_Score[STATE_KNIFE_ROUND].fill(0);
+
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Round Faca: O ^3vencedor escolhe o time inicial.", gPugCvar.m_Tag->string);
 
             gPugLO3.Init();
@@ -91,6 +91,8 @@ int CPugMod::SetState(int State)
         }
         case STATE_FIRST_HALF:
         {
+            this->m_Score[STATE_FIRST_HALF].fill(0);
+
             if (g_pGameRules)
             {
                 CSGameRules()->BalanceTeams();
@@ -135,6 +137,8 @@ int CPugMod::SetState(int State)
         }
         case STATE_SECOND_HALF:
         {
+            this->m_Score[STATE_SECOND_HALF].fill(0);
+
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 Iniciado: Prepare-se !!.", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
 
             gPugLO3.Init();
@@ -142,6 +146,8 @@ int CPugMod::SetState(int State)
         }
         case STATE_OVERTIME:
         {
+            this->m_Score[STATE_OVERTIME].fill(0);
+
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 Iniciado: Prepare-se !!.", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
 
             gPugLO3.Init();
@@ -150,6 +156,8 @@ int CPugMod::SetState(int State)
         case STATE_END:
         {
             this->Scores(nullptr);
+
+            this->SendHudMessage();
 
             g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_VoteMap, "1");
 
@@ -375,7 +383,7 @@ void CPugMod::RestartRound()
     {
         if (CSGameRules()->m_bCompleteReset)
         {
-            std::fill(this->m_Score[this->m_State].begin(), this->m_Score[this->m_State].end(), 0);
+            this->m_Score[this->m_State].fill(0);
         }
         else
         {
@@ -510,6 +518,10 @@ void CPugMod::Scores(CBasePlayer *Player)
 			}
 			else
 			{
+                gPugUtil.ClientCommand(nullptr, "spk \"misc/sheep\"");
+
+                gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Fim de Jogo!\n%s %d : %d %s", g_Pug_TeamShort[TERRORIST], Score[TERRORIST], Score[CT], g_Pug_TeamShort[CT]);
+
 				gPugUtil.PrintColor(pEntity, Sender, "^4[%s]^1 Fim de jogo: ^3%s^1 (^4%d^1) - (^4%d^1) ^3%s^1", gPugCvar.m_Tag->string, g_Pug_TeamId[TERRORIST], Score[TERRORIST], g_Pug_TeamId[CT], Score[CT]);
 			}
 		}
@@ -527,6 +539,10 @@ void CPugMod::Scores(CBasePlayer *Player)
 				}
 				else
 				{
+                    gPugUtil.ClientCommand(nullptr, "spk \"misc/sheep\"");
+
+                    gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Fim de Jogo!\nOs %s venceram\n%s %d : %d %s", g_Pug_TeamId[Winner], g_Pug_TeamShort[TERRORIST], Score[TERRORIST], Score[CT], g_Pug_TeamShort[CT]);
+
 					gPugUtil.PrintColor(pEntity, Sender, "^4[%s]^1 Fim de jogo! Os ^3%s^1 venceram: %d-%d", gPugCvar.m_Tag->string, g_Pug_TeamId[Winner], Score[Winner], Score[Losers]);
 				}
 			}
@@ -538,6 +554,10 @@ void CPugMod::Scores(CBasePlayer *Player)
 				}
 				else
 				{
+                    gPugUtil.ClientCommand(nullptr, "spk \"misc/sheep\"");
+
+                    gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Fim de Jogo!\nPlacar Empatado\n%s %d : %d %s", g_Pug_TeamShort[TERRORIST], Score[TERRORIST], Score[CT], g_Pug_TeamShort[CT]);
+
 					gPugUtil.PrintColor(pEntity, Sender, "^4[%s]^1 Fim de jogo! Placar empatado: %d-%d", gPugCvar.m_Tag->string, Score[TERRORIST], Score[CT]);
 				}
 			}
@@ -557,13 +577,13 @@ void CPugMod::SendHudMessage()
 
         if (this->GetRoundLeft())
         {
-            gPugUtil.SendHud(nullptr, g_Pug_HudParam, "TR %d : %d CT\n%s", Score[TERRORIST], Score[CT], g_Pug_String[this->m_State]);
+            gPugUtil.SendHud(nullptr, g_Pug_HudParam, "%s %d : %d %s\n%s", g_Pug_TeamShort[TERRORIST], Score[TERRORIST], Score[CT], g_Pug_TeamShort[CT], g_Pug_String[this->m_State]);
         }
         else
         {
             gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip, warning\"");
 
-            gPugUtil.SendHud(nullptr, g_Pug_HudParam, "TR %d : %d CT\n%s\nÚltimo Round", Score[TERRORIST], Score[CT], g_Pug_String[this->m_State]);
+            gPugUtil.SendHud(nullptr, g_Pug_HudParam, "%s %d : %d %s\n%s\nÚltimo Round", g_Pug_TeamShort[TERRORIST], Score[TERRORIST], Score[CT], g_Pug_TeamShort[CT], g_Pug_String[this->m_State]);
         }
     }
 }

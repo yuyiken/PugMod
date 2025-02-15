@@ -53,6 +53,14 @@ constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamId =
     "Espectadores"
 };
 
+constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamShort =
+{
+    "UNASSIGNED",
+    "TR",
+    "CT",
+    "SPEC"
+};
+
 constexpr hudtextparms_t g_Pug_HudParam = {-1.0f, 0.20f, 2, 0x00, 0xFF, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0.0f, 0.0f, 12.0f, 2.0f, 1};
 
 class CPugMod
