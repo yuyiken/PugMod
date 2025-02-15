@@ -5,11 +5,11 @@ constexpr hudtextparms_t g_LO3_HudParam = {-1.0f, 0.20f, 2, 0x00, 0xFF, 0x00, 0x
 
 constexpr std::array<const char*, 5> g_LO3_HudText =
 {
-    "..:: LIVE EM TRÊS RESTARTS ::..",
-    "..:: LIVE EM TRÊS RESTARTS ::..",
-    "..:: LIVE EM DOIS RESTARTS ::..",
-    "..:: LIVE NO PRÓXIMO RESTART ::..",
-    "..:: BOA SORTE & DIVIRTA-SE ::.."
+    "LIVE EM TRÊS RESTARTS",
+    "LIVE EM TRÊS RESTARTS",
+    "LIVE EM DOIS RESTARTS",
+    "LIVE NO PRÓXIMO RESTART",
+    "BOA SORTE & DIVIRTA-SE"
 };
 
 constexpr std::array<const char*, 5> g_LO3_Message =

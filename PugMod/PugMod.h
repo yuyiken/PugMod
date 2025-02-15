@@ -47,7 +47,7 @@ constexpr std::array<const char *, STATE_END + 1> g_Pug_String =
 
 constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamId =
 {
-    "Unnasigned",
+    "Nenhum",
     "Terroristas",
     "Contra-Terroristas",
     "Espectadores"
@@ -55,7 +55,7 @@ constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamId =
 
 constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamShort =
 {
-    "UNASSIGNED",
+    "NONE",
     "TR",
     "CT",
     "SPEC"
@@ -74,7 +74,6 @@ public:
 
     void SwapTeams();
 
-    std::array<int, SPECTATOR> GetScore();
     int GetRound();
     int GetWinner();
     int GetRoundLeft();
@@ -95,7 +94,7 @@ public:
 
 private:
     int m_State = STATE_DEAD;
-    std::array<std::array<int, SPECTATOR + 1>, STATE_END + 1> m_Score = {};
+    std::array<int, SPECTATOR + 1> m_Score;
     float m_NextFrame = 0.0f;
 };
 
