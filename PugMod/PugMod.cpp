@@ -391,8 +391,11 @@ void CPugMod::RoundStart()
 {
     if (this->m_State == STATE_KNIFE_ROUND || this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
     {
-        this->Scores(nullptr);
-
+        if (this->m_Score[this->m_State][TERRORIST] || this->m_Score[this->m_State][CT])
+        {
+            this->Scores(nullptr);
+        }
+        
         gPugUtil.ClientPrint(nullptr, E_PRINT::CONSOLE, "[%s] Round %d Iniciado.", gPugCvar.m_Tag->string, this->GetRound());
     }
 }
@@ -405,11 +408,7 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
         {
             auto Winner = (winStatus == WINSTATUS_TERRORISTS) ? TERRORIST : CT;
 
-            if (g_pGameRules)
-            {
-                this->m_Score[this->m_State][TERRORIST] = CSGameRules()->m_iNumTerroristWins;
-                this->m_Score[this->m_State][CT]        = CSGameRules()->m_iNumCTWins;
-            }
+            this->m_Score[this->m_State][Winner] += 1;
 
             gPugUtil.ClientPrint(nullptr, E_PRINT::CONSOLE, "[%s] Round %d Ganho Por: %s.", gPugCvar.m_Tag->string, this->GetRound(), g_Pug_TeamId[Winner]);
 
@@ -554,15 +553,13 @@ void CPugMod::SendHudMessage()
 
         if (this->GetRoundLeft())
         {
-            gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip\"");
-
-            gPugUtil.SendHud(nullptr, g_Pug_HudParam[0], "%s\nTerroristas %d\nContra-Terroristas %d", g_Pug_String[this->m_State], Score[TERRORIST], Score[CT]);
+            gPugUtil.SendHud(nullptr, g_Pug_HudParam, "TR %d : %d CT\n%s", Score[TERRORIST], Score[CT], g_Pug_String[this->m_State]);
         }
         else
         {
             gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip, warning\"");
 
-            gPugUtil.SendHud(nullptr, g_Pug_HudParam[1], "%s\nTerroristas %d\nContra-Terroristas %d\nÚltimo Round", g_Pug_String[this->m_State], Score[TERRORIST], Score[CT]);
+            gPugUtil.SendHud(nullptr, g_Pug_HudParam, "TR %d : %d CT\n%s\nÚltimo Round", Score[TERRORIST], Score[CT], g_Pug_String[this->m_State]);
         }
     }
 }
