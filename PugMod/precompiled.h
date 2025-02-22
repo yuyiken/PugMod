@@ -26,6 +26,7 @@
 #include <vector>
 #include <string>
 #include <array>
+#include <algorithm>
 
 // CSSDK
 #include <extdll.h>

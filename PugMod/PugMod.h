@@ -1,19 +1,16 @@
 #pragma once
 
-enum E_PUG_STATE
-{
-    STATE_DEAD,
-    STATE_DEATHMATCH,
-    STATE_VOTEMAP,
-    STATE_VOTETEAM,
-    STATE_CAPTAIN,
-    STATE_KNIFE_ROUND,
-    STATE_FIRST_HALF,
-    STATE_HALFTIME,
-    STATE_SECOND_HALF,
-    STATE_OVERTIME,
-    STATE_END
-};
+constexpr auto STATE_DEAD = 0;
+constexpr auto STATE_DEATHMATCH = 1;
+constexpr auto STATE_VOTEMAP = 2;
+constexpr auto STATE_VOTETEAM = 3;
+constexpr auto STATE_CAPTAIN = 4;
+constexpr auto STATE_KNIFE_ROUND = 5;
+constexpr auto STATE_FIRST_HALF = 6;
+constexpr auto STATE_HALFTIME = 7;
+constexpr auto STATE_SECOND_HALF = 8;
+constexpr auto STATE_OVERTIME = 9;
+constexpr auto STATE_END = 10;
 
 constexpr std::array<const char *, STATE_END + 1> g_Pug_Config =
 {
@@ -74,9 +71,10 @@ public:
 
     void SwapTeams();
 
+    std::array<int, SPECTATOR + 1> GetScore();
+
     int GetRound();
     int GetWinner();
-    int GetRoundLeft();
 
     bool ChooseTeam(CBasePlayer *Player, int Slot);
     void GetIntoGame(CBasePlayer *Player);
@@ -94,8 +92,7 @@ public:
 
 private:
     int m_State = STATE_DEAD;
-    std::array<int, SPECTATOR + 1> m_Score;
-    float m_NextFrame = 0.0f;
+    std::array<std::array<int, STATE_END + 1>, SPECTATOR + 1> m_Score = {};
 };
 
 extern CPugMod gPugMod;
