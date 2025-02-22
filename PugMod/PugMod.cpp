@@ -402,56 +402,63 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
 
             gPugUtil.ClientPrint(nullptr, E_PRINT::CONSOLE, "[%s] Round %d Ganho Por: %s.", gPugCvar.m_Tag->string, this->GetRound(), g_Pug_TeamId[Winner]);
 
-            switch (this->m_State)
-            {
-                case STATE_KNIFE_ROUND:
-                {
-                    gPugTask.Create(E_TASK::VOTE_SWAP_TEAM, 1.0f, false, Winner);
-                    break;
-                }
-                case STATE_FIRST_HALF:
-                {
-                    if ((this->m_Score[TERRORIST][this->m_State] + this->m_Score[CT][this->m_State]) == static_cast<int>(gPugCvar.m_Rounds->value))
-                    {
-                        gPugTask.Create(E_TASK::SET_STATE, tmDelay + 1.0f, false, STATE_HALFTIME);
-                    }
-                    break;
-                }
-                case STATE_SECOND_HALF:
-                {
-                    auto MaxRounds = static_cast<int>(gPugCvar.m_Rounds->value / 2.0f);
+            this->CheckScore();
+        }
+    }
+}
 
-                    if ((this->m_Score[TERRORIST][this->m_State] > MaxRounds) || (this->m_Score[CT][this->m_State] > MaxRounds))
-                    {
-                        gPugTask.Create(E_TASK::SET_STATE, tmDelay + 1.0f, false, STATE_END);
-                    }
-                    else if ((this->m_Score[TERRORIST][this->m_State] == MaxRounds) && (this->m_Score[CT][this->m_State] == MaxRounds))
-                    {
-                        switch (static_cast<int>(gPugCvar.m_OvertimeType->value))
-                        {
-                            case 0: // Vote OT
-                            {
-                                break;
-                            }
-                            case 1: // OT
-                            {
-                                gPugTask.Create(E_TASK::SET_STATE, tmDelay + 1.0f, false, STATE_HALFTIME);
-                                break;
-                            }
-                            case 2: // End Tied
-                            {
-                                gPugTask.Create(E_TASK::SET_STATE, tmDelay + 1.0f, false, STATE_END);
-                                break;
-                            }
-                        }
-                    }
-                    break;
-                }
-                case STATE_OVERTIME:
+void CPugMod::CheckScore()
+{
+    auto Score = this->GetScore();
+
+    auto MaxRounds = static_cast<int>(gPugCvar.m_Rounds->value);
+
+    switch (this->m_State)
+    {
+        case STATE_KNIFE_ROUND:
+        {
+            gPugTask.Create(E_TASK::VOTE_SWAP_TEAM, 1.0f, false, this->GetWinner());
+            break;
+        }
+        case STATE_FIRST_HALF:
+        {
+            if ((Score[TERRORIST] + Score[CT]) == MaxRounds)
+            {
+                gPugTask.Create(E_TASK::SET_STATE, 6.0f, false, STATE_HALFTIME);
+            }
+            break;
+        }
+        case STATE_SECOND_HALF:
+        {
+            if ((Score[TERRORIST] > MaxRounds) || (Score[CT] > MaxRounds))
+            {
+                gPugTask.Create(E_TASK::SET_STATE, 6.0f, false, STATE_END);
+            }
+            else if ((Score[TERRORIST] == MaxRounds) && (Score[CT] == MaxRounds))
+            {
+                switch (static_cast<int>(gPugCvar.m_OvertimeType->value))
                 {
-                    break;
+                    case 0: // Vote OT
+                    {
+                        break;
+                    }
+                    case 1: // OT
+                    {
+                        gPugTask.Create(E_TASK::SET_STATE, 6.0f, false, STATE_HALFTIME);
+                        break;
+                    }
+                    case 2: // End Tied
+                    {
+                        gPugTask.Create(E_TASK::SET_STATE, 6.0f, false, STATE_END);
+                        break;
+                    }
                 }
             }
+            break;
+        }
+        case STATE_OVERTIME:
+        {
+            break;
         }
     }
 }

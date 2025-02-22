@@ -85,6 +85,8 @@ public:
     void RoundStart();
     void RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay);
 
+    void CheckScore();
+
     void Status(CBasePlayer *Player);
     void Scores(CBasePlayer *Player);
 
