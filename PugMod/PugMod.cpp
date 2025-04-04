@@ -465,12 +465,17 @@ void CPugMod::CheckScore()
 
 void CPugMod::Status(CBasePlayer *Player)
 {
+    auto Players = gPugUtil.GetPlayers(true, true);
+
     if (Player)
     {
-        auto Players = gPugUtil.GetPlayers(true, true);
-
         gPugUtil.PrintColor(Player->edict(), Player->entindex(), "^4[%s]^1 Status: ^3%s^1", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
         gPugUtil.PrintColor(Player->edict(), Player->entindex(), "^4[%s]^1 Jogadores: ^3%d^1 (Mínimo: %d, Máximo: %d)", gPugCvar.m_Tag->string, Players.size(), static_cast<int>(gPugCvar.m_PlayersMin->value), static_cast<int>(gPugCvar.m_PlayersMax->value));
+    }
+    else
+    {
+        gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Status: %s", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
+        gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Jogadores: %d (Mínimo: %d, Máximo: %d)", gPugCvar.m_Tag->string, Players.size(), static_cast<int>(gPugCvar.m_PlayersMin->value), static_cast<int>(gPugCvar.m_PlayersMax->value));
     }
 }
 

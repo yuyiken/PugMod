@@ -16,7 +16,7 @@ pluginName="${PWD##*/}"
 ipAddress="$(ip -4 -o route show scope link | grep -oP '(?<=src )[\d.]+')"
 
 # Executable HLDS with parameters
-hldsRunCommand="./hlds_run -console -debug -game cstrike -port 27020 -pingboost 3 -steam -master -secure -bots -timeout 3 +ip $ipAddress +map de_inferno +maxplayers 32 +sys_ticrate 1000";
+hldsRunCommand="./hlds_run -console -debug -norestart -game cstrike -port 27020 -pingboost 3 -steam -master -secure -bots -timeout 3 +ip $ipAddress +map de_inferno +maxplayers 32 +sys_ticrate 1000";
 
 # cstrike addons dll path
 dllPath="$hldsPath/cstrike/addons/${pluginName,,}/dlls";
