@@ -108,7 +108,7 @@ int CPugMod::SetState(int State)
         {
             this->SwapTeams();
 
-            auto Players = gPugUtil.GetPlayers();
+            auto Players = gPugUtil.GetPlayers(true, true);
 
             auto NextState = (this->GetRound() < static_cast<int>(gPugCvar.m_Rounds->value * 2.0f)) ? STATE_SECOND_HALF : STATE_OVERTIME;
 
