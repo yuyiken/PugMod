@@ -109,7 +109,7 @@ void CPugReady::RestartRound()
         {
             if (CSGameRules()->m_bCompleteReset)
             {
-                this->Init();
+                this->Init(this->m_NextState);
             }
         }
     }
