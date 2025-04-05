@@ -293,7 +293,7 @@ bool CPugMod::ChooseTeam(CBasePlayer *Player, int Slot)
 	{
         auto Players = gPugUtil.GetPlayers();
 
-		if (Players[Slot].size() >= static_cast<size_t>(gPugCvar.m_PlayersMax->value / 2.0f))
+		if (Players[Slot].size() >= static_cast<size_t>(gPugCvar.m_PlayersMax->value))
 		{
 			gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Esse time já está completo.", gPugCvar.m_Tag->string);
 			return true;
