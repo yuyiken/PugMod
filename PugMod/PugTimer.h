@@ -8,7 +8,7 @@ public:
     void ServerActivate();
     void ServerDeactivate();
 
-    void Init();
+    void Init(int NextState);
     void Stop();
     void RestartRound();
     void StartFrame();
@@ -18,6 +18,7 @@ private:
     float m_NextFrame = 0.0f;
     time_t m_Time = 0;
     int m_PlayersMin = 0;
+    int m_NextState = STATE_VOTEMAP;
 };
 
 extern CPugtimer gPugTimer;

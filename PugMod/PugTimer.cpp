@@ -11,6 +11,8 @@ void CPugtimer::ServerActivate()
     this->m_Time = 0;
 
     this->m_PlayersMin = 0;
+
+    this->m_NextState = STATE_VOTEMAP;
 }
 
 void CPugtimer::ServerDeactivate()
@@ -22,9 +24,11 @@ void CPugtimer::ServerDeactivate()
     this->m_Time = 0;
 
     this->m_PlayersMin = 0;
+
+    this->m_NextState = STATE_VOTEMAP;
 }
 
-void CPugtimer::Init()
+void CPugtimer::Init(int NextState)
 {
     this->m_Run = true;
 
@@ -33,6 +37,8 @@ void CPugtimer::Init()
     this->m_Time = time(nullptr);
 
     this->m_PlayersMin = static_cast<int>(gPugCvar.m_PlayersMin->value * 2.0f);
+
+    this->m_NextState = NextState;
 
     gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A começa quando ^3%d^1 jogadores estiverem nos times.", gPugCvar.m_Tag->string, this->m_PlayersMin);
 }
@@ -47,9 +53,9 @@ void CPugtimer::Stop()
 
         this->m_PlayersMin = 0;
 
-        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todos os jogadores estão prontos!", gPugCvar.m_Tag->string);
+        gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, this->m_NextState);
 
-        gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, gPugCvar.m_VoteMap->value ? STATE_VOTEMAP : STATE_VOTETEAM);
+        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todos os jogadores estão prontos!", gPugCvar.m_Tag->string);
     }
 }
 

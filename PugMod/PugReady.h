@@ -16,7 +16,7 @@ public:
     void ServerActivate();
     void ServerDeactivate();
 
-    void Init();
+    void Init(int NextState);
     void Stop();
 
     void PutInServer(edict_t *pEntity);
@@ -34,6 +34,7 @@ private:
     float m_NextFrame = 0.0f;
     std::array<bool, MAX_CLIENTS + 1> m_Ready = {};
     int m_PlayersMin = 0;
+    int m_NextState = STATE_VOTEMAP;
 };
 
 extern CPugReady gPugReady;

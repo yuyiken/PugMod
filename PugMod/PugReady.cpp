@@ -11,6 +11,8 @@ void CPugReady::ServerActivate()
     this->m_Ready.fill(false);
 
     this->m_PlayersMin = 0;
+
+    this->m_NextState = STATE_VOTEMAP;
 }
 
 void CPugReady::ServerDeactivate()
@@ -22,9 +24,11 @@ void CPugReady::ServerDeactivate()
     this->m_Ready.fill(false);
 
     this->m_PlayersMin = 0;
+
+    this->m_NextState = STATE_VOTEMAP;
 }
 
-void CPugReady::Init()
+void CPugReady::Init(int NextState)
 {
     this->m_Run = true;
 
@@ -33,6 +37,8 @@ void CPugReady::Init()
     this->m_Ready.fill(false);
 
     this->m_PlayersMin = static_cast<int>(gPugCvar.m_PlayersMin->value * 2.0f);
+
+    this->m_NextState = NextState;
 
     gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A partida começa quando ^3%d^1 jogadores estiverem prontos.", gPugCvar.m_Tag->string, this->m_PlayersMin);
 }
@@ -49,9 +55,9 @@ void CPugReady::Stop()
 
         this->m_PlayersMin = 0;
 
-        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todos os jogadores estão prontos!", gPugCvar.m_Tag->string);
+        gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, this->m_NextState);
 
-        gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, gPugCvar.m_VoteMap->value ? STATE_VOTEMAP : STATE_VOTETEAM);
+        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todos os jogadores estão prontos!", gPugCvar.m_Tag->string);
     }
 }
 
