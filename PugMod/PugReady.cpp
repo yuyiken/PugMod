@@ -9,6 +9,8 @@ void CPugReady::ServerActivate()
     this->m_NextFrame = 0.0f;
 
     this->m_Ready.fill(false);
+
+    this->m_PlayersMin = 0;
 }
 
 void CPugReady::ServerDeactivate()
@@ -18,6 +20,8 @@ void CPugReady::ServerDeactivate()
     this->m_NextFrame = 0.0f;
 
     this->m_Ready.fill(false);
+
+    this->m_PlayersMin = 0;
 }
 
 void CPugReady::Init()
@@ -28,7 +32,9 @@ void CPugReady::Init()
 
     this->m_Ready.fill(false);
 
-    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A partida vai começar quando todos estiverem prontos.", gPugCvar.m_Tag->string);
+    this->m_PlayersMin = static_cast<int>(gPugCvar.m_PlayersMin->value * 2.0f);
+
+    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A partida começa quando ^3%d^1 jogadores estiverem prontos.", gPugCvar.m_Tag->string, this->m_PlayersMin);
 }
 
 void CPugReady::Stop()
@@ -40,6 +46,8 @@ void CPugReady::Stop()
         this->m_NextFrame = 0.0f;
 
         this->m_Ready.fill(false);
+
+        this->m_PlayersMin = 0;
 
         gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todos os jogadores estão prontos!", gPugCvar.m_Tag->string);
 
@@ -133,7 +141,7 @@ void CPugReady::StartFrame()
                 }
             }
 
-            if (ReadyCount[1] >= static_cast<int>(gPugCvar.m_PlayersMin->value))
+            if (ReadyCount[1] >= this->m_PlayersMin)
             {
                 this->Stop();
             }
@@ -141,8 +149,8 @@ void CPugReady::StartFrame()
             {
                 if (!gPugCvar.m_ReadyList->value)
                 {
-                    gPugUtil.SendHud(nullptr, g_ReadyList_HudParam[0], "Aquecendo (%d de %d):", ReadyCount[0], static_cast<int>(gPugCvar.m_PlayersMin->value));
-                    gPugUtil.SendHud(nullptr, g_ReadyList_HudParam[1], "Pronto (%d de %d):", ReadyCount[1], static_cast<int>(gPugCvar.m_PlayersMin->value));
+                    gPugUtil.SendHud(nullptr, g_ReadyList_HudParam[0], "Aquecendo (%d de %d):", ReadyCount[0], this->m_PlayersMin);
+                    gPugUtil.SendHud(nullptr, g_ReadyList_HudParam[1], "Pronto (%d de %d):", ReadyCount[1], this->m_PlayersMin);
 
                     if (!PlayerList[0].empty())
                     {
@@ -156,16 +164,7 @@ void CPugReady::StartFrame()
                 }
                 else
                 {
-                    gPugUtil.SendHud
-                    (
-                        nullptr,
-                        g_ReadyNum_HudParam,
-                        "Aquecendo: %d / %d\nPronto: %d / %d",
-                        ReadyCount[0],
-                        static_cast<int>(gPugCvar.m_PlayersMin->value),
-                        ReadyCount[1],
-                        static_cast<int>(gPugCvar.m_PlayersMin->value)
-                    );
+                    gPugUtil.SendHud(nullptr, g_ReadyNum_HudParam, "Aquecendo: %d / %d\nPronto: %d / %d", ReadyCount[0], this->m_PlayersMin, ReadyCount[1], this->m_PlayersMin);
                 }
             }
 

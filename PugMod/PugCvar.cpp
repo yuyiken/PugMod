@@ -40,17 +40,17 @@ void CPugCvar::ServerActivate()
     // Padrão: "!"
     this->m_CmdPrefixAdmin = this->Register("pug_cmd_prefix_admin", "!");
 
-    // Mínimo de jogadores para iniciar uma partida
+    // Mínimo de jogadores por time
     //
-    // Padrão: "10"
-    this->m_PlayersMin = this->Register("pug_players_min", "10");
+    // Padrão: "5"
+    this->m_PlayersMin = this->Register("pug_players_min", "5");
 
-    // Máximo de jogadores em jogo
+    // Máximo de jogadores por time em jogo
     //
-    // Padrão: "10"
-    this->m_PlayersMax = this->Register("pug_players_max", "10");
+    // Padrão: "5"
+    this->m_PlayersMax = this->Register("pug_players_max", "5");
 
-    // Total de rounds
+    // Total de rounds por período
     //
     // Padrão: "15"
     this->m_Rounds = this->Register("pug_rounds", "15");

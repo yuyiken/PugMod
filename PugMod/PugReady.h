@@ -33,6 +33,7 @@ private:
     bool m_Run = false;
     float m_NextFrame = 0.0f;
     std::array<bool, MAX_CLIENTS + 1> m_Ready = {};
+    int m_PlayersMin = 0;
 };
 
 extern CPugReady gPugReady;

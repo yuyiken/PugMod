@@ -71,6 +71,7 @@ public:
 
     void SwapTeams();
 
+    void ResetScore(int State);
     std::array<int, SPECTATOR + 1> GetScore();
 
     int GetRound();
@@ -95,6 +96,7 @@ public:
 private:
     int m_State = STATE_DEAD;
     std::array<std::array<int, STATE_END + 1>, SPECTATOR + 1> m_Score = {};
+    std::array<int, SPECTATOR + 1> m_OvertimeScore = {};
 };
 
 extern CPugMod gPugMod;

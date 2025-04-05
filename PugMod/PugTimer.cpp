@@ -9,6 +9,8 @@ void CPugtimer::ServerActivate()
     this->m_NextFrame = 0.0f;
 
     this->m_Time = 0;
+
+    this->m_PlayersMin = 0;
 }
 
 void CPugtimer::ServerDeactivate()
@@ -18,6 +20,8 @@ void CPugtimer::ServerDeactivate()
     this->m_NextFrame = 0.0f;
 
     this->m_Time = 0;
+
+    this->m_PlayersMin = 0;
 }
 
 void CPugtimer::Init()
@@ -28,7 +32,9 @@ void CPugtimer::Init()
 
     this->m_Time = time(nullptr);
 
-    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A partida vai começar quando todos estiverem em jogo.", gPugCvar.m_Tag->string);
+    this->m_PlayersMin = static_cast<int>(gPugCvar.m_PlayersMin->value * 2.0f);
+
+    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A começa quando ^3%d^1 jogadores estiverem nos times.", gPugCvar.m_Tag->string, this->m_PlayersMin);
 }
 
 void CPugtimer::Stop()
@@ -38,6 +44,8 @@ void CPugtimer::Stop()
         this->m_Run = false;
 
         this->m_Time = 0;
+
+        this->m_PlayersMin = 0;
 
         gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todos os jogadores estão prontos!", gPugCvar.m_Tag->string);
 
@@ -67,7 +75,7 @@ void CPugtimer::StartFrame()
         {
             if (gpGlobals->time >= this->m_NextFrame)
             {
-                auto Needed = (static_cast<int>(gPugCvar.m_PlayersMin->value) - (CSGameRules()->m_iNumTerrorist + CSGameRules()->m_iNumCT));
+                auto Needed = (this->m_PlayersMin - (CSGameRules()->m_iNumTerrorist + CSGameRules()->m_iNumCT));
 
                 if (Needed > 0)
                 {

@@ -14,9 +14,10 @@ public:
     void StartFrame();
 
 private:
-    bool m_Run;
-    float m_NextFrame;
-    time_t m_Time;
+    bool m_Run = false;
+    float m_NextFrame = 0.0f;
+    time_t m_Time = 0;
+    int m_PlayersMin = 0;
 };
 
 extern CPugtimer gPugTimer;
