@@ -13,11 +13,11 @@ void CPugMod::ServerDeactivate()
     {
         g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_LastMap, STRING(gpGlobals->mapname));
     }
-    
-	if (this->m_State >= STATE_FIRST_HALF && this->m_State <= STATE_OVERTIME)
-	{
-		this->SetState(STATE_END);
-	}
+
+    if (this->m_State >= STATE_FIRST_HALF && this->m_State <= STATE_OVERTIME)
+    {
+        this->SetState(STATE_END);
+    }
 }
 
 int CPugMod::GetState()
