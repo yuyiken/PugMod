@@ -485,80 +485,94 @@ void CPugMod::Status(CBasePlayer *Player)
     }
 }
 
-void CPugMod::Scores(CBasePlayer *Player)
+void CPugMod::Scores(CBasePlayer *Player) // Corrigir
 {
-	auto pEntity = Player ? Player->edict() : nullptr;
+    if (Player)
+    {
+        auto Sender = E_PRINT_TEAM::GREY;
 
-    auto Sender = E_PRINT_TEAM::GREY;
+        if (this->m_State >= STATE_FIRST_HALF && this->m_State <= STATE_END)
+        {
+            auto Score = this->GetScore();
 
-	if (this->m_State >= STATE_FIRST_HALF && this->m_State <= STATE_END)
-	{
-        auto Score = this->GetScore();
+            if (Score[TERRORIST] != Score[CT])
+            {
+                Sender = (Score[TERRORIST] > Score[CT]) ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE;
+            }
 
-		if (Score[TERRORIST] != Score[CT])
-		{
-			Sender = (Score[TERRORIST] > Score[CT]) ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE;
-		}
-
-        bool Method = false; // TODO
-
-		if (Method)
-		{
-			if (this->m_State != STATE_END)
-			{
-				gPugUtil.PrintColor(pEntity, Sender, "^4[%s]^1 ^3%s^1 (^4%d^1) - (^4%d^1) ^3%s^1", gPugCvar.m_Tag->string, g_Pug_TeamId[TERRORIST], Score[TERRORIST], g_Pug_TeamId[CT], Score[CT]);
-			}
-			else
-			{
-                gPugUtil.ClientCommand(nullptr, "spk \"misc/sheep\"");
-
-                gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Fim de Jogo!\n%s %d : %d %s", g_Pug_TeamShort[TERRORIST], Score[TERRORIST], Score[CT], g_Pug_TeamShort[CT]);
-
-				gPugUtil.PrintColor(pEntity, Sender, "^4[%s]^1 Fim de jogo: ^3%s^1 (^4%d^1) - (^4%d^1) ^3%s^1", gPugCvar.m_Tag->string, g_Pug_TeamId[TERRORIST], Score[TERRORIST], g_Pug_TeamId[CT], Score[CT]);
-			}
-		}
-		else
-		{
-			if (Score[TERRORIST] != Score[CT])
-			{
-				int Winner = (Score[TERRORIST] > Score[CT]) ? TERRORIST : CT;
-
-				int Losers = (Score[TERRORIST] > Score[CT]) ? CT : TERRORIST;
-
-				if (this->m_State != STATE_END)
-				{
-					gPugUtil.PrintColor(pEntity, Sender, "^4[%s]^1 Os ^3%s^1 estão vencendo: %d-%d", gPugCvar.m_Tag->string, g_Pug_TeamId[Winner], Score[Winner], Score[Losers]);
-				}
-				else
-				{
+            if (gPugCvar.m_ScoreText->value == 0.0f)
+            {
+                if (this->m_State != STATE_END)
+                {
+                    gPugUtil.PrintColor(Player->edict(), Sender, "^4[%s]^1 ^3%s^1 (^4%d^1) - (^4%d^1) ^3%s^1", gPugCvar.m_Tag->string, g_Pug_TeamId[TERRORIST], Score[TERRORIST], g_Pug_TeamId[CT], Score[CT]);
+                }
+                else
+                {
                     gPugUtil.ClientCommand(nullptr, "spk \"misc/sheep\"");
 
-                    gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Fim de Jogo!\nOs %s venceram\n%s %d : %d %s", g_Pug_TeamId[Winner], g_Pug_TeamShort[TERRORIST], Score[TERRORIST], Score[CT], g_Pug_TeamShort[CT]);
+                    gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Fim de Jogo!\n%s %d : %d %s", g_Pug_TeamShort[TERRORIST], Score[TERRORIST], Score[CT], g_Pug_TeamShort[CT]);
 
-					gPugUtil.PrintColor(pEntity, Sender, "^4[%s]^1 Fim de jogo! Os ^3%s^1 venceram: %d-%d", gPugCvar.m_Tag->string, g_Pug_TeamId[Winner], Score[Winner], Score[Losers]);
-				}
-			}
-			else
-			{
-				if (this->m_State != STATE_END)
-				{
-					gPugUtil.PrintColor(pEntity, Sender, "^4[%s]^1 Placar empatado: %d-%d", gPugCvar.m_Tag->string, Score[TERRORIST], Score[CT]);
-				}
-				else
-				{
-                    gPugUtil.ClientCommand(nullptr, "spk \"misc/sheep\"");
+                    gPugUtil.PrintColor(Player->edict(), Sender, "^4[%s]^1 Fim de jogo: ^3%s^1 (^4%d^1) - (^4%d^1) ^3%s^1", gPugCvar.m_Tag->string, g_Pug_TeamId[TERRORIST], Score[TERRORIST], g_Pug_TeamId[CT], Score[CT]);
+                }
+            }
+            else
+            {
+                if (Score[TERRORIST] != Score[CT])
+                {
+                    int Winner = (Score[TERRORIST] > Score[CT]) ? TERRORIST : CT;
 
-                    gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Fim de Jogo!\nPlacar Empatado\n%s %d : %d %s", g_Pug_TeamShort[TERRORIST], this->m_Score[TERRORIST], this->m_Score[CT], g_Pug_TeamShort[CT]);
+                    int Losers = (Score[TERRORIST] > Score[CT]) ? CT : TERRORIST;
 
-					gPugUtil.PrintColor(pEntity, Sender, "^4[%s]^1 Fim de jogo! Placar empatado: %d-%d", gPugCvar.m_Tag->string, this->m_Score[TERRORIST], this->m_Score[CT]);
-				}
-			}
-		}
-	}
-	else
-	{
-		gPugUtil.PrintColor(pEntity, Sender, "^4[%s]^1 Comando indisponível.", gPugCvar.m_Tag->string);
-	}
+                    if (this->m_State != STATE_END)
+                    {
+                        gPugUtil.PrintColor(Player->edict(), Sender, "^4[%s]^1 Os ^3%s^1 estão vencendo: %d-%d", gPugCvar.m_Tag->string, g_Pug_TeamId[Winner], Score[Winner], Score[Losers]);
+                    }
+                    else
+                    {
+                        gPugUtil.ClientCommand(nullptr, "spk \"misc/sheep\"");
+
+                        gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Fim de Jogo!\nOs %s venceram\n%s %d : %d %s", g_Pug_TeamId[Winner], g_Pug_TeamShort[TERRORIST], Score[TERRORIST], Score[CT], g_Pug_TeamShort[CT]);
+
+                        gPugUtil.PrintColor(Player->edict(), Sender, "^4[%s]^1 Fim de jogo! Os ^3%s^1 venceram: %d-%d", gPugCvar.m_Tag->string, g_Pug_TeamId[Winner], Score[Winner], Score[Losers]);
+                    }
+                }
+                else
+                {
+                    if (this->m_State != STATE_END)
+                    {
+                        gPugUtil.PrintColor(Player->edict(), Sender, "^4[%s]^1 Placar empatado: %d-%d", gPugCvar.m_Tag->string, Score[TERRORIST], Score[CT]);
+                    }
+                    else
+                    {
+                        gPugUtil.ClientCommand(nullptr, "spk \"misc/sheep\"");
+
+                        gPugUtil.SendHud(nullptr, g_Pug_HudParam, "Fim de Jogo!\nPlacar Empatado\n%s %d : %d %s", g_Pug_TeamShort[TERRORIST], this->m_Score[TERRORIST], this->m_Score[CT], g_Pug_TeamShort[CT]);
+
+                        gPugUtil.PrintColor(Player->edict(), Sender, "^4[%s]^1 Fim de jogo! Placar empatado: %d-%d", gPugCvar.m_Tag->string, this->m_Score[TERRORIST], this->m_Score[CT]);
+                    }
+                }
+            }
+        }
+        else
+        {
+            gPugUtil.PrintColor(Player->edict(), Sender, "^4[%s]^1 Comando indisponível.", gPugCvar.m_Tag->string);
+        }
+    }
+    else
+    {
+        gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Status: %s", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
+
+        if (this->m_State >= STATE_FIRST_HALF && this->m_State <= STATE_END)
+        {
+            auto Score = this->GetScore();
+
+            gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] %s (%d) - (%d) %s", gPugCvar.m_Tag->string, g_Pug_TeamId[TERRORIST], Score[TERRORIST], g_Pug_TeamId[CT], Score[CT]);
+        }
+        else
+        {
+            gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] A partida não foi iniciada.", gPugCvar.m_Tag->string);
+        }
+    }
 }
 
 void CPugMod::SendHudMessage()

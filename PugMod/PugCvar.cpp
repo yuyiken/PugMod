@@ -163,6 +163,14 @@ void CPugCvar::ServerActivate()
     // Padrão: "1"
     this->m_VoteEnd  = this->Register("pug_vote_end", "1");
 
+    // Tipo do texto dos placares na tela
+    //
+    // 0 Por extenso
+    // 1 Mostrar Placares TRs e CTs
+    //
+    // Padrão: "0"
+    this->m_ScoreText = this->Register("pug_score_text", "0");
+
     // Ativar modo Deathmatch
     // Se inativo, será o modo aquecimento comum
     //
