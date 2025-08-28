@@ -17,7 +17,6 @@ public:
     static void AddWeapon();
     static void AddMap();
     static void Status();
-    static void Scores();
 
 private:
     const std::vector<P_SERVER_CMD> m_CommandList = 
@@ -27,8 +26,7 @@ private:
         {"pug_add_spawn", this->AddSpawn},
         {"pug_add_wpn", this->AddWeapon},
         {"pug_add_map", this->AddMap},
-        {"pug_status", this->Status},
-        {"pug_scores", this->Scores}
+        {"pug_status", this->Status}
     }};
 };
 
