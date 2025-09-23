@@ -278,7 +278,7 @@ cvar_t *CPugCvar::Register(const char *pszName, const char *pszValue)
     {
         this->m_Data[pszName].name = pszName;
 
-        this->m_Data[pszName].string = strdup(pszValue);
+        this->m_Data[pszName].string = "";
 
         this->m_Data[pszName].flags = (FCVAR_SERVER | FCVAR_PROTECTED | FCVAR_SPONLY | FCVAR_UNLOGGED);
 
