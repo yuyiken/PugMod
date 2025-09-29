@@ -50,15 +50,15 @@ void CPugCvar::ServerActivate()
     // Padrão: "5"
     this->m_PlayersMax = this->Register("pug_players_max", "5");
 
-    // Total de rounds por período
+    // Total de rounds por mapa
     //
-    // Padrão: "15"
-    this->m_Rounds = this->Register("pug_rounds", "15");
+    // Padrão: "30"
+    this->m_Rounds = this->Register("pug_rounds", "30");
 
     // Total de rounds em overtime
     //
-    // Padrão: "3"
-    this->m_RoundsOT = this->Register("pug_rounds_ot", "3");
+    // Padrão: "6"
+    this->m_RoundsOT = this->Register("pug_rounds_ot", "6");
 
     // Tipo do overtime
     //

@@ -95,7 +95,7 @@ public:
 
 private:
     int m_State = STATE_DEAD;
-    std::array<std::array<int, STATE_END + 1>, SPECTATOR + 1> m_Score = {};
+    std::array<std::array<int, STATE_END + 1>, SPECTATOR + 1> m_Score{{}};
 };
 
 extern CPugMod gPugMod;
