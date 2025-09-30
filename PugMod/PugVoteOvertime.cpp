@@ -1,8 +1,8 @@
 #include "precompiled.h"
 
-CPugVoteSwapTeam gPugVoteSwapTeam;
+CPugVoteOvertime gPugVoteOvertime;
 
-void CPugVoteSwapTeam::ServerActivate()
+void CPugVoteOvertime::ServerActivate()
 {
     this->m_Run = false;
 
@@ -10,14 +10,12 @@ void CPugVoteSwapTeam::ServerActivate()
 
     this->m_Time = 0;
 
-    this->m_Team = UNASSIGNED;
-
     this->m_VotesLeft = 0;
 
     this->m_VoteList.clear();
 }
 
-void CPugVoteSwapTeam::CPugVoteSwapTeam::ServerDeactivate()
+void CPugVoteOvertime::CPugVoteOvertime::ServerDeactivate()
 {
     this->m_Run = false;
 
@@ -25,41 +23,46 @@ void CPugVoteSwapTeam::CPugVoteSwapTeam::ServerDeactivate()
 
     this->m_Time = 0;
 
-    this->m_Team = UNASSIGNED;
-
     this->m_VotesLeft = 0;
 
     this->m_VoteList.clear();
 }
 
-void CPugVoteSwapTeam::Init(int Team)
+void CPugVoteOvertime::Init()
 {
     if (!this->m_Run)
     {
-        auto Players = gPugUtil.GetPlayers();
+        auto Players = gPugUtil.GetPlayers(true, false);
 
-        if (Players[Team].size() > 0)
+        if (Players.size() > 0)
         {
             this->m_Run = true;
+
+            if (g_pGameRules)
+            {
+                if (CSGameRules()->m_bRoundTerminating)
+                {
+                    CSGameRules()->m_flRestartRoundTime = (gpGlobals->time + gPugCvar.m_VoteDelay->value);
+                }
+            }
 
             this->m_NextFrame = 0.0f;
 
             this->m_Time = time(nullptr) + static_cast<time_t>(gPugCvar.m_VoteDelay->value);
 
-            this->m_Team = Team;
-
             this->m_VotesLeft = 0;
 
             this->m_VoteList.clear();
             
-            this->m_VoteList.push_back({1, 0, "Terroristas"});
-            this->m_VoteList.push_back({2, 0, "Contra-Terroristas"});
+            this->m_VoteList.push_back({1, 0, "Morte Súbita"});
+            this->m_VoteList.push_back({2, 0, "Jogar Overtime"});
+            this->m_VoteList.push_back({3, 0, "Terminar Empatado"});
             
-            this->m_VotesLeft = Players[Team].size();
+            this->m_VotesLeft = Players.size();
 
-            for (auto const &Player : Players[Team])
+            for (auto const &Player : Players)
             {
-                gPugMenu[Player->entindex()].Create("Escolha o Time:", false, E_MENU::ME_VOTE_SWAP_TEAM);
+                gPugMenu[Player->entindex()].Create("Partida empatada o que deseja fazer?", false, E_MENU::ME_VOTE_SWAP_TEAM);
 
                 for (size_t i = 0; i < this->m_VoteList.size(); ++i)
                 {
@@ -70,21 +73,24 @@ void CPugVoteSwapTeam::Init(int Team)
 
                 gPugMenu[Player->entindex()].Show(Player);
 
-                gPugUtil.ClientCommand(Player->edict(), g_VoteSwapTeam_Sound[g_engfuncs.pfnRandomLong(0, 1)]);
+                gPugUtil.ClientCommand(Player->edict(), g_VoteOverimte_Sound[g_engfuncs.pfnRandomLong(0, 1)]);
             }
 
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Os ^3%s^1 venceram: Iniciando a escolha do time.", gPugCvar.m_Tag->string, g_Pug_TeamId[Team]);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A partida está empatada, escolha o que fazer:", gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 1. Morte Súbita: ^3O time vencedor será o vencedor da partida.", gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 2. Jogar Overtime: ^3O time vencedor será decidido via Overtime.", gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 3. Terminar Empatado: ^3A partida termina sem um vencedor.", gPugCvar.m_Tag->string);
         }
         else
         {
-            gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_FIRST_HALF);
+            gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_END);
 
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Nenhum vencedor: Iniciando ^3%s^1.", gPugCvar.m_Tag->string, g_Pug_String[STATE_FIRST_HALF]);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Nenhum vencedor: Iniciando ^3%s^1.", gPugCvar.m_Tag->string, g_Pug_String[STATE_END]);
         }
     }
 }
 
-void CPugVoteSwapTeam::Stop()
+void CPugVoteOvertime::Stop()
 {
     if (this->m_Run)
     {
@@ -102,28 +108,43 @@ void CPugVoteSwapTeam::Stop()
 
         if (Winner.Votes)
         {
-            if (Winner.Team != this->m_Team)
+            switch (Winner.Index)
             {
-                if (g_pGameRules)
+                case 1: // Sudden Death Round
                 {
-                    CSGameRules()->SwapAllPlayers();
+                    if (g_pGameRules)
+                    {
+                        CSGameRules()->m_bGameStarted = true;
+                    }
+                    
+                    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Continuando partida no modo ^3Morte Súbita^1 após o freezetime.", gPugCvar.m_Tag->string);
+
+                    break;
+                }
+                case 2: // Play Overtime
+                {
+                    gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, STATE_OVERTIME);
+                    break;
+                }
+                case 3: // End Tied
+                {
+                    gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, STATE_END);
+                    break;
                 }
             }
-
-            gPugUtil.PrintColor(nullptr, (Winner.Team == TERRORIST ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE), "^4[%s]^1 Trocando times para: ^3%s^1.", gPugCvar.m_Tag->string, Winner.Name.c_str());
         }
         else
         {
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A escolha falhou: ^3Nenhum voto.", gPugCvar.m_Tag->string);
+            
+            gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, STATE_END);
         }
-
-        gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_FIRST_HALF);
     }
 }
 
-P_VOTE_SWAP_INFO CPugVoteSwapTeam::GetWinner()
+P_VOTE_OT_INFO CPugVoteOvertime::GetWinner()
 {
-    P_VOTE_SWAP_INFO Winner = {};
+    P_VOTE_OT_INFO Winner = {};
 
     if (!this->m_VoteList.empty())
     {
@@ -146,7 +167,7 @@ P_VOTE_SWAP_INFO CPugVoteSwapTeam::GetWinner()
     return Winner;
 }
 
-void CPugVoteSwapTeam::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
+void CPugVoteOvertime::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (this->m_Run)
     {
@@ -166,7 +187,7 @@ void CPugVoteSwapTeam::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
     }
 }
 
-void CPugVoteSwapTeam::StartFrame()
+void CPugVoteOvertime::StartFrame()
 {
     if (this->m_Run)
     {
@@ -186,7 +207,7 @@ void CPugVoteSwapTeam::StartFrame()
 
                         strftime(szTime, sizeof(szTime), "%M:%S", tm_info);
                         
-                        gPugUtil.SendHud(nullptr, g_VoteSwapTeam_HudParam[0], "Escolha do Time: %s", szTime);
+                        gPugUtil.SendHud(nullptr, g_VoteSwapTeam_HudParam[0], "Modo Overtime: %s", szTime);
                     }
 
                     std::string VoteList = "";

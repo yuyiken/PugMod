@@ -18,7 +18,8 @@ enum E_MENU
     ME_VOTE_MAP,
     ME_VOTE_TEAM,
     CP_LEADER_MENU,
-    ME_VOTE_SWAP_TEAM
+    ME_VOTE_SWAP_TEAM,
+    ME_VOTE_OVERTIME,
 };
 
 typedef struct S_MENU_ITEM

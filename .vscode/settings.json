@@ -63,6 +63,7 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "set": "cpp",
-        "ranges": "cpp"
+        "ranges": "cpp",
+        "queue": "cpp"
     }
 }

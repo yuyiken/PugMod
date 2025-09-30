@@ -14,6 +14,7 @@ public:
 	cvar_t* m_AutoTeamJoin;
 	cvar_t* m_HumansJoinTeam;
 	cvar_t* m_BotJoinTeam;
+	cvar_t* m_RoundRestartDelay;
 
 	cvar_t* m_Tag;
 	cvar_t* m_CmdPrefixPlayer;
@@ -48,9 +49,6 @@ public:
 	cvar_t* m_DM_KillHealedMsg;
 	cvar_t* m_DM_KillSound;
 	cvar_t* m_DM_MoneyFrag;
-
-public:
-	std::map<std::string, cvar_t> m_Data = {};
 };
 
 extern CPugCvar gPugCvar;

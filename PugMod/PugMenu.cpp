@@ -175,6 +175,11 @@ bool CPugMenu::Handle(CBasePlayer *Player, int Key)
                                 gPugVoteSwapTeam.MenuHandle(Player, this->m_Data[ItemId]);
                                 break;
                             }
+                            case E_MENU::ME_VOTE_OVERTIME:
+                            {
+                                gPugVoteOvertime.MenuHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
                         }
                     }
                 }

@@ -25,6 +25,9 @@ void CPugCvar::ServerActivate()
     // bot_join_team
     this->m_BotJoinTeam = g_engfuncs.pfnCVarGetPointer("bot_join_team");
 
+    // mp_round_restart_delay
+    this->m_RoundRestartDelay = g_engfuncs.pfnCVarGetPointer("mp_round_restart_delay");
+
     // Log Tag
     //
     // Padrão: "PUG"
@@ -276,19 +279,27 @@ cvar_t *CPugCvar::Register(const char *pszName, const char *pszValue)
 
     if (!pPointer)
     {
-        this->m_Data[pszName].name = pszName;
-
-        this->m_Data[pszName].string = "";
-
-        this->m_Data[pszName].flags = (FCVAR_SERVER | FCVAR_PROTECTED | FCVAR_SPONLY | FCVAR_UNLOGGED);
-
-        g_engfuncs.pfnCVarRegister(&this->m_Data[pszName]);
-
-        pPointer = g_engfuncs.pfnCVarGetPointer(this->m_Data[pszName].name);
-
-        if (pPointer)
+        if (pszName)
         {
-            g_engfuncs.pfnCvar_DirectSet(pPointer, pszValue);
+            if (pszName[0u] != '\0')
+            {
+                static cvar_t Data;
+
+                Data.name = pszName;
+
+                Data.string = "";
+
+                Data.flags = (FCVAR_SERVER | FCVAR_PROTECTED | FCVAR_SPONLY | FCVAR_UNLOGGED);
+
+                g_engfuncs.pfnCVarRegister(&Data);
+
+                pPointer = g_engfuncs.pfnCVarGetPointer(Data.name);
+
+                if (pPointer)
+                {
+                    g_engfuncs.pfnCvar_DirectSet(pPointer, pszValue);
+                }
+            }
         }
     }
 

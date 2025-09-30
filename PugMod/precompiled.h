@@ -64,5 +64,6 @@
 #include "PugTimer.h"
 #include "PugUtil.h"
 #include "PugVoteMap.h"
+#include "PugVoteOvertime.h"
 #include "PugVoteTeam.h"
 #include "PugVoteSwapTeam.h"
