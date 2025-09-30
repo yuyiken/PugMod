@@ -174,6 +174,18 @@ void CPugCvar::ServerActivate()
     // Padrão: "0"
     this->m_ScoreText = this->Register("pug_score_text", "0");
 
+    // Arquivo de ajuda de comandos via MOTD
+    // Nome do arquivo ou URL do arquivo de ajuda
+    //
+    // Padrão: "motd.html"
+    this->m_MotdFile = this->Register("pug_motd_file", "motd.html");
+
+    // Arquivo de ajuda de comandos via MOTD
+    // Nome do arquivo ou URL do arquivo de ajuda
+    //
+    // Padrão: "motd_admin.html"
+    this->m_MotdFileAdmin = this->Register("pug_motd_admin_file", "motd_admin.html");
+
     // Ativar modo Deathmatch
     // Se inativo, será o modo aquecimento comum
     //

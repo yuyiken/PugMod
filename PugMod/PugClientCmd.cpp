@@ -204,6 +204,20 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                     gPugSpawnEdit.EditSpawns(Player);
                                     return true;
                                 }
+                                case CMD_HELP:
+                                {
+                                    if (gPugCvar.m_MotdFile)
+                                    {
+                                        if (gPugCvar.m_MotdFile->string)
+                                        {
+                                            if (gPugCvar.m_MotdFile->string[0u] != '\0')
+                                            {
+                                                gPugUtil.ShowMotd(pEntity, gPugCvar.m_MotdFile->string, strlen(gPugCvar.m_MotdFile->string));
+                                            }
+                                        }
+                                    }
+                                    return true;
+                                }
                             }
                         }
                     }

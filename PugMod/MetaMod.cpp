@@ -146,6 +146,8 @@ void DLL_POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 
 	gPugClientCmd.ServerActivate();
 
+	gPugClientMenu.ServerActivate();
+
 	gPugDM.ServerActivate();
 
 	gPugSpawnEdit.ServerActivate();

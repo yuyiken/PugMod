@@ -1,5 +1,4 @@
 #include "precompiled.h"
-#include "PugUtil.h"
 
 CPugUtil gPugUtil;
 
@@ -619,4 +618,64 @@ std::array<std::vector<CBasePlayer *>, SPECTATOR + 1> CPugUtil::GetPlayers()
 	}
 
 	return Players;
+}
+
+void CPugUtil::ShowMotd(edict_t* pEntity, char* Motd, unsigned int MotdLength)
+{
+	static int iMsgMOTD;
+
+	if (iMsgMOTD || (iMsgMOTD = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "MOTD", NULL)))
+	{
+		if (MotdLength < 128)
+		{
+			struct stat FileBuffer;
+
+			if (stat(Motd, &FileBuffer) == 0)
+			{
+				int FileLength = 0;
+
+				char* FileContent = reinterpret_cast<char*>(g_engfuncs.pfnLoadFileForMe(Motd, &FileLength));
+
+				if (FileLength)
+				{
+					this->ShowMotd(pEntity, FileContent, FileLength);
+				}
+
+				g_engfuncs.pfnFreeFile(FileContent);
+
+				return;
+			}
+		}
+
+		char* Buffer = Motd;
+
+		char Character = 0;
+
+		int Size = 0;
+
+		while (*Buffer)
+		{
+			Size = MotdLength;
+
+			if (Size > 175)
+			{
+				Size = 175;
+			}
+
+			MotdLength -= Size;
+
+			Character = *(Buffer += Size);
+
+			*Buffer = 0;
+
+			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgMOTD, NULL, pEntity);
+			g_engfuncs.pfnWriteByte(Character ? FALSE : TRUE);
+			g_engfuncs.pfnWriteString(Motd);
+			g_engfuncs.pfnMessageEnd();
+
+			*Buffer = Character;
+
+			Motd = Buffer;
+		}
+	}
 }

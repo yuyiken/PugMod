@@ -11,6 +11,7 @@ enum E_CLIENT_CMD_ID
     CMD_RESPAWN,
     CMD_RESET_SCORE,
     CMD_DM_SPAWN_EDITOR,
+    CMD_HELP
 };
 
 typedef struct S_CLIENT_CMD
