@@ -1,5 +1,12 @@
 #pragma once
 
+constexpr std::array<const char*, 3> g_ClientCmd_Sound =
+{
+    "spk common/menu1", // 0 -> Next / Next
+    "spk common/menu2", // 1 -> Select Normal
+    "spk common/menu3", // 2 -> Select Disabled
+};
+
 enum E_CLIENT_CMD_ID
 {
     CMD_STATUS,
@@ -11,7 +18,8 @@ enum E_CLIENT_CMD_ID
     CMD_RESPAWN,
     CMD_RESET_SCORE,
     CMD_DM_SPAWN_EDITOR,
-    CMD_HELP
+    CMD_HELP,
+    CMD_HELP_ADMIN
 };
 
 typedef struct S_CLIENT_CMD

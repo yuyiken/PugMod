@@ -212,7 +212,25 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                         {
                                             if (gPugCvar.m_MotdFile->string[0u] != '\0')
                                             {
+                                                gPugUtil.ClientCommand(Player->edict(), g_ClientCmd_Sound[1]);
+
                                                 gPugUtil.ShowMotd(pEntity, gPugCvar.m_MotdFile->string, strlen(gPugCvar.m_MotdFile->string));
+                                            }
+                                        }
+                                    }
+                                    return true;
+                                }
+                                case CMD_HELP_ADMIN:
+                                {
+                                    if (gPugCvar.m_MotdFileAdmin)
+                                    {
+                                        if (gPugCvar.m_MotdFileAdmin->string)
+                                        {
+                                            if (gPugCvar.m_MotdFileAdmin->string[0u] != '\0')
+                                            {
+                                                gPugUtil.ClientCommand(Player->edict(), g_ClientCmd_Sound[2]);
+
+                                                gPugUtil.ShowMotd(pEntity, gPugCvar.m_MotdFileAdmin->string, strlen(gPugCvar.m_MotdFileAdmin->string));
                                             }
                                         }
                                     }
