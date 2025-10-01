@@ -40,7 +40,7 @@ public:
     void ServerActivate();
     void Set(std::string Auth, std::string Name, std::string Flag);
 	int ReadFlags(const char* Flags);
-	bool PutInServer(edict_t* pEntity);
+	void PutInServer(edict_t* pEntity);
 	int GetFlags(int EntityIndex);
 	int Access(int EntityIndex, int Level);
 	int Access(std::string Auth, int Level);

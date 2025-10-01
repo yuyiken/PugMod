@@ -37,7 +37,7 @@ int CPugAdmin::ReadFlags(const char* Flags)
     return Result;
 }
 
-bool CPugAdmin::PutInServer(edict_t* pEntity)
+void CPugAdmin::PutInServer(edict_t* pEntity)
 {
     if (!FNullEnt(pEntity))
     {
@@ -60,8 +60,6 @@ bool CPugAdmin::PutInServer(edict_t* pEntity)
             }
         }
     }
-
-    return true;
 }
 
 int CPugAdmin::GetFlags(int EntityIndex)

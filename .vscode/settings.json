@@ -64,6 +64,7 @@
         "variant": "cpp",
         "set": "cpp",
         "ranges": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "iostream": "cpp"
     }
 }
