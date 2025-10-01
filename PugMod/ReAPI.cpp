@@ -75,11 +75,15 @@ void ReAPI_SV_DropClient(IRehldsHook_SV_DropClient *chain, IGameClient *client, 
 {
 	if (client)
 	{
-		if (!FNullEnt(client->GetEdict()))
-		{
-			gPugMod.DropClient(client->GetEdict());
+		auto pEntity = client->GetEdict();
 
-			gPugLeader.DropClient(client->GetEdict());
+		if (!FNullEnt(pEntity))
+		{
+			gPugMod.DropClient(pEntity);
+
+			gPugLeader.DropClient(pEntity);
+
+			gPugPlayer.Disconnect(pEntity, crash, Reason);
 		}
 	}
 	

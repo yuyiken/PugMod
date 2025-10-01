@@ -41,7 +41,7 @@ public:
     std::vector<CBasePlayer *> GetPlayers(bool InGame, bool Bots);
     std::array<std::vector<CBasePlayer *>, SPECTATOR + 1> GetPlayers();
     void ShowMotd(edict_t* pEntity, char* Motd, unsigned int MotdLength);
-    
+    const char* FormatString(const char* Format, ...);
 private:
     std::string m_Path;
 };

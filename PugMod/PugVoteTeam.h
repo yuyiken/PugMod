@@ -14,12 +14,12 @@ constexpr std::array<const char*, 4> g_VoteTeam_Sound =
     "spk scientist/sci_pain8",
 };
 
-constexpr auto VOTE_TEAM_CAPTAIN = 0;
-constexpr auto VOTE_TEAM_RANDOM = 1;
-constexpr auto VOTE_TEAM_UNSORTED = 2;
-constexpr auto VOTE_TEAM_SKILL_BALANCE = 3;
-constexpr auto VOTE_TEAM_SWAP_SIDES = 4;
-constexpr auto VOTE_TEAM_KNIFE_ROUND = 5;
+constexpr auto VOTE_TEAM_CAPTAIN = 1;
+constexpr auto VOTE_TEAM_RANDOM = 2;
+constexpr auto VOTE_TEAM_UNSORTED = 3;
+constexpr auto VOTE_TEAM_SKILL_BALANCE = 4;
+constexpr auto VOTE_TEAM_SWAP_SIDES = 5;
+constexpr auto VOTE_TEAM_KNIFE_ROUND = 6;
 
 typedef struct S_VOTE_TEAM_INFO
 {

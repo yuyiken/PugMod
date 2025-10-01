@@ -35,9 +35,11 @@ void CPugVoteTeam::ServerDeactivate()
 
 void CPugVoteTeam::Init()
 {
-    if (gPugCvar.m_TeamType->value > 0.0f)
+    auto TeamType = static_cast<int>(gPugCvar.m_TeamType->value);
+
+    if (TeamType > 0)
     {
-        this->ChangeTeam(static_cast<int>(gPugCvar.m_TeamType->value));
+        this->ChangeTeam(TeamType);
     }
     else
     {

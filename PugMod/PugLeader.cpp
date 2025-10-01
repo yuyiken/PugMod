@@ -290,7 +290,7 @@ void CPugLeader::Menu(CBasePlayer* Leader)
 			}
 			else
 			{
-				gPugMenu[Leader->entindex()].Create("Jogadores:", false, E_MENU::CP_LEADER_MENU);
+				gPugMenu[Leader->entindex()].Create("Jogadores:", false, E_MENU::ME_LEADER_MENU);
 
 				for (auto const& Player : Players[SPECTATOR])
 				{

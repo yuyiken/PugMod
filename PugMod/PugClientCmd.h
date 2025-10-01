@@ -1,12 +1,5 @@
 #pragma once
 
-constexpr std::array<const char*, 3> g_ClientCmd_Sound =
-{
-    "spk common/menu1", // 0 -> Next / Next
-    "spk common/menu2", // 1 -> Select Normal
-    "spk common/menu3", // 2 -> Select Disabled
-};
-
 enum E_CLIENT_CMD_ID
 {
     CMD_STATUS,
@@ -44,6 +37,9 @@ public:
 
     bool FilterFlood(const char *pszCommand, int EntityIndex);
     bool Command(edict_t *pEntity);
+
+    bool Help(CBasePlayer *Player);
+    bool HelpAdmin(CBasePlayer *Player);
 
 private:
     std::map<std::string, P_CLIENT_CMD> m_Data = {};

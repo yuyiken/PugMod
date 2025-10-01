@@ -146,7 +146,7 @@ void DLL_POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 
 	gPugClientCmd.ServerActivate();
 
-	gPugClientMenu.ServerActivate();
+	gPugPlayer.ServerActivate();
 
 	gPugDM.ServerActivate();
 
@@ -215,7 +215,14 @@ void DLL_POST_StartFrame()
 
 qboolean DLL_POST_ClientConnect(edict_t *pEntity, const char *pszName, const char *pszAddress, char szRejectReason[128])
 {
-	RETURN_META_VALUE(MRES_IGNORED, 0);
+	if (!gPugPlayer.Connect(pEntity, pszName, pszAddress, szRejectReason))
+	{
+		RETURN_META_VALUE(MRES_SUPERCEDE, FALSE);
+
+		return FALSE;
+	}
+
+	RETURN_META_VALUE(MRES_IGNORED, FALSE);
 }
 
 void DLL_POST_ClientPutInServer(edict_t *pEntity)

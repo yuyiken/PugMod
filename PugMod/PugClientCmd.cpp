@@ -181,7 +181,7 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                 }
                                 case CMD_MENU:
                                 {
-                                    //gPugUtil.ServerCommand("bot_kill");
+                                    gPugAdminMenu.Menu(Player);
                                     return true;
                                 }
                                 case CMD_GUNS:
@@ -206,40 +206,54 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                 }
                                 case CMD_HELP:
                                 {
-                                    if (gPugCvar.m_MotdFile)
-                                    {
-                                        if (gPugCvar.m_MotdFile->string)
-                                        {
-                                            if (gPugCvar.m_MotdFile->string[0u] != '\0')
-                                            {
-                                                gPugUtil.ClientCommand(Player->edict(), g_ClientCmd_Sound[1]);
-
-                                                gPugUtil.ShowMotd(pEntity, gPugCvar.m_MotdFile->string, strlen(gPugCvar.m_MotdFile->string));
-                                            }
-                                        }
-                                    }
+                                    this->Help(Player);
                                     return true;
                                 }
                                 case CMD_HELP_ADMIN:
                                 {
-                                    if (gPugCvar.m_MotdFileAdmin)
-                                    {
-                                        if (gPugCvar.m_MotdFileAdmin->string)
-                                        {
-                                            if (gPugCvar.m_MotdFileAdmin->string[0u] != '\0')
-                                            {
-                                                gPugUtil.ClientCommand(Player->edict(), g_ClientCmd_Sound[2]);
-
-                                                gPugUtil.ShowMotd(pEntity, gPugCvar.m_MotdFileAdmin->string, strlen(gPugCvar.m_MotdFileAdmin->string));
-                                            }
-                                        }
-                                    }
+                                    this->HelpAdmin(Player);
                                     return true;
                                 }
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    return false;
+}
+
+bool CPugClientCmd::Help(CBasePlayer *Player)
+{
+    if (gPugCvar.m_MotdFile)
+    {
+        if (gPugCvar.m_MotdFile->string)
+        {
+            if (gPugCvar.m_MotdFile->string[0u] != '\0')
+            {
+                gPugUtil.ShowMotd(Player->edict(), gPugCvar.m_MotdFile->string, strlen(gPugCvar.m_MotdFile->string));
+                
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool CPugClientCmd::HelpAdmin(CBasePlayer *Player)
+{
+    if (gPugCvar.m_MotdFileAdmin)
+    {
+        if (gPugCvar.m_MotdFileAdmin->string)
+        {
+            if (gPugCvar.m_MotdFileAdmin->string[0u] != '\0')
+            {
+                gPugUtil.ShowMotd(Player->edict(), gPugCvar.m_MotdFileAdmin->string, strlen(gPugCvar.m_MotdFileAdmin->string));
+                
+                return true;
             }
         }
     }

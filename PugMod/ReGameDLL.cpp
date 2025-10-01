@@ -47,6 +47,8 @@ bool ReGameDLL_Init()
 
 										g_ReGameHookchains->CBasePlayer_GetIntoGame()->registerHook(ReGameDLL_CBasePlayer_GetIntoGame);
 
+										g_ReGameHookchains->CBasePlayer_SwitchTeam()->registerHook(ReGameDLL_CBasePlayer_SwitchTeam);
+
 										g_ReGameHookchains->CSGameRules_RestartRound()->registerHook(ReGameDLL_CSGameRules_RestartRound);
 
 										g_ReGameHookchains->CSGameRules_GetPlayerSpawnSpot()->registerHook(ReGameDLL_CSGameRules_GetPlayerSpawnSpot);
@@ -102,6 +104,8 @@ bool ReGameDLL_Stop()
 		g_ReGameHookchains->HandleMenu_ChooseTeam()->unregisterHook(ReGameDLL_HandleMenu_ChooseTeam);
 
 		g_ReGameHookchains->CBasePlayer_GetIntoGame()->unregisterHook(ReGameDLL_CBasePlayer_GetIntoGame);
+
+		g_ReGameHookchains->CBasePlayer_SwitchTeam()->unregisterHook(ReGameDLL_CBasePlayer_SwitchTeam);
 
 		g_ReGameHookchains->CSGameRules_RestartRound()->unregisterHook(ReGameDLL_CSGameRules_RestartRound);
 
@@ -173,7 +177,16 @@ bool ReGameDLL_CBasePlayer_GetIntoGame(IReGameHook_CBasePlayer_GetIntoGame *chai
 
 	gPugDM.GetIntoGame(Player);
 
+	gPugPlayer.GetIntoGame(Player);
+
 	return Result;
+}
+
+void ReGameDLL_CBasePlayer_SwitchTeam(IReGameHook_CBasePlayer_SwitchTeam *chain, CBasePlayer *Player)
+{
+	chain->callNext(Player);
+
+	gPugPlayer.SwitchTeam(Player);
 }
 
 void ReGameDLL_CSGameRules_RestartRound(IReGameHook_CSGameRules_RestartRound *chain)
@@ -266,6 +279,8 @@ void ReGameDLL_CBasePlayer_AddAccount(IReGameHook_CBasePlayer_AddAccount *chain,
 	}
 
 	chain->callNext(Player, Amount, Type, TrackChange);
+
+	gPugPlayer.AddAccount(Player, Amount, Type, TrackChange);
 }
 
 void ReGameDLL_CBasePlayer_SetAnimation(IReGameHook_CBasePlayer_SetAnimation *chain, CBasePlayer *Player, PLAYER_ANIM playerAnimation)
