@@ -26,7 +26,6 @@
 #include <vector>
 #include <string>
 #include <array>
-#include <algorithm>
 
 // CSSDK
 #include <extdll.h>
@@ -47,6 +46,9 @@
 // ReAPI & ReGameDLL
 #include "ReAPI.h"
 #include "ReGameDLL.h"
+
+// Time Format
+#include "include/TimeFormat.h"
 
 // Pickup Game Mod
 #include "PugMenu.h"

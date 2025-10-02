@@ -613,13 +613,13 @@ void CPugMod::SendHudMessage()
     {
         auto Score = this->GetScore();
         
-        auto MaxRounds = static_cast<int>(gPugCvar.m_Rounds->value / 2.0f - 1.0f);
+        auto MaxRounds = static_cast<int>(gPugCvar.m_Rounds->value / 2.0f);
 
         switch (this->m_State)
         {
             case STATE_FIRST_HALF:
             {
-                if (this->GetRound() == MaxRounds)
+                if ((Score[TERRORIST] + Score[CT]) == (MaxRounds - 1))
                 {
                     gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip, warning\"");
                     gPugUtil.SendHud(nullptr, g_Pug_HudParam, "%s\n%s %d : %d %s\nÚLTIMO ROUND", g_Pug_String[this->m_State], g_Pug_TeamShort[TERRORIST], Score[TERRORIST], Score[CT], g_Pug_TeamShort[CT]);
@@ -629,7 +629,7 @@ void CPugMod::SendHudMessage()
             }
             case STATE_SECOND_HALF:
             {
-                if ((Score[TERRORIST] == MaxRounds) || (Score[CT] == MaxRounds))
+                if ((Score[TERRORIST] == (MaxRounds - 1)) || (Score[CT] == (MaxRounds - 1)))
                 {
                     gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip, warning\"");
                     gPugUtil.SendHud(nullptr, g_Pug_HudParam, "%s\n%s %d : %d %s\nÚLTIMO ROUND", g_Pug_String[this->m_State], g_Pug_TeamShort[TERRORIST], Score[TERRORIST], Score[CT], g_Pug_TeamShort[CT]);

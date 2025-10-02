@@ -273,6 +273,119 @@ void CPugUtil::ClientCommand(edict_t *pEntity, const char *Format, ...)
 	}
 }
 
+void CPugUtil::ClientDrop(int EntityIndex, const char* Format, ...)
+{
+	va_list argList;
+
+	va_start(argList, Format);
+
+	char Buffer[255] = { 0 };
+
+	vsnprintf(Buffer, sizeof(Buffer), Format, argList);
+
+	va_end(argList);
+
+	if (g_RehldsSvs && g_RehldsFuncs)
+	{
+		auto Gameclient = g_RehldsSvs->GetClient(EntityIndex - 1);
+
+		if (Gameclient)
+		{
+			g_RehldsFuncs->DropClient(Gameclient, false, "%s", Buffer);
+		}
+	}
+	else
+	{
+		auto Player = UTIL_PlayerByIndexSafe(EntityIndex);
+
+		if (Player)
+		{
+			int UserIndex = g_engfuncs.pfnGetPlayerUserId(Player->edict());
+
+			if (!FNullEnt(Player->edict()) && UserIndex > 0)
+			{
+				if (strlen(Buffer) > 0)
+				{
+					this->ServerCommand("kick #%d %s", UserIndex, Buffer);
+				}
+				else
+				{
+					this->ServerCommand("kick #%d", UserIndex);
+				}
+			}
+
+		}
+	}
+}
+
+void CPugUtil::ClientSlap(edict_t *pEntity, float Damage, bool RandomDirection)
+{
+	if (pEntity->v.deadflag == DEAD_NO && pEntity->v.health > 0.0f)
+	{
+		if (pEntity->v.health > Damage)
+		{
+			if (RandomDirection)
+			{
+				pEntity->v.velocity.x += g_engfuncs.pfnRandomLong(-600, 600);
+				pEntity->v.velocity.y += g_engfuncs.pfnRandomLong(-180, 180);
+				pEntity->v.velocity.z += g_engfuncs.pfnRandomLong(100, 200);
+			}
+			else
+			{
+				Vector v_forward, v_right;
+				Vector vang = pEntity->v.angles;
+
+				float fang[3] = {0.0f, 0.0f, 0.0f};
+
+				fang[0] = vang.x;
+				fang[1] = vang.y;
+				fang[2] = vang.z;
+
+				g_engfuncs.pfnAngleVectors(fang, v_forward, v_right, NULL);
+
+				pEntity->v.velocity = pEntity->v.velocity + v_forward * 220 + Vector(0.0f, 0.0f, 200.0f);
+			}
+
+			pEntity->v.punchangle.x = static_cast<vec_t>(g_engfuncs.pfnRandomLong(-10, 10));
+			pEntity->v.punchangle.y = static_cast<vec_t>(g_engfuncs.pfnRandomLong(-10, 10));
+
+			pEntity->v.health -= Damage;
+
+			float armor = pEntity->v.armorvalue;
+
+			armor -= Damage;
+
+			if (armor < 0)
+			{
+				armor = 0;
+			}
+
+			pEntity->v.armorvalue = armor;
+
+			pEntity->v.dmg_inflictor = pEntity;
+
+			static const char *cs_sound[6] =
+			{
+				"player/pl_pain2.wav",
+				"player/pl_pain4.wav",
+				"player/pl_pain5.wav",
+				"player/pl_pain6.wav",
+				"player/pl_pain7.wav"
+			};
+
+			g_engfuncs.pfnEmitSound(pEntity, CHAN_VOICE, cs_sound[g_engfuncs.pfnRandomLong(0, 4)], 1.0, ATTN_NORM, 0, PITCH_NORM);
+		}
+		else
+		{
+			float Backup = pEntity->v.frags;
+
+			MDLL_ClientKill(pEntity);
+
+			pEntity->v.frags = Backup;
+		}
+	}
+}
+
 unsigned short CPugUtil::FixedUnsigned16(float Value, float Scale)
 {
 	int Result = Value * Scale;

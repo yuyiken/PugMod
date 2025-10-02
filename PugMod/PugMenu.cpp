@@ -185,6 +185,31 @@ bool CPugMenu::Handle(CBasePlayer *Player, int Key)
                                 gPugAdminMenu.MenuHandle(Player, this->m_Data[ItemId]);
                                 break;
                             }
+                            case E_MENU::ME_ADMIN_MENU_KICK:
+                            {
+                                gPugAdminMenu.KickHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::ME_ADMIN_MENU_BAN:
+                            {
+                                gPugAdminMenu.BanHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::ME_ADMIN_MENU_SLAP:
+                            {
+                                gPugAdminMenu.SlapHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::ME_ADMIN_MENU_TEAM:
+                            {
+                                gPugAdminMenu.TeamHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::ME_ADMIN_MENU_MAP:
+                            {
+                                gPugAdminMenu.MapHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
                         }
                     }
                 }

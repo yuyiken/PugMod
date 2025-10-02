@@ -28,6 +28,8 @@ public:
     void ParseColor(char *Buffer);
     void ClientPrint(edict_t *pEntity, int iMsgDest, const char *Format, ...);
     void ClientCommand(edict_t *pEntity, const char *Format, ...);
+    void ClientDrop(int EntityIndex, const char *Format, ...);
+    void ClientSlap(edict_t *pEntity, float Damage, bool RandomDirection);
     unsigned short FixedUnsigned16(float Value, float Scale);
     short FixedSigned16(float Value, float Scale);
     hudtextparms_t SetHud(vec3_t FromColor, vec3_t ToColor, float X, float Y, int Effect, float FxTime, float HoldTime, float FadeInTime, float FadeOutTime, int Channel);

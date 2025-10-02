@@ -181,7 +181,6 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                 }
                                 case CMD_MENU:
                                 {
-                                    gPugAdminMenu.Menu(Player);
                                     return true;
                                 }
                                 case CMD_GUNS:
@@ -212,6 +211,11 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                 case CMD_HELP_ADMIN:
                                 {
                                     this->HelpAdmin(Player);
+                                    return true;
+                                }
+                                case CMD_ADMIN_MENU:
+                                {
+                                    gPugAdminMenu.Menu(Player);
                                     return true;
                                 }
                             }
