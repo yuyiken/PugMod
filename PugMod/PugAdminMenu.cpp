@@ -294,7 +294,7 @@ void CPugAdminMenu::Team(CBasePlayer *Player)
 
     for (auto const & Target : Players)
     {
-        //if (!gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
+        if (!gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
         {
             if (Target->m_iTeam != UNASSIGNED)
             {
@@ -348,10 +348,53 @@ void CPugAdminMenu::TeamHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 
 void CPugAdminMenu::Map(CBasePlayer *Player)
 {
+    if (!gPugAdmin.Access(Player->entindex(), ADMIN_MAP))
+    {
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Você não tem acesso a esse comando.", gPugCvar.m_Tag->string);
+        return;
+    }
 
+    auto MapList = gPugMod.GetMaps();
+
+    if (MapList.empty())
+    {
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Nenhum mapa encontrado na lista.", gPugCvar.m_Tag->string);
+        return;
+    }
+
+    gPugMenu[Player->entindex()].Create("Mudar Mapa:", true, E_MENU::ME_ADMIN_MENU_MAP);
+
+    for (const auto& Map : MapList)
+    {
+        gPugMenu[Player->entindex()].AddItem(Map.first, Map.second, (Map.second.compare(STRING(gpGlobals->mapname)) == 0), 0);
+    }
+
+    gPugMenu[Player->entindex()].Show(Player);
 }
 
 void CPugAdminMenu::MapHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
+    if (Player)
+    {
+        gPugTask.Create(CHANGE_MAP, 5.0f, false, Item.Info);
 
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Alterando mapa para: ^3%s^1.", gPugCvar.m_Tag->string, Item.Text.c_str());
+    }
+}
+
+void CPugAdminMenu::ChangeMap(int Index)
+{
+    auto MapList = gPugMod.GetMaps();
+
+    if (!MapList.empty())
+    {
+        auto it = MapList.find(Index);
+
+        if (it != MapList.end())
+        {
+            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_VoteMap, "0");
+
+            gPugUtil.ServerCommand("changelevel %s", it->second.c_str());
+        }
+    }
 }

@@ -26,6 +26,7 @@ public:
 
     void Map(CBasePlayer *Player);
     void MapHandle(CBasePlayer *Player, P_MENU_ITEM Item);
+    void ChangeMap(int Index);
 };
 
 extern CPugAdminMenu gPugAdminMenu;

@@ -132,7 +132,11 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                 {
                                     if (pszCmdArgs[0u] != '\0')
                                     {
-                                        g_engfuncs.pfnClientCommand(pEntity, strdup("%s\n"), pszCmdArgs);
+                                        auto Command = strdup("%s\n");
+
+                                        g_engfuncs.pfnClientCommand(pEntity, Command, pszCmdArgs);
+
+                                        free(Command);
 
                                         return true;
                                     }

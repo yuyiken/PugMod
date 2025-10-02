@@ -66,6 +66,9 @@ public:
     void ServerActivate();
     void ServerDeactivate();
 
+    void AddMap(const char* Map);
+    std::map<int, std::string> GetMaps();
+
     int GetState();
     int SetState(int State);
 
@@ -96,6 +99,7 @@ private:
     int m_State = STATE_DEAD;
     std::array<std::array<int, STATE_END + 1>, SPECTATOR + 1> m_Score{{}};
     std::array<int, SPECTATOR + 1> m_ScoreOT = {};
+    std::map<int, std::string> m_MapList;
 };
 
 extern CPugMod gPugMod;

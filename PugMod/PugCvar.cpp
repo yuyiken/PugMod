@@ -299,8 +299,18 @@ cvar_t *CPugCvar::Register(const char *pszName, const char *pszValue)
 
                 Data.name = pszName;
 
-                Data.string = "";
+                if (pszValue)
+                {
+                    if (pszValue[0u] != '\0')
+                    {
+                        auto Temp = strdup(pszValue);
 
+                        Data.string = Temp;
+
+                        free(Temp);
+                    }
+                }
+                
                 Data.flags = (FCVAR_SERVER | FCVAR_PROTECTED | FCVAR_SPONLY | FCVAR_UNLOGGED);
 
                 g_engfuncs.pfnCVarRegister(&Data);

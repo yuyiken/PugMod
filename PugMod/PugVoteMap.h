@@ -27,9 +27,9 @@ class CPugVoteMap
 public:
     void ServerActivate();
     void ServerDeactivate();
-    void AddMap(std::string Name);
     void Init();
     void Stop();
+    void LoadMaps();
     P_VOTE_MAP_INFO GetWinner();
     P_VOTE_MAP_INFO GetRandom();
     void ChangeMap(unsigned int MapIndex);

@@ -13,8 +13,6 @@ void CPugVoteMap::ServerActivate()
     this->m_VotesLeft = 0;
 
     this->m_MapList.clear();
-
-    gPugUtil.ServerCommand("exec %s/cfg/maplist.cfg", gPugUtil.GetPath());
 }
 
 void CPugVoteMap::ServerDeactivate()
@@ -30,31 +28,10 @@ void CPugVoteMap::ServerDeactivate()
     this->m_MapList.clear();
 }
 
-void CPugVoteMap::AddMap(std::string Name)
-{
-    if (!Name.empty())
-    {
-        if (g_engfuncs.pfnIsMapValid(strdup(Name.c_str())))
-        {
-            P_VOTE_MAP_INFO Map;
-
-            Map.Index = this->m_MapList.size();
-
-            Map.Votes = 0;
-
-            Map.Name = Name;
-
-            Map.This = (Name.compare(STRING(gpGlobals->mapname)) == 0);
-
-            Map.Last = (gPugCvar.m_LastMap->string && (Name.compare(gPugCvar.m_LastMap->string) == 0));
-
-            this->m_MapList.push_back(Map);
-        }
-    }
-}
-
 void CPugVoteMap::Init()
 {
+    this->LoadMaps();
+    
     if (this->m_MapList.empty())
     {
         gPugMod.SetState(STATE_VOTETEAM);
@@ -141,6 +118,33 @@ void CPugVoteMap::Stop()
 
                 gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O Próximo mapa será: ^3%s^1.", gPugCvar.m_Tag->string, Random.Name.c_str());
             }
+        }
+    }
+}
+
+void CPugVoteMap::LoadMaps()
+{
+    auto MapList = gPugMod.GetMaps();
+
+    if (!MapList.empty())
+    {
+        this->m_MapList.clear();
+
+        for (const auto& Map : MapList)
+        {
+            P_VOTE_MAP_INFO MapInfo;
+
+            MapInfo.Index = Map.first;
+
+            MapInfo.Votes = 0;
+
+            MapInfo.Name = Map.second;
+
+            MapInfo.This = (Map.second.compare(STRING(gpGlobals->mapname)) == 0);
+
+            MapInfo.Last = (gPugCvar.m_LastMap->string && (Map.second.compare(gPugCvar.m_LastMap->string) == 0));
+
+            this->m_MapList.push_back(MapInfo);
         }
     }
 }

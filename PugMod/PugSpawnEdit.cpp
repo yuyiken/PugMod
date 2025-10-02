@@ -656,7 +656,7 @@ void CPugSpawnEdit::Save(CBasePlayer* Player)
 	{
 		char Path[MAX_PATH] = { 0 };
 
-		Q_sprintf(Path, "%s/%s/spawns/%s.cfg", gpMetaUtilFuncs->pfnGetGameInfo(PLID, GINFO_GAMEDIR), gPugUtil.GetPath(), STRING(gpGlobals->mapname));
+		snprintf(Path, sizeof(Path), "%s/%s/spawns/%s.cfg", gpMetaUtilFuncs->pfnGetGameInfo(PLID, GINFO_GAMEDIR), gPugUtil.GetPath(), STRING(gpGlobals->mapname));
 
 		std::ofstream File(Path);
 

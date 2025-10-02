@@ -61,6 +61,11 @@ void CPugTask::Execute(int Index)
                 gPugMod.SendHudMessage();
                 break;
             }
+            case E_TASK::CHANGE_MAP:
+            {
+                gPugAdminMenu.ChangeMap(this->m_Task[Index].Parameter);
+                break;
+            }
         }
     }
 }

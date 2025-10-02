@@ -1,10 +1,21 @@
 #include "precompiled.h"
+#include "PugMod.h"
 
 CPugMod gPugMod;
 
 void CPugMod::ServerActivate()
 {
+    this->m_State = STATE_DEAD;
+
+    this->m_Score.fill({});
+
+    this->m_ScoreOT.fill(0);
+
+    this->m_MapList.clear();
+
     this->SetState(STATE_DEAD);
+
+    gPugUtil.ServerCommand("exec %s/cfg/maplist.cfg", gPugUtil.GetPath());
 }
 
 void CPugMod::ServerDeactivate()
@@ -18,6 +29,29 @@ void CPugMod::ServerDeactivate()
     {
         this->SetState(STATE_END);
     }
+}
+
+void CPugMod::AddMap(const char* Map)
+{
+    if (Map)
+    {
+        if (Map[0u] != '\0')
+        {
+            char *MapName = strdup(Map);
+
+            if (g_engfuncs.pfnIsMapValid(MapName))
+            {
+                this->m_MapList.insert(std::make_pair(this->m_MapList.size(), MapName));
+            }
+
+            free(MapName);
+        }
+    }
+}
+
+std::map<int, std::string> CPugMod::GetMaps()
+{
+    return this->m_MapList;
 }
 
 int CPugMod::GetState()
