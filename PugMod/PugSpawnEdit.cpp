@@ -24,20 +24,23 @@ void CPugSpawnEdit::ServerDeactivate()
 
 void CPugSpawnEdit::EditSpawns(CBasePlayer* Player)
 {
-	if (gPugMod.GetState() == STATE_DEATHMATCH)
+	if (gPugAdmin.CheckAccess(Player, ADMIN_LEVEL_D))
 	{
-		if (this->m_Spawns.empty())
+		if (gPugMod.GetState() == STATE_DEATHMATCH)
 		{
-			this->m_Spawns = gPugDM.GetSpawns();
-		}
-		
-		this->MakeEntity(-1);
+			if (this->m_Spawns.empty())
+			{
+				this->m_Spawns = gPugDM.GetSpawns();
+			}
+			
+			this->MakeEntity(-1);
 
-		this->Menu(Player);
-	}
-	else
-	{
-		gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Comando indisponível.", gPugCvar.m_Tag->string);
+			this->Menu(Player);
+		}
+		else
+		{
+			gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Comando indisponível.", gPugCvar.m_Tag->string);
+		}
 	}
 }
 

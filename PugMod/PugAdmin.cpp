@@ -118,3 +118,14 @@ std::string CPugAdmin::GetFlags(edict_t* pEdict)
 
     return "z";
 }
+
+bool CPugAdmin::CheckAccess(CBasePlayer *Player, int Level)
+{
+    if (!this->Access(Player->entindex(), Level))
+    {
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Você não tem acesso a esse comando.", gPugCvar.m_Tag->string);
+        return false;
+    }
+
+    return true;
+}

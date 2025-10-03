@@ -1,5 +1,4 @@
 #include "precompiled.h"
-#include "PugMod.h"
 
 CPugMod gPugMod;
 
@@ -67,27 +66,27 @@ int CPugMod::SetState(int State)
     {
         case STATE_DEAD:
         {
-            this->ResetScore(State);
+            this->m_Score.fill({});
+            this->m_ScoreOT.fill(0);
 
             gPugTask.Create(E_TASK::SET_STATE, 5.0f, false, STATE_DEATHMATCH);
             break;
         }
         case STATE_DEATHMATCH:
         {
+            this->m_Score.fill({});
+            this->m_ScoreOT.fill(0);
+            
             this->ResetScore(State);
 
             auto NextState = (gPugCvar.m_VoteMap->value ? STATE_VOTEMAP : STATE_VOTETEAM);
 
             if (gPugCvar.m_ReadyType->value == 1.0f)
             {
-                gPugReady.Stop(true);
-
                 gPugTimer.Init(NextState);
             }
             else if (gPugCvar.m_ReadyType->value == 2.0f)
             {
-                gPugTimer.Stop(true);
-
                 gPugReady.Init(NextState);
             }
 
@@ -95,17 +94,11 @@ int CPugMod::SetState(int State)
             {
                 gPugDM.Init();
             }
-            else
-            {
-                gPugDM.Stop();
-            }
             
             break;
         }
         case STATE_VOTEMAP:
         {
-            this->ResetScore(State);
-
             gPugDM.Stop();
 
             gPugReady.Stop(true);

@@ -150,77 +150,69 @@ bool CPugClientCmd::Command(edict_t *pEntity)
 
                         if (pCmd)
                         {
-                            if (pCmd->Flags)
+                            if (gPugAdmin.Access(Player->entindex(), pCmd->Flags))
                             {
-                                auto Flags = gPugAdmin.GetFlags(Player->entindex());
-
-                                if (!(Flags & pCmd->Flags))
+                                switch(pCmd->Index)
                                 {
-                                    gPugUtil.PrintColor(pEntity, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Você não tem acesso a esse comando.", gPugCvar.m_Tag->string);
-                                    return true;
-                                }
-                            }
-                        
-                            switch(pCmd->Index)
-                            {
-                                case CMD_STATUS:
-                                {
-                                    gPugMod.Status(Player);
-                                    return true;
-                                }
-                                case CMD_SCORE:
-                                {
-                                    gPugMod.Scores(Player);
-                                    return true;
-                                }
-                                case CMD_READY:
-                                {
-                                    gPugReady.Ready(Player);
-                                    return true;
-                                }
-                                case CMD_NOTREADY:
-                                {
-                                    gPugReady.NotReady(Player);
-                                    return true;
-                                }
-                                case CMD_MENU:
-                                {
-                                    return true;
-                                }
-                                case CMD_GUNS:
-                                {
-                                    gPugDM.DropItem(Player);
-                                    return true;
-                                }
-                                case CMD_RESPAWN:
-                                {
-                                    gPugDM.Respawn(Player);
-                                    return true;
-                                }
-                                case CMD_RESET_SCORE:
-                                {
-                                    gPugDM.ResetScore(Player);
-                                    return true;
-                                }
-                                case CMD_DM_SPAWN_EDITOR:
-                                {
-                                    gPugSpawnEdit.EditSpawns(Player);
-                                    return true;
-                                }
-                                case CMD_HELP:
-                                {
-                                    this->Help(Player);
-                                    return true;
-                                }
-                                case CMD_HELP_ADMIN:
-                                {
-                                    this->HelpAdmin(Player);
-                                    return true;
-                                }
-                                case CMD_ADMIN_MENU:
-                                {
-                                    gPugAdminMenu.Menu(Player);
-                                    return true;
+                                    case CMD_STATUS:
+                                    {
+                                        gPugMod.Status(Player);
+                                        return true;
+                                    }
+                                    case CMD_SCORE:
+                                    {
+                                        gPugMod.Scores(Player);
+                                        return true;
+                                    }
+                                    case CMD_READY:
+                                    {
+                                        gPugReady.Ready(Player);
+                                        return true;
+                                    }
+                                    case CMD_NOTREADY:
+                                    {
+                                        gPugReady.NotReady(Player);
+                                        return true;
+                                    }
+                                    case CMD_MENU:
+                                    {
+                                        return true;
+                                    }
+                                    case CMD_GUNS:
+                                    {
+                                        gPugDM.DropItem(Player);
+                                        return true;
+                                    }
+                                    case CMD_RESPAWN:
+                                    {
+                                        gPugDM.Respawn(Player);
+                                        return true;
+                                    }
+                                    case CMD_RESET_SCORE:
+                                    {
+                                        gPugDM.ResetScore(Player);
+                                        return true;
+                                    }
+                                    case CMD_DM_SPAWN_EDITOR:
+                                    {
+                                        gPugSpawnEdit.EditSpawns(Player);
+                                        return true;
+                                    }
+                                    case CMD_HELP:
+                                    {
+                                        this->Help(Player);
+                                        return true;
+                                    }
+                                    case CMD_HELP_ADMIN:
+                                    {
+                                        this->HelpAdmin(Player);
+                                        return true;
+                                    }
+                                    case CMD_ADMIN_MENU:
+                                    {
+                                        gPugAdminMenu.Menu(Player);
+                                        return true;
+                                    }
                                 }
                             }
                         }
@@ -253,15 +245,18 @@ bool CPugClientCmd::Help(CBasePlayer *Player)
 
 bool CPugClientCmd::HelpAdmin(CBasePlayer *Player)
 {
-    if (gPugCvar.m_MotdFileAdmin)
+    if (gPugAdmin.Access(Player->entindex(), ADMIN_LEVEL_C))
     {
-        if (gPugCvar.m_MotdFileAdmin->string)
+        if (gPugCvar.m_MotdFileAdmin)
         {
-            if (gPugCvar.m_MotdFileAdmin->string[0u] != '\0')
+            if (gPugCvar.m_MotdFileAdmin->string)
             {
-                gPugUtil.ShowMotd(Player->edict(), gPugCvar.m_MotdFileAdmin->string, strlen(gPugCvar.m_MotdFileAdmin->string));
-                
-                return true;
+                if (gPugCvar.m_MotdFileAdmin->string[0u] != '\0')
+                {
+                    gPugUtil.ShowMotd(Player->edict(), gPugCvar.m_MotdFileAdmin->string, strlen(gPugCvar.m_MotdFileAdmin->string));
+                    
+                    return true;
+                }
             }
         }
     }
