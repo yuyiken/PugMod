@@ -43,7 +43,7 @@ void CPugReady::Init(int NextState)
     gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A partida começa quando ^3%d^1 jogadores estiverem prontos.", gPugCvar.m_Tag->string, this->m_PlayersMin);
 }
 
-void CPugReady::Stop()
+void CPugReady::Stop(bool Forced)
 {
     if (this->m_Run)
     {
@@ -55,9 +55,12 @@ void CPugReady::Stop()
 
         this->m_PlayersMin = 0;
 
-        gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, this->m_NextState);
+        if (!Forced)
+        {
+            gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, this->m_NextState);
 
-        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todos os jogadores estão prontos!", gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todos os jogadores estão prontos!", gPugCvar.m_Tag->string);
+        }
     }
 }
 
@@ -149,7 +152,7 @@ void CPugReady::StartFrame()
 
             if (ReadyCount[1] >= this->m_PlayersMin)
             {
-                this->Stop();
+                this->Stop(false);
             }
             else
             {

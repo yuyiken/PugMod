@@ -1,16 +1,19 @@
 #pragma once
 
-constexpr auto STATE_DEAD = 0;
-constexpr auto STATE_DEATHMATCH = 1;
-constexpr auto STATE_VOTEMAP = 2;
-constexpr auto STATE_VOTETEAM = 3;
-constexpr auto STATE_CAPTAIN = 4;
-constexpr auto STATE_KNIFE_ROUND = 5;
-constexpr auto STATE_FIRST_HALF = 6;
-constexpr auto STATE_HALFTIME = 7;
-constexpr auto STATE_SECOND_HALF = 8;
-constexpr auto STATE_OVERTIME = 9;
-constexpr auto STATE_END = 10;
+enum PUG_STATE
+{
+    STATE_DEAD = 0,
+    STATE_DEATHMATCH = 1,
+    STATE_VOTEMAP = 2,
+    STATE_VOTETEAM = 3,
+    STATE_CAPTAIN = 4,
+    STATE_KNIFE_ROUND = 5,
+    STATE_FIRST_HALF = 6,
+    STATE_HALFTIME = 7,
+    STATE_SECOND_HALF = 8,
+    STATE_OVERTIME = 9,
+    STATE_END = 10
+};
 
 constexpr std::array<const char *, STATE_END + 1> g_Pug_Config =
 {
@@ -72,6 +75,8 @@ public:
     int GetState();
     int SetState(int State);
 
+    void ResetScore(int State);
+
     void SwapTeams();
 
     std::array<int, SPECTATOR + 1> GetScore();
@@ -87,8 +92,6 @@ public:
     void RestartRound();
     void RoundStart();
     void RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay);
-
-    void CheckScore();
 
     void Status(CBasePlayer *Player);
     void Scores(CBasePlayer *Player);

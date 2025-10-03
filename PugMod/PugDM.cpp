@@ -84,7 +84,7 @@ void CPugDM::Stop()
         {
             CSGameRules()->CheckMapConditions();
         }
-
+        
         gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::RED, "^4[%s]^1 ^3Deathmatch^1 desativado.", gPugCvar.m_Tag->string);
     }
 }

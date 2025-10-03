@@ -24,6 +24,8 @@ void CPugAdminMenu::Menu(CBasePlayer *Player)
 
     gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_MAP, "Mudar Mapa", !(Flags & ADMIN_MAP), 0);
 
+    gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_PUG, "Controlar Pug", !(Flags & ADMIN_LEVEL_B), 0);
+
     gPugMenu[Player->entindex()].Show(Player);
 }
 
@@ -62,6 +64,11 @@ void CPugAdminMenu::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
             case ADMIN_MENU_MAP:
             {
                 this->Map(Player);
+                break;
+            }
+            case ADMIN_MENU_PUG:
+            {
+                this->Pug(Player);
                 break;
             }
         }
@@ -396,5 +403,66 @@ void CPugAdminMenu::ChangeMap(int Index)
 
             gPugUtil.ServerCommand("changelevel %s", it->second.c_str());
         }
+    }
+}
+
+void CPugAdminMenu::Pug(CBasePlayer *Player)
+{
+    auto Flags = gPugAdmin.GetFlags(Player->entindex());
+
+    if (!gPugAdmin.Access(Player->entindex(), ADMIN_LEVEL_B))
+    {
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Você não tem acesso a esse comando.", gPugCvar.m_Tag->string);
+        return;
+    }
+
+    auto State = gPugMod.GetState();
+
+    if (State == STATE_DEAD || State == STATE_END)
+    {
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Impossível contolar o PUG no estado ^3%s^1...", gPugCvar.m_Tag->string, g_Pug_String[State]);
+        return;
+    }
+
+    gPugMenu[Player->entindex()].Create("Escolha uma ação a executar:", true, E_MENU::ME_ADMIN_MENU_PUG);
+
+    switch (State)
+    {
+        case STATE_DEATHMATCH:
+        {
+            gPugMenu[Player->entindex()].AddItem(0, g_Pug_String[STATE_VOTEMAP], !(Flags & ADMIN_VOTE), STATE_VOTEMAP);
+            gPugMenu[Player->entindex()].AddItem(1, g_Pug_String[STATE_VOTETEAM], !(Flags & ADMIN_VOTE), STATE_VOTETEAM);
+            gPugMenu[Player->entindex()].AddItem(2, g_Pug_String[STATE_CAPTAIN], !(Flags & ADMIN_VOTE), STATE_CAPTAIN);
+            gPugMenu[Player->entindex()].AddItem(3, g_Pug_String[STATE_KNIFE_ROUND], !(Flags & ADMIN_VOTE), STATE_KNIFE_ROUND);
+            gPugMenu[Player->entindex()].AddItem(4, g_Pug_String[STATE_FIRST_HALF], !(Flags & ADMIN_VOTE), STATE_FIRST_HALF);
+            break;
+        }
+        case STATE_FIRST_HALF:
+        case STATE_HALFTIME:
+        case STATE_SECOND_HALF:
+        case STATE_OVERTIME:
+        {
+            gPugMenu[Player->entindex()].AddItem(5, "Reiniciar Partida", !(Flags & ADMIN_LEVEL_B), STATE_FIRST_HALF);
+            gPugMenu[Player->entindex()].AddItem(6, "Finalizar Partida", !(Flags & ADMIN_LEVEL_B), STATE_END);
+            gPugMenu[Player->entindex()].AddItem(7, "Cancelar Partida", !(Flags & ADMIN_LEVEL_B), STATE_DEATHMATCH);
+            gPugMenu[Player->entindex()].AddItemFormat(8, false, State, "Reiniciar %s", g_Pug_String[State]);
+            break;
+        }
+    }
+
+    gPugMenu[Player->entindex()].Show(Player);
+}
+
+void CPugAdminMenu::PugHandle(CBasePlayer *Player, P_MENU_ITEM Item)
+{
+    if (Player)
+    {
+        gPugReady.Stop(true);
+
+        gPugTimer.Stop(true);
+
+        gPugMod.ResetScore(Item.Extra);
+
+        gPugMod.SetState(Item.Extra);
     }
 }

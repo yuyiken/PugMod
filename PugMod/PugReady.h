@@ -17,7 +17,7 @@ public:
     void ServerDeactivate();
 
     void Init(int NextState);
-    void Stop();
+    void Stop(bool Forced);
 
     void PutInServer(edict_t *pEntity);
     void GetIntoGame(CBasePlayer *Player);

@@ -43,7 +43,7 @@ void CPugtimer::Init(int NextState)
     gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A começa quando ^3%d^1 jogadores estiverem nos times.", gPugCvar.m_Tag->string, this->m_PlayersMin);
 }
 
-void CPugtimer::Stop()
+void CPugtimer::Stop(bool Forced)
 {
     if (this->m_Run)
     {
@@ -53,9 +53,12 @@ void CPugtimer::Stop()
 
         this->m_PlayersMin = 0;
 
-        gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, this->m_NextState);
+        if (!Forced)
+        {
+            gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, this->m_NextState);
 
-        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todos os jogadores estão prontos!", gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O tempo acabou: ^3Todos os jogadores devem estar prontos!", gPugCvar.m_Tag->string);
+        }
     }
 }
 
@@ -112,7 +115,7 @@ void CPugtimer::StartFrame()
                     }
                     else
                     {
-                        this->Stop();
+                        this->Stop(false);
                     }
                 }
 

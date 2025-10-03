@@ -9,7 +9,7 @@ public:
     void ServerDeactivate();
 
     void Init(int NextState);
-    void Stop();
+    void Stop(bool Forced);
     void RestartRound();
     void StartFrame();
 
