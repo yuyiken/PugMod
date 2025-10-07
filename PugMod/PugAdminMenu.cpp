@@ -424,12 +424,6 @@ void CPugAdminMenu::PugHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        gPugReady.Stop(true);
-
-        gPugTimer.Stop(true);
-
-        gPugMod.ResetScore(Item.Extra);
-
         gPugMod.SetState(Item.Extra);
     }
 }

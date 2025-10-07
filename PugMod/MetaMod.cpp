@@ -244,7 +244,7 @@ C_DLLEXPORT int GetNewDLLFunctions(NEW_DLL_FUNCTIONS *pNewFunctionTable, int *in
 {
 	memset(&g_DLL_NewFunctionTable_Pre, 0, sizeof(NEW_DLL_FUNCTIONS));
 
-	// Here
+	// Functions here
 
 	memcpy(pNewFunctionTable, &g_DLL_NewFunctionTable_Pre, sizeof(NEW_DLL_FUNCTIONS));
 
@@ -259,7 +259,7 @@ C_DLLEXPORT int GetNewDLLFunctions_Post(NEW_DLL_FUNCTIONS *pNewFunctionTable, in
 {
 	memset(&g_DLL_NewFunctionTable_Post, 0, sizeof(NEW_DLL_FUNCTIONS));
 
-	// Here
+	// Functions here
 
 	memcpy(pNewFunctionTable, &g_DLL_NewFunctionTable_Post, sizeof(NEW_DLL_FUNCTIONS));
 
@@ -274,9 +274,140 @@ C_DLLEXPORT int GetEngineFunctions(enginefuncs_t *pengfuncsFromEngine, int *inte
 {
 	memset(&g_ENGINE_FunctionTable_Pre, 0, sizeof(enginefuncs_t));
 
+	g_ENGINE_FunctionTable_Pre.pfnMessageBegin = ENGINE_PRE_MessageBegin;
+	g_ENGINE_FunctionTable_Pre.pfnMessageEnd = ENGINE_PRE_MessageEnd;
+	g_ENGINE_FunctionTable_Pre.pfnWriteByte = ENGINE_PRE_WriteByte;
+	g_ENGINE_FunctionTable_Pre.pfnWriteChar = ENGINE_PRE_WriteChar;
+	g_ENGINE_FunctionTable_Pre.pfnWriteShort = ENGINE_PRE_WriteShort;
+	g_ENGINE_FunctionTable_Pre.pfnWriteLong = ENGINE_PRE_WriteLong;
+	g_ENGINE_FunctionTable_Pre.pfnWriteAngle = ENGINE_PRE_WriteAngle;
+	g_ENGINE_FunctionTable_Pre.pfnWriteCoord = ENGINE_PRE_WriteCoord;
+	g_ENGINE_FunctionTable_Pre.pfnWriteString = ENGINE_PRE_WriteString;
+	g_ENGINE_FunctionTable_Pre.pfnWriteEntity = ENGINE_PRE_WriteEntity;
+
 	memcpy(pengfuncsFromEngine, &g_ENGINE_FunctionTable_Pre, sizeof(enginefuncs_t));
 
 	return 1;
+}
+
+void ENGINE_PRE_MessageBegin(int msg_dest, int msg_type, const float* pOrigin, edict_t* ed)
+{
+	if (gPugEngine.MessageBegin(msg_dest, msg_type, pOrigin, ed))
+	{
+		RETURN_META(MRES_SUPERCEDE);
+	}
+	else
+	{
+		RETURN_META(MRES_IGNORED);
+	}
+}
+
+void ENGINE_PRE_MessageEnd(void)
+{
+	if (gPugEngine.MessageEnd())
+	{
+		RETURN_META(MRES_SUPERCEDE);
+	}
+	else
+	{
+		RETURN_META(MRES_IGNORED);
+	}
+}
+
+void ENGINE_PRE_WriteByte(int iValue)
+{
+	if (gPugEngine.WriteByte(iValue))
+	{
+		RETURN_META(MRES_SUPERCEDE);
+	}
+	else
+	{
+		RETURN_META(MRES_IGNORED);
+	}
+}
+
+void ENGINE_PRE_WriteChar(int iValue)
+{
+	if (gPugEngine.WriteChar(iValue))
+	{
+		RETURN_META(MRES_SUPERCEDE);
+	}
+	else
+	{
+		RETURN_META(MRES_IGNORED);
+	}
+}
+
+void ENGINE_PRE_WriteShort(int iValue)
+{
+	if (gPugEngine.WriteShort(iValue))
+	{
+		RETURN_META(MRES_SUPERCEDE);
+	}
+	else
+	{
+		RETURN_META(MRES_IGNORED);
+	}
+}
+
+void ENGINE_PRE_WriteLong(int iValue)
+{
+	if (gPugEngine.WriteLong(iValue))
+	{
+		RETURN_META(MRES_SUPERCEDE);
+	}
+	else
+	{
+		RETURN_META(MRES_IGNORED);
+	}
+}
+
+void ENGINE_PRE_WriteAngle(float flValue)
+{
+	if (gPugEngine.WriteAngle(flValue))
+	{
+		RETURN_META(MRES_SUPERCEDE);
+	}
+	else
+	{
+		RETURN_META(MRES_IGNORED);
+	}
+}
+
+void ENGINE_PRE_WriteCoord(float flValue)
+{
+	if (gPugEngine.WriteCoord(flValue))
+	{
+		RETURN_META(MRES_SUPERCEDE);
+	}
+	else
+	{
+		RETURN_META(MRES_IGNORED);
+	}
+}
+
+void ENGINE_PRE_WriteString(const char* sz)
+{
+	if (gPugEngine.WriteString(sz))
+	{
+		RETURN_META(MRES_SUPERCEDE);
+	}
+	else
+	{
+		RETURN_META(MRES_IGNORED);
+	}
+}
+
+void ENGINE_PRE_WriteEntity(int iValue)
+{
+	if (gPugEngine.WriteEntity(iValue))
+	{
+		RETURN_META(MRES_SUPERCEDE);
+	}
+	else
+	{
+		RETURN_META(MRES_IGNORED);
+	}
 }
 #pragma endregion
 
@@ -286,6 +417,8 @@ enginefuncs_t g_ENGINE_FunctionTable_Post;
 C_DLLEXPORT int GetEngineFunctions_Post(enginefuncs_t *pengfuncsFromEngine, int *interfaceVersion)
 {
 	memset(&g_ENGINE_FunctionTable_Post, 0, sizeof(enginefuncs_t));
+
+	// Functions here
 
 	memcpy(pengfuncsFromEngine, &g_ENGINE_FunctionTable_Post, sizeof(enginefuncs_t));
 

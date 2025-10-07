@@ -15,6 +15,10 @@ void CPugMod::ServerActivate()
     this->SetState(STATE_DEAD);
 
     gPugUtil.ServerCommand("exec %s/cfg/maplist.cfg", gPugUtil.GetPath());
+
+	gPugEngine.RegisterHook("TeamScore", this->TeamScore);
+
+	gPugEngine.RegisterHook("ScoreInfo", this->ScoreInfo);
 }
 
 void CPugMod::ServerDeactivate()
@@ -66,9 +70,6 @@ int CPugMod::SetState(int State)
     {
         case STATE_DEAD:
         {
-            this->m_Score.fill({});
-            this->m_ScoreOT.fill(0);
-
             gPugTask.Create(E_TASK::SET_STATE, 5.0f, false, STATE_DEATHMATCH);
             break;
         }
@@ -76,33 +77,30 @@ int CPugMod::SetState(int State)
         {
             this->m_Score.fill({});
             this->m_ScoreOT.fill(0);
-            
-            this->ResetScore(State);
-
-            auto NextState = (gPugCvar.m_VoteMap->value ? STATE_VOTEMAP : STATE_VOTETEAM);
-
-            if (gPugCvar.m_ReadyType->value == 1.0f)
-            {
-                gPugTimer.Init(NextState);
-            }
-            else if (gPugCvar.m_ReadyType->value == 2.0f)
-            {
-                gPugReady.Init(NextState);
-            }
 
             if (gPugCvar.m_DM_Enable->value)
             {
                 gPugDM.Init();
+            }
+
+            if (gPugCvar.m_ReadyType->value == 1.0f)
+            {
+                gPugTimer.Init(gPugCvar.m_VoteMap->value ? STATE_VOTEMAP : STATE_VOTETEAM);
+            }
+            else if (gPugCvar.m_ReadyType->value == 2.0f)
+            {
+                gPugReady.Init(gPugCvar.m_VoteMap->value ? STATE_VOTEMAP : STATE_VOTETEAM);
             }
             
             break;
         }
         case STATE_VOTEMAP:
         {
+            this->m_Score.fill({});
+            this->m_ScoreOT.fill(0);
+
             gPugDM.Stop();
-
             gPugReady.Stop(true);
-
             gPugTimer.Stop(true);
 
             gPugVoteMap.Init();
@@ -112,12 +110,11 @@ int CPugMod::SetState(int State)
         }
         case STATE_VOTETEAM:
         {
-            this->ResetScore(State);
+            this->m_Score.fill({});
+            this->m_ScoreOT.fill(0);
 
             gPugDM.Stop();
-
             gPugReady.Stop(true);
-
             gPugTimer.Stop(true);
 
             gPugVoteTeam.Init();
@@ -127,26 +124,24 @@ int CPugMod::SetState(int State)
         }
         case STATE_CAPTAIN:
         {
+            this->m_Score.fill({});
+            this->m_ScoreOT.fill(0);
+
             gPugDM.Stop();
-
             gPugReady.Stop(true);
-
             gPugTimer.Stop(true);
-
-            this->ResetScore(State);
 
             gPugLeader.Init();
             break;
         }
         case STATE_KNIFE_ROUND:
         {
+            this->m_Score.fill({});
+            this->m_ScoreOT.fill(0);
+
             gPugDM.Stop();
-
             gPugReady.Stop(true);
-
             gPugTimer.Stop(true);
-
-            this->ResetScore(State);
 
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Round Faca: O ^3vencedor escolhe o time inicial.", gPugCvar.m_Tag->string);
 
@@ -155,13 +150,12 @@ int CPugMod::SetState(int State)
         }
         case STATE_FIRST_HALF:
         {
+            this->m_Score.fill({});
+            this->m_ScoreOT.fill(0);
+
             gPugDM.Stop();
-
             gPugReady.Stop(true);
-
             gPugTimer.Stop(true);
-
-            this->ResetScore(State);
             
             if (g_pGameRules)
             {
@@ -175,8 +169,6 @@ int CPugMod::SetState(int State)
         }
         case STATE_HALFTIME:
         {
-            this->ResetScore(State);
-
             this->SwapTeams();
 
             auto Players = gPugUtil.GetPlayers(true, true);
@@ -204,8 +196,6 @@ int CPugMod::SetState(int State)
         }
         case STATE_SECOND_HALF:
         {
-            this->ResetScore(State);
-
             this->m_ScoreOT.fill(0);
 
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 Iniciado: Prepare-se !!.", gPugCvar.m_Tag->string, g_Pug_String[State]);
@@ -250,47 +240,6 @@ int CPugMod::SetState(int State)
     return this->m_State;
 }
 
-void CPugMod::ResetScore(int State)
-{
-    switch (State)
-    {
-        case STATE_DEAD:
-        case STATE_DEATHMATCH:
-        case STATE_VOTEMAP:
-        case STATE_VOTETEAM:
-        case STATE_CAPTAIN:
-        case STATE_KNIFE_ROUND:
-        case STATE_FIRST_HALF:
-        {
-            this->m_Score[TERRORIST].fill(0);
-            this->m_Score[CT].fill(0);
-
-            this->m_ScoreOT.fill(0);
-            break;
-        }
-        case STATE_HALFTIME:
-        case STATE_SECOND_HALF:
-        {
-            this->m_Score[TERRORIST][STATE_SECOND_HALF] = 0;
-            this->m_Score[CT][STATE_SECOND_HALF] = 0;
-
-            this->m_Score[TERRORIST][STATE_OVERTIME] = 0;
-            this->m_Score[CT][STATE_OVERTIME] = 0;
-
-            this->m_ScoreOT.fill(0);
-            break;
-        }
-        case STATE_OVERTIME:
-        {
-            this->m_Score[TERRORIST][STATE_OVERTIME] = 0;
-            this->m_Score[CT][STATE_OVERTIME] = 0;
-
-            this->m_ScoreOT.fill(0);
-            break;
-        }
-    }
-}
-
 void CPugMod::SwapTeams()
 {
 	if (this->GetRound() >= static_cast<int>(gPugCvar.m_Rounds->value))
@@ -318,17 +267,6 @@ void CPugMod::SwapTeams()
     gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Trocando times automaticamente.", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
 }
 
-std::array<int, SPECTATOR + 1> CPugMod::GetScore()
-{
-    std::array<int, SPECTATOR + 1> Score = {0};
-
-    Score[TERRORIST] = this->m_Score[TERRORIST][STATE_FIRST_HALF] + this->m_Score[TERRORIST][STATE_SECOND_HALF] + this->m_Score[TERRORIST][STATE_OVERTIME];
-
-    Score[CT] = this->m_Score[CT][STATE_FIRST_HALF] + this->m_Score[CT][STATE_SECOND_HALF] + this->m_Score[CT][STATE_OVERTIME];
-
-    return Score;
-}
-
 int CPugMod::GetRound()
 {
     auto Score = this->GetScore();
@@ -353,6 +291,18 @@ int CPugMod::GetWinner()
     }
 
     return UNASSIGNED;
+}
+
+std::array<int, SPECTATOR + 1> CPugMod::GetScore()
+{
+    std::array<int, SPECTATOR + 1> Score = {0};
+
+    for (size_t Team = 0; Team < this->m_Score.size(); ++Team)
+    {
+        Score[Team] = std::accumulate(this->m_Score[Team].begin(), this->m_Score[Team].end(), 0);
+    }
+
+    return Score;
 }
 
 bool CPugMod::ChooseTeam(CBasePlayer *Player, int Slot)
@@ -738,4 +688,50 @@ void CPugMod::SendHudMessage()
 
         gPugUtil.SendHud(nullptr, g_Pug_HudParam, "%s\n%s %d : %d %s", g_Pug_String[this->m_State], g_Pug_TeamShort[TERRORIST], Score[TERRORIST], Score[CT], g_Pug_TeamShort[CT]);
     }
+}
+
+bool CPugMod::TeamScore(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity)
+{
+	if (gPugMod.GetState() >= STATE_FIRST_HALF)
+	{
+        auto TeamName = gPugEngine.GetString(0);
+
+        if (TeamName)
+        {
+            auto Score = gPugMod.GetScore();
+
+            if (TeamName[0u] == 'T')
+            {
+                gPugEngine.SetArgInt(1, Score[TERRORIST]);
+            }
+            else if (TeamName[0u] == 'C')
+            {
+                gPugEngine.SetArgInt(1, Score[CT]);
+            }
+        }
+	}
+
+	return false;
+}
+
+bool CPugMod::ScoreInfo(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity)
+{
+	if (gPugMod.GetState() >= STATE_HALFTIME)
+	{
+        auto Player = UTIL_PlayerByIndexSafe(gPugEngine.GetByte(0));
+
+        if (Player)
+        {
+            auto lpInfo = gPugPlayer.GetInfo(g_engfuncs.pfnGetPlayerUserId(Player->edict()));
+
+            if (lpInfo)
+            {
+                gPugEngine.SetArgInt(1, lpInfo->Stats[STATE_FIRST_HALF].Frags + lpInfo->Stats[STATE_SECOND_HALF].Frags + lpInfo->Stats[STATE_OVERTIME].Frags);
+
+                gPugEngine.SetArgInt(2, lpInfo->Stats[STATE_FIRST_HALF].Deaths + lpInfo->Stats[STATE_SECOND_HALF].Deaths + lpInfo->Stats[STATE_OVERTIME].Deaths);
+            }
+        }
+	}
+
+	return false;
 }

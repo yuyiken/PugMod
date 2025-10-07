@@ -26,6 +26,7 @@
 #include <vector>
 #include <string>
 #include <array>
+#include <numeric>
 
 // CSSDK
 #include <extdll.h>
@@ -57,6 +58,7 @@
 #include "PugClientCmd.h"
 #include "PugCvar.h"
 #include "PugDM.h"
+#include "PugEngine.h"
 #include "PugLeader.h"
 #include "PugLO3.h"
 #include "PugMod.h"

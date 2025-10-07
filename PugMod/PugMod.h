@@ -75,14 +75,11 @@ public:
     int GetState();
     int SetState(int State);
 
-    void ResetScore(int State);
-
     void SwapTeams();
-
-    std::array<int, SPECTATOR + 1> GetScore();
 
     int GetRound();
     int GetWinner();
+    std::array<int, SPECTATOR + 1> GetScore();
 
     bool ChooseTeam(CBasePlayer *Player, int Slot);
     void GetIntoGame(CBasePlayer *Player);
@@ -98,10 +95,13 @@ public:
 
     void SendHudMessage();
 
+    static bool TeamScore(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
+    static bool ScoreInfo(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
+
 private:
     int m_State = STATE_DEAD;
-    std::array<std::array<int, STATE_END + 1>, SPECTATOR + 1> m_Score{{}};
-    std::array<int, SPECTATOR + 1> m_ScoreOT = {};
+    std::array<std::array<int, STATE_END + 1>, SPECTATOR + 1> m_Score;
+    std::array<int, SPECTATOR + 1> m_ScoreOT;
     std::map<int, std::string> m_MapList;
 };
 

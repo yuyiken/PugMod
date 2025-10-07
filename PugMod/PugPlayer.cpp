@@ -85,11 +85,7 @@ void CPugPlayer::PutInServer(edict_t* pEntity)
 
 				this->m_Player[AuthId].Team = TeamName::UNASSIGNED;
 
-				this->m_Player[AuthId].Frags = 0.0f;
-
-				this->m_Player[AuthId].Deaths = 0;
-
-				this->m_Player[AuthId].Account = 0;
+				this->m_Player[AuthId].Stats.fill({});
 			}
 		}
 	}
@@ -107,11 +103,16 @@ void CPugPlayer::GetIntoGame(CBasePlayer* Player)
 
 		this->m_Player[AuthId].Team = Player->m_iTeam;
 
-		this->m_Player[AuthId].Frags = Player->edict()->v.frags;
+		auto State = gPugMod.GetState();
 
-		this->m_Player[AuthId].Deaths = Player->m_iDeaths;
+		if (State >= STATE_DEAD && State <= STATE_END)
+		{
+			this->m_Player[AuthId].Stats[State].Frags = static_cast<int>(Player->edict()->v.frags);
 
-		this->m_Player[AuthId].Account = Player->m_iAccount;
+			this->m_Player[AuthId].Stats[State].Deaths = Player->m_iDeaths;
+
+			this->m_Player[AuthId].Stats[State].Account = Player->m_iAccount;
+		}
 	}
 }
 
@@ -127,11 +128,16 @@ void CPugPlayer::SwitchTeam(CBasePlayer* Player)
 
 		this->m_Player[AuthId].Team = Player->m_iTeam;
 
-		this->m_Player[AuthId].Frags = Player->edict()->v.frags;
+		auto State = gPugMod.GetState();
 
-		this->m_Player[AuthId].Deaths = Player->m_iDeaths;
+		if (State >= STATE_DEAD && State <= STATE_END)
+		{
+			this->m_Player[AuthId].Stats[State].Frags = static_cast<int>(Player->edict()->v.frags);
 
-		this->m_Player[AuthId].Account = Player->m_iAccount;
+			this->m_Player[AuthId].Stats[State].Deaths = Player->m_iDeaths;
+
+			this->m_Player[AuthId].Stats[State].Account = Player->m_iAccount;
+		}
 	}
 }
 
@@ -147,11 +153,16 @@ void CPugPlayer::AddAccount(CBasePlayer* Player, int Amount, RewardType Type, bo
 
 		this->m_Player[AuthId].Team = Player->m_iTeam;
 
-		this->m_Player[AuthId].Frags = Player->edict()->v.frags;
+		auto State = gPugMod.GetState();
 
-		this->m_Player[AuthId].Deaths = Player->m_iDeaths;
+		if (State >= STATE_DEAD && State <= STATE_END)
+		{
+			this->m_Player[AuthId].Stats[State].Frags = Player->edict()->v.frags;
 
-		this->m_Player[AuthId].Account = Player->m_iAccount;
+			this->m_Player[AuthId].Stats[State].Deaths = Player->m_iDeaths;
+
+			this->m_Player[AuthId].Stats[State].Account = Player->m_iAccount;
+		}
 	}
 }
 

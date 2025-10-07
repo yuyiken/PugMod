@@ -75,8 +75,9 @@ void CPugCvar::ServerActivate()
 
     // Modo do sistema ready
     //
-    // 0 Automático
-    // 1 Jogadores usam o sistema ready
+    // 0 Desligado
+    // 1 Por tempo limite
+    // 2 Sistema ready / notready
     //
     // Padrão: "1"
     this->m_ReadyType = this->Register("pug_ready_type", "1");

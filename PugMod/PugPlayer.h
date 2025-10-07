@@ -1,18 +1,23 @@
 #pragma once
 
+typedef struct S_PLAYER_STATS
+{
+	int Frags;   // Frags
+	int Deaths;	 // Deaths
+	int Account; // Account
+} P_PLAYER_STATS, *LP_PLAYER_STATS;
+
 typedef struct S_PLAYER_INFO
 {
-	int EntityId;						// Entity Index
-	int UserId;							// User Index
-	std::string Auth;					// Auth Id
-	std::string Name;					// Player Name
-	int Flags;							// Player Flags (Bitsum)
-	int Status;							// 0 Disconnected, 1 Connected, 2 In Game
-	std::string DcReason;				// Disconnect Reason
-	TeamName Team;						// Team
-	float Frags;						// Frags
-	int Deaths;							// Deaths
-	int Account;						// Account
+	int EntityId;									 // Entity Index
+	int UserId;										 // User Index
+	std::string Auth;								 // Auth Id
+	std::string Name;								 // Player Name
+	int Flags;										 // Player Flags (Bitsum)
+	int Status;										 // 0 Disconnected, 1 Connected, 2 In Game
+	std::string DcReason;							 // Disconnect Reason
+	TeamName Team;									 // Team
+	std::array<P_PLAYER_STATS, STATE_END + 1> Stats; // Stats
 } P_PLAYER_INFO, *LP_PLAYER_INFO;
 
 class CPugPlayer
