@@ -76,10 +76,7 @@ public:
     int SetState(int State);
 
     void SwapTeams();
-
-    int GetRound();
-    int GetWinner();
-    std::array<int, SPECTATOR + 1> GetScore();
+    void RestoreScores();
 
     bool ChooseTeam(CBasePlayer *Player, int Slot);
     void GetIntoGame(CBasePlayer *Player);
@@ -94,15 +91,12 @@ public:
     void Scores(CBasePlayer *Player);
 
     void SendHudMessage();
-
-    static bool TeamScore(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
-    static bool ScoreInfo(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
-
 private:
     int m_State = STATE_DEAD;
-    std::array<std::array<int, STATE_END + 1>, SPECTATOR + 1> m_Score;
-    std::array<int, SPECTATOR + 1> m_ScoreOT;
     std::map<int, std::string> m_MapList;
+
+    std::array<int, STATE_END + 1> m_iNumCTWins;
+    std::array<int, STATE_END + 1> m_iNumTerroristWins;
 };
 
 extern CPugMod gPugMod;
