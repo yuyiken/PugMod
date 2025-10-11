@@ -2,7 +2,7 @@
 
 typedef struct S_PLAYER_STATS
 {
-	int Frags;   // Frags
+	float Frags;   // Frags
 	int Deaths;	 // Deaths
 	int Account; // Account
 } P_PLAYER_STATS, *LP_PLAYER_STATS;
@@ -26,7 +26,7 @@ public:
 	void ServerActivate();
     const char* GetPlayerAuthId(edict_t* pEntity);
 	LP_PLAYER_INFO GetInfo(const char* AuthId);
-	LP_PLAYER_INFO GetInfo(int UserIndex);
+	LP_PLAYER_INFO GetInfo(int EntityIndex);
 	void PutInServer(edict_t* pEntity);
 	void GetIntoGame(CBasePlayer* Player);
 	void SwitchTeam(CBasePlayer* Player);

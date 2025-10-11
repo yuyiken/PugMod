@@ -150,8 +150,7 @@ int CPugMod::SetState(int State)
         }
         case STATE_HALFTIME:
         {
-            this->m_iNumCTWins[State] = 0;
-            this->m_iNumTerroristWins[State] = 0;
+            this->SetScores(State, 0, 0);
 
             auto NextState = ((CSGameRules()->m_iNumCTWins + CSGameRules()->m_iNumTerroristWins) < static_cast<int>(gPugCvar.m_Rounds->value)) ? STATE_SECOND_HALF : STATE_OVERTIME;
 
@@ -180,8 +179,7 @@ int CPugMod::SetState(int State)
         }
         case STATE_SECOND_HALF:
         {
-            this->m_iNumCTWins[State] = 0;
-            this->m_iNumTerroristWins[State] = 0;
+            this->SetScores(State, 0, 0);
 
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 Iniciado: Prepare-se !!.", gPugCvar.m_Tag->string, g_Pug_String[State]);
 
@@ -190,9 +188,6 @@ int CPugMod::SetState(int State)
         }
         case STATE_OVERTIME:
         {
-            this->m_iNumCTWins[State] = 0;
-            this->m_iNumTerroristWins[State] = 0;
-            
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 Iniciado: Prepare-se !!.", gPugCvar.m_Tag->string, g_Pug_String[State]);
 
             gPugLO3.Init();
@@ -234,8 +229,6 @@ void CPugMod::SwapTeams()
     {
         CSGameRules()->SwapAllPlayers();
 
-        CSGameRules()->UpdateTeamScores();
-
         g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_SvRestart, "1");
     }
 
@@ -244,21 +237,10 @@ void CPugMod::SwapTeams()
     gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Trocando times automaticamente.", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
 }
 
-void CPugMod::RestoreScores()
+void CPugMod::SetScores(int State, int NumCTWins, int NumTerroristWins)
 {
-    if (this->m_State == STATE_HALFTIME || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
-    {
-        if (g_pGameRules)
-        {
-            if (!CSGameRules()->m_iTotalRoundsPlayed)
-            {
-                CSGameRules()->m_iNumCTWins = (this->m_iNumCTWins[STATE_FIRST_HALF] + this->m_iNumCTWins[STATE_SECOND_HALF] + this->m_iNumCTWins[STATE_OVERTIME]);
-                CSGameRules()->m_iNumTerroristWins = (this->m_iNumTerroristWins[STATE_FIRST_HALF] + this->m_iNumTerroristWins[STATE_SECOND_HALF] + this->m_iNumTerroristWins[STATE_OVERTIME]);
-            }
-
-            CSGameRules()->UpdateTeamScores();
-        }
-    }
+    this->m_iNumCTWins[State] = NumCTWins;
+    this->m_iNumTerroristWins[State] = NumTerroristWins;
 }
 
 bool CPugMod::ChooseTeam(CBasePlayer *Player, int Slot)
@@ -386,15 +368,52 @@ void CPugMod::DropClient(edict_t *pEntity)
 
 void CPugMod::RestartRound()
 {
-    if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_HALFTIME || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
+    if (this->m_State >= STATE_FIRST_HALF && this->m_State <= STATE_OVERTIME)
     {
         if (g_pGameRules)
         {
-            this->RestoreScores();
-
-            if (!CSGameRules()->m_bCompleteReset && CSGameRules()->m_iTotalRoundsPlayed && this->m_State != STATE_HALFTIME)
+            if (this->m_State == STATE_HALFTIME || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
             {
-                gPugTask.Create(E_TASK::ROUND_START_HUD, 1.0f, false, 0);
+                if (!CSGameRules()->m_bRoundTerminating)
+                {
+                    if (CSGameRules()->m_iNumCTWins == 0 && CSGameRules()->m_iNumTerroristWins == 0)
+                    {
+                        CSGameRules()->m_iNumCTWins = (this->m_iNumCTWins[STATE_FIRST_HALF] + this->m_iNumCTWins[STATE_SECOND_HALF] + this->m_iNumCTWins[STATE_OVERTIME]);
+                        CSGameRules()->m_iNumTerroristWins = (this->m_iNumTerroristWins[STATE_FIRST_HALF] + this->m_iNumTerroristWins[STATE_SECOND_HALF] + this->m_iNumTerroristWins[STATE_OVERTIME]);
+
+                        CSGameRules()->UpdateTeamScores();
+                        
+                        auto Players = gPugUtil.GetPlayers(false, true);
+
+                        for (auto Player : Players)
+                        {
+                            auto lpInfo = gPugPlayer.GetInfo(Player->entindex());
+
+                            if (lpInfo)
+                            {
+                                Player->edict()->v.frags = (lpInfo->Stats[STATE_FIRST_HALF].Frags + lpInfo->Stats[STATE_SECOND_HALF].Frags + lpInfo->Stats[STATE_OVERTIME].Frags);
+
+                                Player->m_iDeaths = (lpInfo->Stats[STATE_FIRST_HALF].Deaths + lpInfo->Stats[STATE_SECOND_HALF].Deaths + lpInfo->Stats[STATE_OVERTIME].Deaths);
+
+                                Player->AddPoints(0, true);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (this->m_State != STATE_HALFTIME)
+            {
+                if (!CSGameRules()->m_bCompleteReset)
+                {
+                    if (!CSGameRules()->m_bRoundTerminating)
+                    {
+                        if (CSGameRules()->m_iTotalRoundsPlayed)
+                        {
+                            gPugTask.Create(E_TASK::ROUND_START_HUD, 1.0f, false, 0);
+                        }
+                    }
+                }
             }
         }
     }
@@ -406,7 +425,7 @@ void CPugMod::RoundStart()
     {
         if (g_pGameRules)
         {
-            if (CSGameRules()->m_iTotalRoundsPlayed)
+            if (CSGameRules()->m_iNumCTWins || CSGameRules()->m_iNumTerroristWins)
             {
                 this->Scores(nullptr);
             }
@@ -424,10 +443,9 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
         {
             if (g_pGameRules)
             {
+                this->SetScores(this->m_State, CSGameRules()->m_iNumCTWins, CSGameRules()->m_iNumTerroristWins);
+                
                 TeamName Winner = (winStatus == WINSTATUS_TERRORISTS) ? TERRORIST : CT;
-
-                this->m_iNumCTWins[this->m_State] = CSGameRules()->m_iNumCTWins;
-                this->m_iNumTerroristWins[this->m_State] = CSGameRules()->m_iNumTerroristWins;
 
                 gPugUtil.ClientPrint(nullptr, E_PRINT::CONSOLE, "[%s] Round %d Ganho Por: %s.", gPugCvar.m_Tag->string, CSGameRules()->m_iTotalRoundsPlayed, g_Pug_TeamId[Winner]);
 

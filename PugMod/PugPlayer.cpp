@@ -38,19 +38,17 @@ LP_PLAYER_INFO CPugPlayer::GetInfo(const char* AuthId)
 	return nullptr;
 }
 
-LP_PLAYER_INFO CPugPlayer::GetInfo(int UserIndex)
+LP_PLAYER_INFO CPugPlayer::GetInfo(int EntityIndex)
 {
 	if (!this->m_Player.empty())
 	{
 		for (auto const& Player : this->m_Player)
 		{
-			if (Player.second.UserId == UserIndex)
+			if (Player.second.EntityId == EntityIndex)
 			{
-				auto PlayerInfo = this->GetInfo(Player.first.c_str());
-
-				if (PlayerInfo)
+				if (!Player.first.empty())
 				{
-					return PlayerInfo;
+					return this->GetInfo(Player.first.c_str());
 				}
 			}
 		}
@@ -107,7 +105,7 @@ void CPugPlayer::GetIntoGame(CBasePlayer* Player)
 
 		if (State >= STATE_DEAD && State <= STATE_END)
 		{
-			this->m_Player[AuthId].Stats[State].Frags = static_cast<int>(Player->edict()->v.frags);
+			this->m_Player[AuthId].Stats[State].Frags = Player->edict()->v.frags;
 
 			this->m_Player[AuthId].Stats[State].Deaths = Player->m_iDeaths;
 
@@ -132,7 +130,7 @@ void CPugPlayer::SwitchTeam(CBasePlayer* Player)
 
 		if (State >= STATE_DEAD && State <= STATE_END)
 		{
-			this->m_Player[AuthId].Stats[State].Frags = static_cast<int>(Player->edict()->v.frags);
+			this->m_Player[AuthId].Stats[State].Frags = Player->edict()->v.frags;
 
 			this->m_Player[AuthId].Stats[State].Deaths = Player->m_iDeaths;
 

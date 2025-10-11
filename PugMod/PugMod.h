@@ -76,7 +76,8 @@ public:
     int SetState(int State);
 
     void SwapTeams();
-    void RestoreScores();
+
+    void SetScores(int State, int NumCTWins, int NumTerroristWins);
 
     bool ChooseTeam(CBasePlayer *Player, int Slot);
     void GetIntoGame(CBasePlayer *Player);
