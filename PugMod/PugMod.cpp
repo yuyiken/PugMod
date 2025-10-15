@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "PugMod.h"
 
 CPugMod gPugMod;
 
@@ -181,6 +182,10 @@ int CPugMod::SetState(int State)
         {
             this->SetScores(State, 0, 0);
 
+            gPugDM.Stop();
+            gPugReady.Stop(true);
+            gPugTimer.Stop(true);
+
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 Iniciado: Prepare-se !!.", gPugCvar.m_Tag->string, g_Pug_String[State]);
 
             gPugLO3.Init();
@@ -188,6 +193,10 @@ int CPugMod::SetState(int State)
         }
         case STATE_OVERTIME:
         {
+            gPugDM.Stop();
+            gPugReady.Stop(true);
+            gPugTimer.Stop(true);
+
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 Iniciado: Prepare-se !!.", gPugCvar.m_Tag->string, g_Pug_String[State]);
 
             gPugLO3.Init();
@@ -474,6 +483,8 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
                         }
                         else if ((CSGameRules()->m_iNumCTWins == MaxRounds) && (CSGameRules()->m_iNumTerroristWins == MaxRounds))
                         {
+                            this->SetScores(STATE_OVERTIME, 0, 0);
+
                             switch (static_cast<int>(gPugCvar.m_OvertimeType->value))
                             {
                                 case 0: // Vote OT
@@ -501,6 +512,45 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
                     }
                     case STATE_OVERTIME:
                     {
+                        //
+                        auto MaxRounds = static_cast<int>(gPugCvar.m_Rounds->value);
+
+                        //
+                        auto MaxRoundsOT = static_cast<int>(gPugCvar.m_RoundsOT->value);
+
+                        //
+                        auto TotalRounds = (CSGameRules()->m_iNumCTWins + CSGameRules()->m_iNumTerroristWins);
+
+                        //
+                        auto OvertimeRound = ((TotalRounds - MaxRounds) % MaxRoundsOT);
+
+                        //
+                        auto WinnerCT = ((CSGameRules()->m_iNumCTWins - (MaxRounds / 2)) % MaxRoundsOT) > (MaxRoundsOT / 2);
+
+                        //
+                        auto WinnerTR = ((CSGameRules()->m_iNumTerroristWins - (MaxRounds / 2)) % MaxRoundsOT) > (MaxRoundsOT / 2);
+
+                        LOG_CONSOLE(PLID, "[TotalRounds] %d", TotalRounds);
+                        LOG_CONSOLE(PLID, "[OvertimeRound] %d", OvertimeRound);
+                        LOG_CONSOLE(PLID, "[WinnerCT] %d", WinnerCT ? 1 : 0);
+                        LOG_CONSOLE(PLID, "[WinnerCT] %d", WinnerTR ? 1 : 0);
+
+                        if (OvertimeRound == (MaxRoundsOT / 2))
+                        {
+                            gPugTask.Create(E_TASK::SET_STATE, (gPugCvar.m_RoundRestartDelay->value + 1.0f), false, STATE_HALFTIME);
+                        }
+                        else if(WinnerCT || WinnerTR || !OvertimeRound)
+                        {
+                            if (CSGameRules()->m_iNumCTWins == CSGameRules()->m_iNumTerroristWins)
+                            {
+                                gPugTask.Create(E_TASK::SET_STATE, (gPugCvar.m_RoundRestartDelay->value + 1.0f), false, STATE_HALFTIME);
+                            }
+                            else
+                            {
+                                gPugTask.Create(E_TASK::SET_STATE, (gPugCvar.m_RoundRestartDelay->value + 1.0f), false, STATE_END);
+                            }
+                        }
+
                         break;
                     }
                 }   

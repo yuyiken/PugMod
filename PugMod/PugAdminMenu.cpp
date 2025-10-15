@@ -422,8 +422,26 @@ void CPugAdminMenu::PugHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        gPugMod.SetScores(Item.Extra, 0, 0);
+        if (Item.Extra == STATE_FIRST_HALF)
+        {
+            gPugReady.Stop(true);
+            gPugTimer.Stop(true);
+            
+            gPugMod.SetScores(STATE_FIRST_HALF, 2, 1);
+            gPugMod.SetScores(STATE_SECOND_HALF, 1, 2);
+            gPugMod.SetScores(STATE_OVERTIME, 0, 0);
 
-        gPugMod.SetState(Item.Extra);
+            if (g_pGameRules)
+            {
+                CSGameRules()->m_iNumCTWins = 3;
+                CSGameRules()->m_iNumTerroristWins = 3;
+            }
+
+            gPugMod.SetState(STATE_OVERTIME);
+        }
+
+        //gPugMod.SetScores(Item.Extra, 0, 0);
+
+        //gPugMod.SetState(Item.Extra);
     }
 }
