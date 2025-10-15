@@ -230,6 +230,8 @@ void ReGameDLL_CBasePlayer_GiveDefaultItems(IReGameHook_CBasePlayer_GiveDefaultI
 	chain->callNext(Player);
 
 	gPugDM.GiveDefaultItems(Player);
+
+	gPugMod.GiveDefaultItems(Player);
 }
 
 void ReGameDLL_ShowVGUIMenu(IReGameHook_ShowVGUIMenu *chain, CBasePlayer *Player, int MenuType, int BitMask, char *pszMenuText)

@@ -7,7 +7,6 @@ enum E_TASK
     LEADER_MENU,
     VOTE_SWAP_TEAM,
     VOTE_OVERTIME,
-    ROUND_START_HUD,
     CHANGE_MAP
 };
 

@@ -83,6 +83,7 @@ public:
     void GetIntoGame(CBasePlayer *Player);
     bool HasRestrictItem(CBasePlayer *Player, ItemID Item, ItemRestType Type);
     void DropClient(edict_t *pEntity);
+    void GiveDefaultItems(CBasePlayer *Player);
 
     void RestartRound();
     void RoundStart();
@@ -90,8 +91,6 @@ public:
 
     void Status(CBasePlayer *Player);
     void Scores(CBasePlayer *Player);
-
-    void SendHudMessage();
 private:
     int m_State = STATE_DEAD;
     std::map<int, std::string> m_MapList;

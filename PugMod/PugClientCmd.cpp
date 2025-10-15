@@ -1,5 +1,4 @@
 #include "precompiled.h"
-#include "PugClientCmd.h"
 
 CPugClientCmd gPugClientCmd;
 

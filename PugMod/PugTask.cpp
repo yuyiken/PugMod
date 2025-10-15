@@ -56,11 +56,6 @@ void CPugTask::Execute(int Index)
                 gPugVoteOvertime.Init();
                 break;
             }
-            case E_TASK::ROUND_START_HUD:
-            {
-                gPugMod.SendHudMessage();
-                break;
-            }
             case E_TASK::CHANGE_MAP:
             {
                 gPugAdminMenu.ChangeMap(this->m_Task[Index].Parameter);
