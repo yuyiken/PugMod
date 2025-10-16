@@ -150,17 +150,13 @@ int CPugMod::SetState(int State)
         }
         case STATE_HALFTIME:
         {
-            auto NextState = (this->GetRound() < static_cast<int>(gPugCvar.m_Rounds->value)) ? STATE_SECOND_HALF : STATE_OVERTIME;
-
             this->SwapTeams();
 
             auto Players = gPugUtil.GetPlayers(true, true);
 
-            if (Players.size() >= static_cast<size_t>(gPugCvar.m_PlayersMin->value * 2.0f))
-            {
-                gPugTask.Create(E_TASK::SET_STATE, 3.0f, false, NextState);
-            }
-            else
+            auto NextState = (this->GetRound() < static_cast<int>(gPugCvar.m_Rounds->value)) ? STATE_SECOND_HALF : STATE_OVERTIME;
+
+            if (Players.size() < static_cast<size_t>(gPugCvar.m_PlayersMin->value * 2.0f))
             {
                 if (gPugCvar.m_ReadyType->value == 1.0f)
                 {
@@ -170,6 +166,10 @@ int CPugMod::SetState(int State)
                 {
                     gPugReady.Init(NextState);
                 }
+            }
+            else
+            {
+                gPugTask.Create(E_TASK::SET_STATE, 4.0f, false, NextState);
             }
             
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 Iniciado: Prepare-se !!", gPugCvar.m_Tag->string, g_Pug_String[State]);
@@ -432,13 +432,13 @@ void CPugMod::GiveDefaultItems(CBasePlayer *Player)
                     {
                         gPugUtil.ClientCommand(Player->edict(), "spk \"fvox/blip, warning\"");
 
-                        gPugUtil.SendHud(Player->edict(), g_Pug_HudParam, "PRIMEIRO TEMPO DO OT\nÚLTIMO ROUND\n%s %d : %d %s", g_Pug_TeamShort[TERRORIST], this->GetScore(TERRORIST), this->GetScore(CT), g_Pug_TeamShort[CT]);
+                        gPugUtil.SendHud(Player->edict(), g_Pug_HudParam, "PRIMEIRO OVERTIME\nÚLTIMO ROUND\n%s %d : %d %s", g_Pug_TeamShort[TERRORIST], this->GetScore(TERRORIST), this->GetScore(CT), g_Pug_TeamShort[CT]);
                     }
                     else if ((this->m_ScoreOT[TERRORIST] == RoundsOT) || (this->m_ScoreOT[CT] == RoundsOT))
                     {
                         gPugUtil.ClientCommand(Player->edict(), "spk \"fvox/blip, warning\"");
 
-                        gPugUtil.SendHud(Player->edict(), g_Pug_HudParam, "SEGUNDO TEMPO DO OT\nPERIGO: FIM DA PARTIDA\n%s %d : %d %s", g_Pug_TeamShort[TERRORIST], this->GetScore(TERRORIST), this->GetScore(CT), g_Pug_TeamShort[CT]);
+                        gPugUtil.SendHud(Player->edict(), g_Pug_HudParam, "SEGUNDO OVERTIME\nPERIGO: FIM DA PARTIDA\n%s %d : %d %s", g_Pug_TeamShort[TERRORIST], this->GetScore(TERRORIST), this->GetScore(CT), g_Pug_TeamShort[CT]);
                     }
                     else
                     {
@@ -449,7 +449,6 @@ void CPugMod::GiveDefaultItems(CBasePlayer *Player)
         }
     }
 }
-
 
 void CPugMod::RestartRound()
 {
