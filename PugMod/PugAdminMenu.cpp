@@ -427,20 +427,20 @@ void CPugAdminMenu::PugHandle(CBasePlayer *Player, P_MENU_ITEM Item)
             gPugReady.Stop(true);
             gPugTimer.Stop(true);
             
-            gPugMod.SetScores(STATE_FIRST_HALF, 2, 1);
-            gPugMod.SetScores(STATE_SECOND_HALF, 1, 2);
-            gPugMod.SetScores(STATE_OVERTIME, 0, 0);
+            gPugMod.m_Score[TERRORIST][STATE_FIRST_HALF] = 2;
+            gPugMod.m_Score[CT][STATE_FIRST_HALF] = 1;
 
-            if (g_pGameRules)
-            {
-                CSGameRules()->m_iNumCTWins = 3;
-                CSGameRules()->m_iNumTerroristWins = 3;
-            }
+            gPugMod.m_Score[TERRORIST][STATE_SECOND_HALF] = 1;
+            gPugMod.m_Score[CT][STATE_SECOND_HALF] = 2;
+
+            gPugMod.m_Score[TERRORIST][STATE_OVERTIME] = 0;
+            gPugMod.m_Score[CT][STATE_OVERTIME] = 0;
+
+            gPugMod.m_ScoreOT[TERRORIST] = 0;
+            gPugMod.m_ScoreOT[CT] = 0;
 
             gPugMod.SetState(STATE_OVERTIME);
         }
-
-        //gPugMod.SetScores(Item.Extra, 0, 0);
 
         //gPugMod.SetState(Item.Extra);
     }
