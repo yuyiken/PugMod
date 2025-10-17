@@ -1,5 +1,4 @@
 #include "precompiled.h"
-#include "PugMod.h"
 
 CPugMod gPugMod;
 
@@ -254,6 +253,24 @@ void CPugMod::SwapTeams()
     SWAP(this->m_ScoreOT[TERRORIST], this->m_ScoreOT[CT]);
 
     gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Trocando times automaticamente.", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
+}
+
+void CPugMod::RestartRound()
+{
+    if (this->m_State >= STATE_HALFTIME && this->m_State <= STATE_OVERTIME)
+    {
+        if (g_pGameRules)
+        {
+            if (!CSGameRules()->m_bRoundTerminating)
+            {
+                if (gPugCvar.m_ScoreTeams->value)
+                {
+                    CSGameRules()->m_iNumCTWins = this->GetScore(CT);
+                    CSGameRules()->m_iNumTerroristWins = this->GetScore(TERRORIST);
+                }
+            }
+        }
+    }
 }
 
 int CPugMod::GetRound()

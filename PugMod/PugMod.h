@@ -80,6 +80,8 @@ public:
 
     void SwapTeams();
 
+    void RestartRound();
+
     bool ChooseTeam(CBasePlayer *Player, int Slot);
     void GetIntoGame(CBasePlayer *Player);
     bool HasRestrictItem(CBasePlayer *Player, ItemID Item, ItemRestType Type);
