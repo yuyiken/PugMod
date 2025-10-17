@@ -86,12 +86,14 @@ public:
     void DropClient(edict_t *pEntity);
     void GiveDefaultItems(CBasePlayer *Player);
 
-    void RestartRound();
     void RoundStart();
     void RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay);
 
     void Status(CBasePlayer *Player);
     void Scores(CBasePlayer *Player);
+
+    static bool TeamScore(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
+    static bool ScoreInfo(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
 
     int m_State = STATE_DEAD;
     std::map<int, std::string> m_MapList;

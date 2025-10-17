@@ -36,6 +36,8 @@ public:
 	cvar_t* m_KnifeRound;
 	cvar_t* m_VoteEnd;
 	cvar_t* m_ScoreText;
+	cvar_t* m_ScoreTeams;
+	cvar_t* m_ScorePlayers;
 	cvar_t* m_MotdFile;
 	cvar_t* m_MotdFileAdmin;
 

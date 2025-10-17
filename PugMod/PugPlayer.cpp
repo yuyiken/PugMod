@@ -42,19 +42,48 @@ LP_PLAYER_INFO CPugPlayer::GetInfo(int EntityIndex)
 {
 	if (!this->m_Player.empty())
 	{
-		for (auto const& Player : this->m_Player)
+		for (auto Player : this->m_Player)
 		{
 			if (Player.second.EntityId == EntityIndex)
 			{
-				if (!Player.first.empty())
-				{
-					return this->GetInfo(Player.first.c_str());
-				}
+				return &this->m_Player[Player.first];
 			}
 		}
 	}
 	
 	return nullptr;
+}
+
+void CPugPlayer::Connect(edict_t *pEntity, const char *pszName, const char *pszAddress)
+{
+	if (!FNullEnt(pEntity))
+	{
+		auto AuthId = this->GetPlayerAuthId(pEntity);
+
+		if (AuthId)
+		{
+			if (!((pEntity->v.flags & FL_PROXY) == FL_PROXY))
+			{
+				this->m_Player[AuthId].EntityId = ENTINDEX(pEntity);
+
+				this->m_Player[AuthId].UserId = g_engfuncs.pfnGetPlayerUserId(pEntity);
+
+				this->m_Player[AuthId].Auth = AuthId;
+
+				this->m_Player[AuthId].Name = STRING(pEntity->v.netname);
+
+				this->m_Player[AuthId].Flags = gPugAdmin.GetFlags(ENTINDEX(pEntity));
+
+				this->m_Player[AuthId].Status = 1;
+
+				this->m_Player[AuthId].DcReason.clear();
+
+				this->m_Player[AuthId].Team = TeamName::UNASSIGNED;
+
+				this->m_Player[AuthId].Stats.fill({});
+			}
+		}
+	}
 }
 
 void CPugPlayer::PutInServer(edict_t* pEntity)
@@ -95,22 +124,23 @@ void CPugPlayer::GetIntoGame(CBasePlayer* Player)
 
 	if (AuthId)
 	{
+		this->m_Player[AuthId].EntityId = Player->entindex();
+
+		this->m_Player[AuthId].UserId = g_engfuncs.pfnGetPlayerUserId(Player->edict());
+
+		this->m_Player[AuthId].Auth = AuthId;
+
 		this->m_Player[AuthId].Name = STRING(Player->edict()->v.netname);
+
+		this->m_Player[AuthId].Flags = gPugAdmin.GetFlags(Player->entindex());
 
 		this->m_Player[AuthId].Status = 2;
 
+		this->m_Player[AuthId].DcReason.clear();
+
 		this->m_Player[AuthId].Team = Player->m_iTeam;
 
-		auto State = gPugMod.GetState();
-
-		if (State >= STATE_DEAD && State <= STATE_END)
-		{
-			this->m_Player[AuthId].Stats[State].Frags = Player->edict()->v.frags;
-
-			this->m_Player[AuthId].Stats[State].Deaths = Player->m_iDeaths;
-
-			this->m_Player[AuthId].Stats[State].Account = Player->m_iAccount;
-		}
+		this->m_Player[AuthId].Stats.fill({});
 	}
 }
 
@@ -120,22 +150,19 @@ void CPugPlayer::SwitchTeam(CBasePlayer* Player)
 
 	if (AuthId)
 	{
+		this->m_Player[AuthId].EntityId = Player->entindex();
+
+		this->m_Player[AuthId].UserId = g_engfuncs.pfnGetPlayerUserId(Player->edict());
+
+		this->m_Player[AuthId].Auth = AuthId;
+
 		this->m_Player[AuthId].Name = STRING(Player->edict()->v.netname);
+
+		this->m_Player[AuthId].Flags = gPugAdmin.GetFlags(Player->entindex());
 
 		this->m_Player[AuthId].Status = (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT) ? 2 : 1;
 
 		this->m_Player[AuthId].Team = Player->m_iTeam;
-
-		auto State = gPugMod.GetState();
-
-		if (State >= STATE_DEAD && State <= STATE_END)
-		{
-			this->m_Player[AuthId].Stats[State].Frags = Player->edict()->v.frags;
-
-			this->m_Player[AuthId].Stats[State].Deaths = Player->m_iDeaths;
-
-			this->m_Player[AuthId].Stats[State].Account = Player->m_iAccount;
-		}
 	}
 }
 
@@ -145,7 +172,15 @@ void CPugPlayer::AddAccount(CBasePlayer* Player, int Amount, RewardType Type, bo
 
 	if (AuthId)
 	{
+		this->m_Player[AuthId].EntityId = Player->entindex();
+
+		this->m_Player[AuthId].UserId = g_engfuncs.pfnGetPlayerUserId(Player->edict());
+
+		this->m_Player[AuthId].Auth = AuthId;
+
 		this->m_Player[AuthId].Name = STRING(Player->edict()->v.netname);
+
+		this->m_Player[AuthId].Flags = gPugAdmin.GetFlags(Player->entindex());
 
 		this->m_Player[AuthId].Status = (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT) ? 2 : 1;
 
@@ -153,7 +188,7 @@ void CPugPlayer::AddAccount(CBasePlayer* Player, int Amount, RewardType Type, bo
 
 		auto State = gPugMod.GetState();
 
-		if (State >= STATE_DEAD && State <= STATE_END)
+		if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 		{
 			this->m_Player[AuthId].Stats[State].Frags = Player->edict()->v.frags;
 

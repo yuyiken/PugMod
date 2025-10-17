@@ -27,6 +27,7 @@ public:
     const char* GetPlayerAuthId(edict_t* pEntity);
 	LP_PLAYER_INFO GetInfo(const char* AuthId);
 	LP_PLAYER_INFO GetInfo(int EntityIndex);
+	void Connect(edict_t *pEntity, const char *pszName, const char *pszAddress);
 	void PutInServer(edict_t* pEntity);
 	void GetIntoGame(CBasePlayer* Player);
 	void SwitchTeam(CBasePlayer* Player);

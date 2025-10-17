@@ -215,6 +215,8 @@ void DLL_POST_StartFrame()
 
 qboolean DLL_POST_ClientConnect(edict_t *pEntity, const char *pszName, const char *pszAddress, char szRejectReason[128])
 {
+	gPugPlayer.Connect(pEntity, pszName, pszAddress);
+
 	RETURN_META_VALUE(MRES_IGNORED, FALSE);
 }
 

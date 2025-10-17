@@ -167,13 +167,29 @@ void CPugCvar::ServerActivate()
     // Padrão: "1"
     this->m_VoteEnd  = this->Register("pug_vote_end", "1");
 
-    // Tipo do texto dos placares na tela
+    // Tipo do texto dos placares no chat
     //
-    // 0 Por extenso
-    // 1 Mostrar Placares TRs e CTs
+    // 0 Por extenso ([PUG] Os Terroristas estão vencendo: 8-6)
+    // 1 Ambos Placares (Terroristas (8) - (6) Contra-Terroristas)
     //
     // Padrão: "0"
     this->m_ScoreText = this->Register("pug_score_text", "0");
+
+    // Manter o placar total dos times no scoreboard (TAB)
+    //
+    // 0 Resetar placar a cada período
+    // 1 Manter o placar total em todos os períodos
+    //
+    // Padrão: "1"
+	this->m_ScoreTeams = this->Register("pug_score_teams", "1");
+
+    // Manter o score dos jogadores scoreboard (TAB)
+    //
+    // 0 Resetar scores a cada período
+    // 1 Manter scores em todos os períodos
+    //
+    // Padrão: "1"
+	this->m_ScorePlayers = this->Register("pug_score_players", "1");
 
     // Arquivo de ajuda de comandos via MOTD
     // Nome do arquivo ou URL do arquivo de ajuda

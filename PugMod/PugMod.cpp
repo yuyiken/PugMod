@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "PugMod.h"
 
 CPugMod gPugMod;
 
@@ -15,6 +16,10 @@ void CPugMod::ServerActivate()
     this->SetState(STATE_DEAD);
 
     gPugUtil.ServerCommand("exec %s/cfg/maplist.cfg", gPugUtil.GetPath());
+
+    gPugEngine.RegisterHook("TeamScore", this->TeamScore);
+
+    gPugEngine.RegisterHook("ScoreInfo", this->ScoreInfo);
 }
 
 void CPugMod::ServerDeactivate()
@@ -450,46 +455,6 @@ void CPugMod::GiveDefaultItems(CBasePlayer *Player)
     }
 }
 
-void CPugMod::RestartRound()
-{
-    if (this->m_State >= STATE_FIRST_HALF && this->m_State <= STATE_OVERTIME)
-    {
-        if (g_pGameRules)
-        {
-            if (this->m_State == STATE_HALFTIME || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
-            {
-                if (!CSGameRules()->m_bRoundTerminating)
-                {
-                    if (CSGameRules()->m_iNumCTWins == 0 && CSGameRules()->m_iNumTerroristWins == 0)
-                    {
-                        CSGameRules()->m_iNumCTWins = this->GetScore(CT);
-
-                        CSGameRules()->m_iNumTerroristWins = this->GetScore(TERRORIST);
-
-                        CSGameRules()->UpdateTeamScores();
-                        
-                        auto Players = gPugUtil.GetPlayers(false, true);
-
-                        for (auto Player : Players)
-                        {
-                            auto lpInfo = gPugPlayer.GetInfo(Player->entindex());
-
-                            if (lpInfo)
-                            {
-                                Player->edict()->v.frags = (lpInfo->Stats[STATE_FIRST_HALF].Frags + lpInfo->Stats[STATE_SECOND_HALF].Frags + lpInfo->Stats[STATE_OVERTIME].Frags);
-
-                                Player->m_iDeaths = (lpInfo->Stats[STATE_FIRST_HALF].Deaths + lpInfo->Stats[STATE_SECOND_HALF].Deaths + lpInfo->Stats[STATE_OVERTIME].Deaths);
-
-                                Player->AddPoints(0, true);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 void CPugMod::RoundStart()
 {
     if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
@@ -702,4 +667,60 @@ void CPugMod::Scores(CBasePlayer *Player)
             gPugUtil.PrintColor(pEntity, Sender, "^4[%s]^1 Comando indisponível.", gPugCvar.m_Tag->string);
         }
     }
+}
+
+bool CPugMod::TeamScore(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity)
+{
+	if (gPugMod.GetState() >= STATE_HALFTIME)
+	{
+		if (gPugCvar.m_ScoreTeams)
+		{
+			if (gPugCvar.m_ScoreTeams->value > 0.0f)
+			{
+				auto Team = gPugEngine.GetString(0);
+
+				if (Team)
+				{
+					if (Team[0u] == 'T')
+					{
+						gPugEngine.SetArgInt(1, gPugMod.GetScore(TERRORIST));
+					}
+					else if (Team[0u] == 'C')
+					{
+						gPugEngine.SetArgInt(1, gPugMod.GetScore(CT));
+					}
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+bool CPugMod::ScoreInfo(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity)
+{
+	if (gPugMod.GetState() >= STATE_HALFTIME)
+	{
+		if (gPugCvar.m_ScorePlayers)
+		{
+			if (gPugCvar.m_ScorePlayers->value > 0.0f)
+			{
+				auto Player = UTIL_PlayerByIndexSafe(gPugEngine.GetByte(0));
+
+		        if (Player)
+		        {
+		            auto lpInfo = gPugPlayer.GetInfo(Player->entindex());
+
+		            if (lpInfo)
+		            {
+		                gPugEngine.SetArgInt(1, (int)(lpInfo->Stats[STATE_FIRST_HALF].Frags + lpInfo->Stats[STATE_SECOND_HALF].Frags + lpInfo->Stats[STATE_OVERTIME].Frags));
+
+		                gPugEngine.SetArgInt(2, lpInfo->Stats[STATE_FIRST_HALF].Deaths + lpInfo->Stats[STATE_SECOND_HALF].Deaths + lpInfo->Stats[STATE_OVERTIME].Deaths);
+		            }
+		        }
+			}
+		}
+	}
+
+	return false;
 }
