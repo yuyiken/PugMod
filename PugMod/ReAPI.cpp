@@ -82,8 +82,6 @@ void ReAPI_SV_DropClient(IRehldsHook_SV_DropClient *chain, IGameClient *client, 
 			gPugMod.DropClient(pEntity);
 
 			gPugLeader.DropClient(pEntity);
-
-			gPugPlayer.Disconnect(pEntity, crash, Reason);
 		}
 	}
 	

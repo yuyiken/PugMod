@@ -61,7 +61,6 @@
 #include "PugLeader.h"
 #include "PugLO3.h"
 #include "PugMod.h"
-#include "PugPlayer.h"
 #include "PugReady.h"
 #include "PugServerCmd.h"
 #include "PugSpawnEdit.h"

@@ -177,16 +177,12 @@ bool ReGameDLL_CBasePlayer_GetIntoGame(IReGameHook_CBasePlayer_GetIntoGame *chai
 
 	gPugDM.GetIntoGame(Player);
 
-	gPugPlayer.GetIntoGame(Player);
-
 	return Result;
 }
 
 void ReGameDLL_CBasePlayer_SwitchTeam(IReGameHook_CBasePlayer_SwitchTeam *chain, CBasePlayer *Player)
 {
 	chain->callNext(Player);
-
-	gPugPlayer.SwitchTeam(Player);
 }
 
 void ReGameDLL_CSGameRules_RestartRound(IReGameHook_CSGameRules_RestartRound *chain)
@@ -281,8 +277,6 @@ void ReGameDLL_CBasePlayer_AddAccount(IReGameHook_CBasePlayer_AddAccount *chain,
 	}
 
 	chain->callNext(Player, Amount, Type, TrackChange);
-
-	gPugPlayer.AddAccount(Player, Amount, Type, TrackChange);
 }
 
 void ReGameDLL_CBasePlayer_SetAnimation(IReGameHook_CBasePlayer_SetAnimation *chain, CBasePlayer *Player, PLAYER_ANIM playerAnimation)
