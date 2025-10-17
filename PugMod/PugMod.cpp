@@ -16,10 +16,6 @@ void CPugMod::ServerActivate()
     this->SetState(STATE_DEAD);
 
     gPugUtil.ServerCommand("exec %s/cfg/maplist.cfg", gPugUtil.GetPath());
-
-    gPugEngine.RegisterHook("TeamScore", this->TeamScore);
-
-    gPugEngine.RegisterHook("ScoreInfo", this->ScoreInfo);
 }
 
 void CPugMod::ServerDeactivate()
@@ -667,60 +663,4 @@ void CPugMod::Scores(CBasePlayer *Player)
             gPugUtil.PrintColor(pEntity, Sender, "^4[%s]^1 Comando indisponível.", gPugCvar.m_Tag->string);
         }
     }
-}
-
-bool CPugMod::TeamScore(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity)
-{
-	if (gPugMod.GetState() >= STATE_HALFTIME)
-	{
-		if (gPugCvar.m_ScoreTeams)
-		{
-			if (gPugCvar.m_ScoreTeams->value > 0.0f)
-			{
-				auto Team = gPugEngine.GetString(0);
-
-				if (Team)
-				{
-					if (Team[0u] == 'T')
-					{
-						gPugEngine.SetArgInt(1, gPugMod.GetScore(TERRORIST));
-					}
-					else if (Team[0u] == 'C')
-					{
-						gPugEngine.SetArgInt(1, gPugMod.GetScore(CT));
-					}
-				}
-			}
-		}
-	}
-
-	return false;
-}
-
-bool CPugMod::ScoreInfo(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity)
-{
-	if (gPugMod.GetState() >= STATE_HALFTIME)
-	{
-		if (gPugCvar.m_ScorePlayers)
-		{
-			if (gPugCvar.m_ScorePlayers->value > 0.0f)
-			{
-				auto Player = UTIL_PlayerByIndexSafe(gPugEngine.GetByte(0));
-
-		        if (Player)
-		        {
-		            auto lpInfo = gPugPlayer.GetInfo(Player->entindex());
-
-		            if (lpInfo)
-		            {
-		                gPugEngine.SetArgInt(1, (int)(lpInfo->Stats[STATE_FIRST_HALF].Frags + lpInfo->Stats[STATE_SECOND_HALF].Frags + lpInfo->Stats[STATE_OVERTIME].Frags));
-
-		                gPugEngine.SetArgInt(2, lpInfo->Stats[STATE_FIRST_HALF].Deaths + lpInfo->Stats[STATE_SECOND_HALF].Deaths + lpInfo->Stats[STATE_OVERTIME].Deaths);
-		            }
-		        }
-			}
-		}
-	}
-
-	return false;
 }

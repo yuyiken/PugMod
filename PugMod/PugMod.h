@@ -92,9 +92,6 @@ public:
     void Status(CBasePlayer *Player);
     void Scores(CBasePlayer *Player);
 
-    static bool TeamScore(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
-    static bool ScoreInfo(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
-
     int m_State = STATE_DEAD;
     std::map<int, std::string> m_MapList;
     std::array<std::array<int, STATE_END + 1U>, SPECTATOR + 1U> m_Score;
