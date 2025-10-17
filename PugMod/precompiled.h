@@ -60,6 +60,7 @@
 #include "PugDM.h"
 #include "PugLeader.h"
 #include "PugLO3.h"
+#include "PugMapList.h"
 #include "PugMod.h"
 #include "PugReady.h"
 #include "PugServerCmd.h"

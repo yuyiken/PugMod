@@ -92,7 +92,7 @@ void CPugServerCmd::AddMap()
 {
     if (g_engfuncs.pfnCmd_Argc() >= 2)
     {
-        gPugMod.AddMap(g_engfuncs.pfnCmd_Argv(1));
+        gPugMapList.Add(g_engfuncs.pfnCmd_Argv(1));
     }
     else
     {

@@ -10,8 +10,6 @@ void CPugMod::ServerActivate()
 
     this->m_ScoreOT.fill(0);
 
-    this->m_MapList.clear();
-
     this->SetState(STATE_DEAD);
 
     gPugUtil.ServerCommand("exec %s/cfg/maplist.cfg", gPugUtil.GetPath());
@@ -28,29 +26,6 @@ void CPugMod::ServerDeactivate()
     {
         this->SetState(STATE_END);
     }
-}
-
-void CPugMod::AddMap(const char* Map)
-{
-    if (Map)
-    {
-        if (Map[0u] != '\0')
-        {
-            char *MapName = strdup(Map);
-
-            if (g_engfuncs.pfnIsMapValid(MapName))
-            {
-                this->m_MapList.insert(std::make_pair(this->m_MapList.size(), MapName));
-            }
-
-            free(MapName);
-        }
-    }
-}
-
-std::map<int, std::string> CPugMod::GetMaps()
-{
-    return this->m_MapList;
 }
 
 int CPugMod::GetState()
@@ -592,11 +567,8 @@ void CPugMod::Status(CBasePlayer *Player)
 {
     auto Players = gPugUtil.GetPlayers();
 
-    if (Player)
-    {
-        gPugUtil.PrintColor(Player->edict(), Player->entindex(), "^4[%s]^1 Status: ^3%s^1", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
-        gPugUtil.PrintColor(Player->edict(), Player->entindex(), "^4[%s]^1 TRs: ^3%d^1, CTs: ^3%d^1, Espectadores: ^3%d^1", gPugCvar.m_Tag->string, Players[TERRORIST].size(), Players[CT].size(), Players[SPECTATOR].size());
-    }
+    gPugUtil.PrintColor(Player->edict(), Player->entindex(), "^4[%s]^1 Status: ^3%s^1", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
+    gPugUtil.PrintColor(Player->edict(), Player->entindex(), "^4[%s]^1 TRs: ^3%d^1, CTs: ^3%d^1, SPECs: ^3%d^1", gPugCvar.m_Tag->string, Players[TERRORIST].size(), Players[CT].size(), Players[SPECTATOR].size());
 }
 
 void CPugMod::Scores(CBasePlayer *Player)

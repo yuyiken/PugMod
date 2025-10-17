@@ -335,7 +335,7 @@ void CPugAdminMenu::Map(CBasePlayer *Player)
 {
     if (gPugAdmin.CheckAccess(Player, ADMIN_MAP))
     {
-        auto MapList = gPugMod.GetMaps();
+        auto MapList = gPugMapList.Get();
 
         if (MapList.empty())
         {
@@ -366,7 +366,7 @@ void CPugAdminMenu::MapHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 
 void CPugAdminMenu::ChangeMap(int Index)
 {
-    auto MapList = gPugMod.GetMaps();
+    auto MapList = gPugMapList.Get();
 
     if (!MapList.empty())
     {

@@ -124,7 +124,7 @@ void CPugVoteMap::Stop()
 
 void CPugVoteMap::LoadMaps()
 {
-    auto MapList = gPugMod.GetMaps();
+    auto MapList = gPugMapList.Get();
 
     if (!MapList.empty())
     {

@@ -27,3 +27,4 @@ bool ReGameDLL_CBasePlayer_HasRestrictItem(IReGameHook_CBasePlayer_HasRestrictIt
 void ReGameDLL_CSGameRules_RestartRound(IReGameHook_CSGameRules_RestartRound *chain);
 void ReGameDLL_CSGameRules_OnRoundFreezeEnd(IReGameHook_CSGameRules_OnRoundFreezeEnd *chain);
 bool ReGameDLL_RoundEnd(IReGameHook_RoundEnd *chain, int winStatus, ScenarioEventEndRound event, float tmDelay);
+void ReGameDLL_CBotManager_OnEvent(IReGameHook_CBotManager_OnEvent *chain, GameEventType event, CBaseEntity *pEntity, CBaseEntity *pOther);

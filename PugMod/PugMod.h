@@ -69,9 +69,6 @@ public:
     void ServerActivate();
     void ServerDeactivate();
 
-    void AddMap(const char* Map);
-    std::map<int, std::string> GetMaps();
-
     int GetState();
     int SetState(int State);
 
@@ -95,7 +92,6 @@ public:
     void Scores(CBasePlayer *Player);
 
     int m_State = STATE_DEAD;
-    std::map<int, std::string> m_MapList;
     std::array<std::array<int, STATE_END + 1U>, SPECTATOR + 1U> m_Score;
     std::array<int, SPECTATOR + 1U> m_ScoreOT;
 };
