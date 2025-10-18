@@ -668,12 +668,12 @@ bool CPugMod::TeamScore(int msg_dest, int msg_type, const float* pOrigin, edict_
 	return false;
 }
 
-bool CPugMod::ScoreInfo(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity)
+bool CPugMod::ScoreInfo(int msg_dest, int msg_type, const float *pOrigin, edict_t *pEntity)
 {
     auto State = gPugMod.GetState();
 
-	if (State >= STATE_FIRST_HALF && State <= STATE_OVERTIME)
-	{
+    if (State >= STATE_FIRST_HALF && State <= STATE_OVERTIME)
+    {
         auto EntityIndex = gPugEngine.GetByte(0);
 
         if (EntityIndex >= 1 && EntityIndex <= gpGlobals->maxClients)
@@ -692,7 +692,7 @@ bool CPugMod::ScoreInfo(int msg_dest, int msg_type, const float* pOrigin, edict_
                 }
             }
         }
-	}
+    }
 
-	return false;
+    return false;
 }
