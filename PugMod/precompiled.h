@@ -58,6 +58,7 @@
 #include "PugClientCmd.h"
 #include "PugCvar.h"
 #include "PugDM.h"
+#include "PugEngine.h"
 #include "PugLeader.h"
 #include "PugLO3.h"
 #include "PugMapList.h"
