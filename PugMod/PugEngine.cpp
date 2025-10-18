@@ -104,14 +104,11 @@ bool CPugEngine::MessageEnd()
 			}
 		}
 
-		// Reset current message index
 		this->m_MsgId = 0;
 
-		// Return true
 		return true;
 	}
 
-	// Return false
 	return false;
 }
 

@@ -55,6 +55,7 @@ public:
     int m_State = STATE_DEAD;
     std::array<std::array<int, STATE_END + 1U>, SPECTATOR + 1U> m_Score;
     std::array<int, SPECTATOR + 1U> m_ScoreOT;
+    std::array<std::array<std::array<int, 2>, MAX_CLIENTS + 1U>, STATE_END + 1U> m_Points;
 };
 
 extern CPugMod gPugMod;

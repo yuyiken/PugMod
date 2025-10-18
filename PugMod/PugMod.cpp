@@ -6,9 +6,11 @@ void CPugMod::ServerActivate()
 {
     this->m_State = STATE_DEAD;
 
-    this->m_Score.fill({});
+    this->m_Score = {};
 
-    this->m_ScoreOT.fill(0);
+    this->m_ScoreOT = {};
+
+    this->m_Points = {};
 
     this->SetState(STATE_DEAD);
 
@@ -99,6 +101,10 @@ int CPugMod::SetState(int State)
         }
         case STATE_KNIFE_ROUND:
         {
+            this->m_Score = {};
+            this->m_ScoreOT = {};
+            this->m_Points = {};
+            
             gPugDM.Stop();
             gPugReady.Stop(true);
             gPugTimer.Stop(true);
@@ -110,8 +116,9 @@ int CPugMod::SetState(int State)
         }
         case STATE_FIRST_HALF:
         {
-            this->m_Score.fill({});
-            this->m_ScoreOT.fill(0);
+            this->m_Score = {};
+            this->m_ScoreOT = {};
+            this->m_Points = {};
 
             gPugDM.Stop();
             gPugReady.Stop(true);
@@ -678,17 +685,15 @@ bool CPugMod::ScoreInfo(int msg_dest, int msg_type, const float *pOrigin, edict_
 
         if (EntityIndex >= 1 && EntityIndex <= gpGlobals->maxClients)
         {
-            static std::array<std::array<std::array<int, 2>, STATE_END + 1U>, MAX_CLIENTS + 1U> Points;
-
-            Points[EntityIndex][State][0] = gPugEngine.GetShort(1);
-            Points[EntityIndex][State][1] = gPugEngine.GetShort(2);
+            gPugMod.m_Points[EntityIndex][State][0] = gPugEngine.GetShort(1);
+            gPugMod.m_Points[EntityIndex][State][1] = gPugEngine.GetShort(2);
 
             if (gPugCvar.m_ScorePlayers)
             {
                 if (gPugCvar.m_ScorePlayers->value > 0.0f)
                 {
-                    gPugEngine.SetArgInt(1, Points[EntityIndex][STATE_FIRST_HALF][0] + Points[EntityIndex][STATE_SECOND_HALF][0] + Points[EntityIndex][STATE_OVERTIME][0]);
-                    gPugEngine.SetArgInt(2, Points[EntityIndex][STATE_FIRST_HALF][1] + Points[EntityIndex][STATE_SECOND_HALF][1] + Points[EntityIndex][STATE_OVERTIME][1]);
+                    gPugEngine.SetArgInt(1, gPugMod.m_Points[EntityIndex][STATE_FIRST_HALF][0] + gPugMod.m_Points[EntityIndex][STATE_SECOND_HALF][0] + gPugMod.m_Points[EntityIndex][STATE_OVERTIME][0]);
+                    gPugEngine.SetArgInt(2, gPugMod.m_Points[EntityIndex][STATE_FIRST_HALF][1] + gPugMod.m_Points[EntityIndex][STATE_SECOND_HALF][1] + gPugMod.m_Points[EntityIndex][STATE_OVERTIME][1]);
                 }
             }
         }
