@@ -123,7 +123,7 @@ void CPugVoteOvertime::Stop()
                 }
                 case 2: // Play Overtime
                 {
-                    gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, STATE_OVERTIME);
+                    gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, STATE_FIRST_OT);
                     break;
                 }
                 case 3: // End Tied

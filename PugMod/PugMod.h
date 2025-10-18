@@ -9,12 +9,14 @@ constexpr auto STATE_KNIFE_ROUND = 5;
 constexpr auto STATE_FIRST_HALF = 6;
 constexpr auto STATE_HALFTIME = 7;
 constexpr auto STATE_SECOND_HALF = 8;
-constexpr auto STATE_OVERTIME = 9;
-constexpr auto STATE_END = 10;
+constexpr auto STATE_FIRST_OT = 9;
+constexpr auto STATE_HALFTIME_OT = 10;
+constexpr auto STATE_SECOND_OT = 11;
+constexpr auto STATE_END = 12;
 
-constexpr std::array<const char *, STATE_END + 1> g_Pug_Config = {"pugmod", "deathmatch", "votemap", "voteteam", "captain", "kniferound", "esl", "halftime", "esl", "esl-ot", "end"};
+constexpr std::array<const char *, STATE_END + 1> g_Pug_Config = {"pugmod", "deathmatch", "votemap", "voteteam", "captain", "kniferound", "esl", "halftime", "esl", "esl-ot", "halftime", "esl-ot", "end"};
 
-constexpr std::array<const char *, STATE_END + 1> g_Pug_String = {"Morto", "Deathmatch", "Escolha do Mapa", "Escolha do Time", "Capitães", "Round Faca", "Primeiro Tempo", "Intervalo", "Segundo Tempo", "Overtime", "Fim"};
+constexpr std::array<const char *, STATE_END + 1> g_Pug_String = {"Morto", "Deathmatch", "Escolha do Mapa", "Escolha do Time", "Capitães", "Round Faca", "Primeiro Tempo", "Intervalo", "Segundo Tempo", "Primeiro OT", "Intervalo OT", "Segundo OT", "Fim"};
 
 constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamId = {"Nenhum", "Terroristas", "Contra-Terroristas", "Espectadores"};
 
@@ -32,7 +34,12 @@ public:
     int SetState(int State);
 
     int GetRound();
+
     int GetScore(TeamName Team);
+    void SetScore(TeamName Team, int State, int Score);
+
+    int GetPoint(int EntityIndex, int Type);
+    void SetPoint(int State, int EntityIndex, int Type, int Point);
 
     void SwapTeams();
 
@@ -42,6 +49,7 @@ public:
     void DropClient(edict_t *pEntity);
     void GiveDefaultItems(CBasePlayer *Player);
 
+    void RestartRound();
     void RoundStart();
     void RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay);
 
@@ -51,11 +59,10 @@ public:
     static bool TeamScore(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
     static bool ScoreInfo(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
 
-//private:
+private:
     int m_State = STATE_DEAD;
     std::array<std::array<int, STATE_END + 1U>, SPECTATOR + 1U> m_Score;
-    std::array<int, SPECTATOR + 1U> m_ScoreOT;
-    std::array<std::array<std::array<int, 2>, MAX_CLIENTS + 1U>, STATE_END + 1U> m_Points;
+    std::array<std::array<std::array<int, 2>, STATE_END + 1U>, MAX_CLIENTS + 1U> m_Point;
 };
 
 extern CPugMod gPugMod;

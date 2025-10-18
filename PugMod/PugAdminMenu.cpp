@@ -399,12 +399,11 @@ void CPugAdminMenu::Pug(CBasePlayer *Player)
                 gPugMenu[Player->entindex()].AddItem(3, g_Pug_String[STATE_KNIFE_ROUND], false, STATE_KNIFE_ROUND);
                 gPugMenu[Player->entindex()].AddItem(4, g_Pug_String[STATE_FIRST_HALF], false, STATE_FIRST_HALF);
             }
-            else if (State >= STATE_FIRST_HALF && State <= STATE_OVERTIME)
+            else if (State == STATE_FIRST_HALF && State <= STATE_SECOND_OT)
             {
                 gPugMenu[Player->entindex()].AddItem(5, "Reiniciar Partida", false, STATE_FIRST_HALF);
                 gPugMenu[Player->entindex()].AddItem(6, "Finalizar Partida", false, STATE_END);
                 gPugMenu[Player->entindex()].AddItem(7, "Cancelar Partida", false, STATE_DEATHMATCH);
-                gPugMenu[Player->entindex()].AddItemFormat(8, false, State, "Reiniciar %s", g_Pug_String[State]);
             }
 
             gPugMenu[Player->entindex()].Show(Player);
@@ -424,24 +423,23 @@ void CPugAdminMenu::PugHandle(CBasePlayer *Player, P_MENU_ITEM Item)
     {
         if (Item.Extra == STATE_FIRST_HALF)
         {
+            gPugDM.Stop();
             gPugReady.Stop(true);
             gPugTimer.Stop(true);
-            
-            gPugMod.m_Score[TERRORIST][STATE_FIRST_HALF] = 2;
-            gPugMod.m_Score[CT][STATE_FIRST_HALF] = 1;
 
-            gPugMod.m_Score[TERRORIST][STATE_SECOND_HALF] = 1;
-            gPugMod.m_Score[CT][STATE_SECOND_HALF] = 2;
+            gPugMod.SetScore(TERRORIST, STATE_FIRST_HALF, 2);
+            gPugMod.SetScore(CT, STATE_FIRST_HALF, 1);
 
-            gPugMod.m_Score[TERRORIST][STATE_OVERTIME] = 0;
-            gPugMod.m_Score[CT][STATE_OVERTIME] = 0;
+            gPugMod.SetScore(TERRORIST, STATE_SECOND_HALF, 1);
+            gPugMod.SetScore(CT, STATE_SECOND_HALF, 2);
 
-            gPugMod.m_ScoreOT[TERRORIST] = 0;
-            gPugMod.m_ScoreOT[CT] = 0;
+            gPugMod.SetScore(TERRORIST, STATE_FIRST_OT, 0);
+            gPugMod.SetScore(CT, STATE_FIRST_OT, 0);
 
-            gPugMod.SetState(STATE_OVERTIME);
+            gPugMod.SetScore(TERRORIST, STATE_SECOND_OT, 0);
+            gPugMod.SetScore(CT, STATE_SECOND_OT, 0);
+
+            gPugMod.SetState(STATE_FIRST_OT);
         }
-
-        //gPugMod.SetState(Item.Extra);
     }
 }
