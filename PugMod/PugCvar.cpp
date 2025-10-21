@@ -4,9 +4,6 @@ CPugCvar gPugCvar;
 
 void CPugCvar::ServerActivate()
 {
-    // sv_restart
-    this->m_SvRestart = g_engfuncs.pfnCVarGetPointer("sv_restart");
-
     // allow_spectators
     this->m_AllowSpectators = g_engfuncs.pfnCVarGetPointer("allow_spectators");
 

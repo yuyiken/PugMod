@@ -7,7 +7,6 @@ public:
 
 	cvar_t* Register(const char *pszName, const char *pszValue);
 
-	cvar_t* m_SvRestart;
 	cvar_t* m_AllowSpectators;
 	cvar_t* m_MpMaxMoney;
 	cvar_t* m_MpFreezeTime;

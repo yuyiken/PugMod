@@ -55,7 +55,7 @@ bool ReGameDLL_Init()
 
 										g_ReGameHookchains->CSGameRules_PlayerSpawn()->registerHook(ReGameDLL_CSGameRules_PlayerSpawn);
 
-										g_ReGameHookchains->CBasePlayer_GiveDefaultItems()->registerHook(ReGameDLL_CBasePlayer_GiveDefaultItems);
+										g_ReGameHookchains->CBasePlayer_OnSpawnEquip()->registerHook(ReGameDLL_CBasePlayer_OnSpawnEquip);
 
 										g_ReGameHookchains->ShowVGUIMenu()->registerHook(ReGameDLL_ShowVGUIMenu);
 
@@ -74,8 +74,6 @@ bool ReGameDLL_Init()
 										g_ReGameHookchains->CSGameRules_OnRoundFreezeEnd()->registerHook(ReGameDLL_CSGameRules_OnRoundFreezeEnd);
 
 										g_ReGameHookchains->RoundEnd()->registerHook(ReGameDLL_RoundEnd);
-
-										g_ReGameHookchains->CBotManager_OnEvent()->registerHook(ReGameDLL_CBotManager_OnEvent);
 									}
 
 									gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] ReGameDLL API Loaded: %d.%d", Plugin_info.logtag, REGAMEDLL_API_VERSION_MAJOR, REGAMEDLL_API_VERSION_MINOR);
@@ -115,7 +113,7 @@ bool ReGameDLL_Stop()
 
 		g_ReGameHookchains->CSGameRules_PlayerSpawn()->unregisterHook(ReGameDLL_CSGameRules_PlayerSpawn);
 
-		g_ReGameHookchains->CBasePlayer_GiveDefaultItems()->unregisterHook(ReGameDLL_CBasePlayer_GiveDefaultItems);
+		g_ReGameHookchains->CBasePlayer_OnSpawnEquip()->unregisterHook(ReGameDLL_CBasePlayer_OnSpawnEquip);
 
 		g_ReGameHookchains->ShowVGUIMenu()->unregisterHook(ReGameDLL_ShowVGUIMenu);
 
@@ -134,8 +132,6 @@ bool ReGameDLL_Stop()
 		g_ReGameHookchains->CSGameRules_OnRoundFreezeEnd()->unregisterHook(ReGameDLL_CSGameRules_OnRoundFreezeEnd);
 
 		g_ReGameHookchains->RoundEnd()->unregisterHook(ReGameDLL_RoundEnd);
-
-		g_ReGameHookchains->CBotManager_OnEvent()->unregisterHook(ReGameDLL_CBotManager_OnEvent);
 	}
 
 	return true;
@@ -223,13 +219,13 @@ void ReGameDLL_CSGameRules_PlayerSpawn(IReGameHook_CSGameRules_PlayerSpawn *chai
 	gPugReady.PlayerSpawn(Player);
 }
 
-void ReGameDLL_CBasePlayer_GiveDefaultItems(IReGameHook_CBasePlayer_GiveDefaultItems *chain, CBasePlayer *Player)
+void ReGameDLL_CBasePlayer_OnSpawnEquip(IReGameHook_CBasePlayer_OnSpawnEquip *chain, CBasePlayer *Player, bool addDefault, bool equipGame)
 {
-	chain->callNext(Player);
+	chain->callNext(Player, addDefault, equipGame);
 
-	gPugDM.GiveDefaultItems(Player);
+	gPugDM.OnSpawnEquip(Player, addDefault, equipGame);
 
-	gPugMod.GiveDefaultItems(Player);
+	gPugMod.OnSpawnEquip(Player, addDefault, equipGame);
 }
 
 void ReGameDLL_ShowVGUIMenu(IReGameHook_ShowVGUIMenu *chain, CBasePlayer *Player, int MenuType, int BitMask, char *pszMenuText)
@@ -312,9 +308,4 @@ bool ReGameDLL_RoundEnd(IReGameHook_RoundEnd *chain, int winStatus, ScenarioEven
 	gPugMod.RoundEnd(winStatus, event, tmDelay);
 
 	return Result;
-}
-
-void ReGameDLL_CBotManager_OnEvent(IReGameHook_CBotManager_OnEvent *chain, GameEventType event, CBaseEntity *pEntity, CBaseEntity *pOther)
-{
-	chain->callNext(event, pEntity, pOther);
 }

@@ -72,7 +72,7 @@ public:
     bool CheckDistance(CBasePlayer *Player, vec3_t Origin, float Distance);
     void GetIntoGame(CBasePlayer *Player);
     void PlayerSpawn(CBasePlayer *Player);
-    void GiveDefaultItems(CBasePlayer *Player);
+    void OnSpawnEquip(CBasePlayer *Player, bool addDefault, bool equipGame);
     bool DropItem(CBasePlayer *Player);
     bool FPlayerCanTakeDamage(CBasePlayer *Player, CBaseEntity *Entity);
     void TakeDamage(CBasePlayer *Player, entvars_t *pevInflictor, entvars_t *pevAttacker, float &flDamage, int bitsDamageType);

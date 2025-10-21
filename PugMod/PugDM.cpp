@@ -208,7 +208,7 @@ void CPugDM::PlayerSpawn(CBasePlayer *Player)
     }
 }
 
-void CPugDM::GiveDefaultItems(CBasePlayer *Player)
+void CPugDM::OnSpawnEquip(CBasePlayer *Player, bool addDefault, bool equipGame)
 {
     if (this->m_Run)
     {

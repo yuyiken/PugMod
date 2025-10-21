@@ -47,7 +47,7 @@ public:
     void GetIntoGame(CBasePlayer *Player);
     bool HasRestrictItem(CBasePlayer *Player, ItemID Item, ItemRestType Type);
     void DropClient(edict_t *pEntity);
-    void GiveDefaultItems(CBasePlayer *Player);
+    void OnSpawnEquip(CBasePlayer *Player, bool addDefault, bool equipGame);
 
     void RestartRound();
     void RoundStart();
@@ -61,8 +61,8 @@ public:
 
 private:
     int m_State = STATE_DEAD;
-    std::array<std::array<int, STATE_END + 1U>, SPECTATOR + 1U> m_Score;
-    std::array<std::array<std::array<int, 2>, STATE_END + 1U>, MAX_CLIENTS + 1U> m_Point;
+    std::array<std::array<int, STATE_END + 1U>, SPECTATOR + 1U> m_Score = {};
+    std::array<std::array<std::array<int, 2>, STATE_END + 1U>, MAX_CLIENTS + 1U> m_Point = {};
 };
 
 extern CPugMod gPugMod;
