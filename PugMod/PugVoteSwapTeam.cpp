@@ -73,7 +73,7 @@ void CPugVoteSwapTeam::Init(int Team)
                 gPugUtil.ClientCommand(Player->edict(), g_VoteSwapTeam_Sound[g_engfuncs.pfnRandomLong(0, 1)]);
             }
 
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Os ^3%s^1 venceram: Iniciando a escolha do time.", gPugCvar.m_Tag->string, g_Pug_TeamId[Team]);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Os ^3%s^1 venceram: Iniciando a escolha do time.", gPugCvar.m_Tag->string, g_Pug_TeamName[Team]);
         }
         else
         {

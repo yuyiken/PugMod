@@ -28,6 +28,32 @@ void CPugMenu::Create(std::string Title, bool Exit, int HandleType)
     this->m_Handle = HandleType;
 }
 
+void CPugMenu::CreateFormat(bool Exit, int HandleType, const char *Format, ...)
+{
+    va_list argList;
+
+    va_start(argList, Format);
+
+    char Buffer[128] = {0};
+
+    vsnprintf(Buffer, sizeof(Buffer), Format, argList);
+
+    va_end(argList);
+
+    if (Buffer[0] != '\0')
+    {
+        this->m_Text = std::string(Buffer);
+
+        this->m_Data.clear();
+
+        this->m_Page = -1;
+
+        this->m_Exit = Exit;
+
+        this->m_Handle = HandleType;
+    }
+}
+
 void CPugMenu::AddItem(int Info, std::string Text, bool Disabled, int Extra)
 {
     this->m_Data.push_back({Info, Text, Disabled, Extra});

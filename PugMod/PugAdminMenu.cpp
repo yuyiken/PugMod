@@ -148,7 +148,7 @@ void CPugAdminMenu::BanHandle(CBasePlayer *Player, P_MENU_ITEM Item)
         {
             if (Item.Extra < 0)
             {
-                gPugMenu[Player->entindex()].Create(gPugUtil.FormatString("Tempo para banir: ^w%s^y", STRING(Target->edict()->v.netname)), true, E_MENU::ME_ADMIN_MENU_BAN);
+                gPugMenu[Player->entindex()].CreateFormat(true, E_MENU::ME_ADMIN_MENU_BAN, "Tempo para banir: ^w%s^y", STRING(Target->edict()->v.netname));
 
                 std::vector<time_t> BanTimes = { 5, 10, 15, 30, 60, 120, 240, 480, 960, 1440, 10080, 43200 };
 
@@ -219,7 +219,7 @@ void CPugAdminMenu::SlapHandle(CBasePlayer *Player, P_MENU_ITEM Item)
         {
             if (Item.Extra < 0)
             {
-                gPugMenu[Player->entindex()].Create(gPugUtil.FormatString("Tapa: ^w%s^y", STRING(Target->edict()->v.netname)), true, E_MENU::ME_ADMIN_MENU_SLAP);
+                gPugMenu[Player->entindex()].CreateFormat(true, E_MENU::ME_ADMIN_MENU_SLAP, "Tapa: ^w%s^y", STRING(Target->edict()->v.netname));
 
 				gPugMenu[Player->entindex()].AddItem(Target->entindex(), "Sem Dano", false, 0);
 
@@ -282,7 +282,7 @@ void CPugAdminMenu::Team(CBasePlayer *Player)
             {
                 if (!gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
                 {
-                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), gPugUtil.FormatString("%s \\R\\y%s", STRING(Target->edict()->v.netname), g_Pug_TeamShort[Player->m_iTeam]), false, -1);
+                    gPugMenu[Player->entindex()].AddItemFormat(Target->entindex(), false, -1, "%s \\R\\y%s", STRING(Target->edict()->v.netname), g_Pug_TeamNameShort[Player->m_iTeam]);
                 }
             }
         }
@@ -301,13 +301,13 @@ void CPugAdminMenu::TeamHandle(CBasePlayer *Player, P_MENU_ITEM Item)
         {
             if (Item.Extra < 0)
             {
-                gPugMenu[Player->entindex()].Create(gPugUtil.FormatString("Transferir Time: ^w%s^y", STRING(Target->edict()->v.netname)), true, E_MENU::ME_ADMIN_MENU_TEAM);
+                gPugMenu[Player->entindex()].CreateFormat(true, E_MENU::ME_ADMIN_MENU_TEAM, "Transferir Time: ^w%s^y", STRING(Target->edict()->v.netname));
 
-				gPugMenu[Player->entindex()].AddItem(Target->entindex(), g_Pug_TeamId[TERRORIST], Target->m_iTeam == TERRORIST, TERRORIST);
+				gPugMenu[Player->entindex()].AddItem(Target->entindex(), g_Pug_TeamName[TERRORIST], Target->m_iTeam == TERRORIST, TERRORIST);
 
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), g_Pug_TeamId[CT], Target->m_iTeam == CT, CT);
+                gPugMenu[Player->entindex()].AddItem(Target->entindex(), g_Pug_TeamName[CT], Target->m_iTeam == CT, CT);
 
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), g_Pug_TeamId[SPECTATOR], Target->m_iTeam == SPECTATOR, SPECTATOR);
+                gPugMenu[Player->entindex()].AddItem(Target->entindex(), g_Pug_TeamName[SPECTATOR], Target->m_iTeam == SPECTATOR, SPECTATOR);
 
                 gPugMenu[Player->entindex()].Show(Player);
             }
@@ -389,7 +389,7 @@ void CPugAdminMenu::Pug(CBasePlayer *Player)
 
         if (State > STATE_DEAD && State < STATE_END)
         {
-            gPugMenu[Player->entindex()].Create("Escolha uma ação a executar:", true, E_MENU::ME_ADMIN_MENU_PUG);
+            gPugMenu[Player->entindex()].Create("Escolha uma ação:", true, E_MENU::ME_ADMIN_MENU_PUG);
 
             if (State == STATE_DEATHMATCH)
             {
@@ -421,25 +421,11 @@ void CPugAdminMenu::PugHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        if (Item.Extra == STATE_FIRST_HALF)
+        if (Item.Extra >= STATE_DEATHMATCH && Item.Extra <= STATE_END)
         {
-            gPugDM.Stop();
-            gPugReady.Stop(true);
-            gPugTimer.Stop(true);
+            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Iniciando Estado: ^3%s^1.", gPugCvar.m_Tag->string, g_Pug_String[Item.Extra]);
 
-            gPugMod.SetScore(TERRORIST, STATE_FIRST_HALF, 2);
-            gPugMod.SetScore(CT, STATE_FIRST_HALF, 1);
-
-            gPugMod.SetScore(TERRORIST, STATE_SECOND_HALF, 1);
-            gPugMod.SetScore(CT, STATE_SECOND_HALF, 2);
-
-            gPugMod.SetScore(TERRORIST, STATE_FIRST_OT, 0);
-            gPugMod.SetScore(CT, STATE_FIRST_OT, 0);
-
-            gPugMod.SetScore(TERRORIST, STATE_SECOND_OT, 0);
-            gPugMod.SetScore(CT, STATE_SECOND_OT, 0);
-
-            gPugMod.SetState(STATE_FIRST_OT);
+            gPugMod.SetState(Item.Extra);
         }
     }
 }

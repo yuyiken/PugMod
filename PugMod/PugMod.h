@@ -18,9 +18,9 @@ constexpr std::array<const char *, STATE_END + 1> g_Pug_Config = {"pugmod", "dea
 
 constexpr std::array<const char *, STATE_END + 1> g_Pug_String = {"Morto", "Deathmatch", "Escolha do Mapa", "Escolha do Time", "Capitães", "Round Faca", "Primeiro Tempo", "Intervalo", "Segundo Tempo", "Primeiro OT", "Intervalo OT", "Segundo OT", "Fim"};
 
-constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamId = {"Nenhum", "Terroristas", "Contra-Terroristas", "Espectadores"};
+constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamName = {"Nenhum", "Terroristas", "Contra-Terroristas", "Espectadores"};
 
-constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamShort = {"NONE", "TR", "CT", "SPEC"};
+constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamNameShort = {"NONE", "TR", "CT", "SPEC"};
 
 constexpr hudtextparms_t g_Pug_HudParam = {-1.0f, 0.20f, 2, 0x00, 0xFF, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0.0f, 0.0f, 12.0f, 2.0f, 1};
 
@@ -45,7 +45,6 @@ public:
 
     bool ChooseTeam(CBasePlayer *Player, int Slot);
     void GetIntoGame(CBasePlayer *Player);
-    bool HasRestrictItem(CBasePlayer *Player, ItemID Item, ItemRestType Type);
     void DropClient(edict_t *pEntity);
     void OnSpawnEquip(CBasePlayer *Player, bool addDefault, bool equipGame);
 

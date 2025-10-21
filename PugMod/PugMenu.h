@@ -42,6 +42,7 @@ class CPugMenu
 public:
     void Clear();
     void Create(std::string Title, bool Exit, int HandleType);
+    void CreateFormat(bool Exit, int HandleType, const char *Format, ...);
     void AddItem(int Info, std::string Text, bool Disabled, int Extra);
     void AddItemFormat(int Info, bool Disabled, int Extra, const char *Format, ...);
     void Show(CBasePlayer *Player);

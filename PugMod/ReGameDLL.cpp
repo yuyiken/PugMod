@@ -286,7 +286,7 @@ void ReGameDLL_CBasePlayer_SetAnimation(IReGameHook_CBasePlayer_SetAnimation *ch
 
 bool ReGameDLL_CBasePlayer_HasRestrictItem(IReGameHook_CBasePlayer_HasRestrictItem *chain, CBasePlayer *Player, ItemID ItemIndex, ItemRestType RestType)
 {
-	if (gPugMod.HasRestrictItem(Player, ItemIndex, RestType))
+	if (gPugRestrictItem.HasRestrictItem(Player, ItemIndex, RestType))
 	{
 		return true;
 	}

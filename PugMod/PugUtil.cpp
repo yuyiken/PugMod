@@ -792,18 +792,3 @@ void CPugUtil::ShowMotd(edict_t* pEntity, char* Motd, unsigned int MotdLength)
 		}
 	}
 }
-
-const char* CPugUtil::FormatString(const char* Format, ...)
-{
-	va_list ArgList;
-
-	static char VarArgs[256];
-
-	va_start(ArgList, Format);
-
-	vsnprintf(VarArgs, sizeof(VarArgs), Format, ArgList);
-
-	va_end(ArgList);
-
-	return VarArgs;
-}

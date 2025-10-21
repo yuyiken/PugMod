@@ -106,16 +106,16 @@ void CPugServerCmd::Status()
     auto State = gPugMod.GetState();
 
     gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Status: %s", gPugCvar.m_Tag->string, g_Pug_String[State]);
-    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] %s: %d", gPugCvar.m_Tag->string,g_Pug_TeamId[TERRORIST], Players[TERRORIST].size());
-    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] %s: %d", gPugCvar.m_Tag->string,g_Pug_TeamId[CT], Players[CT].size());
-    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] %s: %d", gPugCvar.m_Tag->string,g_Pug_TeamId[SPECTATOR], Players[SPECTATOR].size());
+    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] %s: %d", gPugCvar.m_Tag->string,g_Pug_TeamName[TERRORIST], Players[TERRORIST].size());
+    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] %s: %d", gPugCvar.m_Tag->string,g_Pug_TeamName[CT], Players[CT].size());
+    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] %s: %d", gPugCvar.m_Tag->string,g_Pug_TeamName[SPECTATOR], Players[SPECTATOR].size());
 
     if (State >= STATE_FIRST_HALF && State <= STATE_END)
     {
         if (g_pGameRules)
         {
-            gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Score %s: %d", gPugCvar.m_Tag->string, g_Pug_TeamId[TERRORIST], CSGameRules()->m_iNumTerroristWins);
-            gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Score %s: %d", gPugCvar.m_Tag->string, g_Pug_TeamId[CT], CSGameRules()->m_iNumCTWins);
+            gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Score %s: %d", gPugCvar.m_Tag->string, g_Pug_TeamName[TERRORIST], CSGameRules()->m_iNumTerroristWins);
+            gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Score %s: %d", gPugCvar.m_Tag->string, g_Pug_TeamName[CT], CSGameRules()->m_iNumCTWins);
         }
     }
 }

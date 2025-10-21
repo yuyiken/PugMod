@@ -24,7 +24,7 @@ private:
         {"pug_add_admin", this->AddAdmin},
         {"pug_add_clcmd", this->AddClientCmd},
         {"pug_add_spawn", this->AddSpawn},
-        {"pug_add_wpn", this->AddWeapon},
+        {"pug_add_weapon", this->AddWeapon},
         {"pug_add_map", this->AddMap},
         {"pug_status", this->Status}
     }};

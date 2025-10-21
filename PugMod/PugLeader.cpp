@@ -196,7 +196,7 @@ void CPugLeader::SetLeader(CBasePlayer* Player, int Team)
 
         Player->ClearConditions(BIT_LEADER_MENU);
 
-        gPugUtil.PrintColor(nullptr, (Team == TERRORIST ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE), "^4[%s]^1 Novo capitão dos ^3%s^1: %s", gPugCvar.m_Tag->string, g_Pug_TeamId[Team], STRING(Player->edict()->v.netname));
+        gPugUtil.PrintColor(nullptr, (Team == TERRORIST ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE), "^4[%s]^1 Novo capitão dos ^3%s^1: %s", gPugCvar.m_Tag->string, g_Pug_TeamName[Team], STRING(Player->edict()->v.netname));
     }
 }
 
@@ -373,19 +373,19 @@ void CPugLeader::StartFrame()
 
 			PlayerList[CT] += std::string((5 - Count[CT]), '\n');
 
-            gPugUtil.SendHud(nullptr, g_Leader_HudParam[0], "%s (%d / %d):", g_Pug_TeamId[TERRORIST], Count[TERRORIST], this->m_PlayersMin);
+            gPugUtil.SendHud(nullptr, g_Leader_HudParam[0], "%s (%d / %d):", g_Pug_TeamName[TERRORIST], Count[TERRORIST], this->m_PlayersMin);
 
             gPugUtil.SendHud(nullptr, g_Leader_HudParam[1], "\n%s", PlayerList[TERRORIST].c_str());
 
             if (Count[SPECTATOR] < 1)
             {
-                gPugUtil.SendHud(nullptr, g_Leader_HudParam[2], "%s (%d / %d):", g_Pug_TeamId[CT], Count[CT], this->m_PlayersMin);
+                gPugUtil.SendHud(nullptr, g_Leader_HudParam[2], "%s (%d / %d):", g_Pug_TeamName[CT], Count[CT], this->m_PlayersMin);
 
                 gPugUtil.SendHud(nullptr, g_Leader_HudParam[3], "\n%s", PlayerList[CT].c_str());
             }
             else
             {
-                gPugUtil.SendHud(nullptr, g_Leader_HudParam[4], "%s (%d / %d):\n\n\n\n\n\n%s (%d):", g_Pug_TeamId[CT], Count[CT], this->m_PlayersMin, g_Pug_TeamId[SPECTATOR], Count[SPECTATOR]);
+                gPugUtil.SendHud(nullptr, g_Leader_HudParam[4], "%s (%d / %d):\n\n\n\n\n\n%s (%d):", g_Pug_TeamName[CT], Count[CT], this->m_PlayersMin, g_Pug_TeamName[SPECTATOR], Count[SPECTATOR]);
 
                 gPugUtil.SendHud(nullptr, g_Leader_HudParam[5], "\n%s\n%s", PlayerList[CT].c_str(), PlayerList[SPECTATOR].c_str());
             }
