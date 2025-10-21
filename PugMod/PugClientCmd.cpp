@@ -212,6 +212,36 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                         gPugAdminMenu.Menu(Player);
                                         return true;
                                     }
+                                    case CMD_ADMIN_KICK:
+                                    {
+                                        gPugAdminMenu.Kick(Player);
+                                        return true;
+                                    }
+                                    case CMD_ADMIN_BAN:
+                                    {
+                                        gPugAdminMenu.Ban(Player);
+                                        return true;
+                                    }
+                                    case CMD_ADMIN_SLAP:
+                                    {
+                                        gPugAdminMenu.Slap(Player);
+                                        return true;
+                                    }
+                                    case CMD_ADMIN_TEAM:
+                                    {
+                                        gPugAdminMenu.Team(Player);
+                                        return true;
+                                    }
+                                    case CMD_ADMIN_MESSAGE:
+                                    {
+                                        this->Message(Player);
+                                        return true;
+                                    }
+                                    case CMD_ADMIN_RCON:
+                                    {
+                                        this->Rcon(Player);
+                                        return true;
+                                    }
                                 }
                             }
                         }
@@ -258,6 +288,61 @@ bool CPugClientCmd::HelpAdmin(CBasePlayer *Player)
                 }
             }
         }
+    }
+
+    return false;
+}
+
+bool CPugClientCmd::Message(CBasePlayer *Player)
+{
+    if (gPugAdmin.CheckAccess(Player, ADMIN_CHAT))
+    {
+        auto pCmdArgs = g_engfuncs.pfnCmd_Args();
+
+        if (pCmdArgs)
+        {
+            if (pCmdArgs[0u] != '\0')
+            {
+                gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 (^3%s^1) %s", gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), pCmdArgs);
+                return true;
+            }
+        }
+
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Uso: ^3%s^1 <mensagem>", gPugCvar.m_Tag->string, g_engfuncs.pfnCmd_Argv(0));
+        return true;
+    }
+
+    return false;
+}
+
+bool CPugClientCmd::Rcon(CBasePlayer *Player)
+{
+    if (gPugAdmin.CheckAccess(Player, ADMIN_RCON))
+    {
+        auto pCmdArgs = g_engfuncs.pfnCmd_Args();
+
+        if (pCmdArgs)
+        {
+            if (pCmdArgs[0u] != '\0')
+            {
+                std::string Args = pCmdArgs;
+
+                if (Args.find("rcon_password") != std::string::npos || Args.find("sv_password") != std::string::npos)
+                {
+                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Comando bloqueado.", gPugCvar.m_Tag->string);
+                    return true;
+                }
+                
+                gPugUtil.ServerCommand("%s", pCmdArgs);
+
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Executado: ^3%s^1", gPugCvar.m_Tag->string, pCmdArgs);
+
+                return true;
+            }
+        }
+
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Uso: ^3%s^1 <comando>", gPugCvar.m_Tag->string, g_engfuncs.pfnCmd_Argv(0));
+        return true;
     }
 
     return false;

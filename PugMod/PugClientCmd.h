@@ -18,6 +18,8 @@ enum E_CLIENT_CMD_ID
     CMD_ADMIN_BAN,
     CMD_ADMIN_SLAP,
     CMD_ADMIN_TEAM,
+    CMD_ADMIN_MESSAGE,
+    CMD_ADMIN_RCON,
 };
 
 typedef struct S_CLIENT_CMD
@@ -45,7 +47,8 @@ public:
 
     bool Help(CBasePlayer *Player);
     bool HelpAdmin(CBasePlayer *Player);
-
+    bool Message(CBasePlayer *Player);
+    bool Rcon(CBasePlayer *Player);
 private:
     std::map<std::string, P_CLIENT_CMD> m_Data = {};
 
