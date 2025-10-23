@@ -54,7 +54,7 @@ bool CPugClientCmd::FilterFlood(const char *pszCommand, int EntityIndex)
 {
     if (!gPugAdmin.Access(EntityIndex, ADMIN_IMMUNITY))
     {
-        if (_stricmp(pszCommand, "say") == 0 || _stricmp(pszCommand, "say_team") == 0 || _stricmp(pszCommand, "jointeam") == 0 || _stricmp(pszCommand, "chooseteam") == 0)
+        if (strcasecmp(pszCommand, "say") == 0 || strcasecmp(pszCommand, "say_team") == 0 || strcasecmp(pszCommand, "jointeam") == 0 || strcasecmp(pszCommand, "chooseteam") == 0)
         {
             if (this->m_FloodTimer[EntityIndex] > gpGlobals->time)
             {
@@ -82,7 +82,7 @@ bool CPugClientCmd::Command(edict_t *pEntity)
 {
     if (!FNullEnt(pEntity))
     {
-        const char *pszCommand = g_engfuncs.pfnCmd_Argv(0);
+        auto pszCommand = g_engfuncs.pfnCmd_Argv(0);
 
         if (pszCommand)
         {
@@ -125,21 +125,11 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                         {
                             if (pszArgv[0u] == gPugCvar.m_CmdPrefixPlayer->string[0u] || pszArgv[0u] == gPugCvar.m_CmdPrefixAdmin->string[0u])
                             {
-                                auto pszCmdArgs = g_engfuncs.pfnCmd_Args();
+                                char szCommand[] = "%s\n";
 
-                                if (pszCmdArgs)
-                                {
-                                    if (pszCmdArgs[0u] != '\0')
-                                    {
-                                        auto Command = strdup("%s\n");
+                                g_engfuncs.pfnClientCommand(pEntity, szCommand, g_engfuncs.pfnCmd_Args());
 
-                                        g_engfuncs.pfnClientCommand(pEntity, Command, pszCmdArgs);
-
-                                        free(Command);
-
-                                        return true;
-                                    }
-                                }
+                                return true;
                             }
                         }
                     }

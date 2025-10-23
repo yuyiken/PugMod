@@ -335,7 +335,7 @@ bool CPugMod::ChooseTeam(CBasePlayer *Player, int Slot)
 
     if (Player->m_iTeam == Slot)
     {
-        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Você já está nesse time.", gPugCvar.m_Tag->string);
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Você já está no time ^3%s^1.", gPugCvar.m_Tag->string, g_Pug_TeamName[Player->m_iTeam]);
         return true;
     }
 
@@ -354,7 +354,7 @@ bool CPugMod::ChooseTeam(CBasePlayer *Player, int Slot)
 
 		if (Players[Slot].size() >= static_cast<size_t>(gPugCvar.m_PlayersMax->value))
 		{
-			gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Esse time já está completo.", gPugCvar.m_Tag->string);
+			gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O time ^3%s^1 já está completo.", gPugCvar.m_Tag->string, g_Pug_TeamName[Slot]);
 			return true;
 		}
 	}
@@ -562,7 +562,7 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
                                 {
                                     this->m_State = STATE_END;
 
-                                    gPugTask.Create(E_TASK::SET_STATE, (tmDelay+ 1.0f), false, STATE_END);
+                                    gPugTask.Create(E_TASK::SET_STATE, (tmDelay + 1.0f), false, STATE_END);
                                     break;
                                 }
                             }

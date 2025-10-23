@@ -98,58 +98,60 @@ bool CPugDM::GetPlayerSpawnSpot(CBasePlayer *Player)
 {
     if (this->m_Run)
     {
-        if (this->m_Spawn.size())
+        if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
         {
-            do
+            if (this->m_Spawn.size())
             {
-                auto Spawn = this->m_Spawn.begin();
-
-                std::advance(Spawn, g_engfuncs.pfnRandomLong(0, this->m_Spawn.size()));
-
-                if (!Spawn->second.Vecs.IsZero())
+                do
                 {
-                    if (this->CheckDistance(Player, Spawn->second.Vecs, SPAWN_POINT_MIN_DISTANCE))
+                    auto Spawn = this->m_Spawn.begin();
+
+                    std::advance(Spawn, g_engfuncs.pfnRandomLong(0, this->m_Spawn.size()));
+
+                    if (!Spawn->second.Vecs.IsZero())
                     {
-                        Player->edict()->v.origin = Spawn->second.Vecs + Vector(0.0f, 0.0f, 1.0f);
-
-                        if (!Spawn->second.Angles.IsZero())
+                        if (this->CheckDistance(Player, Spawn->second.Vecs, SPAWN_POINT_MIN_DISTANCE))
                         {
-                            Player->edict()->v.angles = Spawn->second.Angles;
+                            Player->edict()->v.origin = Spawn->second.Vecs + Vector(0.0f, 0.0f, 1.0f);
+
+                            if (!Spawn->second.Angles.IsZero())
+                            {
+                                Player->edict()->v.angles = Spawn->second.Angles;
+                            }
+
+                            if (!Spawn->second.VAngles.IsZero())
+                            {
+                                Player->edict()->v.v_angle = Spawn->second.VAngles;
+
+                                Player->edict()->v.v_angle.z = 0;
+
+                                Player->edict()->v.angles = Player->edict()->v.v_angle;
+                            }
+
+                            Player->edict()->v.velocity = Vector(0.0f, 0.0f, 0.0f);
+
+                            Player->edict()->v.punchangle = Vector(0.0f, 0.0f, 0.0f);
+
+                            Player->edict()->v.fixangle = 1;
+
+                            Player->m_bloodColor = BLOOD_COLOR_RED;
+
+                            Player->m_modelIndexPlayer = Player->edict()->v.modelindex;
+
+                            if (Player->edict()->v.flags & FL_DUCKING)
+                            {
+                                g_engfuncs.pfnSetSize(Player->edict(), VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX);
+                            }
+                            else
+                            {
+                                g_engfuncs.pfnSetSize(Player->edict(), VEC_HULL_MIN, VEC_HULL_MAX);
+                            }
+
+                            return true;
                         }
-
-                        if (!Spawn->second.VAngles.IsZero())
-                        {
-                            Player->edict()->v.v_angle = Spawn->second.VAngles;
-
-                            Player->edict()->v.v_angle.z = 0;
-
-                            Player->edict()->v.angles = Player->edict()->v.v_angle;
-                        }
-
-                        Player->edict()->v.velocity = Vector(0.0f, 0.0f, 0.0f);
-
-                        Player->edict()->v.punchangle = Vector(0.0f, 0.0f, 0.0f);
-
-                        Player->edict()->v.fixangle = 1;
-
-                        Player->m_bloodColor = BLOOD_COLOR_RED;
-
-                        Player->m_modelIndexPlayer = Player->edict()->v.modelindex;
-
-                        if (Player->edict()->v.flags & FL_DUCKING)
-                        {
-                            g_engfuncs.pfnSetSize(Player->edict(), VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX);
-                        }
-                        else
-                        {
-                            g_engfuncs.pfnSetSize(Player->edict(), VEC_HULL_MIN, VEC_HULL_MAX);
-                        }
-
-                        return true;
                     }
-                }
+                } while (true);
             }
-            while (true);
         }
     }
 

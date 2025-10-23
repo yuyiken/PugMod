@@ -7,20 +7,20 @@ void CPugMapList::ServerActivate()
     this->m_Data.clear();
 }
 
-void CPugMapList::Add(const char* Map)
+void CPugMapList::Add(const char *Map)
 {
     if (Map)
     {
         if (Map[0u] != '\0')
         {
-            char *Name = strdup(Map);
+            char *File = strdup(Map);
 
-            if (g_engfuncs.pfnIsMapValid(Name))
+            if (g_engfuncs.pfnIsMapValid(File))
             {
-                this->m_Data.insert(std::make_pair(this->m_Data.size(), Name));
+                this->m_Data.insert(std::make_pair(this->m_Data.size(), Map));
             }
 
-            free(Name);
+            free(File);
         }
     }
 }

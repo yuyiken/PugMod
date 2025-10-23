@@ -276,13 +276,13 @@ void CPugAdminMenu::Team(CBasePlayer *Player)
 
         gPugMenu[Player->entindex()].Create("Time do Jogador:", true, E_MENU::ME_ADMIN_MENU_TEAM);
 
-        for (auto const & Target : Players)
+        for (auto Target : Players)
         {
             if (Target->m_iTeam != UNASSIGNED)
             {
                 if (!gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
                 {
-                    gPugMenu[Player->entindex()].AddItemFormat(Target->entindex(), false, -1, "%s \\R\\y%s", STRING(Target->edict()->v.netname), g_Pug_TeamNameShort[Player->m_iTeam]);
+                    gPugMenu[Player->entindex()].AddItemFormat(0, false, Target->entindex(), "%s \\R\\y%s", STRING(Target->edict()->v.netname), g_Pug_TeamNameShort[Target->m_iTeam]);
                 }
             }
         }
@@ -295,25 +295,25 @@ void CPugAdminMenu::TeamHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        auto Target = UTIL_PlayerByIndexSafe(Item.Info);
+        auto Target = UTIL_PlayerByIndexSafe(Item.Extra);
 
         if (Target)
         {
-            if (Item.Extra < 0)
+            if (Item.Info == 0)
             {
                 gPugMenu[Player->entindex()].CreateFormat(true, E_MENU::ME_ADMIN_MENU_TEAM, "Transferir Time: ^w%s^y", STRING(Target->edict()->v.netname));
 
-				gPugMenu[Player->entindex()].AddItem(Target->entindex(), g_Pug_TeamName[TERRORIST], Target->m_iTeam == TERRORIST, TERRORIST);
+				gPugMenu[Player->entindex()].AddItem(TERRORIST, g_Pug_TeamName[TERRORIST], Target->m_iTeam == TERRORIST, Target->entindex());
 
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), g_Pug_TeamName[CT], Target->m_iTeam == CT, CT);
+                gPugMenu[Player->entindex()].AddItem(CT, g_Pug_TeamName[CT], Target->m_iTeam == CT, Target->entindex());
 
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), g_Pug_TeamName[SPECTATOR], Target->m_iTeam == SPECTATOR, SPECTATOR);
+                gPugMenu[Player->entindex()].AddItem(SPECTATOR, g_Pug_TeamName[SPECTATOR], Target->m_iTeam == SPECTATOR, Target->entindex());
 
                 gPugMenu[Player->entindex()].Show(Player);
             }
             else
             {
-				if (Item.Extra == SPECTATOR)
+				if (Item.Info == SPECTATOR)
 				{
 					if (Target->IsAlive())
 					{
@@ -323,7 +323,7 @@ void CPugAdminMenu::TeamHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 					}
 				}
 
-                Target->CSPlayer()->JoinTeam((TeamName)Item.Extra);
+                Target->CSPlayer()->JoinTeam((TeamName)Item.Info);
 
                 this->Team(Player);
             }
