@@ -15,17 +15,48 @@ void CPugCvarControl::Add(const char *Name, const char *String)
     {
         if (Name[0u] != '\0')
         {
-            std::string Temp = "";
-
-            if (String)
+            if (g_engfuncs.pfnCVarGetPointer(Name))
             {
-                if (String[0u] != '\0')
-                {
-                    Temp = String;
-                }
-            }
+                std::string Temp = "";
 
-            this->m_Data[Name].push_back(Temp);
+                if (String)
+                {
+                    if (String[0u] != '\0')
+                    {
+                        Temp = String;
+                    }
+                }
+
+                this->m_Data[Name].push_back(Temp);
+            }
         }
+    }
+}
+
+void CPugCvarControl::Menu(CBasePlayer *Player)
+{
+    if (gPugAdmin.CheckAccess(Player, ADMIN_CVAR))
+    {
+        gPugMenu[Player->entindex()].Create("Controle de Cvars", true, E_MENU::ME_ADMIN_MENU_CVAR);
+
+        for (auto Item : this->m_Data)
+        {
+            auto Pointer = g_engfuncs.pfnCVarGetPointer(Item.first.c_str());
+
+            if (Pointer)
+            {
+                gPugMenu[Player->entindex()].AddItemFormat(0, false, 0, "%s \\R\"%s\"", Pointer->name, Pointer->string);
+            }
+        }
+
+        gPugMenu[Player->entindex()].Display(Player, 0);
+    }
+}
+
+void CPugCvarControl::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
+{
+    if (Player)
+    {
+        /**/
     }
 }

@@ -241,6 +241,11 @@ bool CPugMenu::Handle(CBasePlayer *Player, int Key)
                                 gPugAdminMenu.PugHandle(Player, this->m_Data[ItemId]);
                                 break;
                             }
+                            case E_MENU::ME_ADMIN_MENU_CVAR:
+                            {
+                                gPugCvarControl.MenuHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
                         }
                     }
                 }
