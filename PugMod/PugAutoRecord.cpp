@@ -49,7 +49,7 @@ void CPugAutoRecord::PlayerSpawn(CBasePlayer *Player)
                     {
                         char File[64] = {0};
                         
-                        Q_snprintf(File, sizeof(File), "%ld-%s.dem", time(NULL), STRING(gpGlobals->mapname));
+                        Q_snprintf(File, sizeof(File), "%u-%s.dem", (unsigned)time(NULL), STRING(gpGlobals->mapname));
 
                         gPugUtil.ClientCommand(Player->edict(), "stop; record \"%s\"", File);
 
