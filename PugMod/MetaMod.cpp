@@ -83,20 +83,11 @@ C_DLLEXPORT int GetEntityAPI2(DLL_FUNCTIONS *pFunctionTable, int *interfaceVersi
 {
 	memset(&g_DLL_FunctionTable_Pre, 0, sizeof(DLL_FUNCTIONS));
 
-	g_DLL_FunctionTable_Pre.pfnClientDisconnect = DLL_PRE_ClientDisconnect;
-
 	g_DLL_FunctionTable_Pre.pfnClientCommand = DLL_PRE_ClientCommand;
 
 	memcpy(pFunctionTable, &g_DLL_FunctionTable_Pre, sizeof(DLL_FUNCTIONS));
 
 	return 1;
-}
-
-void DLL_PRE_ClientDisconnect(edict_t *pEntity)
-{
-	gPugReady.Disconnect(pEntity);
-
-	RETURN_META(MRES_IGNORED);
 }
 
 void DLL_PRE_ClientCommand(edict_t *pEntity)
@@ -122,8 +113,6 @@ C_DLLEXPORT int GetEntityAPI2_Post(DLL_FUNCTIONS *pFunctionTable, int *interface
 	g_DLL_FunctionTable_Post.pfnServerDeactivate = DLL_POST_ServerDeactivate;
 
 	g_DLL_FunctionTable_Post.pfnStartFrame = DLL_POST_StartFrame;
-
-	g_DLL_FunctionTable_Post.pfnClientConnect = DLL_POST_ClientConnect;
 
 	g_DLL_FunctionTable_Post.pfnClientPutInServer = DLL_POST_ClientPutInServer;
 
@@ -166,7 +155,7 @@ void DLL_POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 
 	gPugVoteSwapTeam.ServerActivate();
 
-	gPugDemoRecord.ServerActivate();
+	gPugAutoRecord.ServerActivate();
 
 	RETURN_META(MRES_IGNORED);
 }
@@ -193,6 +182,8 @@ void DLL_POST_ServerDeactivate()
 
 	gPugVoteSwapTeam.ServerActivate();
 
+	gPugAutoRecord.ServerDeactivate();
+
 	RETURN_META(MRES_IGNORED);
 }
 
@@ -215,11 +206,6 @@ void DLL_POST_StartFrame()
 	RETURN_META(MRES_IGNORED);
 }
 
-qboolean DLL_POST_ClientConnect(edict_t *pEntity, const char *pszName, const char *pszAddress, char szRejectReason[128])
-{
-	RETURN_META_VALUE(MRES_IGNORED, FALSE);
-}
-
 void DLL_POST_ClientPutInServer(edict_t *pEntity)
 {
 	gPugAdmin.PutInServer(pEntity);
@@ -227,6 +213,8 @@ void DLL_POST_ClientPutInServer(edict_t *pEntity)
 	gPugReady.PutInServer(pEntity);
 
 	gPugLeader.PutInServer(pEntity);
+
+	gPugRetry.PutInServer(pEntity);
 
 	RETURN_META(MRES_IGNORED);
 }

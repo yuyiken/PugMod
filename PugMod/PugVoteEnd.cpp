@@ -65,6 +65,8 @@ void CPugVoteEnd::Init()
                 gPugMenu[Player->entindex()].Show(Player);
 
                 gPugUtil.ClientCommand(Player->edict(), g_VoteEnd_Sound[g_engfuncs.pfnRandomLong(0, 1)]);
+
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Um Jogador saiu da partida, o que deseja fazer?", gPugCvar.m_Tag->string);
             }
         }
         else
@@ -88,11 +90,14 @@ void CPugVoteEnd::Stop()
 
         auto Winner = this->GetWinner();
 
-        if (Winner.Votes && Winner.Index == 2)
+        if (Winner.Votes)
         {
-            gPugUtil.ClientCommand(nullptr, g_VoteEnd_Sound[2]);
+            if (Winner.Index == 2)
+            {
+                gPugUtil.ClientCommand(nullptr, g_VoteEnd_Sound[2]);
 
-            gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_END);
+                gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_END);
+            }
         }
     }
 }

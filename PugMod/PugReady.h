@@ -22,7 +22,7 @@ public:
     void PutInServer(edict_t *pEntity);
     void GetIntoGame(CBasePlayer *Player);
     void PlayerSpawn(CBasePlayer *Player);
-    void Disconnect(edict_t *pEntity);
+    void DropClient(edict_t *pEntity);
     void RestartRound();
     void StartFrame();
 

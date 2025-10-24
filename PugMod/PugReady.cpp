@@ -96,7 +96,7 @@ void CPugReady::PlayerSpawn(CBasePlayer *Player)
     }
 }
 
-void CPugReady::Disconnect(edict_t *pEntity)
+void CPugReady::DropClient(edict_t *pEntity)
 {
     if (!FNullEnt(pEntity))
     {

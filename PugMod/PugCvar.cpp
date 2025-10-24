@@ -222,6 +222,13 @@ void CPugCvar::ServerActivate()
     // Padrão: "1"
     this->m_DemoRecord = this->Register("pug_demo_record", "1");
 
+    // Tempo de ban do anti-retry
+    //
+    // 0 Inativo
+    //
+    // Padrão: "20.0"
+    this->m_RetryTime = this->Register("pug_retry_time", "20.0");
+
     // Ativar modo Deathmatch
     // Se inativo, será o modo aquecimento comum
     //
