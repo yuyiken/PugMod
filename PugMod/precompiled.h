@@ -57,6 +57,7 @@
 #include "PugAdminMenu.h"
 #include "PugClientCmd.h"
 #include "PugCvar.h"
+#include "PugDemoRecord.h"
 #include "PugDM.h"
 #include "PugEngine.h"
 #include "PugLeader.h"

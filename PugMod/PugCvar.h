@@ -18,6 +18,9 @@ public:
 	cvar_t* m_Tag;
 	cvar_t* m_CmdPrefixPlayer;
 	cvar_t* m_CmdPrefixAdmin;
+	cvar_t* m_CmdFloodTime;
+	cvar_t* m_CmdFloodRepeat;
+	cvar_t* m_CmdFloodNextTime;
 	cvar_t* m_PlayersMin;
 	cvar_t* m_PlayersMax;
 	cvar_t* m_Rounds;
@@ -39,6 +42,7 @@ public:
 	cvar_t* m_ScorePlayers;
 	cvar_t* m_MotdFile;
 	cvar_t* m_MotdFileAdmin;
+	cvar_t* m_DemoRecord;
 
 	cvar_t* m_DM_Enable;
 	cvar_t* m_DM_HideKillFeed;

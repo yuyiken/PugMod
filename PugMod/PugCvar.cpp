@@ -40,6 +40,21 @@ void CPugCvar::ServerActivate()
     // Padrão: "!"
     this->m_CmdPrefixAdmin = this->Register("pug_cmd_prefix_admin", "!");
 
+    // Tempo entre comandos para considerar uma tentativa de flood
+    //
+    // Padrao: "0.75"
+    this->m_CmdFloodTime = this->Register("pug_cmd_flood_time", "0.75");
+
+    // Máximo de tentativas de flood para bloqueio
+    //
+    // Padrao: "3.0"
+    this->m_CmdFloodRepeat = this->Register("pug_cmd_flood_repeat", "3.0");
+
+    // Tempo de bloqueio do anti flood
+    //
+    // Padrao: "4.0"
+    this->m_CmdFloodNextTime = this->Register("pug_cmd_flood_next_time", "4.0");
+
     // Mínimo de jogadores por time
     //
     // Padrão: "5"
@@ -199,6 +214,14 @@ void CPugCvar::ServerActivate()
     //
     // Padrão: "motd_admin.html"
     this->m_MotdFileAdmin = this->Register("pug_motd_admin_file", "motd_admin.html");
+
+    // Gravar uma demo no lado do cliente ao iniciar a partida
+    //
+    // 0 Inativo
+    // 1 Ativvo
+    //
+    // Padrão: "1"
+    this->m_DemoRecord = this->Register("pug_demo_record", "1");
 
     // Ativar modo Deathmatch
     // Se inativo, será o modo aquecimento comum

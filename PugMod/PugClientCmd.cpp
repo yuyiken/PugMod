@@ -6,6 +6,10 @@ void CPugClientCmd::ServerActivate()
 {
     this->m_Data.clear();
 
+    this->m_FloodCount = {};
+
+    this->m_FloodTimer = {};
+
     gPugUtil.ServerCommand("exec %s/cfg/clientcmd.cfg", gPugUtil.GetPath());
 }
 
@@ -52,26 +56,29 @@ LP_CLIENT_CMD CPugClientCmd::Get(int Index)
 
 bool CPugClientCmd::FilterFlood(const char *pszCommand, int EntityIndex)
 {
-    if (!gPugAdmin.Access(EntityIndex, ADMIN_IMMUNITY))
+    if (gPugCvar.m_CmdFloodTime->value > 0.0f)
     {
-        if (strcasecmp(pszCommand, "say") == 0 || strcasecmp(pszCommand, "say_team") == 0 || strcasecmp(pszCommand, "jointeam") == 0 || strcasecmp(pszCommand, "chooseteam") == 0)
+        if (!gPugAdmin.Access(EntityIndex, ADMIN_IMMUNITY))
         {
-            if (this->m_FloodTimer[EntityIndex] > gpGlobals->time)
+            if (Q_stricmp(pszCommand, "say") == 0 || Q_stricmp(pszCommand, "say_team") == 0 || Q_stricmp(pszCommand, "jointeam") == 0 || Q_stricmp(pszCommand, "chooseteam") == 0)
             {
-                if (this->m_FloodCount[EntityIndex] >= CMD_MAX_FLOOD_REPEAT)
+                if (this->m_FloodTimer[EntityIndex] > gpGlobals->time)
                 {
-                    this->m_FloodTimer[EntityIndex] = (gpGlobals->time + CMD_MIN_FLOOD_TIME + CMD_MIN_FLOOD_NEXT_TIME);
-                    return true;
+                    if (this->m_FloodCount[EntityIndex] >= gPugCvar.m_CmdFloodRepeat->value)
+                    {
+                        this->m_FloodTimer[EntityIndex] = (gpGlobals->time + gPugCvar.m_CmdFloodTime->value + gPugCvar.m_CmdFloodNextTime->value);
+                        return true;
+                    }
+
+                    this->m_FloodCount[EntityIndex] += 1.0f;
+                }
+                else if (this->m_FloodCount[EntityIndex])
+                {
+                    this->m_FloodCount[EntityIndex] -= 1.0f;
                 }
 
-                this->m_FloodCount[EntityIndex]++;
+                this->m_FloodTimer[EntityIndex] = gpGlobals->time + gPugCvar.m_CmdFloodTime->value;
             }
-            else if (this->m_FloodCount[EntityIndex])
-            {
-                this->m_FloodCount[EntityIndex]--;
-            }
-
-            this->m_FloodTimer[EntityIndex] = gpGlobals->time + CMD_MIN_FLOOD_TIME;
         }
     }
 
@@ -125,9 +132,7 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                         {
                             if (pszArgv[0u] == gPugCvar.m_CmdPrefixPlayer->string[0u] || pszArgv[0u] == gPugCvar.m_CmdPrefixAdmin->string[0u])
                             {
-                                char szCommand[] = "%s\n";
-
-                                g_engfuncs.pfnClientCommand(pEntity, szCommand, g_engfuncs.pfnCmd_Args());
+                                gPugUtil.ClientCommand(pEntity, "%s\n", g_engfuncs.pfnCmd_Args());
 
                                 return true;
                             }

@@ -29,10 +29,6 @@ typedef struct S_CLIENT_CMD
     int Flags;
 } P_CLIENT_CMD, *LP_CLIENT_CMD;
 
-constexpr auto CMD_MAX_FLOOD_REPEAT = 4;
-constexpr auto CMD_MIN_FLOOD_TIME = 0.75f;
-constexpr auto CMD_MIN_FLOOD_NEXT_TIME = 4.0f;
-
 class CPugClientCmd
 {
 public:
@@ -52,7 +48,7 @@ public:
 private:
     std::map<std::string, P_CLIENT_CMD> m_Data = {};
 
-    std::array<short, MAX_CLIENTS + 1> m_FloodCount = {};
+    std::array<float, MAX_CLIENTS + 1> m_FloodCount = {};
     std::array<float, MAX_CLIENTS + 1> m_FloodTimer = {};
 };
 

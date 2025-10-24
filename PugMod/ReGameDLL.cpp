@@ -208,6 +208,8 @@ void ReGameDLL_CSGameRules_PlayerSpawn(IReGameHook_CSGameRules_PlayerSpawn *chai
 	gPugDM.PlayerSpawn(Player);
 
 	gPugReady.PlayerSpawn(Player);
+
+	gPugDemoRecord.PlayerSpawn(Player);
 }
 
 void ReGameDLL_CBasePlayer_OnSpawnEquip(IReGameHook_CBasePlayer_OnSpawnEquip *chain, CBasePlayer *Player, bool addDefault, bool equipGame)
