@@ -90,7 +90,7 @@ void CPugVoteEnd::Stop()
 
         if (Winner.Votes && Winner.Index == 2)
         {
-            gPugUtil.ClientCommand(nullptr, g_VoteSwapTeam_Sound[2]);
+            gPugUtil.ClientCommand(nullptr, g_VoteEnd_Sound[2]);
 
             gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_END);
         }
@@ -162,7 +162,7 @@ void CPugVoteEnd::StartFrame()
 
                         strftime(szTime, sizeof(szTime), "%M:%S", tm_info);
                         
-                        gPugUtil.SendHud(nullptr, g_VoteSwapTeam_HudParam[0], "Finalizar Partida: %s", szTime);
+                        gPugUtil.SendHud(nullptr, g_VoteEnd_HudParam[0], "Finalizar Partida: %s", szTime);
                     }
 
                     std::string VoteList = "";
@@ -177,11 +177,11 @@ void CPugVoteEnd::StartFrame()
 
                     if (!VoteList.empty())
                     {
-                        gPugUtil.SendHud(nullptr, g_VoteSwapTeam_HudParam[1], VoteList.c_str());
+                        gPugUtil.SendHud(nullptr, g_VoteEnd_HudParam[1], VoteList.c_str());
                     }
                     else
                     {
-                        gPugUtil.SendHud(nullptr, g_VoteSwapTeam_HudParam[1], "Nenhum voto registrado.");
+                        gPugUtil.SendHud(nullptr, g_VoteEnd_HudParam[1], "Nenhum voto registrado.");
                     }
                 }
                 else
