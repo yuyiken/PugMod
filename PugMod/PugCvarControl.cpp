@@ -57,6 +57,6 @@ void CPugCvarControl::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        /**/
+        this->Menu(Player);
     }
 }
