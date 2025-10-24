@@ -49,7 +49,7 @@ void CPugCvarControl::Menu(CBasePlayer *Player)
             }
         }
 
-        gPugMenu[Player->entindex()].Display(Player, 0);
+        gPugMenu[Player->entindex()].Show(Player);
     }
 }
 
