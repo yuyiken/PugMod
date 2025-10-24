@@ -171,7 +171,6 @@ void CPugCvar::ServerActivate()
     this->m_KnifeRound = this->Register("pug_knife_round", "0");
 
     // Questionar fim da partida ao desconectar um jogador
-    // Quando não houver espectadores
     //
     // 0 Inativo
     // 1 Ativo

@@ -45,11 +45,17 @@ int CPugMod::SetState(int State)
     {
         case STATE_DEAD:
         {
+            this->m_Score = {};
+            this->m_Point = {};
+            
             gPugTask.Create(E_TASK::SET_STATE, 5.0f, false, STATE_DEATHMATCH);
             break;
         }
         case STATE_DEATHMATCH:
         {
+            this->m_Score = {};
+            this->m_Point = {};
+
             if (gPugCvar.m_DM_Enable->value)
             {
                 gPugDM.Init();
@@ -68,6 +74,9 @@ int CPugMod::SetState(int State)
         }
         case STATE_VOTEMAP:
         {
+            this->m_Score = {};
+            this->m_Point = {};
+
             gPugDM.Stop();
             gPugReady.Stop(true);
             gPugTimer.Stop(true);
@@ -79,6 +88,9 @@ int CPugMod::SetState(int State)
         }
         case STATE_VOTETEAM:
         {
+            this->m_Score = {};
+            this->m_Point = {};
+
             gPugDM.Stop();
             gPugReady.Stop(true);
             gPugTimer.Stop(true);
@@ -90,6 +102,9 @@ int CPugMod::SetState(int State)
         }
         case STATE_CAPTAIN:
         {
+            this->m_Score = {};
+            this->m_Point = {};
+
             gPugDM.Stop();
             gPugReady.Stop(true);
             gPugTimer.Stop(true);
@@ -386,13 +401,27 @@ void CPugMod::DropClient(edict_t *pEntity)
     {
         auto Players = gPugUtil.GetPlayers();
 
-        auto PlayersMin = static_cast<size_t>(gPugCvar.m_PlayersMin->value - 1.0f);
-
-        if((Players[TERRORIST].size() < PlayersMin) || (Players[CT].size() < PlayersMin))
+        if((Players[TERRORIST].size() < 1) && (Players[CT].size() < 1))
         {
-            if (Players[SPECTATOR].size() < 1)
+            this->SetState(STATE_END);
+        }
+        else
+        {
+            auto Player = UTIL_PlayerByIndexSafe(ENTINDEX(pEntity));
+
+            if (Player)
             {
-                gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_END);
+                if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
+                {
+                    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 Saiu da partida..", gPugCvar.m_Tag->string, STRING(pEntity->v.netname));
+                }
+            }
+
+            auto PlayersMin = static_cast<size_t>(gPugCvar.m_PlayersMin->value - 1.0f);
+
+            if((Players[TERRORIST].size() < PlayersMin) || (Players[CT].size() < PlayersMin))
+            {
+                gPugVoteEnd.Init();
             }
         }
     }

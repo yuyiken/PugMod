@@ -1,13 +1,13 @@
 #include "precompiled.h"
 
-CPugDemoRecord gPugDemoRecord;
+CPugAutoRecord gPugAutoRecord;
 
-void CPugDemoRecord::ServerActivate()
+void CPugAutoRecord::ServerActivate()
 {
     this->m_Recording = {};
 }
 
-void CPugDemoRecord::ServerDeactivate()
+void CPugAutoRecord::ServerDeactivate()
 {
     if (gPugCvar.m_DemoRecord->value)
     {
@@ -25,7 +25,15 @@ void CPugDemoRecord::ServerDeactivate()
     }
 }
 
-void CPugDemoRecord::PlayerSpawn(CBasePlayer *Player)
+void CPugAutoRecord::GetIntoGame(CBasePlayer *Player)
+{
+    if (gPugCvar.m_DemoRecord->value)
+    {
+        this->m_Recording[Player->entindex()] = false;
+    }
+}
+
+void CPugAutoRecord::PlayerSpawn(CBasePlayer *Player)
 {
     if (gPugCvar.m_DemoRecord->value)
     {
@@ -50,15 +58,6 @@ void CPugDemoRecord::PlayerSpawn(CBasePlayer *Player)
                         gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Gravando Demo: ^3%s^1", gPugCvar.m_Tag->string, File);
                     }
                 }
-            }
-        }
-        else if (State == STATE_END)
-        {
-            if (this->m_Recording[Player->entindex()])
-            {
-                this->m_Recording[Player->entindex()] = false;
-
-                gPugUtil.ClientCommand(Player->edict(), "stop");
             }
         }
     }
