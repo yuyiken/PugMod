@@ -157,6 +157,8 @@ void DLL_POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 
 	gPugAutoRecord.ServerActivate();
 
+	gPugCvarControl.ServerActivate();
+
 	RETURN_META(MRES_IGNORED);
 }
 

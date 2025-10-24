@@ -88,6 +88,22 @@ void CPugServerCmd::AddWeapon()
     }
 }
 
+void CPugServerCmd::AddCvar()
+{
+    if (g_engfuncs.pfnCmd_Argc() >= 3)
+    {
+        gPugCvarControl.Add
+        (
+            g_engfuncs.pfnCmd_Argv(1),
+            g_engfuncs.pfnCmd_Argv(2)
+        );
+    }
+    else
+    {
+        gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Uso: %s <nome> <valor>", Plugin_info.logtag, g_engfuncs.pfnCmd_Argv(0));
+    }
+}
+
 void CPugServerCmd::AddMap()
 {
     if (g_engfuncs.pfnCmd_Argc() >= 2)

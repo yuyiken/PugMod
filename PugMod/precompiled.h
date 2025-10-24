@@ -58,6 +58,7 @@
 #include "PugAutoRecord.h"
 #include "PugClientCmd.h"
 #include "PugCvar.h"
+#include "PugCvarControl.h"
 #include "PugDM.h"
 #include "PugEngine.h"
 #include "PugLeader.h"

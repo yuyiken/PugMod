@@ -15,6 +15,7 @@ public:
     static void AddClientCmd();
     static void AddSpawn();
     static void AddWeapon();
+    static void AddCvar();
     static void AddMap();
     static void Status();
 
@@ -25,6 +26,7 @@ private:
         {"pug_add_clcmd", this->AddClientCmd},
         {"pug_add_spawn", this->AddSpawn},
         {"pug_add_weapon", this->AddWeapon},
+        {"pug_add_cvar", this->AddCvar},
         {"pug_add_map", this->AddMap},
         {"pug_status", this->Status}
     }};
