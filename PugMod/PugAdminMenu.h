@@ -6,6 +6,7 @@ constexpr auto ADMIN_MENU_SLAP = 2;
 constexpr auto ADMIN_MENU_TEAM = 3;
 constexpr auto ADMIN_MENU_MAP = 4;
 constexpr auto ADMIN_MENU_PUG = 5;
+constexpr auto ADMIN_MENU_CVAR = 6;
 
 class CPugAdminMenu
 {

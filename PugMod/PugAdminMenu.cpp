@@ -20,6 +20,8 @@ void CPugAdminMenu::Menu(CBasePlayer *Player)
 
         gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_PUG, "Controlar Pug", false, ADMIN_VOTE|ADMIN_LEVEL_B);
 
+        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_CVAR, "Controlar Cvars", false, ADMIN_CVAR);
+
         gPugMenu[Player->entindex()].Show(Player);
     }
 }
@@ -60,6 +62,11 @@ void CPugAdminMenu::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
                 case ADMIN_MENU_PUG:
                 {
                     this->Pug(Player);
+                    break;
+                }
+                case ADMIN_MENU_CVAR:
+                {
+                    gPugCvarControl.Menu(Player);
                     break;
                 }
             }

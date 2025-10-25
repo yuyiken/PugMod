@@ -237,6 +237,11 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                         this->Rcon(Player);
                                         return true;
                                     }
+                                    case CMD_ADMIN_CVAR:
+                                    {
+                                        gPugCvarControl.Menu(Player);
+                                        break;
+                                    }
                                 }
                             }
                         }

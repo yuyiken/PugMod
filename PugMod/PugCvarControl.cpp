@@ -15,7 +15,9 @@ void CPugCvarControl::Add(const char *Name, const char *String)
     {
         if (Name[0u] != '\0')
         {
-            if (g_engfuncs.pfnCVarGetPointer(Name))
+            auto Pointer = g_engfuncs.pfnCVarGetPointer(Name);
+
+            if (Pointer)
             {
                 std::string Temp = "";
 
@@ -27,7 +29,7 @@ void CPugCvarControl::Add(const char *Name, const char *String)
                     }
                 }
 
-                this->m_Data[Name].push_back(Temp);
+                this->m_Data[Pointer].push_back(Temp);
             }
         }
     }
@@ -41,11 +43,9 @@ void CPugCvarControl::Menu(CBasePlayer *Player)
 
         for (auto Item : this->m_Data)
         {
-            auto Pointer = g_engfuncs.pfnCVarGetPointer(Item.first.c_str());
-
-            if (Pointer)
+            if (Item.first)
             {
-                gPugMenu[Player->entindex()].AddItemFormat(0, false, 0, "%s \\R\"%s\"", Pointer->name, Pointer->string);
+                gPugMenu[Player->entindex()].AddItemFormat((int)(Item.first), false, 0, "%s \\R^y%s", Item.first->name, Item.first->string);
             }
         }
 
@@ -57,6 +57,45 @@ void CPugCvarControl::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
+        if (Item.Info)
+        {
+            auto Pointer = (cvar_t*)(Item.Info);
+
+            if (Pointer)
+            {
+                if (this->m_Data.find(Pointer) != this->m_Data.end())
+                {
+                    auto begin = this->m_Data[Pointer].begin();
+
+                    auto end = this->m_Data[Pointer].end();
+
+                    for (auto it = begin; ; ++it)
+                    {
+                        if (it < end)
+                        {
+                            if (it->compare(Pointer->string) == 0)
+                            {
+                                if (++it >= end)
+                                {
+                                    it = begin;
+                                }
+
+                                g_engfuncs.pfnCvar_DirectSet(Pointer, it->c_str());
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            g_engfuncs.pfnCvar_DirectSet(Pointer, begin->c_str());
+                            break;
+                        }
+                    }
+                }
+
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 %s ajustada para: \"^3%s^1\"", Plugin_info.logtag, Pointer->name, Pointer->string);
+            }
+        }
+
         this->Menu(Player);
     }
 }

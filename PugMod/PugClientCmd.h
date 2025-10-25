@@ -20,6 +20,7 @@ enum E_CLIENT_CMD_ID
     CMD_ADMIN_TEAM,
     CMD_ADMIN_MESSAGE,
     CMD_ADMIN_RCON,
+    CMD_ADMIN_CVAR
 };
 
 typedef struct S_CLIENT_CMD
