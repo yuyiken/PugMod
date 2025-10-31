@@ -8,6 +8,8 @@ void CPugMod::ServerActivate()
 
     this->m_Score = {};
 
+    this->m_ScoreOT = {};
+
     this->m_Point = {};
 
     this->SetState(STATE_DEAD);
@@ -46,6 +48,7 @@ int CPugMod::SetState(int State)
         case STATE_DEAD:
         {
             this->m_Score = {};
+            this->m_ScoreOT = {};
             this->m_Point = {};
             
             gPugTask.Create(E_TASK::SET_STATE, 5.0f, false, STATE_DEATHMATCH);
@@ -54,6 +57,7 @@ int CPugMod::SetState(int State)
         case STATE_DEATHMATCH:
         {
             this->m_Score = {};
+            this->m_ScoreOT = {};
             this->m_Point = {};
 
             if (gPugCvar.m_DM_Enable->value)
@@ -75,6 +79,7 @@ int CPugMod::SetState(int State)
         case STATE_VOTEMAP:
         {
             this->m_Score = {};
+            this->m_ScoreOT = {};
             this->m_Point = {};
 
             gPugDM.Stop();
@@ -89,6 +94,7 @@ int CPugMod::SetState(int State)
         case STATE_VOTETEAM:
         {
             this->m_Score = {};
+            this->m_ScoreOT = {};
             this->m_Point = {};
 
             gPugDM.Stop();
@@ -103,6 +109,7 @@ int CPugMod::SetState(int State)
         case STATE_CAPTAIN:
         {
             this->m_Score = {};
+            this->m_ScoreOT = {};
             this->m_Point = {};
 
             gPugDM.Stop();
@@ -115,6 +122,7 @@ int CPugMod::SetState(int State)
         case STATE_KNIFE_ROUND:
         {
             this->m_Score = {};
+            this->m_ScoreOT = {};
             this->m_Point = {};
             
             gPugDM.Stop();
@@ -129,6 +137,7 @@ int CPugMod::SetState(int State)
         case STATE_FIRST_HALF:
         {
             this->m_Score = {};
+            this->m_ScoreOT = {};
             this->m_Point = {};
 
             gPugDM.Stop();
@@ -176,7 +185,7 @@ int CPugMod::SetState(int State)
         {
             this->m_Score[TERRORIST][State] = 0;
             this->m_Score[CT][State] = 0;
-
+            this->m_ScoreOT = {};
             this->m_Point[State] = {};
 
             gPugDM.Stop();
@@ -190,9 +199,7 @@ int CPugMod::SetState(int State)
         }
         case STATE_FIRST_OT:
         {
-            this->m_Score[TERRORIST][State] = 0;
-            this->m_Score[CT][State] = 0;
-
+            this->m_ScoreOT = {};
             this->m_Point[State] = {};
 
             gPugDM.Stop();
@@ -231,9 +238,6 @@ int CPugMod::SetState(int State)
         }
         case STATE_SECOND_OT:
         {
-            this->m_Score[TERRORIST][State] = 0;
-            this->m_Score[CT][State] = 0;
-            
             this->m_Point[State] = {};
 
             gPugDM.Stop();
@@ -285,6 +289,8 @@ void CPugMod::SwapTeams()
     }
 
     SWAP(this->m_Score[TERRORIST], this->m_Score[CT]);
+
+    SWAP(this->m_ScoreOT[TERRORIST], this->m_ScoreOT[CT]);
 
     gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Trocando times automaticamente.", gPugCvar.m_Tag->string, g_Pug_String[this->m_State]);
 }
@@ -453,7 +459,7 @@ void CPugMod::UpdateClientData(CBasePlayer *Player)
                         auto MaxRound = static_cast<int>(gPugCvar.m_Rounds->value / 2.0f);
                         auto MaxRoundOT = static_cast<int>(gPugCvar.m_RoundsOT->value / 2.0f);
 
-                        if ((ScoreTR + ScoreCT) == (MaxRound - 1) || (this->m_Score[TERRORIST][this->m_State] + this->m_Score[CT][this->m_State]) == (MaxRoundOT - 1))
+                        if ((ScoreTR + ScoreCT) == (MaxRound - 1) || (this->m_ScoreOT[TERRORIST] + this->m_ScoreOT[CT]) == (MaxRoundOT - 1))
                         {
                             if (Player->m_iUpdateTime <= 0)
                             {
@@ -462,7 +468,7 @@ void CPugMod::UpdateClientData(CBasePlayer *Player)
 
                             gPugUtil.SendHud(Player->edict(), g_Pug_HudParam[1], "%s\nÚltimo Round\n%s %d : %d %s", g_Pug_String[this->m_State], g_Pug_TeamNameShort[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamNameShort[CT]);
                         }
-                        else if ((ScoreTR == MaxRound) || (ScoreCT == MaxRound) || ((this->m_Score[TERRORIST][STATE_FIRST_OT] + this->m_Score[TERRORIST][STATE_SECOND_OT]) == MaxRoundOT) || ((this->m_Score[CT][STATE_FIRST_OT] + this->m_Score[CT][STATE_SECOND_OT]) == MaxRoundOT))
+                        else if ((ScoreTR == MaxRound) || (ScoreCT == MaxRound) || (this->m_ScoreOT[TERRORIST] == MaxRoundOT) || (this->m_ScoreOT[CT] == MaxRoundOT))
                         {
                             if (Player->m_iUpdateTime <= 0)
                             {
@@ -490,8 +496,6 @@ void CPugMod::RestartRound()
     {
         if (CSGameRules()->m_bCompleteReset)
         {
-            this->m_Score[TERRORIST][this->m_State] = 0;
-            this->m_Score[CT][this->m_State] = 0;
             this->m_Point[this->m_State] = {};
         }
     }
@@ -524,6 +528,11 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
                 TeamName Winner = (winStatus == WINSTATUS_TERRORISTS) ? TERRORIST : CT;
 
                 this->m_Score[Winner][this->m_State]++;
+
+                if (this->m_State == STATE_FIRST_OT || this->m_State == STATE_SECOND_OT)
+                {
+                    this->m_ScoreOT[Winner]++;
+                }
                 
                 gPugUtil.ClientPrint(nullptr, E_PRINT::CONSOLE, "[%s] Round %d Ganho Por: %s.", gPugCvar.m_Tag->string, (this->GetRound() + 1), g_Pug_TeamName[Winner]);
 
@@ -588,7 +597,7 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
                     {
                         auto RoundsOT = static_cast<int>(gPugCvar.m_RoundsOT->value / 2.0f);
 
-                        if ((this->m_Score[TERRORIST][this->m_State] + this->m_Score[CT][this->m_State]) == RoundsOT)
+                        if ((this->m_ScoreOT[TERRORIST] + this->m_ScoreOT[CT]) == RoundsOT)
                         {
                             this->m_State = STATE_HALFTIME_OT;
 
@@ -600,16 +609,13 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
                     {
                         auto MaxRounds = static_cast<int>(gPugCvar.m_RoundsOT->value / 2.0f);
 
-                        auto ScoreTR = (this->m_Score[TERRORIST][STATE_FIRST_OT] + this->m_Score[TERRORIST][STATE_SECOND_OT]);
-                        auto ScoreCT = (this->m_Score[CT][STATE_FIRST_OT] + this->m_Score[CT][STATE_SECOND_OT]);
-
-                        if ((ScoreTR > MaxRounds) || (ScoreCT > MaxRounds))
+                        if ((this->m_ScoreOT[TERRORIST] > MaxRounds) || (this->m_ScoreOT[CT] > MaxRounds))
                         {
                             this->m_State = STATE_END;
 
                             gPugTask.Create(E_TASK::SET_STATE, (tmDelay + 1.0f), false, STATE_END);
                         }
-                        else if ((ScoreTR == MaxRounds) && (ScoreCT == MaxRounds))
+                        else if ((this->m_ScoreOT[TERRORIST] == MaxRounds) && (this->m_ScoreOT[CT] == MaxRounds))
                         {
                             switch (static_cast<int>(gPugCvar.m_OvertimeType->value))
                             {

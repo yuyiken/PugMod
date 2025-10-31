@@ -392,35 +392,16 @@ void CPugAdminMenu::Pug(CBasePlayer *Player)
 {
     if (gPugAdmin.CheckAccess(Player, ADMIN_VOTE|ADMIN_LEVEL_B))
     {
-        auto State = gPugMod.GetState();
+        gPugMenu[Player->entindex()].Create("Escolha o Estado:", true, E_MENU::ME_ADMIN_MENU_PUG);
 
-        if (State > STATE_DEAD && State < STATE_END)
+        for (auto i = STATE_DEAD; i <= STATE_END; i++)
         {
-            gPugMenu[Player->entindex()].Create("Escolha uma ação:", true, E_MENU::ME_ADMIN_MENU_PUG);
-
-            if (State == STATE_DEATHMATCH)
-            {
-                gPugMenu[Player->entindex()].AddItem(0, g_Pug_String[STATE_VOTEMAP], false, STATE_VOTEMAP);
-                gPugMenu[Player->entindex()].AddItem(1, g_Pug_String[STATE_VOTETEAM], false, STATE_VOTETEAM);
-                gPugMenu[Player->entindex()].AddItem(2, g_Pug_String[STATE_CAPTAIN], false, STATE_CAPTAIN);
-                gPugMenu[Player->entindex()].AddItem(3, g_Pug_String[STATE_KNIFE_ROUND], false, STATE_KNIFE_ROUND);
-                gPugMenu[Player->entindex()].AddItem(4, g_Pug_String[STATE_FIRST_HALF], false, STATE_FIRST_HALF);
-            }
-            else if (State == STATE_FIRST_HALF && State <= STATE_SECOND_OT)
-            {
-                gPugMenu[Player->entindex()].AddItem(5, "Reiniciar Partida", false, STATE_FIRST_HALF);
-                gPugMenu[Player->entindex()].AddItem(6, "Finalizar Partida", false, STATE_END);
-                gPugMenu[Player->entindex()].AddItem(7, "Cancelar Partida", false, STATE_DEATHMATCH);
-            }
-
-            gPugMenu[Player->entindex()].Show(Player);
+            gPugMenu[Player->entindex()].AddItem(i, g_Pug_String[i], false, i);
         }
-        else
-        {
-            this->Menu(Player);
 
-            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Controle indisponível nesse estado.", gPugCvar.m_Tag->string);
-        }
+        gPugMenu[Player->entindex()].Show(Player);
+
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O servidor será controlado conforme o estado do jogo.", gPugCvar.m_Tag->string);
     }
 }
 
@@ -428,11 +409,11 @@ void CPugAdminMenu::PugHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        if (Item.Extra >= STATE_DEATHMATCH && Item.Extra <= STATE_END)
-        {
-            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Iniciando Estado: ^3%s^1.", gPugCvar.m_Tag->string, g_Pug_String[Item.Extra]);
+        gPugMod.SetScore(CT, Item.Extra, 0);
+        gPugMod.SetScore(TERRORIST, Item.Extra, 0);
 
-            gPugMod.SetState(Item.Extra);
-        }
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O ^3ADMIN^1 alterou o status do servidor.", gPugCvar.m_Tag->string);
+
+        gPugMod.SetState(Item.Extra);
     }
 }
