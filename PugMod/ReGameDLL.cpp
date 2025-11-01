@@ -150,8 +150,6 @@ void ReGameDLL_CBasePlayer_UpdateClientData(IReGameHook_CBasePlayer_UpdateClient
 	chain->callNext(Player);
 
 	gPugDM.UpdateClientData(Player);
-
-	gPugMod.UpdateClientData(Player);
 }
 
 BOOL ReGameDLL_HandleMenu_ChooseTeam(IReGameHook_HandleMenu_ChooseTeam *chain, CBasePlayer *Player, int Slot)
@@ -191,6 +189,8 @@ void ReGameDLL_CSGameRules_RestartRound(IReGameHook_CSGameRules_RestartRound *ch
 	chain->callNext();
 
 	gPugLO3.RestartRound();
+
+	gPugMod.RestartRound();
 }
 
 edict_t *ReGameDLL_CSGameRules_GetPlayerSpawnSpot(IReGameHook_CSGameRules_GetPlayerSpawnSpot *chain, CBasePlayer *Player)
@@ -213,8 +213,6 @@ void ReGameDLL_CSGameRules_PlayerSpawn(IReGameHook_CSGameRules_PlayerSpawn *chai
 
 	gPugReady.PlayerSpawn(Player);
 
-	gPugMod.PlayerSpawn(Player);
-
 	gPugDemoRecord.PlayerSpawn(Player);
 }
 
@@ -223,6 +221,8 @@ void ReGameDLL_CBasePlayer_OnSpawnEquip(IReGameHook_CBasePlayer_OnSpawnEquip *ch
 	chain->callNext(Player, addDefault, equipGame);
 
 	gPugDM.OnSpawnEquip(Player, addDefault, equipGame);
+
+	gPugMod.OnSpawnEquip(Player);
 }
 
 void ReGameDLL_ShowVGUIMenu(IReGameHook_ShowVGUIMenu *chain, CBasePlayer *Player, int MenuType, int BitMask, char *pszMenuText)

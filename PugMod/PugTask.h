@@ -7,7 +7,7 @@ enum E_TASK
     LEADER_MENU,
     VOTE_SWAP_TEAM,
     VOTE_OVERTIME,
-    CHANGE_MAP
+    CHANGE_MAP,
 };
 
 typedef struct S_TASK

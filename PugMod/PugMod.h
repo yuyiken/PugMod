@@ -22,11 +22,7 @@ constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamName = {"Nenhum", "T
 
 constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamNameShort = {"NONE", "TR", "CT", "SPEC"};
 
-constexpr std::array<hudtextparms_t, 2> g_Pug_HudParam =
-{{
-    {-1.0f, 0.20f, 2, 0x00, 0xFF, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0.0f, 0.0f, 12.0f, 2.0f, 3},
-    {0.01f, 0.18f, 0, 0x00, 0xFF, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0.0f, 0.0f, 2.20f, 2.2f, 4}
-}};
+constexpr hudtextparms_t g_Pug_HudParam = {-1.0f, 0.20f, 2, 0x00, 0xFF, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0.0f, 0.0f, 12.0f, 2.0f, 1};
 
 class CPugMod
 {
@@ -50,10 +46,12 @@ public:
     bool ChooseTeam(CBasePlayer *Player, int Slot);
     void GetIntoGame(CBasePlayer *Player);
     void DropClient(edict_t *pEntity);
-    void PlayerSpawn(CBasePlayer *Player);
-    void UpdateClientData(CBasePlayer *Player);
+    void OnSpawnEquip(CBasePlayer *Player);
 
     void RestartRound();
+
+    void FreezeTime();
+
     void RoundStart();
     void RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay);
 

@@ -1,12 +1,15 @@
 #pragma once
 
-constexpr auto ADMIN_MENU_KICK = 0;
-constexpr auto ADMIN_MENU_BAN = 1;
-constexpr auto ADMIN_MENU_SLAP = 2;
-constexpr auto ADMIN_MENU_TEAM = 3;
-constexpr auto ADMIN_MENU_MAP = 4;
-constexpr auto ADMIN_MENU_PUG = 5;
-constexpr auto ADMIN_MENU_CVAR = 6;
+enum ADMIN_MENU_LIST
+{
+    ADMIN_MENU_KICK,
+    ADMIN_MENU_BAN,
+    ADMIN_MENU_SLAP,
+    ADMIN_MENU_TEAM,
+    ADMIN_MENU_MAP,
+    ADMIN_MENU_PUG,
+    ADMIN_MENU_CVAR
+};
 
 class CPugAdminMenu
 {
