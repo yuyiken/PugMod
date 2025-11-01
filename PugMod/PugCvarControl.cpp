@@ -39,13 +39,13 @@ void CPugCvarControl::Menu(CBasePlayer *Player)
 {
     if (gPugAdmin.CheckAccess(Player, ADMIN_CVAR))
     {
-        gPugMenu[Player->entindex()].Create("Controle de Cvars", true, E_MENU::ME_ADMIN_MENU_CVAR);
+        gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_CVAR, "Controle de Cvars");
 
         for (auto Item : this->m_Data)
         {
             if (Item.first)
             {
-                gPugMenu[Player->entindex()].AddItemFormat((int)(Item.first), false, 0, "%s \\R^y%s", Item.first->name, Item.first->string);
+                gPugMenu[Player->entindex()].AddItem((int)(Item.first), false, 0, "%s \\R^y%s", Item.first->name, Item.first->string);
             }
         }
 

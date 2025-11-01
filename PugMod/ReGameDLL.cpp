@@ -175,7 +175,7 @@ bool ReGameDLL_CBasePlayer_GetIntoGame(IReGameHook_CBasePlayer_GetIntoGame *chai
 
 	gPugDM.GetIntoGame(Player);
 
-	gPugAutoRecord.GetIntoGame(Player);
+	gPugDemoRecord.GetIntoGame(Player);
 
 	return Result;
 }
@@ -215,7 +215,7 @@ void ReGameDLL_CSGameRules_PlayerSpawn(IReGameHook_CSGameRules_PlayerSpawn *chai
 
 	gPugMod.PlayerSpawn(Player);
 
-	gPugAutoRecord.PlayerSpawn(Player);
+	gPugDemoRecord.PlayerSpawn(Player);
 }
 
 void ReGameDLL_CBasePlayer_OnSpawnEquip(IReGameHook_CBasePlayer_OnSpawnEquip *chain, CBasePlayer *Player, bool addDefault, bool equipGame)

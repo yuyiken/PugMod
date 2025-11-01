@@ -70,7 +70,7 @@ void CPugVoteTeam::Init()
 
         for (auto const &Player : Players)
         {
-            gPugMenu[Player->entindex()].Create("Modo de jogo:", false, E_MENU::ME_VOTE_TEAM);
+            gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_TEAM, "Modo de jogo:");
 
             for (size_t i = 0; i < this->m_VoteList.size(); ++i)
             {
@@ -78,7 +78,7 @@ void CPugVoteTeam::Init()
 
                 if (MenuFlags == 0 || (MenuFlags & BIT(i)))
                 {
-                    gPugMenu[Player->entindex()].AddItem(i, this->m_VoteList[i].Name, false, 0);
+                    gPugMenu[Player->entindex()].AddItem(i, false, i, this->m_VoteList[i].Name.c_str());
                 }
             }
 

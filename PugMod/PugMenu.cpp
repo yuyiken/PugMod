@@ -15,20 +15,7 @@ void CPugMenu::Clear()
 	this->m_Handle = 0;
 }
 
-void CPugMenu::Create(std::string Title, bool Exit, int HandleType)
-{
-    this->m_Text = Title;
-
-    this->m_Data.clear();
-
-    this->m_Page = -1;
-
-    this->m_Exit = Exit;
-
-    this->m_Handle = HandleType;
-}
-
-void CPugMenu::CreateFormat(bool Exit, int HandleType, const char *Format, ...)
+void CPugMenu::Create(bool Exit, int HandleType, const char *Format, ...)
 {
     va_list argList;
 
@@ -54,12 +41,7 @@ void CPugMenu::CreateFormat(bool Exit, int HandleType, const char *Format, ...)
     }
 }
 
-void CPugMenu::AddItem(int Info, std::string Text, bool Disabled, int Extra)
-{
-    this->m_Data.push_back({Info, Text, Disabled, Extra});
-}
-
-void CPugMenu::AddItemFormat(int Info, bool Disabled, int Extra, const char *Format, ...)
+void CPugMenu::AddItem(int Info, bool Disabled, int Extra, const char *Format, ...)
 {
     va_list argList;
 
@@ -191,7 +173,7 @@ bool CPugMenu::Handle(CBasePlayer *Player, int Key)
                                 gPugVoteTeam.MenuHandle(Player, this->m_Data[ItemId]);
                                 break;
                             }
-                            case E_MENU::ME_LEADER_MENU:
+                            case E_MENU::ME_VOTE_LEADER:
                             {
                                 gPugLeader.MenuHandle(Player, this->m_Data[ItemId]);
                                 break;
@@ -204,6 +186,16 @@ bool CPugMenu::Handle(CBasePlayer *Player, int Key)
                             case E_MENU::ME_VOTE_OVERTIME:
                             {
                                 gPugVoteOvertime.MenuHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::ME_VOTE_END:
+                            {
+                                gPugVoteEnd.MenuHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::ME_DEMO_RECORD:
+                            {
+                                gPugDemoRecord.MenuHandle(Player, this->m_Data[ItemId]);
                                 break;
                             }
                             case E_MENU::ME_ADMIN_MENU:

@@ -6,21 +6,21 @@ void CPugAdminMenu::Menu(CBasePlayer *Player)
 {
     if (gPugAdmin.CheckAccess(Player, ADMIN_MENU))
     {
-        gPugMenu[Player->entindex()].Create("Menu do Pug Mod:", true, E_MENU::ME_ADMIN_MENU);
+        gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU, "Menu do Pug Mod:");
 
-        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_KICK, "Kickar Jogador", false, ADMIN_KICK);
+        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_KICK, false, ADMIN_KICK, "Kickar Jogador");
 
-        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_BAN, "Banir Jogador", false, ADMIN_BAN|ADMIN_BAN_TEMP);
+        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_BAN, false, ADMIN_BAN|ADMIN_BAN_TEMP, "Banir Jogador");
 
-        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_SLAP, "Tapa no Jogador", false, ADMIN_SLAY);
+        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_SLAP, false, ADMIN_SLAY, "Tapa no Jogador");
 
-        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_TEAM, "Time do Jogador", false, ADMIN_LEVEL_A);
+        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_TEAM, false, ADMIN_LEVEL_A, "Time do Jogador");
 
-        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_MAP, "Mudar Mapa", false, ADMIN_MAP);
+        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_MAP, false, ADMIN_MAP, "Mudar Mapa");
 
-        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_PUG, "Controlar Pug", false, ADMIN_VOTE|ADMIN_LEVEL_B);
+        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_PUG, false, ADMIN_VOTE|ADMIN_LEVEL_B, "Controlar Pug");
 
-        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_CVAR, "Controlar Cvars", false, ADMIN_CVAR);
+        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_CVAR, false, ADMIN_CVAR, "Controlar Cvars");
 
         gPugMenu[Player->entindex()].Show(Player);
     }
@@ -71,6 +71,10 @@ void CPugAdminMenu::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
                 }
             }
         }
+        else
+        {
+            this->Menu(Player);
+        }
     }
 }
 
@@ -78,27 +82,28 @@ void CPugAdminMenu::Kick(CBasePlayer *Player)
 {
     if (gPugAdmin.CheckAccess(Player, ADMIN_KICK))
     {
-        auto Players = gPugUtil.GetPlayers(false, true);
+        auto Players = gPugUtil.GetPlayers(false, false);
 
-        if (Players.size() < 1)
+        if (Players.size() > 0)
+        {
+            gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_KICK, "Kickar Jogador:");
+
+            for (auto const & Target : Players)
+            {
+                if (!gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
+                {
+                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 0, STRING(Target->edict()->v.netname));
+                }
+            }
+
+            gPugMenu[Player->entindex()].Show(Player);
+        }
+        else
         {
             this->Menu(Player);
 
             gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Nenhum jogador encontrado.", gPugCvar.m_Tag->string);
-            return;
         }
-
-        gPugMenu[Player->entindex()].Create("Kickar Jogador:", true, E_MENU::ME_ADMIN_MENU_KICK);
-
-        for (auto const & Target : Players)
-        {
-            if (!gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
-            {
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), STRING(Target->edict()->v.netname), false, 0);
-            }
-        }
-
-        gPugMenu[Player->entindex()].Show(Player);
     }
 }
 
@@ -121,27 +126,28 @@ void CPugAdminMenu::Ban(CBasePlayer *Player)
 {
     if (gPugAdmin.CheckAccess(Player, ADMIN_BAN|ADMIN_BAN_TEMP))
     {
-        auto Players = gPugUtil.GetPlayers(false, true);
+        auto Players = gPugUtil.GetPlayers(false, false);
 
-        if (Players.size() < 1)
+        if (Players.size() > 0)
+        {
+            gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_BAN, "Banir Jogador:");
+
+            for (auto const & Target : Players)
+            {
+                if (!gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
+                {
+                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, -1, STRING(Target->edict()->v.netname));
+                }
+            }
+
+            gPugMenu[Player->entindex()].Show(Player);
+        }
+        else
         {
             this->Menu(Player);
 
             gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Nenhum jogador encontrado.", gPugCvar.m_Tag->string);
-            return;
         }
-
-        gPugMenu[Player->entindex()].Create("Banir Jogador:", true, E_MENU::ME_ADMIN_MENU_BAN);
-
-        for (auto const & Target : Players)
-        {
-            if (!gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
-            {
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), STRING(Target->edict()->v.netname), false, -1);
-            }
-        }
-
-        gPugMenu[Player->entindex()].Show(Player);
     }
 }
 
@@ -155,7 +161,7 @@ void CPugAdminMenu::BanHandle(CBasePlayer *Player, P_MENU_ITEM Item)
         {
             if (Item.Extra < 0)
             {
-                gPugMenu[Player->entindex()].CreateFormat(true, E_MENU::ME_ADMIN_MENU_BAN, "Tempo para banir: ^w%s^y", STRING(Target->edict()->v.netname));
+                gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_BAN, "Tempo para banir: ^w%s^y", STRING(Target->edict()->v.netname));
 
                 std::vector<time_t> BanTimes = { 5, 10, 15, 30, 60, 120, 240, 480, 960, 1440, 10080, 43200 };
 
@@ -166,7 +172,7 @@ void CPugAdminMenu::BanHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 
 				for (auto const& Time : BanTimes)
 				{
-					gPugMenu[Player->entindex()].AddItem(Target->entindex(), CTimeFormat::GetTimeLength(Time, CTimeFormat::TIMEUNIT_MINUTES), false, Time);
+					gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, Time, CTimeFormat::GetTimeLength(Time, CTimeFormat::TIMEUNIT_MINUTES).c_str());
 				}
 
                 gPugMenu[Player->entindex()].Show(Player);
@@ -199,7 +205,7 @@ void CPugAdminMenu::Slap(CBasePlayer *Player)
             return;
         }
 
-        gPugMenu[Player->entindex()].Create("Tapa no Jogador:", true, E_MENU::ME_ADMIN_MENU_SLAP);
+        gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_SLAP, "Tapa no Jogador:");
 
         for (auto const & Target : Players)
         {
@@ -207,7 +213,7 @@ void CPugAdminMenu::Slap(CBasePlayer *Player)
             {
                 if (Target->IsAlive())
                 {
-                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), STRING(Target->edict()->v.netname), false, -1);
+                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, -1, STRING(Target->edict()->v.netname));
                 }
             }
         }
@@ -226,21 +232,21 @@ void CPugAdminMenu::SlapHandle(CBasePlayer *Player, P_MENU_ITEM Item)
         {
             if (Item.Extra < 0)
             {
-                gPugMenu[Player->entindex()].CreateFormat(true, E_MENU::ME_ADMIN_MENU_SLAP, "Tapa: ^w%s^y", STRING(Target->edict()->v.netname));
+                gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_SLAP, "Tapa: ^w%s^y", STRING(Target->edict()->v.netname));
 
-				gPugMenu[Player->entindex()].AddItem(Target->entindex(), "Sem Dano", false, 0);
+				gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 0, "Sem Dano");
 
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), "Tapa 1 HP", false, 1);
+                gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 1, "Tapa 1 HP");
 
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), "Tapa 5 HP", false, 5);
+                gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 5, "Tapa 5 HP");
 
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), "Tapa 10 HP", false, 10);
+                gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 10, "Tapa 10 HP");
 
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), "Tapa 25 HP", false, 25);
+                gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 25, "Tapa 25 HP");
 
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), "Tapa 50 HP", false, 50);
+                gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 50, "Tapa 50 HP");
 
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), "Matar Jogador", false, 100);
+                gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 100, "Matar Jogador");
 
                 gPugMenu[Player->entindex()].Show(Player);
             }
@@ -281,7 +287,7 @@ void CPugAdminMenu::Team(CBasePlayer *Player)
             return;
         }
 
-        gPugMenu[Player->entindex()].Create("Time do Jogador:", true, E_MENU::ME_ADMIN_MENU_TEAM);
+        gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_TEAM, "Time do Jogador:");
 
         for (auto Target : Players)
         {
@@ -289,7 +295,7 @@ void CPugAdminMenu::Team(CBasePlayer *Player)
             {
                 if (!gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
                 {
-                    gPugMenu[Player->entindex()].AddItemFormat(0, false, Target->entindex(), "%s \\R\\y%s", STRING(Target->edict()->v.netname), g_Pug_TeamNameShort[Target->m_iTeam]);
+                    gPugMenu[Player->entindex()].AddItem(0, false, Target->entindex(), "%s \\R\\y%s", STRING(Target->edict()->v.netname), g_Pug_TeamNameShort[Target->m_iTeam]);
                 }
             }
         }
@@ -308,13 +314,13 @@ void CPugAdminMenu::TeamHandle(CBasePlayer *Player, P_MENU_ITEM Item)
         {
             if (Item.Info == 0)
             {
-                gPugMenu[Player->entindex()].CreateFormat(true, E_MENU::ME_ADMIN_MENU_TEAM, "Transferir Time: ^w%s^y", STRING(Target->edict()->v.netname));
+                gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_TEAM, "Transferir Time: ^w%s^y", STRING(Target->edict()->v.netname));
 
-				gPugMenu[Player->entindex()].AddItem(TERRORIST, g_Pug_TeamName[TERRORIST], Target->m_iTeam == TERRORIST, Target->entindex());
+				gPugMenu[Player->entindex()].AddItem(TERRORIST, Target->m_iTeam == TERRORIST, Target->entindex(), g_Pug_TeamName[TERRORIST]);
 
-                gPugMenu[Player->entindex()].AddItem(CT, g_Pug_TeamName[CT], Target->m_iTeam == CT, Target->entindex());
+                gPugMenu[Player->entindex()].AddItem(CT, Target->m_iTeam == CT, Target->entindex(), g_Pug_TeamName[CT]);
 
-                gPugMenu[Player->entindex()].AddItem(SPECTATOR, g_Pug_TeamName[SPECTATOR], Target->m_iTeam == SPECTATOR, Target->entindex());
+                gPugMenu[Player->entindex()].AddItem(SPECTATOR, Target->m_iTeam == SPECTATOR, Target->entindex(), g_Pug_TeamName[SPECTATOR]);
 
                 gPugMenu[Player->entindex()].Show(Player);
             }
@@ -350,11 +356,11 @@ void CPugAdminMenu::Map(CBasePlayer *Player)
             return;
         }
 
-        gPugMenu[Player->entindex()].Create("Mudar Mapa:", true, E_MENU::ME_ADMIN_MENU_MAP);
+        gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_MAP, "Mudar Mapa:");
 
         for (const auto& Map : MapList)
         {
-            gPugMenu[Player->entindex()].AddItem(Map.first, Map.second, (Map.second.compare(STRING(gpGlobals->mapname)) == 0), 0);
+            gPugMenu[Player->entindex()].AddItem(Map.first, (Map.second.compare(STRING(gpGlobals->mapname)) == 0), 0, Map.second.c_str());
         }
 
         gPugMenu[Player->entindex()].Show(Player);
@@ -392,16 +398,14 @@ void CPugAdminMenu::Pug(CBasePlayer *Player)
 {
     if (gPugAdmin.CheckAccess(Player, ADMIN_VOTE|ADMIN_LEVEL_B))
     {
-        gPugMenu[Player->entindex()].Create("Escolha o Estado:", true, E_MENU::ME_ADMIN_MENU_PUG);
+        gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_PUG, "Escolha um estado:");
 
-        for (auto i = STATE_DEAD; i <= STATE_END; i++)
+        for (int i = STATE_DEATHMATCH; i <= STATE_FIRST_HALF; i++)
         {
-            gPugMenu[Player->entindex()].AddItem(i, g_Pug_String[i], false, i);
+            gPugMenu[Player->entindex()].AddItem(i, false, 0, g_Pug_String[i]);
         }
 
         gPugMenu[Player->entindex()].Show(Player);
-
-        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O servidor será controlado conforme o estado do jogo.", gPugCvar.m_Tag->string);
     }
 }
 
@@ -409,11 +413,8 @@ void CPugAdminMenu::PugHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        gPugMod.SetScore(CT, Item.Extra, 0);
-        gPugMod.SetScore(TERRORIST, Item.Extra, 0);
+        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O ^3ADMIN^1 alterou o status do servidor.", gPugCvar.m_Tag->string);
 
-        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O ^3ADMIN^1 alterou o status do servidor.", gPugCvar.m_Tag->string);
-
-        gPugMod.SetState(Item.Extra);
+        gPugMod.SetState(Item.Info);
     }
 }

@@ -59,13 +59,13 @@ void CPugVoteSwapTeam::Init(int Team)
 
             for (auto const &Player : Players[Team])
             {
-                gPugMenu[Player->entindex()].Create("Escolha o Time:", false, E_MENU::ME_VOTE_SWAP_TEAM);
+                gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_SWAP_TEAM, "Escolha o Time:");
 
                 for (size_t i = 0; i < this->m_VoteList.size(); ++i)
                 {
                     this->m_VoteList[i].Votes = 0;
 
-                    gPugMenu[Player->entindex()].AddItem(i, this->m_VoteList[i].Name, false, 0);
+                    gPugMenu[Player->entindex()].AddItem(i, false, 0, this->m_VoteList[i].Name.c_str());
                 }
 
                 gPugMenu[Player->entindex()].Show(Player);

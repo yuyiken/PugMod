@@ -472,15 +472,16 @@ void CPugDM::MenuOption(CBasePlayer *Player)
 
             if (EntityIndex > 0 && EntityIndex <= gpGlobals->maxClients)
             {
-                gPugMenu[EntityIndex].Create("CSDM: Opções", true, E_MENU::DM_OPTIONS);
+                gPugMenu[EntityIndex].Create(true, E_MENU::DM_OPTIONS, "CSDM: Opções");
 
-                gPugMenu[EntityIndex].AddItemFormat(DM_OPT_KILL_FEED, false, 0, "Ocultar Kill Feed^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_KILL_FEED] ? "^yS" : "^rN");
-                gPugMenu[EntityIndex].AddItemFormat(DM_OPT_HIT_DMG, false, 0, "Indicador de dano^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_HIT_DMG] ? "^yS" : "^rN");
-                gPugMenu[EntityIndex].AddItemFormat(DM_OPT_HS_MODE, false, 0, "Modo headshot^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_HS_MODE] ? "^yS" : "^rN");
-                gPugMenu[EntityIndex].AddItemFormat(DM_OPT_HUD_KD, false, 0, "Exibir estatísticas^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_HUD_KD] ? "^yS" : "^rN");
-                gPugMenu[EntityIndex].AddItemFormat(DM_OPT_KILL_FADE, false, 0, "Piscar ao matar^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_KILL_FADE] ? "^yS" : "^rN");
-                gPugMenu[EntityIndex].AddItemFormat(DM_OPT_KILL_SOUND, false, 0, "Emitir som ao matar^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_KILL_SOUND] ? "^yS" : "^rN");
-                gPugMenu[EntityIndex].AddItemFormat(DM_OPT_MONEY_FRAG, false, 0, "Exibir frags no dinheiro^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_MONEY_FRAG] ? "^yS" : "^rN");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_KILL_FEED, false, 0, "Ocultar Kill Feed^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_KILL_FEED] ? "^yS" : "^rN");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_HIT_DMG, false, 0, "Indicador de dano^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_HIT_DMG] ? "^yS" : "^rN");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_HS_MODE, false, 0, "Modo headshot^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_HS_MODE] ? "^yS" : "^rN");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_HS_MODE, false, 0, "Modo headshot^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_HS_MODE] ? "^yS" : "^rN");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_HUD_KD, false, 0, "Exibir estatísticas^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_HUD_KD] ? "^yS" : "^rN");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_KILL_FADE, false, 0, "Piscar ao matar^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_KILL_FADE] ? "^yS" : "^rN");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_KILL_SOUND, false, 0, "Emitir som ao matar^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_KILL_SOUND] ? "^yS" : "^rN");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_MONEY_FRAG, false, 0, "Exibir frags no dinheiro^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_MONEY_FRAG] ? "^yS" : "^rN");
 
                 gPugMenu[EntityIndex].Show(Player);
             }
@@ -541,15 +542,15 @@ void CPugDM::Menu(CBasePlayer *Player)
             {
                 if (!this->m_Info[EntityIndex].m_HideMenu)
                 {
-                    gPugMenu[EntityIndex].Create("CSDM: Equipamentos", false, E_MENU::DM_EQUIP);
+                    gPugMenu[EntityIndex].Create(false, E_MENU::DM_EQUIP, "CSDM: Equipamentos");
 
-                    gPugMenu[EntityIndex].AddItem(1, "Novas Armas", false, 0);
+                    gPugMenu[EntityIndex].AddItem(1, false, 0, "Novas Armas");
 
                     if ((this->m_Info[EntityIndex].m_WeaponLast[PRIMARY_WEAPON_SLOT] != WEAPON_NONE) && (this->m_Info[EntityIndex].m_WeaponLast[PISTOL_SLOT] != WEAPON_NONE))
                     {
-                        gPugMenu[EntityIndex].AddItem(2, "Setup Anterior", false, 0);
+                        gPugMenu[EntityIndex].AddItem(2, false, 0, "Setup Anterior");
 
-                        gPugMenu[EntityIndex].AddItem(3, "2 + Ocultar menu", false, 0);
+                        gPugMenu[EntityIndex].AddItem(3, false, 0, "2 + Ocultar menu");
                     }
 
                     gPugMenu[EntityIndex].Show(Player);
@@ -618,7 +619,7 @@ void CPugDM::MenuEquip(CBasePlayer *Player, int Slot)
 
                 if (EntityIndex > 0 && EntityIndex <= gpGlobals->maxClients)
                 {
-                    gPugMenu[EntityIndex].Create("CSDM: Armas", false, E_MENU::DM_WEAPONS);
+                    gPugMenu[EntityIndex].Create(false, E_MENU::DM_WEAPONS, "CSDM: Armas");
 
                     for (auto const &Weapon : this->m_Weapon)
                     {
@@ -626,7 +627,7 @@ void CPugDM::MenuEquip(CBasePlayer *Player, int Slot)
                         {
                             if (Weapon.SlotInfo->slot == Slot)
                             {
-                                gPugMenu[EntityIndex].AddItem(Weapon.SlotInfo->id, Weapon.Label, false, Weapon.SlotInfo->slot);
+                                gPugMenu[EntityIndex].AddItem(Weapon.SlotInfo->id, false, Weapon.SlotInfo->slot, Weapon.Label.c_str());
                             }
                         }
                     }

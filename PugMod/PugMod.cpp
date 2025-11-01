@@ -466,7 +466,7 @@ void CPugMod::UpdateClientData(CBasePlayer *Player)
                                 gPugUtil.ClientCommand(Player->edict(), "spk \"fvox/blip, warning\"");
                             }
 
-                            gPugUtil.SendHud(Player->edict(), g_Pug_HudParam[1], "%s\nÚltimo Round\n%s %d : %d %s", g_Pug_String[this->m_State], g_Pug_TeamNameShort[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamNameShort[CT]);
+                            gPugUtil.SendHud(Player->edict(), g_Pug_HudParam[1], "%s\nÚltimo Round\n%s %d\n%s %d", g_Pug_String[this->m_State], g_Pug_TeamName[TERRORIST], ScoreTR, g_Pug_TeamName[CT], ScoreCT);
                         }
                         else if ((ScoreTR == MaxRound) || (ScoreCT == MaxRound) || (this->m_ScoreOT[TERRORIST] == MaxRoundOT) || (this->m_ScoreOT[CT] == MaxRoundOT))
                         {
@@ -475,11 +475,11 @@ void CPugMod::UpdateClientData(CBasePlayer *Player)
                                 gPugUtil.ClientCommand(Player->edict(), "spk \"fvox/blip, warning\"");
                             }
 
-                            gPugUtil.SendHud(Player->edict(), g_Pug_HudParam[1], "%s\nPerigo: Fim da partida\n%s %d : %d %s", g_Pug_String[this->m_State], g_Pug_TeamNameShort[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamNameShort[CT]);                        
+                            gPugUtil.SendHud(Player->edict(), g_Pug_HudParam[1], "%s\nPerigo: Fim da partida\n%s %d\n%s %d", g_Pug_String[this->m_State], g_Pug_TeamName[TERRORIST], ScoreTR, g_Pug_TeamName[CT], ScoreCT);                        
                         }
                         else
                         {
-                            gPugUtil.SendHud(Player->edict(), g_Pug_HudParam[1], "%s\n%s %d : %d %s", g_Pug_String[this->m_State], g_Pug_TeamNameShort[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamNameShort[CT]);
+                            gPugUtil.SendHud(Player->edict(), g_Pug_HudParam[1], "%s\n%s %d\n%s %d", g_Pug_String[this->m_State], g_Pug_TeamName[TERRORIST], ScoreTR, g_Pug_TeamName[CT], ScoreCT);
                         }
                     }
                 }
@@ -547,8 +547,6 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
                     {
                         if ((this->m_Score[TERRORIST][this->m_State] + this->m_Score[CT][this->m_State]) == static_cast<int>(gPugCvar.m_Rounds->value / 2.0f))
                         {
-                            this->m_State = STATE_HALFTIME;
-
                             gPugTask.Create(E_TASK::SET_STATE, (tmDelay + 1.0f), false, STATE_HALFTIME);
                         }
                         break;
@@ -562,8 +560,6 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
 
                         if ((ScoreTR > MaxRounds) || (ScoreCT > MaxRounds))
                         {
-                            this->m_State = STATE_END;
-
                             gPugTask.Create(E_TASK::SET_STATE, (tmDelay + 1.0f), false, STATE_END);
                         }
                         else if ((ScoreTR == MaxRounds) && (ScoreCT == MaxRounds))
@@ -577,15 +573,11 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
                                 }
                                 case 1: // OT
                                 {
-                                    this->m_State = STATE_HALFTIME;
-
                                     gPugTask.Create(E_TASK::SET_STATE, (tmDelay + 1.0f), false, STATE_HALFTIME);
                                     break;
                                 }
                                 case 2: // End Tied
                                 {
-                                    this->m_State = STATE_END;
-
                                     gPugTask.Create(E_TASK::SET_STATE, (tmDelay + 1.0f), false, STATE_END);
                                     break;
                                 }
@@ -599,8 +591,6 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
 
                         if ((this->m_ScoreOT[TERRORIST] + this->m_ScoreOT[CT]) == RoundsOT)
                         {
-                            this->m_State = STATE_HALFTIME_OT;
-
                             gPugTask.Create(E_TASK::SET_STATE, (tmDelay + 1.0f), false, STATE_HALFTIME_OT);
                         }
                         break;
@@ -611,8 +601,6 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
 
                         if ((this->m_ScoreOT[TERRORIST] > MaxRounds) || (this->m_ScoreOT[CT] > MaxRounds))
                         {
-                            this->m_State = STATE_END;
-
                             gPugTask.Create(E_TASK::SET_STATE, (tmDelay + 1.0f), false, STATE_END);
                         }
                         else if ((this->m_ScoreOT[TERRORIST] == MaxRounds) && (this->m_ScoreOT[CT] == MaxRounds))
@@ -626,15 +614,11 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
                                 }
                                 case 1: // OT
                                 {
-                                    this->m_State = STATE_HALFTIME;
-
                                     gPugTask.Create(E_TASK::SET_STATE, (tmDelay + 1.0f), false, STATE_HALFTIME);
                                     break;
                                 }
                                 case 2: // End Tied
                                 {
-                                    this->m_State = STATE_END;
-
                                     gPugTask.Create(E_TASK::SET_STATE, (tmDelay + 1.0f), false, STATE_END);
                                     break;
                                 }

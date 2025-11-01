@@ -148,6 +148,7 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                             {
                                 switch(pCmd->Index)
                                 {
+                                    // Players
                                     case CMD_STATUS:
                                     {
                                         gPugMod.Status(Player);
@@ -187,16 +188,18 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                         gPugDM.ResetScore(Player);
                                         return true;
                                     }
-                                    case CMD_DM_SPAWN_EDITOR:
-                                    {
-                                        gPugSpawnEdit.EditSpawns(Player);
-                                        return true;
-                                    }
                                     case CMD_HELP:
                                     {
                                         this->Help(Player);
                                         return true;
                                     }
+                                    case CMD_RECORD:
+                                    {
+                                        gPugDemoRecord.Menu(Player);
+                                        return true;
+                                    }
+                                    //
+                                    // Admins
                                     case CMD_HELP_ADMIN:
                                     {
                                         this->HelpAdmin(Player);
@@ -241,6 +244,11 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                     {
                                         gPugCvarControl.Menu(Player);
                                         break;
+                                    }
+                                    case CMD_DM_SPAWN_EDITOR:
+                                    {
+                                        gPugSpawnEdit.EditSpawns(Player);
+                                        return true;
                                     }
                                 }
                             }

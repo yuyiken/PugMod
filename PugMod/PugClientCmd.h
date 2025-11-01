@@ -2,7 +2,8 @@
 
 enum E_CLIENT_CMD_ID
 {
-    CMD_STATUS,
+    // Players
+    CMD_STATUS = 0,
     CMD_SCORE,
     CMD_READY,
     CMD_NOTREADY,
@@ -10,9 +11,11 @@ enum E_CLIENT_CMD_ID
     CMD_GUNS,
     CMD_RESPAWN,
     CMD_RESET_SCORE,
-    CMD_DM_SPAWN_EDITOR,
     CMD_HELP,
-    CMD_HELP_ADMIN,
+    CMD_RECORD,
+    //
+    // Admins
+    CMD_HELP_ADMIN = 100,
     CMD_ADMIN_MENU,
     CMD_ADMIN_KICK,
     CMD_ADMIN_BAN,
@@ -20,7 +23,8 @@ enum E_CLIENT_CMD_ID
     CMD_ADMIN_TEAM,
     CMD_ADMIN_MESSAGE,
     CMD_ADMIN_RCON,
-    CMD_ADMIN_CVAR
+    CMD_ADMIN_CVAR,
+    CMD_DM_SPAWN_EDITOR
 };
 
 typedef struct S_CLIENT_CMD

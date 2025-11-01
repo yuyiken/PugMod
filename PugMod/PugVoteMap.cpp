@@ -61,7 +61,7 @@ void CPugVoteMap::Init()
 
         for (auto const &Player : Players)
         {
-            gPugMenu[Player->entindex()].Create("Escolha o mapa:", false, E_MENU::ME_VOTE_MAP);
+            gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_MAP, "Escolha o mapa:");
 
             for (size_t i = 0; i < this->m_MapList.size(); ++i)
             {
@@ -69,7 +69,7 @@ void CPugVoteMap::Init()
 
                 if (!this->m_MapList[i].This && !this->m_MapList[i].Last)
                 {
-                    gPugMenu[Player->entindex()].AddItem(i, this->m_MapList[i].Name, false, 0);
+                    gPugMenu[Player->entindex()].AddItem(i, false, i, this->m_MapList[i].Name.c_str());
                 }
             }
 

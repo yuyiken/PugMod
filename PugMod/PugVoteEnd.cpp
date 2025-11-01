@@ -53,13 +53,13 @@ void CPugVoteEnd::Init()
 
             for (auto const &Player : Players)
             {
-                gPugMenu[Player->entindex()].Create("Um Jogador saiu da partida, o que deseja fazer?", false, E_MENU::ME_VOTE_END);
+                gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_END, "Um Jogador saiu da partida, o que deseja fazer?");
 
                 for (size_t i = 0; i < this->m_VoteList.size(); ++i)
                 {
                     this->m_VoteList[i].Votes = 0;
 
-                    gPugMenu[Player->entindex()].AddItem(i, this->m_VoteList[i].Name, false, 0);
+                    gPugMenu[Player->entindex()].AddItem(i, false, i, this->m_VoteList[i].Name.c_str());
                 }
 
                 gPugMenu[Player->entindex()].Show(Player);

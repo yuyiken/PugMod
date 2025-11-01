@@ -17,10 +17,11 @@ enum E_MENU
     DM_SPAWN_EDIT_DISCARD,
     ME_VOTE_MAP,
     ME_VOTE_TEAM,
-    ME_LEADER_MENU,
+    ME_VOTE_LEADER,
     ME_VOTE_SWAP_TEAM,
     ME_VOTE_OVERTIME,
     ME_VOTE_END,
+    ME_DEMO_RECORD,
     ME_ADMIN_MENU,
     ME_ADMIN_MENU_KICK,
     ME_ADMIN_MENU_BAN,
@@ -43,10 +44,8 @@ class CPugMenu
 {
 public:
     void Clear();
-    void Create(std::string Title, bool Exit, int HandleType);
-    void CreateFormat(bool Exit, int HandleType, const char *Format, ...);
-    void AddItem(int Info, std::string Text, bool Disabled, int Extra);
-    void AddItemFormat(int Info, bool Disabled, int Extra, const char *Format, ...);
+    void Create(bool Exit, int HandleType, const char *Format, ...);
+    void AddItem(int Info, bool Disabled, int Extra, const char *Format, ...);
     void Show(CBasePlayer *Player);
     void Hide(CBasePlayer *Player);
     bool Handle(CBasePlayer *Player, int Key);

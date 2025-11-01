@@ -290,11 +290,11 @@ void CPugLeader::Menu(CBasePlayer* Leader)
 			}
 			else
 			{
-				gPugMenu[Leader->entindex()].Create("Jogadores:", false, E_MENU::ME_LEADER_MENU);
+				gPugMenu[Leader->entindex()].Create(false, E_MENU::ME_VOTE_LEADER, "Jogadores:");
 
 				for (auto const& Player : Players[SPECTATOR])
 				{
-					gPugMenu[Leader->entindex()].AddItem(Player->entindex(), STRING(Player->edict()->v.netname), false, Player->m_iTeam);
+					gPugMenu[Leader->entindex()].AddItem(Player->entindex(), false, Player->m_iTeam, STRING(Player->edict()->v.netname));
 				}
 
 				gPugMenu[Leader->entindex()].Show(Leader);

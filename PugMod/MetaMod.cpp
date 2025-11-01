@@ -155,7 +155,7 @@ void DLL_POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 
 	gPugVoteSwapTeam.ServerActivate();
 
-	gPugAutoRecord.ServerActivate();
+	gPugDemoRecord.ServerActivate();
 
 	gPugCvarControl.ServerActivate();
 
@@ -184,7 +184,7 @@ void DLL_POST_ServerDeactivate()
 
 	gPugVoteSwapTeam.ServerActivate();
 
-	gPugAutoRecord.ServerDeactivate();
+	gPugDemoRecord.ServerDeactivate();
 
 	RETURN_META(MRES_IGNORED);
 }
