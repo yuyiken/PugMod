@@ -221,8 +221,6 @@ void ReGameDLL_CBasePlayer_OnSpawnEquip(IReGameHook_CBasePlayer_OnSpawnEquip *ch
 	chain->callNext(Player, addDefault, equipGame);
 
 	gPugDM.OnSpawnEquip(Player, addDefault, equipGame);
-
-	gPugMod.OnSpawnEquip(Player);
 }
 
 void ReGameDLL_ShowVGUIMenu(IReGameHook_ShowVGUIMenu *chain, CBasePlayer *Player, int MenuType, int BitMask, char *pszMenuText)
