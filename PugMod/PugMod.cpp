@@ -54,8 +54,6 @@ int CPugMod::SetState(int State)
             gPugDM.Stop();
             gPugReady.Stop(true);
             gPugTimer.Stop(true);
-
-            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_SvRestart, "1");
             break;
         }
         case STATE_DEATHMATCH:
