@@ -22,11 +22,11 @@
 #include <osconfig.h>
 
 // C++
-#include <map>
-#include <vector>
-#include <string>
 #include <array>
-#include <numeric>
+#include <map>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 // CSSDK
 #include <extdll.h>
@@ -61,6 +61,7 @@
 #include "PugDemoRecord.h"
 #include "PugDM.h"
 #include "PugEngine.h"
+#include "PugLang.h"
 #include "PugLeader.h"
 #include "PugLO3.h"
 #include "PugMapList.h"

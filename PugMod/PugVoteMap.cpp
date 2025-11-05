@@ -61,7 +61,7 @@ void CPugVoteMap::Init()
 
         for (auto const &Player : Players)
         {
-            gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_MAP, "Escolha o mapa:");
+            gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_MAP, _T("Escolha o mapa:"));
 
             for (size_t i = 0; i < this->m_MapList.size(); ++i)
             {
@@ -78,7 +78,7 @@ void CPugVoteMap::Init()
             gPugMenu[Player->entindex()].Show(Player);
         }
 
-        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Iniciando a escolha do novo mapa.", gPugCvar.m_Tag->string);
+        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Iniciando a escolha do novo mapa."), gPugCvar.m_Tag->string);
     }
 }
 
@@ -98,17 +98,17 @@ void CPugVoteMap::Stop()
         {
             gPugTask.Create(E_TASK::VOTE_MAP_CHANGE, 5.0f, false, Winner.Index);
 
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Alterando mapa para: ^3%s^1.", gPugCvar.m_Tag->string, Winner.Name.c_str());
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Alterando mapa para: ^3%s^1."), gPugCvar.m_Tag->string, Winner.Name.c_str());
         }
         else
         {
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A escolha falhou: Nenhum voto.", gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 A escolha falhou: Nenhum voto."), gPugCvar.m_Tag->string);
 
             if (gPugUtil.GetPlayers(true, true).size() >= static_cast<size_t>(gPugCvar.m_PlayersMin->value))
             {
                 gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, STATE_VOTEMAP);
 
-                gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Reiniciando escolha do mapa.", gPugCvar.m_Tag->string);
+                gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Reiniciando escolha do mapa."), gPugCvar.m_Tag->string);
             }
             else
             {
@@ -116,7 +116,7 @@ void CPugVoteMap::Stop()
 
                 gPugTask.Create(E_TASK::VOTE_MAP_CHANGE, 5.0f, false, Random.Index);
 
-                gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O Próximo mapa será: ^3%s^1.", gPugCvar.m_Tag->string, Random.Name.c_str());
+                gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 O Próximo mapa será: ^3%s^1."), gPugCvar.m_Tag->string, Random.Name.c_str());
             }
         }
     }
@@ -209,7 +209,7 @@ void CPugVoteMap::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
             this->m_VotesLeft -= 1;
             this->m_MapList[Item.Info].Votes += 1;
 
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 escolheu ^3%s^1.", gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), this->m_MapList[Item.Info].Name.c_str());
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%s^1 escolheu ^3%s^1."), gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), this->m_MapList[Item.Info].Name.c_str());
 
             if (this->m_VotesLeft < 1)
             {
@@ -239,7 +239,7 @@ void CPugVoteMap::StartFrame()
 
                         strftime(szTime, sizeof(szTime), "%M:%S", tm_info);
                         
-                        gPugUtil.SendHud(nullptr, g_VoteMap_HudParam[0], "Escolha do Mapa: %s", szTime);
+                        gPugUtil.SendHud(nullptr, g_VoteMap_HudParam[0], _T("Escolha do Mapa: %s"), szTime);
                     }
 
                     std::string VoteList = "";
@@ -258,7 +258,7 @@ void CPugVoteMap::StartFrame()
                     }
                     else
                     {
-                        gPugUtil.SendHud(nullptr, g_VoteMap_HudParam[1], "Nenhum voto registrado.");
+                        gPugUtil.SendHud(nullptr, g_VoteMap_HudParam[1], _T("Nenhum voto registrado."));
                     }
                 }
                 else

@@ -40,7 +40,7 @@ void CPugReady::Init(int NextState)
 
     this->m_NextState = NextState;
 
-    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A partida começa quando ^3%d^1 jogadores estiverem prontos.", gPugCvar.m_Tag->string, this->m_PlayersMin);
+    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 A partida começa quando ^3%d^1 jogadores estiverem prontos."), gPugCvar.m_Tag->string, this->m_PlayersMin);
 }
 
 void CPugReady::Stop(bool Forced)
@@ -59,7 +59,7 @@ void CPugReady::Stop(bool Forced)
         {
             gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, this->m_NextState);
 
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todos os jogadores estão prontos!", gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Todos os jogadores estão prontos!"), gPugCvar.m_Tag->string);
         }
     }
 }
@@ -90,7 +90,7 @@ void CPugReady::PlayerSpawn(CBasePlayer *Player)
 
             if (pCmd)
             {
-                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Quando você estiver pronto, digite ^3%s^1.", gPugCvar.m_Tag->string, pCmd->Name.c_str());
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Quando você estiver pronto, digite ^3%s^1."), gPugCvar.m_Tag->string, pCmd->Name.c_str());
             }
         }
     }
@@ -158,8 +158,8 @@ void CPugReady::StartFrame()
             {
                 if (!gPugCvar.m_ReadyList->value)
                 {
-                    gPugUtil.SendHud(nullptr, g_ReadyList_HudParam[0], "Aquecendo (%d de %d):", ReadyCount[0], this->m_PlayersMin);
-                    gPugUtil.SendHud(nullptr, g_ReadyList_HudParam[1], "Pronto (%d de %d):", ReadyCount[1], this->m_PlayersMin);
+                    gPugUtil.SendHud(nullptr, g_ReadyList_HudParam[0], _T("Aquecendo (%d de %d):"), ReadyCount[0], this->m_PlayersMin);
+                    gPugUtil.SendHud(nullptr, g_ReadyList_HudParam[1], _T("Pronto (%d de %d):"), ReadyCount[1], this->m_PlayersMin);
 
                     if (!PlayerList[0].empty())
                     {
@@ -173,7 +173,7 @@ void CPugReady::StartFrame()
                 }
                 else
                 {
-                    gPugUtil.SendHud(nullptr, g_ReadyNum_HudParam, "Aquecendo: %d / %d\nPronto: %d / %d", ReadyCount[0], this->m_PlayersMin, ReadyCount[1], this->m_PlayersMin);
+                    gPugUtil.SendHud(nullptr, g_ReadyNum_HudParam, _T("Aquecendo: %d / %d\nPronto: %d / %d"), ReadyCount[0], this->m_PlayersMin, ReadyCount[1], this->m_PlayersMin);
                 }
             }
 
@@ -192,20 +192,20 @@ bool CPugReady::Ready(CBasePlayer *Player)
 			{
 				this->m_Ready[Player->entindex()] = true;
 
-				gPugUtil.PrintColor(nullptr, Player->entindex(), "^4[%s]^1 ^3%s^1 está pronto.", gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname));
+				gPugUtil.PrintColor(nullptr, Player->entindex(), _T("^4[%s]^1 ^3%s^1 está pronto."), gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname));
 
 				return true;
 			}
 		}
         else
         {
-            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Você já está pronto.", gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Você já está pronto."), gPugCvar.m_Tag->string);
         }
 
         return false;
 	}
 
-    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Comando indisponível.", gPugCvar.m_Tag->string);
+    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Comando indisponível."), gPugCvar.m_Tag->string);
 
 	return false;
 }
@@ -220,19 +220,19 @@ bool CPugReady::NotReady(CBasePlayer *Player)
 			{
 				this->m_Ready[Player->entindex()] = false;
 
-				gPugUtil.PrintColor(nullptr, Player->entindex(), "^4[%s]^1 ^3%s^1 não está pronto.", gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname));
+				gPugUtil.PrintColor(nullptr, Player->entindex(), _T("^4[%s]^1 ^3%s^1 não está pronto."), gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname));
 
 				return true;
 			}
 		}
         else
         {
-            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Você ainda não está pronto.", gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Você ainda não está pronto."), gPugCvar.m_Tag->string);
         }
         return false;
 	}
 
-    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Comando indisponível.", gPugCvar.m_Tag->string);
+    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Comando indisponível."), gPugCvar.m_Tag->string);
 
 	return false;
 }

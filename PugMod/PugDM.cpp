@@ -71,7 +71,7 @@ void CPugDM::Init()
         CSGameRules()->m_bMapHasVIPSafetyZone = false;
     }
 
-    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::RED, "^4[%s]^1 ^3Deathmatch^1 ativo até o início da partida.", gPugCvar.m_Tag->string);
+    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::RED, _T("^4[%s]^1 ^3Deathmatch^1 ativo até o início da partida."), gPugCvar.m_Tag->string);
 }
 
 void CPugDM::Stop()
@@ -85,7 +85,7 @@ void CPugDM::Stop()
             CSGameRules()->CheckMapConditions();
         }
         
-        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::RED, "^4[%s]^1 ^3Deathmatch^1 desativado.", gPugCvar.m_Tag->string);
+        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::RED, _T("^4[%s]^1 ^3Deathmatch^1 desativado."), gPugCvar.m_Tag->string);
     }
 }
 
@@ -230,11 +230,11 @@ bool CPugDM::DropItem(CBasePlayer *Player)
             {
                 this->m_Info[EntityIndex].m_HideMenu = false;
 
-                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O menu de armas foi habilitado.", gPugCvar.m_Tag->string);
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 O menu de armas foi habilitado."), gPugCvar.m_Tag->string);
             }
             else
             {
-                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O menu de armas já está habilitado.", gPugCvar.m_Tag->string);
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 O menu de armas já está habilitado."), gPugCvar.m_Tag->string);
             }
             
             if(!Player->m_rgpPlayerItems[PISTOL_SLOT])
@@ -412,7 +412,7 @@ void CPugDM::UpdateClientData(CBasePlayer *Player)
                         (
                             Player->edict(),
                             g_DM_HudInfo,
-                            "KD: %.2f - HSP: %.2f%%",
+                            _T("KD: %.2f - HSP: %.2f%%"),
                             (Player->m_iDeaths > 0) ? (Player->edict()->v.frags / (float)(Player->m_iDeaths)) : (Player->edict()->v.frags > 0.0f ? 100.0f : 0.0f),
                             (Player->edict()->v.frags > 0.0f) ? ((this->m_Info[Player->entindex()].m_Headshots / Player->edict()->v.frags) * 100.0f) : 0.0f
                         );
@@ -472,16 +472,16 @@ void CPugDM::MenuOption(CBasePlayer *Player)
 
             if (EntityIndex > 0 && EntityIndex <= gpGlobals->maxClients)
             {
-                gPugMenu[EntityIndex].Create(true, E_MENU::DM_OPTIONS, "CSDM: Opções");
+                gPugMenu[EntityIndex].Create(true, E_MENU::DM_OPTIONS, _T("CSDM: Opções"));
 
-                gPugMenu[EntityIndex].AddItem(DM_OPT_KILL_FEED, false, 0, "Ocultar Kill Feed^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_KILL_FEED] ? "^yS" : "^rN");
-                gPugMenu[EntityIndex].AddItem(DM_OPT_HIT_DMG, false, 0, "Indicador de dano^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_HIT_DMG] ? "^yS" : "^rN");
-                gPugMenu[EntityIndex].AddItem(DM_OPT_HS_MODE, false, 0, "Modo headshot^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_HS_MODE] ? "^yS" : "^rN");
-                gPugMenu[EntityIndex].AddItem(DM_OPT_HS_MODE, false, 0, "Modo headshot^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_HS_MODE] ? "^yS" : "^rN");
-                gPugMenu[EntityIndex].AddItem(DM_OPT_HUD_KD, false, 0, "Exibir estatísticas^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_HUD_KD] ? "^yS" : "^rN");
-                gPugMenu[EntityIndex].AddItem(DM_OPT_KILL_FADE, false, 0, "Piscar ao matar^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_KILL_FADE] ? "^yS" : "^rN");
-                gPugMenu[EntityIndex].AddItem(DM_OPT_KILL_SOUND, false, 0, "Emitir som ao matar^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_KILL_SOUND] ? "^yS" : "^rN");
-                gPugMenu[EntityIndex].AddItem(DM_OPT_MONEY_FRAG, false, 0, "Exibir frags no dinheiro^R%s", this->m_Info[EntityIndex].m_Option[DM_OPT_MONEY_FRAG] ? "^yS" : "^rN");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_KILL_FEED, false, 0, _T("Ocultar Kill Feed^R%s"), this->m_Info[EntityIndex].m_Option[DM_OPT_KILL_FEED] ? "^y1" : "^r0");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_HIT_DMG, false, 0, _T("Indicador de dano^R%s"), this->m_Info[EntityIndex].m_Option[DM_OPT_HIT_DMG] ? "^y1" : "^r0");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_HS_MODE, false, 0, _T("Modo headshot^R%s"), this->m_Info[EntityIndex].m_Option[DM_OPT_HS_MODE] ? "^y1" : "^rN");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_HS_MODE, false, 0, _T("Modo headshot^R%s"), this->m_Info[EntityIndex].m_Option[DM_OPT_HS_MODE] ? "^y1" : "^r0");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_HUD_KD, false, 0, _T("Exibir estatísticas^R%s"), this->m_Info[EntityIndex].m_Option[DM_OPT_HUD_KD] ? "^y1" : "^rN");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_KILL_FADE, false, 0, _T("Piscar ao matar^R%s"), this->m_Info[EntityIndex].m_Option[DM_OPT_KILL_FADE] ? "^y1" : "^r0");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_KILL_SOUND, false, 0, _T("Emitir som ao matar^R%s"), this->m_Info[EntityIndex].m_Option[DM_OPT_KILL_SOUND] ? "^y1" : "^r0");
+                gPugMenu[EntityIndex].AddItem(DM_OPT_MONEY_FRAG, false, 0, _T("Exibir frags no dinheiro^R%s"), this->m_Info[EntityIndex].m_Option[DM_OPT_MONEY_FRAG] ? "^y1" : "^r0");
 
                 gPugMenu[EntityIndex].Show(Player);
             }
@@ -542,24 +542,24 @@ void CPugDM::Menu(CBasePlayer *Player)
             {
                 if (!this->m_Info[EntityIndex].m_HideMenu)
                 {
-                    gPugMenu[EntityIndex].Create(false, E_MENU::DM_EQUIP, "CSDM: Equipamentos");
+                    gPugMenu[EntityIndex].Create(false, E_MENU::DM_EQUIP, _T("CSDM: Equipamentos"));
 
-                    gPugMenu[EntityIndex].AddItem(1, false, 0, "Novas Armas");
+                    gPugMenu[EntityIndex].AddItem(1, false, 0, _T("Novas Armas"));
 
                     if ((this->m_Info[EntityIndex].m_WeaponLast[PRIMARY_WEAPON_SLOT] != WEAPON_NONE) && (this->m_Info[EntityIndex].m_WeaponLast[PISTOL_SLOT] != WEAPON_NONE))
                     {
-                        gPugMenu[EntityIndex].AddItem(2, false, 0, "Setup Anterior");
+                        gPugMenu[EntityIndex].AddItem(2, false, 0, _T("Setup Anterior"));
 
-                        gPugMenu[EntityIndex].AddItem(3, false, 0, "2 + Ocultar menu");
+                        gPugMenu[EntityIndex].AddItem(3, false, 0, _T("2 + Ocultar Menu"));
                     }
 
                     gPugMenu[EntityIndex].Show(Player);
 
-                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Tecle ^3'M'^1 para ver o menu de treino.", gPugCvar.m_Tag->string);
+                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Tecle ^3'M'^1 para ver o menu de treino."), gPugCvar.m_Tag->string);
                 }
                 else
                 {
-                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Tecle ^3'G'^1 para ver o menu de armas.", gPugCvar.m_Tag->string);
+                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Tecle ^3'G'^1 para ver o menu de armas."), gPugCvar.m_Tag->string);
 
                     this->EquipItem(Player, this->m_Info[EntityIndex].m_WeaponLast[PRIMARY_WEAPON_SLOT]);
                     this->EquipItem(Player, this->m_Info[EntityIndex].m_WeaponLast[PISTOL_SLOT]);
@@ -593,7 +593,7 @@ void CPugDM::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
                 {
                     this->m_Info[EntityIndex].m_HideMenu = true;
 
-                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Tecle ^3'G'^1 para exibir o menu novamente.", gPugCvar.m_Tag->string);
+                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Tecle ^3'G'^1 para exibir o menu novamente."), gPugCvar.m_Tag->string);
                 }
 
                 this->EquipItem(Player, gPugDM.m_Info[EntityIndex].m_WeaponLast[PRIMARY_WEAPON_SLOT]);
@@ -619,7 +619,7 @@ void CPugDM::MenuEquip(CBasePlayer *Player, int Slot)
 
                 if (EntityIndex > 0 && EntityIndex <= gpGlobals->maxClients)
                 {
-                    gPugMenu[EntityIndex].Create(false, E_MENU::DM_WEAPONS, "CSDM: Armas");
+                    gPugMenu[EntityIndex].Create(false, E_MENU::DM_WEAPONS, _T("CSDM: Armas"));
 
                     for (auto const &Weapon : this->m_Weapon)
                     {
@@ -743,14 +743,14 @@ bool CPugDM::Respawn(CBasePlayer *Player)
                 {
                     Player->RoundRespawn();
 
-                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Você reviveu.", gPugCvar.m_Tag->string);
+                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Você reviveu."), gPugCvar.m_Tag->string);
 
                     return true;
                 }
             }
         }
 
-        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Comando indisponível.", gPugCvar.m_Tag->string);
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Comando indisponível."), gPugCvar.m_Tag->string);
     }
 
     return false;
@@ -772,20 +772,20 @@ bool CPugDM::ResetScore(CBasePlayer *Player)
 
                     Player->RoundRespawn();
 
-                    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%s^1 resetou o score.", gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname));
+                    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%s^1 resetou o score."), gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname));
 
                     return true;
                 }
                 else
                 {
-                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Não há frags para resetar.", gPugCvar.m_Tag->string);
+                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Não há frags para resetar."), gPugCvar.m_Tag->string);
                 }
 
                 return false;
             }
         }
 
-        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Comando indisponível.", gPugCvar.m_Tag->string);
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Comando indisponível."), gPugCvar.m_Tag->string);
     }
 
     return false;

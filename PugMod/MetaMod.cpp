@@ -5,7 +5,7 @@ plugin_info_t Plugin_info =
 {
 	META_INTERFACE_VERSION,
 	"Pickup Game Mod",
-	"0.0.1",
+	"0.0.2",
 	__DATE__,
 	"SmileY",
 	"https://pugbr.net",
@@ -128,6 +128,8 @@ void DLL_POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 	gPugCvar.ServerActivate();
 
 	gPugTask.ServerActivate();
+
+	gPugLang.ServerActivate();
 
 	gPugAdmin.ServerActivate();
 

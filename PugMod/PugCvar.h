@@ -18,6 +18,7 @@ public:
 	cvar_t* m_SvRestartRound;
 
 	cvar_t* m_Tag;
+	cvar_t* m_Language;
 	cvar_t* m_CmdPrefixPlayer;
 	cvar_t* m_CmdPrefixAdmin;
 	cvar_t* m_CmdFloodTime;

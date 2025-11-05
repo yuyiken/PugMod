@@ -323,15 +323,15 @@ void CPugMenu::Display(CBasePlayer *Player, int Page)
 
         if (Page)
         {
-            MenuText += "\n\\r9.\\w Próxmo\n\\r0.\\w Voltar";
+            MenuText += "\n\\r9.\\w Next\n\\r0.\\w Back";
         }
         else
         {
-            MenuText += "\n\\r9.\\w Próxmo";
+            MenuText += "\n\\r9.\\w Next";
 
             if (this->m_Exit)
             {
-                MenuText += "\n\\r0.\\w Sair";
+                MenuText += "\n\\r0.\\w Exit";
             }
         }
     }
@@ -339,13 +339,13 @@ void CPugMenu::Display(CBasePlayer *Player, int Page)
     {
         if (Page)
         {
-            MenuText += "\n\\r0.\\w Voltar";
+            MenuText += "\n\\r0.\\w Back";
         }
         else
         {
             if (this->m_Exit)
             {
-                MenuText += "\n\\r0.\\w Sair";
+                MenuText += "\n\\r0.\\w Exit";
             }
         }
     }

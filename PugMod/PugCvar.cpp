@@ -36,6 +36,11 @@ void CPugCvar::ServerActivate()
     // Padrão: "PUG"
     this->m_Tag = this->Register("pug_tag", "PUG");
 
+    // Language
+    //
+    // Padrão: "br"
+    this->m_Language = this->Register("pug_language", "br");
+
     // Prefixo do comando via say (Jogador)
     //
     // Padrão: "."

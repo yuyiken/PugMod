@@ -10,6 +10,18 @@ void CPugServerCmd::ServerActivate()
     }
 }
 
+void CPugServerCmd::AddString()
+{
+    if (g_engfuncs.pfnCmd_Argc() >= 3)
+    {
+        gPugLang.Add(g_engfuncs.pfnCmd_Argv(1), g_engfuncs.pfnCmd_Argv(2));
+    }
+    else
+    {
+        gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Uso: %s <texto> <traduzido>", Plugin_info.logtag, g_engfuncs.pfnCmd_Argv(0));
+    }
+}
+
 void CPugServerCmd::AddAdmin()
 {
     if (g_engfuncs.pfnCmd_Argc() >= 4)

@@ -46,14 +46,14 @@ void CPugVoteEnd::Init()
 
             this->m_VoteList.clear();
             
-            this->m_VoteList.push_back({1, 0, "Continuar Partida"});
-            this->m_VoteList.push_back({2, 0, "Finalizar Partida"});
+            this->m_VoteList.push_back({1, 0, _T("Continuar Partida")});
+            this->m_VoteList.push_back({2, 0, _T("Finalizar Partida")});
             
             this->m_VotesLeft = Players.size();
 
             for (auto const &Player : Players)
             {
-                gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_END, "Um Jogador saiu da partida, o que deseja fazer?");
+                gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_END, _T("Um Jogador saiu da partida, o que deseja fazer?"));
 
                 for (size_t i = 0; i < this->m_VoteList.size(); ++i)
                 {
@@ -66,7 +66,7 @@ void CPugVoteEnd::Init()
 
                 gPugUtil.ClientCommand(Player->edict(), g_VoteEnd_Sound[g_engfuncs.pfnRandomLong(0, 1)]);
 
-                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Um Jogador saiu da partida, o que deseja fazer?", gPugCvar.m_Tag->string);
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Um Jogador saiu da partida, o que deseja fazer?"), gPugCvar.m_Tag->string);
             }
         }
         else

@@ -39,57 +39,57 @@ void CPugSpawnEdit::EditSpawns(CBasePlayer* Player)
 		}
 		else
 		{
-			gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Comando indisponível.", gPugCvar.m_Tag->string);
+			gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Comando indisponível."), gPugCvar.m_Tag->string);
 		}
 	}
 }
 
 void CPugSpawnEdit::Menu(CBasePlayer* Player)
 {
-	gPugMenu[Player->entindex()].Create(true, E_MENU::DM_SPAWN_EDIT, "CSDM: Gerenciador de Spawns");
+	gPugMenu[Player->entindex()].Create(true, E_MENU::DM_SPAWN_EDIT, _T("CSDM: Gerenciador de Spawns"));
 
-	gPugMenu[Player->entindex()].AddItem(1, false, 0, "Adicionar Spawn na posição atual");
+	gPugMenu[Player->entindex()].AddItem(1, false, 0, _T("Adicionar Spawn na posição atual"));
 
 	if (this->m_Spawns.empty())
 	{
-		gPugMenu[Player->entindex()].AddItem(2, true, 0, "Editar Spawn - Nenhum Spawn");
-		gPugMenu[Player->entindex()].AddItem(3, true, 0, "Apagar Spawn - Nenhum Spawn");
+		gPugMenu[Player->entindex()].AddItem(2, true, 0, _T("Editar Spawn - Nenhum Spawn"));
+		gPugMenu[Player->entindex()].AddItem(3, true, 0, _T("Apagar Spawn - Nenhum Spawn"));
 	}
 	else if (FNullEnt(this->m_Entities[this->m_Marked[Player->entindex()]]))
 	{
-		gPugMenu[Player->entindex()].AddItem(2, true, 0, "Editar Spawn - Nenhum Spawn Marcado");
-		gPugMenu[Player->entindex()].AddItem(3, true, 0, "Apagar Spawn - Nenhum Spawn Marcado");
+		gPugMenu[Player->entindex()].AddItem(2, true, 0, _T("Editar Spawn - Nenhum Spawn Marcado"));
+		gPugMenu[Player->entindex()].AddItem(3, true, 0, _T("Apagar Spawn - Nenhum Spawn Marcado"));
 	}
 	else
 	{
-		gPugMenu[Player->entindex()].AddItem(2, false, 0, "Mover Spawn mais próximo (^yAmarelo^w) para a posição atual");
+		gPugMenu[Player->entindex()].AddItem(2, false, 0, _T("Mover Spawn mais próximo (^yAmarelo^w) para a posição atual"));
 
 		if ((Player->edict()->v.origin - this->m_Entities[this->m_Marked[Player->entindex()]]->v.origin).Length() > 200.0f)
 		{
-			gPugMenu[Player->entindex()].AddItem(3, true, 0, "Apagar Spawn - Spawn Selecionado muito longe");
+			gPugMenu[Player->entindex()].AddItem(3, true, 0, _T("Apagar Spawn - Spawn Selecionado muito longe"));
 		}
 		else
 		{
-			gPugMenu[Player->entindex()].AddItem(3, false, 0, "Apagar Spawn mais próximo");
+			gPugMenu[Player->entindex()].AddItem(3, false, 0, _T("Apagar Spawn mais próximo"));
 		}
 	}
 
-	gPugMenu[Player->entindex()].AddItem(4, false, 0, "Selecionar Spawn mais próximo");
+	gPugMenu[Player->entindex()].AddItem(4, false, 0, _T("Selecionar Spawn mais próximo"));
 
-	gPugMenu[Player->entindex()].AddItem(5, false, 0, "Exibir Estatísticas");
+	gPugMenu[Player->entindex()].AddItem(5, false, 0, _T("Exibir Estatísticas"));
 
 	if (Player->edict()->v.movetype == MOVETYPE_WALK)
 	{
-		gPugMenu[Player->entindex()].AddItem(6, false, 0, "Ativar No Clip");
+		gPugMenu[Player->entindex()].AddItem(6, false, 0, _T("Ativar No Clip"));
 	}
 	else if(Player->edict()->v.movetype == MOVETYPE_NOCLIP)
 	{
-		gPugMenu[Player->entindex()].AddItem(6, false, 0, "Desativar No Clip");
+		gPugMenu[Player->entindex()].AddItem(6, false, 0, _T("Desativar No Clip"));
 	}
 
-	gPugMenu[Player->entindex()].AddItem(7, false, 0, "Descartar todas alterações, e sair");
+	gPugMenu[Player->entindex()].AddItem(7, false, 0, _T("Descartar todas alterações, e sair"));
 
-	gPugMenu[Player->entindex()].AddItem(8, false, 0, "Salvar todas as alterações");
+	gPugMenu[Player->entindex()].AddItem(8, false, 0, _T("Salvar todas as alterações"));
 
 	gPugMenu[Player->entindex()].Show(Player);
 }
@@ -139,13 +139,13 @@ void CPugSpawnEdit::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 					{
 						Player->edict()->v.movetype = MOVETYPE_NOCLIP;
 
-						gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::BLUE, "^4[%s]^1 ^3No-Clip Habilitado.", gPugCvar.m_Tag->string);
+						gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::BLUE, _T("^4[%s]^1 ^3No-Clip Habilitado."), gPugCvar.m_Tag->string);
 					}
 					else if (Player->edict()->v.movetype == MOVETYPE_NOCLIP)
 					{
 						Player->edict()->v.movetype = MOVETYPE_WALK;
 
-						gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::RED, "^4[%s]^1 ^3No-Clip Desabilitado.", gPugCvar.m_Tag->string);
+						gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::RED, _T("^4[%s]^1 ^3No-Clip Desabilitado."), gPugCvar.m_Tag->string);
 					}
 
 					this->Menu(Player);
@@ -170,12 +170,12 @@ void CPugSpawnEdit::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 
 void CPugSpawnEdit::AddSpawnMenu(CBasePlayer* Player)
 {
-	gPugMenu[Player->entindex()].Create(false, E_MENU::DM_SPAWN_EDIT_ADD_SPAWN, "CSDM: Menu de Adicionar Spawn");
+	gPugMenu[Player->entindex()].Create(false, E_MENU::DM_SPAWN_EDIT_ADD_SPAWN, _T("CSDM: Menu de Adicionar Spawn"));
 
-	gPugMenu[Player->entindex()].AddItem(1, false, 0, "Adicionar posição atual como um Spawn Aleatório");
-	gPugMenu[Player->entindex()].AddItem(2, false, 0, "Adicionar posição atual como um Spawn de TR");
-	gPugMenu[Player->entindex()].AddItem(3, false, 0, "Adicionar posição atual como um Spawn de CT");
-	gPugMenu[Player->entindex()].AddItem(4, false, 0, "Cancelar");
+	gPugMenu[Player->entindex()].AddItem(1, false, 0, _T("Adicionar posição atual como um Spawn Aleatório"));
+	gPugMenu[Player->entindex()].AddItem(2, false, 0, _T("Adicionar posição atual como um Spawn de TR"));
+	gPugMenu[Player->entindex()].AddItem(3, false, 0, _T("Adicionar posição atual como um Spawn de CT"));
+	gPugMenu[Player->entindex()].AddItem(4, false, 0, _T("Cancelar"));
 
 	gPugMenu[Player->entindex()].Show(Player);
 }
@@ -218,13 +218,13 @@ void CPugSpawnEdit::AddSpawnMenuHandle(CBasePlayer* Player, P_MENU_ITEM Item)
 
 void CPugSpawnEdit::DiscardChanges(CBasePlayer* Player)
 {
-	gPugMenu[Player->entindex()].Create(false, E_MENU::DM_SPAWN_EDIT_DISCARD, "Descartar todas as alterações e sair do editor?");
+	gPugMenu[Player->entindex()].Create(false, E_MENU::DM_SPAWN_EDIT_DISCARD, _T("Descartar todas as alterações e sair do editor?"));
 
-	gPugMenu[Player->entindex()].AddItem(1, false, 0, "Não, continuar editando");
+	gPugMenu[Player->entindex()].AddItem(1, false, 0, _T("Não, continuar editando"));
 
-	gPugMenu[Player->entindex()].AddItem(2, false, 0, "Sim, descartar tudo e sair do editor");
+	gPugMenu[Player->entindex()].AddItem(2, false, 0, _T("Sim, descartar tudo e sair do editor"));
 
-	gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::RED, "^4[%s]^1 ^3Descartar todas alterações e sair do editor?", gPugCvar.m_Tag->string);
+	gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::RED, _T("^4[%s]^1 ^3Descartar todas alterações e sair do editor?"), gPugCvar.m_Tag->string);
 
 	gPugMenu[Player->entindex()].Show(Player);
 }
@@ -246,7 +246,7 @@ void CPugSpawnEdit::DiscardChangesHandle(CBasePlayer* Player, P_MENU_ITEM Item)
 
 				Player->edict()->v.movetype = MOVETYPE_WALK;
 
-                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Todas as alterações foram descartadas.", gPugCvar.m_Tag->string);
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Todas as alterações foram descartadas."), gPugCvar.m_Tag->string);
 
 				auto lpInfo = gPugClientCmd.Get(CMD_DM_SPAWN_EDITOR);
 
@@ -254,7 +254,7 @@ void CPugSpawnEdit::DiscardChangesHandle(CBasePlayer* Player, P_MENU_ITEM Item)
 				{
 					if (!lpInfo->Name.empty())
 					{
-						gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Use o comando ^3%s^1. para abrir o editor novamente.", gPugCvar.m_Tag->string, lpInfo->Name.c_str());
+						gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Use o comando ^3%s^1. para abrir o editor novamente."), gPugCvar.m_Tag->string, lpInfo->Name.c_str());
 					}
 				}
 
@@ -580,17 +580,17 @@ void CPugSpawnEdit::Refresh(CBasePlayer* Player)
 		(
 			Player->edict(),
 			E_PRINT_TEAM::DEFAULT,
-			"^4[%s]^1 Spawn mais próximo: Número ^3%d^1 -> Time ^3%s^1",
+			_T("^4[%s]^1 Spawn mais próximo: Número ^3%d^1 -> Time ^3%s^1"),
 			gPugCvar.m_Tag->string,
 			Spawn->first,
-			(Spawn->second.Team == UNASSIGNED) ? "ALEATÓRIO" : (Spawn->second.Team == CT ? "CT" : "TR")
+			(Spawn->second.Team == UNASSIGNED) ? _T("RANDOM") : (Spawn->second.Team == CT ? "CT" : "TR")
 		);
 
 		gPugUtil.PrintColor
 		(
 			Player->edict(),
 			E_PRINT_TEAM::DEFAULT,
-			"^4[%s]^1 Origem [%.0f %.0f %.0f] Ângulo [%.0f %.0f %.0f] VÂngulo [%.0f %.0f %.0f]",
+			_T("^4[%s]^1 Origem [%.0f %.0f %.0f] Ângulo [%.0f %.0f %.0f] VÂngulo [%.0f %.0f %.0f]"),
 			gPugCvar.m_Tag->string,
 			Spawn->second.Vecs[0],
 			Spawn->second.Vecs[1],
@@ -609,10 +609,10 @@ void CPugSpawnEdit::Refresh(CBasePlayer* Player)
 			(
 				Player->edict(),
 				E_PRINT_TEAM::RED,
-				"^4[%s]^1 Esse Spawn (Número ^4%d^1) (Time ^4%s^1) pode estar preso: ^3Faça a correção.",
+				_T("^4[%s]^1 Esse Spawn (Número ^4%d^1) (Time ^4%s^1) pode estar preso: ^3Faça a correção."),
 				gPugCvar.m_Tag->string,
 				Spawn->first,
-				(Spawn->second.Team == UNASSIGNED) ? "ALEATÓRIO" : (Spawn->second.Team == CT ? "CT" : "TR")
+				(Spawn->second.Team == UNASSIGNED) ? _T("RANDOM") : (Spawn->second.Team == CT ? "CT" : "TR")
 			);
 		}
 	}
@@ -649,8 +649,8 @@ void CPugSpawnEdit::ShowStats(CBasePlayer* Player)
 		}
 	}
 
-	gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Spawns: %d; Aleatório: %d; TR: %d; CT: %d", gPugCvar.m_Tag->string, TotalSpawns, TotalRandom, TotalTR, TotalCT);
-	gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Posição Atual: X: %.3f Y: %.3f Z: %.3f", gPugCvar.m_Tag->string, Player->edict()->v.origin.x, Player->edict()->v.origin.y, Player->edict()->v.origin.z);
+	gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Spawns: %d; Aleatório: %d; TR: %d; CT: %d"), gPugCvar.m_Tag->string, TotalSpawns, TotalRandom, TotalTR, TotalCT);
+	gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Posição Atual: X: %.3f Y: %.3f Z: %.3f"), gPugCvar.m_Tag->string, Player->edict()->v.origin.x, Player->edict()->v.origin.y, Player->edict()->v.origin.z);
 }
 
 void CPugSpawnEdit::Save(CBasePlayer* Player)
@@ -679,15 +679,15 @@ void CPugSpawnEdit::Save(CBasePlayer* Player)
 
 			gPugDM.Load();
 			
-			gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 ^3%u^1 Spawns salvos no arquivo: ^3%s.cfg", gPugCvar.m_Tag->string, this->m_Spawns.size(), STRING(gpGlobals->mapname));
+			gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%u^1 Spawns salvos no arquivo: ^3%s.cfg"), gPugCvar.m_Tag->string, this->m_Spawns.size(), STRING(gpGlobals->mapname));
 		}
 		else
 		{
-			gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Falha ao abrir: ^3%s.cfg", gPugCvar.m_Tag->string, STRING(gpGlobals->mapname));
+			gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Falha ao abrir: ^3%s.cfg"), gPugCvar.m_Tag->string, STRING(gpGlobals->mapname));
 		}
 	}
 	else
 	{
-		gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::RED, "^4[%s]^1 Falha ao salvar arquivo: ^3Nenhum Spawn na lista.", gPugCvar.m_Tag->string);
+		gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::RED, _T("^4[%s]^1 Falha ao salvar arquivo: ^3Nenhum Spawn na lista."), gPugCvar.m_Tag->string);
 	}	
 }
