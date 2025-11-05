@@ -61,7 +61,7 @@ void CPugTask::Execute(int Index)
                 gPugAdminMenu.ChangeMap(this->m_Task[Index].Parameter);
                 break;
             }
-            case E_TASK::ROUND_MSG:
+            case E_TASK::ROUND_MESSAGE:
             {
                 gPugMod.RoundMessage();
                 break;

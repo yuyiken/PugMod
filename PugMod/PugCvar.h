@@ -14,6 +14,8 @@ public:
 	cvar_t* m_HumansJoinTeam;
 	cvar_t* m_BotJoinTeam;
 	cvar_t* m_RoundRestartDelay;
+	cvar_t* m_SvRestart;
+	cvar_t* m_SvRestartRound;
 
 	cvar_t* m_Tag;
 	cvar_t* m_CmdPrefixPlayer;

@@ -398,11 +398,25 @@ void CPugAdminMenu::Pug(CBasePlayer *Player)
 {
     if (gPugAdmin.CheckAccess(Player, ADMIN_VOTE|ADMIN_LEVEL_B))
     {
-        gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_PUG, "Escolha um estado:");
+        gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_PUG, "Escolha uma operação:");
 
-        for (int i = STATE_DEATHMATCH; i <= STATE_FIRST_HALF; i++)
+        auto State = gPugMod.GetState();
+
+        if (State >= STATE_DEAD && State <= STATE_KNIFE_ROUND)
         {
-            gPugMenu[Player->entindex()].AddItem(i, false, 0, g_Pug_String[i]);
+            gPugMenu[Player->entindex()].AddItem(STATE_DEAD, false, 0, "Desligar Pug");
+            gPugMenu[Player->entindex()].AddItem(STATE_DEATHMATCH, false, 0, "Death Match");
+            gPugMenu[Player->entindex()].AddItem(STATE_VOTEMAP, false, 0, "Votação de Mapa");
+            gPugMenu[Player->entindex()].AddItem(STATE_VOTETEAM, false, 0, "Votação de Times");
+            gPugMenu[Player->entindex()].AddItem(STATE_CAPTAIN, false, 0, "Escolha de Capitães");
+            gPugMenu[Player->entindex()].AddItem(STATE_KNIFE_ROUND, false, 0, "Round Faca");
+            gPugMenu[Player->entindex()].AddItem(STATE_FIRST_HALF, false, 0, "Iniciar Partida");
+        }
+        else if (State >= STATE_FIRST_HALF && State <= STATE_OVERTIME)
+        {
+            gPugMenu[Player->entindex()].AddItem(STATE_FIRST_HALF, false, 0, "Reiniciar Partida");
+            gPugMenu[Player->entindex()].AddItem(STATE_DEAD, false, 0, "Cancelar Partida");
+            gPugMenu[Player->entindex()].AddItem(STATE_END, false, 0, "Finalizar Partida");
         }
 
         gPugMenu[Player->entindex()].Show(Player);
@@ -413,8 +427,11 @@ void CPugAdminMenu::PugHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O ^3ADMIN^1 alterou o status do servidor.", gPugCvar.m_Tag->string);
+        if (Item.Info >= STATE_DEAD && Item.Info <= STATE_END)
+        {
+            gPugTask.Create(E_TASK::SET_STATE, 0.3f, false, Item.Info);
 
-        gPugMod.SetState(Item.Info);
+            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Estado alterado: ^3%s^1.", gPugCvar.m_Tag->string, g_Pug_String[Item.Info]);
+        }
     }
 }

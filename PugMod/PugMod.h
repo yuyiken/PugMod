@@ -9,14 +9,12 @@ constexpr auto STATE_KNIFE_ROUND = 5;
 constexpr auto STATE_FIRST_HALF = 6;
 constexpr auto STATE_HALFTIME = 7;
 constexpr auto STATE_SECOND_HALF = 8;
-constexpr auto STATE_FIRST_OT = 9;
-constexpr auto STATE_HALFTIME_OT = 10;
-constexpr auto STATE_SECOND_OT = 11;
-constexpr auto STATE_END = 12;
+constexpr auto STATE_OVERTIME = 9;
+constexpr auto STATE_END = 10;
 
-constexpr std::array<const char *, STATE_END + 1> g_Pug_Config = {"pugmod", "deathmatch", "votemap", "voteteam", "captain", "kniferound", "esl", "halftime", "esl", "esl-ot", "halftime", "esl-ot", "end"};
+constexpr std::array<const char *, STATE_END + 1> g_Pug_Config = {"pugmod", "deathmatch", "votemap", "voteteam", "captain", "kniferound", "esl", "halftime", "esl", "esl-ot", "end"};
 
-constexpr std::array<const char *, STATE_END + 1> g_Pug_String = {"Morto", "Deathmatch", "Escolha do Mapa", "Escolha do Time", "Capitães", "Round Faca", "Primeiro Tempo", "Intervalo", "Segundo Tempo", "Primeiro OT", "Intervalo OT", "Segundo OT", "Fim"};
+constexpr std::array<const char *, STATE_END + 1> g_Pug_String = {"Morto", "Deathmatch", "Escolha do Mapa", "Escolha do Time", "Capitães", "Round Faca", "Primeiro Tempo", "Intervalo", "Segundo Tempo", "Overtime", "Fim"};
 
 constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamName = {"Nenhum", "Terroristas", "Contra-Terroristas", "Espectadores"};
 
@@ -40,6 +38,7 @@ public:
 
     int GetPoint(int EntityIndex, int Type);
     void SetPoint(int State, int EntityIndex, int Type, int Point);
+    void ResetPoint(int State);
 
     void SwapTeams();
 

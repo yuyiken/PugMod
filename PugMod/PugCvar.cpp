@@ -25,6 +25,12 @@ void CPugCvar::ServerActivate()
     // mp_round_restart_delay
     this->m_RoundRestartDelay = g_engfuncs.pfnCVarGetPointer("mp_round_restart_delay");
 
+    // sv_restart
+	this->m_SvRestart = g_engfuncs.pfnCVarGetPointer("sv_restart");
+
+    // sv_restartround
+	this->m_SvRestartRound = g_engfuncs.pfnCVarGetPointer("sv_restartround");
+
     // Log Tag
     //
     // Padrão: "PUG"

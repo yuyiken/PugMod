@@ -36,7 +36,7 @@ void CPugDemoRecord::PlayerSpawn(CBasePlayer *Player)
     {
         auto State = gPugMod.GetState();
 
-        if (State >= STATE_FIRST_HALF && State <= STATE_SECOND_OT)
+        if (State >= STATE_FIRST_HALF && State <= STATE_OVERTIME)
         {
             if (!this->m_Asked[Player->entindex()])
             {
@@ -78,6 +78,10 @@ void CPugDemoRecord::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
             gPugUtil.ClientCommand(Player->edict(), "stop; record \"pug-%s-%u.dem\"", File);
 
             gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Gravando: ^3%s^1", gPugCvar.m_Tag->string, File);
+        }
+        else
+        {
+            gPugUtil.ClientCommand(Player->edict(), "stop");
         }
     }
 }

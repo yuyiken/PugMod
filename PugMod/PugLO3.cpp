@@ -21,16 +21,18 @@ void CPugLO3::RestartRound()
             {
                 if (this->m_Restart <= 3)
                 {
-                    if (g_pGameRules)
-                    {
-                        CSGameRules()->m_bGameStarted = true;
-                        CSGameRules()->m_bCompleteReset = true;
-                        CSGameRules()->m_flRestartRoundTime = (gpGlobals->time + 3.0f);
-                    }
+                    CSGameRules()->m_bGameStarted = false;
+                    CSGameRules()->m_bCompleteReset = true;
+                    CSGameRules()->m_flRestartRoundTime = (gpGlobals->time + 3.0f);
+
+                    g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_SvRestartRound, "0");
+                    g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_SvRestart, "0");
                 }
                 else
                 {
                     this->m_Run = false;
+
+                    CSGameRules()->m_bGameStarted = true;
                 }
 
                 auto State = gPugMod.GetState();
