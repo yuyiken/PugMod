@@ -175,6 +175,8 @@ bool ReGameDLL_CBasePlayer_GetIntoGame(IReGameHook_CBasePlayer_GetIntoGame *chai
 
 	gPugDemoRecord.GetIntoGame(Player);
 
+	gPugStats.GetIntoGame(Player);
+
 	return Result;
 }
 
@@ -247,6 +249,8 @@ BOOL ReGameDLL_CBasePlayer_TakeDamage(IReGameHook_CBasePlayer_TakeDamage *chain,
 
 	gPugDM.TakeDamage(Player, pevInflictor, pevAttacker, flDamage, bitsDamageType);
 
+	gPugStats.TakeDamage(Player, pevInflictor, pevAttacker, flDamage, bitsDamageType);
+
 	return Result;
 }
 
@@ -292,6 +296,8 @@ void ReGameDLL_CSGameRules_OnRoundFreezeEnd(IReGameHook_CSGameRules_OnRoundFreez
 	chain->callNext();
 
 	gPugMod.RoundStart();
+
+	gPugStats.RoundStart();
 }
 
 bool ReGameDLL_RoundEnd(IReGameHook_RoundEnd *chain, int winStatus, ScenarioEventEndRound event, float tmDelay)
@@ -299,6 +305,8 @@ bool ReGameDLL_RoundEnd(IReGameHook_RoundEnd *chain, int winStatus, ScenarioEven
 	auto Result = chain->callNext(winStatus, event, tmDelay);
 
 	gPugMod.RoundEnd(winStatus, event, tmDelay);
+
+	gPugStats.RoundEnd(winStatus, event, tmDelay);
 
 	return Result;
 }

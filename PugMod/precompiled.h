@@ -71,6 +71,7 @@
 #include "PugRetry.h"
 #include "PugServerCmd.h"
 #include "PugSpawnEdit.h"
+#include "PugStats.h"
 #include "PugTask.h"
 #include "PugTimer.h"
 #include "PugUtil.h"
