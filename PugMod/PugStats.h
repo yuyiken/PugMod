@@ -1,11 +1,5 @@
 #pragma once
 
-constexpr auto CMD_ALL	= 0;		/* All Options */
-constexpr auto CMD_HP	= BIT(0);	/* flag "a" */
-constexpr auto CMD_DMG	= BIT(1);	/* flag "b" */
-constexpr auto CMD_RDMG = BIT(2);	/* flag "c" */
-constexpr auto CMD_SUM	= BIT(3);	/* flag "d" */
-
 class CPugStats
 {
 public:

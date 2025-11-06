@@ -13,6 +13,10 @@ enum E_CLIENT_CMD_ID
     CMD_RESET_SCORE,
     CMD_HELP,
     CMD_RECORD,
+    CMD_HP,
+    CMD_DMG,
+    CMD_RDMG,
+    CMD_SUM,
     //
     // Admins
     CMD_HELP_ADMIN = 100,

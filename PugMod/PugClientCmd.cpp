@@ -133,7 +133,6 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                             if (pszArgv[0u] == gPugCvar.m_CmdPrefixPlayer->string[0u] || pszArgv[0u] == gPugCvar.m_CmdPrefixAdmin->string[0u])
                             {
                                 gPugUtil.ClientCommand(pEntity, "%s\n", g_engfuncs.pfnCmd_Args());
-
                                 return true;
                             }
                         }
@@ -198,6 +197,26 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                         gPugDemoRecord.Menu(Player);
                                         return true;
                                     }
+                                    case CMD_HP:
+                                    {
+                                        gPugStats.ShowHP(Player, false);
+                                        return true;
+                                    }
+                                    case CMD_DMG:
+                                    {
+                                        gPugStats.ShowDamage(Player, false);
+                                        return true;
+                                    }
+                                    case CMD_RDMG:
+                                    {
+                                        gPugStats.ShowReceivedDamage(Player, false);
+                                        return true;
+                                    }
+                                    case CMD_SUM:
+                                    {
+                                        gPugStats.ShowSummary(Player, false);
+                                        return true;
+                                    }
                                     //
                                     // Admins
                                     case CMD_HELP_ADMIN:
@@ -243,7 +262,7 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                     case CMD_ADMIN_CVAR:
                                     {
                                         gPugCvarControl.Menu(Player);
-                                        break;
+                                        return true;
                                     }
                                     case CMD_DM_SPAWN_EDITOR:
                                     {
@@ -271,7 +290,6 @@ bool CPugClientCmd::Help(CBasePlayer *Player)
             if (gPugCvar.m_MotdFile->string[0u] != '\0')
             {
                 gPugUtil.ShowMotd(Player->edict(), gPugCvar.m_MotdFile->string, strlen(gPugCvar.m_MotdFile->string));
-                
                 return true;
             }
         }
