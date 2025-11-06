@@ -24,10 +24,7 @@ void CPugDemoRecord::ServerDeactivate()
 
 void CPugDemoRecord::GetIntoGame(CBasePlayer *Player)
 {
-    if (gPugCvar.m_DemoRecord->value)
-    {
-        this->m_Asked[Player->entindex()] = false;
-    }
+    this->m_Asked[Player->entindex()] = false;
 }
 
 void CPugDemoRecord::PlayerSpawn(CBasePlayer *Player)

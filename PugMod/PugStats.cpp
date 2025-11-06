@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-CPugStats gPugRound;
+CPugStats gPugStats;
 
 void CPugStats::RoundStart()
 {
@@ -36,11 +36,8 @@ void CPugStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, flo
 
 void CPugStats::GetIntoGame(CBasePlayer *Player)
 {
-	if (Player)
-	{
-        this->m_RoundDmg[Player->entindex()] = {};
-        this->m_RoundHit[Player->entindex()] = {};
-	}
+    this->m_RoundDmg[Player->entindex()] = {};
+    this->m_RoundHit[Player->entindex()] = {};
 }
 
 void CPugStats::DropClient(edict_t *pEntity)
