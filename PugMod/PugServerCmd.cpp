@@ -133,7 +133,7 @@ void CPugServerCmd::Status()
     auto Players = gPugUtil.GetPlayers();
     auto State = gPugMod.GetState();
 
-    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Status: %s", gPugCvar.m_Tag->string, g_Pug_String[State]);
+    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Status: %s", gPugCvar.m_Tag->string, gPugMod.GetString(State));
     gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] %s: %d", gPugCvar.m_Tag->string,g_Pug_TeamName[TERRORIST], Players[TERRORIST].size());
     gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] %s: %d", gPugCvar.m_Tag->string,g_Pug_TeamName[CT], Players[CT].size());
     gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] %s: %d", gPugCvar.m_Tag->string,g_Pug_TeamName[SPECTATOR], Players[SPECTATOR].size());

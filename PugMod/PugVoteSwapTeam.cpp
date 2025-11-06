@@ -78,8 +78,6 @@ void CPugVoteSwapTeam::Init(int Team)
         else
         {
             gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_FIRST_HALF);
-
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Nenhum vencedor: Iniciando ^3%s^1."), gPugCvar.m_Tag->string, g_Pug_String[STATE_FIRST_HALF]);
         }
     }
 }

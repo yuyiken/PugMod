@@ -431,7 +431,7 @@ void CPugAdminMenu::PugHandle(CBasePlayer *Player, P_MENU_ITEM Item)
         {
             gPugTask.Create(E_TASK::SET_STATE, 0.3f, false, Item.Info);
 
-            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Estado alterado: ^3%s^1."), gPugCvar.m_Tag->string, g_Pug_String[Item.Info]);
+            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Estado alterado: ^3%s^1."), gPugCvar.m_Tag->string, gPugMod.GetString(Item.Info));
         }
     }
 }

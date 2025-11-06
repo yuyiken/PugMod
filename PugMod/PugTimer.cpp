@@ -94,11 +94,11 @@ void CPugtimer::StartFrame()
 
                     if (Needed > 1)
                     {
-                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, _T("%s\n%d Jogadores Necessários"), g_Pug_String[State], Needed);
+                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, _T("%s\n%d Jogadores Necessários"), gPugMod.GetString(State), Needed);
                     }
                     else
                     {
-                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, _T("%s\n%d Jogador Necessário"), g_Pug_String[State], Needed);
+                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, _T("%s\n%d Jogador Necessário"), gPugMod.GetString(State), Needed);
                     }
                 }
                 else

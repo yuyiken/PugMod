@@ -53,7 +53,7 @@ void CPugLO3::RestartRound()
 
                         gPugUtil.SendHud(pEntity, g_LO3_HudParam, _T(g_LO3_HudText[this->m_Restart]));
 
-                        gPugUtil.PrintColor(pEntity, E_PRINT_TEAM::DEFAULT, _T(g_LO3_Message[this->m_Restart]), gPugCvar.m_Tag->string, g_Pug_String[State]);
+                        gPugUtil.PrintColor(pEntity, E_PRINT_TEAM::DEFAULT, _T(g_LO3_Message[this->m_Restart]), gPugCvar.m_Tag->string, gPugMod.GetString(State));
                     }
                 }
 
