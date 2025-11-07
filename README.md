@@ -1,4 +1,4 @@
-## Counter-Strike 1.6 Match Plugin
+<h3 align="center">Counter-Strike 1.6 Match Plugin</h3>
 
 <p align="center">Counter-Strike 1.6 Match Plugin for ReHLDS and MetaMod.</p>
 
