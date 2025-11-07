@@ -102,7 +102,7 @@ void CPugAdminMenu::Kick(CBasePlayer *Player)
         {
             this->Menu(Player);
 
-            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T(_T("^4[%s]^1 Nenhum jogador encontrado.")), gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Nenhum jogador encontrado."), gPugCvar.m_Tag->string);
         }
     }
 }
@@ -146,7 +146,7 @@ void CPugAdminMenu::Ban(CBasePlayer *Player)
         {
             this->Menu(Player);
 
-            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T(_T("^4[%s]^1 Nenhum jogador encontrado.")), gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Nenhum jogador encontrado."), gPugCvar.m_Tag->string);
         }
     }
 }
@@ -201,7 +201,7 @@ void CPugAdminMenu::Slap(CBasePlayer *Player)
         {
             this->Menu(Player);
 
-            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T(_T("^4[%s]^1 Nenhum jogador encontrado.")), gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Nenhum jogador encontrado."), gPugCvar.m_Tag->string);
             return;
         }
 
