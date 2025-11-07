@@ -10,7 +10,7 @@
 <h3>Description</h3>
 <p>A metamod plugin to run automnated competitive Counter-Strike 1.6 matches</p>
 
-<h3>Requisitos</h3>
+<h3>Requisites</h3>
 <ul>
     <li>ReHLDS</li>
     <li>ReGameDLL_CS</li>
