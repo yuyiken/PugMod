@@ -10,6 +10,19 @@ void CPugStats::RoundStart()
 	{
 		this->m_RoundDmg = {};
 		this->m_RoundHit = {};
+
+        this->m_Flags = R_STATS_ALL;
+
+        if (gPugCvar.m_RoundStats)
+        {
+            if (gPugCvar.m_RoundStats->string)
+            {
+                if (gPugCvar.m_RoundStats->string[0u] != '\0')
+                {
+                    this->m_Flags |= gPugAdmin.ReadFlags(gPugCvar.m_RoundStats->string);
+                }
+            }
+        }
 	}
 }
 
@@ -27,7 +40,7 @@ void CPugStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, flo
             {
                 for (auto const& Player : Players)
                 {
-                    this->ShowSummary(Player, true);
+                    this->ShowStats(Player);
                 }
             }
 		}
@@ -86,7 +99,17 @@ void CPugStats::TakeDamage(CBasePlayer *Player, entvars_t *pevInflictor, entvars
 	}
 }
 
-bool CPugStats::ShowHP(CBasePlayer* Player, bool InConsole)
+void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Victim, CBasePlayer *Assister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
+{
+    auto State = gPugMod.GetState();
+
+    if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
+    {
+        this->ShowStats(Victim);
+    }
+}
+
+bool CPugStats::ShowHP(CBasePlayer *Player, bool InConsole)
 {
     auto State = gPugMod.GetState();
 
@@ -131,14 +154,14 @@ bool CPugStats::ShowHP(CBasePlayer* Player, bool InConsole)
 	return false;
 }
 
-bool CPugStats::ShowDamage(CBasePlayer* Player, bool InConsole)
+bool CPugStats::ShowDamage(CBasePlayer *Player, bool InConsole)
 {
     auto State = gPugMod.GetState();
         
     if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
     {
         if (g_pGameRules)
-        {
+        {this->ShowReceivedDamage(Player, true);
             if (!Player->IsAlive() || CSGameRules()->m_bRoundTerminating || CSGameRules()->IsFreezePeriod())
             {
                 if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
@@ -201,7 +224,7 @@ bool CPugStats::ShowDamage(CBasePlayer* Player, bool InConsole)
 	return false;
 }
 
-bool CPugStats::ShowReceivedDamage(CBasePlayer* Player, bool InConsole)
+bool CPugStats::ShowReceivedDamage(CBasePlayer *Player, bool InConsole)
 {
     auto State = gPugMod.GetState();
         
@@ -268,7 +291,7 @@ bool CPugStats::ShowReceivedDamage(CBasePlayer* Player, bool InConsole)
 	return false;
 }
 
-bool CPugStats::ShowSummary(CBasePlayer* Player, bool InConsole)
+bool CPugStats::ShowSummary(CBasePlayer *Player, bool InConsole)
 {
     auto State = gPugMod.GetState();
         
@@ -342,4 +365,69 @@ bool CPugStats::ShowSummary(CBasePlayer* Player, bool InConsole)
     }
 
 	return false;
+}
+
+bool CPugStats::ShowStats(CBasePlayer *Player)
+{
+    auto State = gPugMod.GetState();
+        
+    if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
+    {
+        if (g_pGameRules)
+        {
+            if (!Player->IsAlive() || CSGameRules()->m_bRoundTerminating || CSGameRules()->IsFreezePeriod())
+            {
+                if (!Player->IsBot())
+                {
+                    if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
+                    {
+                        auto Players = gPugUtil.GetPlayers(true, true);
+
+                        if (Players.size() > 0)
+                        {
+                            char HudList[3][511] = {};
+
+                            Q_memset(HudList, 0, sizeof(HudList));
+
+                            auto PlayerId = Player->entindex();
+
+                            for (auto const& Target : Players)
+                            {
+                                auto TargetId = Target->entindex();
+
+                                if (this->m_RoundHit[PlayerId][TargetId])
+                                {
+                                    Q_snprintf(HudList[0] + strlen(HudList[0]), sizeof(HudList[0]), "%s -- %d hit(s) / %d dano\n", STRING(Target->edict()->v.netname), this->m_RoundHit[PlayerId][TargetId], this->m_RoundDmg[PlayerId][TargetId]);
+                                }
+
+                                if (this->m_RoundHit[TargetId][PlayerId])
+                                {
+                                    Q_snprintf(HudList[1] + strlen(HudList[1]), sizeof(HudList[1]), "%s -- %d hit(s) / %d dano\n", STRING(Target->edict()->v.netname), this->m_RoundHit[TargetId][PlayerId], this->m_RoundDmg[TargetId][PlayerId]);
+                                }
+                            }
+
+                            if (HudList[0][0u] != '\0')
+                            {
+                                Q_snprintf(HudList[2], sizeof(HudList[2]), "Vítimas:\n%s", HudList[0]);
+                            }
+
+                            if (HudList[1][0u] != '\0')
+                            {
+                                Q_snprintf(HudList[2] + strlen(HudList[2]), sizeof(HudList[2]), "\n\n\n\nAtacantes:\n%s", HudList[1]);
+                            }
+
+                            if (HudList[2][0u] != '\0')
+                            {
+                                gPugUtil.SendHud(Player->edict(), g_RoundStats_HudParam, HudList[2]);
+                            }
+                        }
+
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
 }

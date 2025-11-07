@@ -1,5 +1,13 @@
 #pragma once
 
+constexpr auto R_STATS_ALL	= 0;		/* All Options */
+constexpr auto R_STATS_HP	= BIT(0);	/* flag "a" */
+constexpr auto R_STATS_DMG	= BIT(1);	/* flag "b" */
+constexpr auto R_STATS_RDMG = BIT(2);	/* flag "c" */
+constexpr auto R_STATS_SUM	= BIT(3);	/* flag "d" */
+
+constexpr hudtextparms_t g_RoundStats_HudParam = {0.70f, 0.28f, 2, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0.0f, 0.0f, 12.0f, 1.0f, 1};
+
 class CPugStats
 {
 public:
@@ -8,13 +16,16 @@ public:
 	
     void GetIntoGame(CBasePlayer *Player);
     void DropClient(edict_t *pEntity);
-	void TakeDamage(CBasePlayer* Victim, entvars_t* pevInflictor, entvars_t* pevAttacker, float& flDamage, int bitsDamageType);
-	bool ShowHP(CBasePlayer* Player, bool InConsole);
-	bool ShowDamage(CBasePlayer* Player, bool InConsole);
-	bool ShowReceivedDamage(CBasePlayer* Player, bool InConsole);
-	bool ShowSummary(CBasePlayer* Player, bool InConsole);
+	void TakeDamage(CBasePlayer *Victim, entvars_t *pevInflictor, entvars_t *pevAttacker, float& flDamage, int bitsDamageType);
+	void SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Victim, CBasePlayer *Assister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill);
+	bool ShowHP(CBasePlayer *Player, bool InConsole);
+	bool ShowDamage(CBasePlayer *Player, bool InConsole);
+	bool ShowReceivedDamage(CBasePlayer *Player, bool InConsole);
+	bool ShowSummary(CBasePlayer *Player, bool InConsole);
+	bool ShowStats(CBasePlayer *Player);
 
 private:
+	int m_Flags = R_STATS_ALL;
 	std::array<std::array<int, MAX_CLIENTS + 1>, MAX_CLIENTS + 1> m_RoundDmg;
 	std::array<std::array<int, MAX_CLIENTS + 1>, MAX_CLIENTS + 1> m_RoundHit;
 };

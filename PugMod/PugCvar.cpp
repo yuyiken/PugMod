@@ -240,6 +240,27 @@ void CPugCvar::ServerActivate()
     // Padrão: "20.0"
     this->m_RetryTime = this->Register("pug_retry_time", "20.0");
 
+    // Flags para ativar os comandos de stats
+    // Se vazio nenhum comando é habilitado
+    //
+    // a Ativa o comando .hp
+    // b Ativa o comando .dmg
+    // c Ativa o comando .rdmg
+    // d Ativa o comando .sum
+    //
+    // Padrão: "abcd"
+    this->m_RoundStats = this->Register("pug_round_stats", "abcd");
+
+    // Exibe estatísticas no fim do round
+    //
+    // 0 Inativo
+    // 1 Exibir Vítimas
+    // 2 Exibir Atacantes
+    // 3 Exibir Ambos
+    //
+    // Padrão: "3"
+    this->m_RoundEndStats = this->Register("pug_round_end_stats", "3");
+
     // Ativar modo Deathmatch
     // Se inativo, será o modo aquecimento comum
     //
