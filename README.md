@@ -57,9 +57,9 @@
 
 <details>
     <summary>Pug Mod Variables</summary>
-    
+
 | Variable | Default | Description |
-|----------|----------------|------------|
+|----------|:---------------:|------------|
 | pug_tag | "PUG" | Log Tag |
 | pug_language | "br" | Server language |
 | pug_cmd_prefix_player | "." | Player command prefix |
