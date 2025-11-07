@@ -57,6 +57,7 @@
 
 <details>
     <summary>Pug Mod Variables</summary>
+    
 | Variable | Default | Description |
 |----------|----------------|------------|
 | pug_tag | "PUG" | Log Tag |
