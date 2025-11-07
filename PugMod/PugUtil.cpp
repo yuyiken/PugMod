@@ -459,6 +459,8 @@ void CPugUtil::SendHud(edict_t *pEntity, const hudtextparms_t &TextParams, const
 
 	va_end(ArgPtr);
 
+	this->ParseColor(szString);
+
 	if (!FNullEnt(pEntity))
 	{
 		g_engfuncs.pfnMessageBegin(MSG_ONE_UNRELIABLE, SVC_TEMPENTITY, nullptr, pEntity);
@@ -510,6 +512,8 @@ void CPugUtil::SendDHud(edict_t *pEntity, const hudtextparms_t &TextParams, cons
 	int Length = vsnprintf(Text, sizeof(Text), Format, ArgPtr);
 
 	va_end(ArgPtr);
+
+	this->ParseColor(Text);
 
 	if (!FNullEnt(pEntity))
 	{

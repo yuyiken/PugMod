@@ -18,10 +18,10 @@ public:
     void DropClient(edict_t *pEntity);
 	void TakeDamage(CBasePlayer *Victim, entvars_t *pevInflictor, entvars_t *pevAttacker, float& flDamage, int bitsDamageType);
 	void SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Victim, CBasePlayer *Assister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill);
-	bool ShowHP(CBasePlayer *Player, bool InConsole);
-	bool ShowDamage(CBasePlayer *Player, bool InConsole);
-	bool ShowReceivedDamage(CBasePlayer *Player, bool InConsole);
-	bool ShowSummary(CBasePlayer *Player, bool InConsole);
+	bool ShowHP(CBasePlayer *Player);
+	bool ShowDamage(CBasePlayer *Player);
+	bool ShowReceivedDamage(CBasePlayer *Player);
+	bool ShowSummary(CBasePlayer *Player);
 	bool ShowStats(CBasePlayer *Player);
 
 private:

@@ -109,7 +109,7 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
     }
 }
 
-bool CPugStats::ShowHP(CBasePlayer *Player, bool InConsole)
+bool CPugStats::ShowHP(CBasePlayer *Player)
 {
     auto State = gPugMod.GetState();
 
@@ -138,7 +138,7 @@ bool CPugStats::ShowHP(CBasePlayer *Player, bool InConsole)
                         }
                     }
 
-                    if (!StatsCount && !InConsole)
+                    if (!StatsCount)
                     {
                         gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Nenhum jogador vivo."), gPugCvar.m_Tag->string);
                     }
@@ -154,14 +154,14 @@ bool CPugStats::ShowHP(CBasePlayer *Player, bool InConsole)
 	return false;
 }
 
-bool CPugStats::ShowDamage(CBasePlayer *Player, bool InConsole)
+bool CPugStats::ShowDamage(CBasePlayer *Player)
 {
     auto State = gPugMod.GetState();
         
     if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
     {
         if (g_pGameRules)
-        {this->ShowReceivedDamage(Player, true);
+        {
             if (!Player->IsAlive() || CSGameRules()->m_bRoundTerminating || CSGameRules()->IsFreezePeriod())
             {
                 if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
@@ -176,36 +176,20 @@ bool CPugStats::ShowDamage(CBasePlayer *Player, bool InConsole)
                         {
                             StatsCount++;
 
-                            if (!InConsole)
-                            {
-                                gPugUtil.PrintColor
-                                (
-                                    Player->edict(),
-                                    Target->entindex(),
-                                    _T("^4[%s]^1 Acertou ^3%s^1 %d vez(es) (Dano %d)"),
-                                    gPugCvar.m_Tag->string,
-                                    STRING(Target->edict()->v.netname),
-                                    this->m_RoundHit[Player->entindex()][Target->entindex()],
-                                    this->m_RoundDmg[Player->entindex()][Target->entindex()]
-                                );
-                            }
-                            else
-                            {
-                                gPugUtil.ClientPrint
-                                (
-                                    Player->edict(),
-                                    E_PRINT::CONSOLE,
-                                    _T("[%s] Acertou %s %d vez(es) (Dano %d)"),
-                                    gPugCvar.m_Tag->string,
-                                    STRING(Target->edict()->v.netname),
-                                    this->m_RoundHit[Player->entindex()][Target->entindex()],
-                                    this->m_RoundDmg[Player->entindex()][Target->entindex()]
-                                );
-                            }
+                            gPugUtil.PrintColor
+                            (
+                                Player->edict(),
+                                Target->entindex(),
+                                _T("^4[%s]^1 Acertou ^3%s^1 %d vez(es) (Dano %d)"),
+                                gPugCvar.m_Tag->string,
+                                STRING(Target->edict()->v.netname),
+                                this->m_RoundHit[Player->entindex()][Target->entindex()],
+                                this->m_RoundDmg[Player->entindex()][Target->entindex()]
+                            );
                         }
                     }
 
-                    if (!StatsCount && !InConsole)
+                    if (!StatsCount)
                     {
                         gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Nenhum dano nesse round."), gPugCvar.m_Tag->string);
                     }
@@ -216,15 +200,12 @@ bool CPugStats::ShowDamage(CBasePlayer *Player, bool InConsole)
         }
     }
 
-    if (!InConsole)
-    {
-        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Comando indisponível."), gPugCvar.m_Tag->string);
-    }
+    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Comando indisponível."), gPugCvar.m_Tag->string);
 
 	return false;
 }
 
-bool CPugStats::ShowReceivedDamage(CBasePlayer *Player, bool InConsole)
+bool CPugStats::ShowReceivedDamage(CBasePlayer *Player)
 {
     auto State = gPugMod.GetState();
         
@@ -246,36 +227,20 @@ bool CPugStats::ShowReceivedDamage(CBasePlayer *Player, bool InConsole)
                         {
                             StatsCount++;
 
-                            if (!InConsole)
-                            {
-                                gPugUtil.PrintColor
-                                (
-                                    Player->edict(),
-                                    Target->entindex(),
-                                    _T("^4[%s]^1 Dano Recebido de ^3%s^1 %d vez(es) (Dano %d)"),
-                                    gPugCvar.m_Tag->string,
-                                    STRING(Target->edict()->v.netname),
-                                    this->m_RoundHit[Target->entindex()][Player->entindex()],
-                                    this->m_RoundDmg[Target->entindex()][Player->entindex()]
-                                );
-                            }
-                            else
-                            {
-                                gPugUtil.ClientPrint
-                                (
-                                    Player->edict(),
-                                    E_PRINT::CONSOLE,
-                                    _T("[%s] Dano Recebido de %s %d vez(es) (Dano %d)"),
-                                    gPugCvar.m_Tag->string,
-                                    STRING(Target->edict()->v.netname),
-                                    this->m_RoundHit[Player->entindex()][Target->entindex()],
-                                    this->m_RoundDmg[Player->entindex()][Target->entindex()]
-                                );
-                            }
+                            gPugUtil.PrintColor
+                            (
+                                Player->edict(),
+                                Target->entindex(),
+                                _T("^4[%s]^1 Dano Recebido de ^3%s^1 %d vez(es) (Dano %d)"),
+                                gPugCvar.m_Tag->string,
+                                STRING(Target->edict()->v.netname),
+                                this->m_RoundHit[Target->entindex()][Player->entindex()],
+                                this->m_RoundDmg[Target->entindex()][Player->entindex()]
+                            );
                         }
                     }
 
-                    if (!StatsCount && !InConsole)
+                    if (!StatsCount)
                     {
                         gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Nenhum dano recebido nesse round."), gPugCvar.m_Tag->string);
                     }
@@ -291,7 +256,7 @@ bool CPugStats::ShowReceivedDamage(CBasePlayer *Player, bool InConsole)
 	return false;
 }
 
-bool CPugStats::ShowSummary(CBasePlayer *Player, bool InConsole)
+bool CPugStats::ShowSummary(CBasePlayer *Player)
 {
     auto State = gPugMod.GetState();
         
@@ -313,42 +278,23 @@ bool CPugStats::ShowSummary(CBasePlayer *Player, bool InConsole)
                         {
                             StatsCount++;
 
-                            if (!InConsole)
-                            {
-                                gPugUtil.PrintColor
-                                (
-                                    Player->edict(),
-                                    Target->entindex(),
-                                    _T("^4[%s]^1 (%d dano | %d hits) para (%d dano | %d hits) de ^3%s^1 (%d HP)"),
-                                    gPugCvar.m_Tag->string,
-                                    this->m_RoundDmg[Player->entindex()][Target->entindex()],
-                                    this->m_RoundHit[Player->entindex()][Target->entindex()],
-                                    this->m_RoundDmg[Target->entindex()][Player->entindex()],
-                                    this->m_RoundHit[Target->entindex()][Player->entindex()],
-                                    STRING(Target->edict()->v.netname),
-                                    Target->IsAlive() ? (int)Target->edict()->v.health : 0
-                                );
-                            }
-                            else
-                            {
-                                gPugUtil.ClientPrint
-                                (
-                                    Player->edict(),
-                                    E_PRINT::CONSOLE,
-                                    _T("[%s] (%d dano | %d hits) para (%d dano | %d hits) de %s (%d HP)"),
-                                    gPugCvar.m_Tag->string,
-                                    this->m_RoundDmg[Player->entindex()][Target->entindex()],
-                                    this->m_RoundHit[Player->entindex()][Target->entindex()],
-                                    this->m_RoundDmg[Target->entindex()][Player->entindex()],
-                                    this->m_RoundHit[Target->entindex()][Player->entindex()],
-                                    STRING(Target->edict()->v.netname),
-                                    Target->IsAlive() ? (int)Target->edict()->v.health : 0
-                                );
-                            }
+                            gPugUtil.PrintColor
+                            (
+                                Player->edict(),
+                                Target->entindex(),
+                                _T("^4[%s]^1 (%d dano | %d hits) para (%d dano | %d hits) de ^3%s^1 (%d HP)"),
+                                gPugCvar.m_Tag->string,
+                                this->m_RoundDmg[Player->entindex()][Target->entindex()],
+                                this->m_RoundHit[Player->entindex()][Target->entindex()],
+                                this->m_RoundDmg[Target->entindex()][Player->entindex()],
+                                this->m_RoundHit[Target->entindex()][Player->entindex()],
+                                STRING(Target->edict()->v.netname),
+                                Target->IsAlive() ? (int)Target->edict()->v.health : 0
+                            );
                         }
                     }
 
-                    if (!StatsCount && !InConsole)
+                    if (!StatsCount)
                     {
                         gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Nenhum dano nesse round."), gPugCvar.m_Tag->string);
                     }
@@ -359,10 +305,7 @@ bool CPugStats::ShowSummary(CBasePlayer *Player, bool InConsole)
         }
     }
 
-    if (!InConsole)
-    {
-        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Comando indisponível."), gPugCvar.m_Tag->string);
-    }
+    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Comando indisponível."), gPugCvar.m_Tag->string);
 
 	return false;
 }
@@ -397,23 +340,23 @@ bool CPugStats::ShowStats(CBasePlayer *Player)
 
                                 if (this->m_RoundHit[PlayerId][TargetId])
                                 {
-                                    Q_snprintf(HudList[0] + strlen(HudList[0]), sizeof(HudList[0]), "%s -- %d hit(s) / %d dano\n", STRING(Target->edict()->v.netname), this->m_RoundHit[PlayerId][TargetId], this->m_RoundDmg[PlayerId][TargetId]);
+                                    Q_snprintf(HudList[0] + strlen(HudList[0]), sizeof(HudList[0]), _T("%s -- %d hit(s) / %d dmg\n"), STRING(Target->edict()->v.netname), this->m_RoundHit[PlayerId][TargetId], this->m_RoundDmg[PlayerId][TargetId]);
                                 }
 
                                 if (this->m_RoundHit[TargetId][PlayerId])
                                 {
-                                    Q_snprintf(HudList[1] + strlen(HudList[1]), sizeof(HudList[1]), "%s -- %d hit(s) / %d dano\n", STRING(Target->edict()->v.netname), this->m_RoundHit[TargetId][PlayerId], this->m_RoundDmg[TargetId][PlayerId]);
+                                    Q_snprintf(HudList[1] + strlen(HudList[1]), sizeof(HudList[1]), _T("%s -- %d hit(s) / %d dmg\n"), STRING(Target->edict()->v.netname), this->m_RoundHit[TargetId][PlayerId], this->m_RoundDmg[TargetId][PlayerId]);
                                 }
                             }
 
                             if (HudList[0][0u] != '\0')
                             {
-                                Q_snprintf(HudList[2], sizeof(HudList[2]), "Vítimas:\n%s", HudList[0]);
+                                Q_snprintf(HudList[2], sizeof(HudList[2]), _T("Victims:^n%s"), HudList[0]);
                             }
 
                             if (HudList[1][0u] != '\0')
                             {
-                                Q_snprintf(HudList[2] + strlen(HudList[2]), sizeof(HudList[2]), "\n\n\n\nAtacantes:\n%s", HudList[1]);
+                                Q_snprintf(HudList[2] + strlen(HudList[2]), sizeof(HudList[2]), _T("^n^n^n^nAttackers:\n%s"), HudList[1]);
                             }
 
                             if (HudList[2][0u] != '\0')

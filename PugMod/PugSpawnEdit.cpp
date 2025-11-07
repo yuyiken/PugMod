@@ -583,7 +583,7 @@ void CPugSpawnEdit::Refresh(CBasePlayer* Player)
 			_T("^4[%s]^1 Spawn mais próximo: Número ^3%d^1 -> Time ^3%s^1"),
 			gPugCvar.m_Tag->string,
 			Spawn->first,
-			(Spawn->second.Team == UNASSIGNED) ? _T("RANDOM") : (Spawn->second.Team == CT ? "CT" : "TR")
+			(Spawn->second.Team == UNASSIGNED) ? "ANY" : (Spawn->second.Team == CT ? "CT" : "TR")
 		);
 
 		gPugUtil.PrintColor
@@ -612,7 +612,7 @@ void CPugSpawnEdit::Refresh(CBasePlayer* Player)
 				_T("^4[%s]^1 Esse Spawn (Número ^4%d^1) (Time ^4%s^1) pode estar preso: ^3Faça a correção."),
 				gPugCvar.m_Tag->string,
 				Spawn->first,
-				(Spawn->second.Team == UNASSIGNED) ? _T("RANDOM") : (Spawn->second.Team == CT ? "CT" : "TR")
+				(Spawn->second.Team == UNASSIGNED) ? "ANY" : (Spawn->second.Team == CT ? "CT" : "TR")
 			);
 		}
 	}

@@ -173,7 +173,7 @@ void CPugReady::StartFrame()
                 }
                 else
                 {
-                    gPugUtil.SendHud(nullptr, g_ReadyNum_HudParam, _T("Aquecendo: %d / %d\nPronto: %d / %d"), ReadyCount[0], this->m_PlayersMin, ReadyCount[1], this->m_PlayersMin);
+                    gPugUtil.SendHud(nullptr, g_ReadyNum_HudParam, _T("Aquecendo: %d / %d^nPronto: %d / %d"), ReadyCount[0], this->m_PlayersMin, ReadyCount[1], this->m_PlayersMin);
                 }
             }
 

@@ -94,11 +94,11 @@ void CPugtimer::StartFrame()
 
                     if (Needed > 1)
                     {
-                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, _T("%s\n%d Jogadores Necessários"), gPugMod.GetString(State), Needed);
+                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, _T("%s^n%d Jogadores Necessários"), gPugMod.GetString(State), Needed);
                     }
                     else
                     {
-                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, _T("%s\n%d Jogador Necessário"), gPugMod.GetString(State), Needed);
+                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, _T("%s^n%d Jogador Necessário"), gPugMod.GetString(State), Needed);
                     }
                 }
                 else
@@ -109,7 +109,7 @@ void CPugtimer::StartFrame()
                     {
                         char szTime[32] = { 0 };
 
-                        strftime(szTime, sizeof(szTime), _T("INICIANDO PARTIDA EM\n%M:%S"), localtime(&RemainTime));
+                        strftime(szTime, sizeof(szTime), _T("INICIANDO PARTIDA EM^n%M:%S"), localtime(&RemainTime));
 
                         gPugUtil.SendHud(nullptr, g_Timer_HudParam, szTime);
                     }

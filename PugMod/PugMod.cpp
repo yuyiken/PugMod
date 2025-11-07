@@ -586,13 +586,13 @@ void CPugMod::RoundMessage()
                     {
                         gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip, warning\"");
 
-                        gPugUtil.SendHud(nullptr, g_Pug_HudParam, _T("%s\n%s %d : %d %s\nÚltimo Round"), gPugMod.GetString(this->m_State), g_Pug_TeamNameShort[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamNameShort[CT]);
+                        gPugUtil.SendHud(nullptr, g_Pug_HudParam, _T("%s^n%s %d : %d %s^nÚltimo Round"), gPugMod.GetString(this->m_State), g_Pug_TeamNameShort[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamNameShort[CT]);
                     }
                     else if ((ScoreTR == MaxRound) || (ScoreCT == MaxRound) || (this->m_ScoreOT[TERRORIST] == MaxRoundOT) || (this->m_ScoreOT[CT] == MaxRoundOT))
                     {
                         gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip, warning\"");
 
-                        gPugUtil.SendHud(nullptr, g_Pug_HudParam, _T("%s\n%s %d : %d %s\nPerigo Fim da Partida"), gPugMod.GetString(this->m_State), g_Pug_TeamNameShort[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamNameShort[CT]);
+                        gPugUtil.SendHud(nullptr, g_Pug_HudParam, _T("%s^n%s %d : %d %s^nPerigo Fim da Partida"), gPugMod.GetString(this->m_State), g_Pug_TeamNameShort[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamNameShort[CT]);
                     }
                     else
                     {
@@ -605,13 +605,13 @@ void CPugMod::RoundMessage()
 
                     if (ScoreTR == ScoreCT)
                     {
-                        gPugUtil.SendHud(nullptr, g_Pug_HudParam, _T("Fim de Jogo!\n%s %d : %d %s\nA partida terminou empatada"), g_Pug_TeamNameShort[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamNameShort[CT]);
+                        gPugUtil.SendHud(nullptr, g_Pug_HudParam, _T("Fim de Jogo!^n%s %d : %d %s^nA partida terminou empatada"), g_Pug_TeamNameShort[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamNameShort[CT]);
                     }
                     else
                     {
                         auto Winner = (ScoreTR > ScoreCT) ? TERRORIST : CT;
 
-                        gPugUtil.SendHud(nullptr, g_Pug_HudParam, _T("Fim de Jogo!\n%s %d : %d %s\nOs %s venceram a partida"), g_Pug_TeamNameShort[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamNameShort[CT], g_Pug_TeamName[Winner]);
+                        gPugUtil.SendHud(nullptr, g_Pug_HudParam, _T("Fim de Jogo!^n%s %d : %d %s^nOs %s venceram a partida"), g_Pug_TeamNameShort[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamNameShort[CT], g_Pug_TeamName[Winner]);
                     }
                 }
             }
