@@ -6,12 +6,10 @@ class CPugLang
 {
 public:
     void ServerActivate();
-
-    void Add(const char* Key, const char* Value);
-    const char* Get(const char* Key);
+    const char* Get(const char* Head);
 
 private:
-    std::unordered_map<std::string, std::string> m_Data = {};
+    std::unordered_map<std::string, std::map<std::string, std::string>> m_Data = {};
 };
 
 extern CPugLang gPugLang;

@@ -6,32 +6,72 @@ void CPugLang::ServerActivate()
 {
     this->m_Data.clear();
 
-    gPugUtil.ServerCommand("exec %s/cfg/language.cfg", gPugUtil.GetPath());
-}
+    char File[MAX_PATH] = { 0 };
+    Q_snprintf(File, sizeof(File), "%s/cfg/language.cfg", gPugUtil.GetPath());
 
-void CPugLang::Add(const char* Key, const char* Value)
-{
-    if (Key && Value)
+    std::ifstream TempFile(File);
+
+    if (TempFile.is_open())
     {
-        if (Key[0u] != '\0' && Value[0u] != '\0')
+        std::string Line;
+        std::string Head;
+        std::string Lang;
+
+        while (std::getline(TempFile, Line))
         {
-            this->m_Data[Key] = Value;
+            if (!Line.empty())
+            {
+                if (Line[0u] == '"')
+                {
+                    Line.erase(std::remove(Line.begin(), Line.end(), '\"'), Line.end());
+                    Head = Line;
+                }
+                else if (Line[2u] == ':')
+                {
+                    Lang = Line.substr(0, 2);
+
+                    if (!Line.empty())
+                    {
+                        Line.erase(0, 3);
+                        Line.erase(std::remove(Line.begin(), Line.end(), '\"'), Line.end());
+
+                        if (!Head.empty() && !Line.empty())
+                        {
+                            this->m_Data[Head][Lang] = Line;
+                        }
+                    }
+                }
+            } 
         }
     }
+
+    TempFile.close();
 }
 
-const char* CPugLang::Get(const char* Key)
+const char* CPugLang::Get(const char* Head)
 {
-    if (Key)
+    if (Head)
     {
-        if (!this->m_Data.empty())
+        if (Head[0u] != '\0')
         {
-            if (this->m_Data.find(Key) != this->m_Data.end())
+            if (gPugCvar.m_Language->string)
             {
-                return this->m_Data[Key].c_str();
+                if (gPugCvar.m_Language->string[0u] != '\0')
+                {
+                    if (!this->m_Data.empty())
+                    {
+                        if (this->m_Data.find(Head) != this->m_Data.end())
+                        {
+                            if (this->m_Data[Head].find(gPugCvar.m_Language->string) != this->m_Data[Head].end())
+                            {
+                                return this->m_Data[Head][gPugCvar.m_Language->string].c_str();
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
-    return Key;
+    return Head;
 }

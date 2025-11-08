@@ -11,7 +11,6 @@ class CPugServerCmd
 public:
     void ServerActivate();
 
-    static void AddString();
     static void AddAdmin();
     static void AddClientCmd();
     static void AddSpawn();
@@ -23,7 +22,6 @@ public:
 private:
     const std::vector<P_SERVER_CMD> m_CommandList = 
     {{
-        {"pug_add_string", this->AddString},
         {"pug_add_admin", this->AddAdmin},
         {"pug_add_clcmd", this->AddClientCmd},
         {"pug_add_spawn", this->AddSpawn},
