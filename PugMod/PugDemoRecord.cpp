@@ -49,11 +49,11 @@ void CPugDemoRecord::Menu(CBasePlayer *Player)
     {
         if (!Player->IsBot())
         {
-            gPugMenu[Player->entindex()].Create(false, E_MENU::ME_DEMO_RECORD, _T("Gravar demo?"));
+            gPugMenu[Player->entindex()].Create(false, E_MENU::ME_DEMO_RECORD, _T("Record demo?"));
 
-            gPugMenu[Player->entindex()].AddItem(1, false, 1, _T("Sim"));
+            gPugMenu[Player->entindex()].AddItem(1, false, 1, _T("Yes"));
 
-            gPugMenu[Player->entindex()].AddItem(0, false, 0, _T("Não"));
+            gPugMenu[Player->entindex()].AddItem(0, false, 0, _T("No"));
 
             gPugMenu[Player->entindex()].Show(Player);
 
@@ -74,7 +74,7 @@ void CPugDemoRecord::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 
             gPugUtil.ClientCommand(Player->edict(), "stop; record \"pug-%s-%u.dem\"", File);
 
-            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Gravando: ^3%s^1"), gPugCvar.m_Tag->string, File);
+            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Recording: ^3%s^1"), gPugCvar.m_Tag->string, File);
         }
         else
         {

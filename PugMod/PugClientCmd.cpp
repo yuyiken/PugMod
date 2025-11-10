@@ -101,7 +101,7 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                 {              
                     if (this->FilterFlood(pszCommand, Player->entindex()))
                     {
-                        gPugUtil.ClientPrint(pEntity, E_PRINT::CONSOLE, _T("*** FLOODING DETECTADO ***"));
+                        gPugUtil.ClientPrint(pEntity, E_PRINT::CONSOLE, _T("*** FLOODING DETECTED ***"));
                         return true;
                     }
 
@@ -339,7 +339,7 @@ bool CPugClientCmd::Message(CBasePlayer *Player)
             }
         }
 
-        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Uso: ^3%s^1 <mensagem>"), gPugCvar.m_Tag->string, g_engfuncs.pfnCmd_Argv(0));
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Usage: ^3%s^1 <message>"), gPugCvar.m_Tag->string, g_engfuncs.pfnCmd_Argv(0));
         return true;
     }
 
@@ -360,19 +360,19 @@ bool CPugClientCmd::Rcon(CBasePlayer *Player)
 
                 if (Args.find("rcon_password") != std::string::npos || Args.find("sv_password") != std::string::npos)
                 {
-                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Comando bloqueado."), gPugCvar.m_Tag->string);
+                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command blocked."), gPugCvar.m_Tag->string);
                     return true;
                 }
                 
                 gPugUtil.ServerCommand("%s", pCmdArgs);
 
-                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Executado: ^3%s^1"), gPugCvar.m_Tag->string, pCmdArgs);
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Executed: ^3%s^1"), gPugCvar.m_Tag->string, pCmdArgs);
 
                 return true;
             }
         }
 
-        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Uso: ^3%s^1 <comando>"), gPugCvar.m_Tag->string, g_engfuncs.pfnCmd_Argv(0));
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Usage: ^3%s^1 <command>"), gPugCvar.m_Tag->string, g_engfuncs.pfnCmd_Argv(0));
         return true;
     }
 

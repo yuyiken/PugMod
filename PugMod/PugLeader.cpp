@@ -107,7 +107,7 @@ void CPugLeader::Stop()
 				gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_FIRST_HALF);
 			}
 
-			gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Os times estão completos."), gPugCvar.m_Tag->string);
+			gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Teams are full."), gPugCvar.m_Tag->string);
 		}
 		else
 		{
@@ -135,7 +135,7 @@ void CPugLeader::Stop()
 
 			gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_DEATHMATCH);
 
-			gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Falha ao escolher: ^3Os times estão incompletos.^1"), gPugCvar.m_Tag->string);
+			gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Pick failed: Teams are incomplete.^1"), gPugCvar.m_Tag->string);
 		}
 	}
 }
@@ -196,7 +196,7 @@ void CPugLeader::SetLeader(CBasePlayer* Player, int Team)
 
         Player->ClearConditions(BIT_LEADER_MENU);
 
-        gPugUtil.PrintColor(nullptr, (Team == TERRORIST ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE), _T("^4[%s]^1 Novo capitão dos ^3%s^1: %s"), gPugCvar.m_Tag->string, g_Pug_TeamName[Team], STRING(Player->edict()->v.netname));
+        gPugUtil.PrintColor(nullptr, (Team == TERRORIST ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE), _T("^4[%s]^1 New captain of ^3%s^1: %s"), gPugCvar.m_Tag->string, g_Pug_TeamName[Team], STRING(Player->edict()->v.netname));
     }
 }
 
@@ -221,13 +221,13 @@ void CPugLeader::GetPlayer(CBasePlayer* Leader, CBasePlayer* Target)
 					Target->RoundRespawn();
 				}
 
-				gPugUtil.PrintColor(nullptr, (Leader->m_iTeam == TERRORIST ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE), _T("^4[%s]^1 ^3%s^1 escolheu ^3%s^1"), gPugCvar.m_Tag->string, STRING(Leader->edict()->v.netname), STRING(Target->edict()->v.netname));
+				gPugUtil.PrintColor(nullptr, (Leader->m_iTeam == TERRORIST ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE), _T("^4[%s]^1 ^3%s^1 picked ^3%s^1"), gPugCvar.m_Tag->string, STRING(Leader->edict()->v.netname), STRING(Target->edict()->v.netname));
 
 				this->Next(Leader);
 			}
 			else
 			{
-				gPugUtil.PrintColor(nullptr, (Target->m_iTeam == TERRORIST ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE), _T("^4[%s]^1 ^3%s^1 já está em um time."), gPugCvar.m_Tag->string, STRING(Target->edict()->v.netname));
+				gPugUtil.PrintColor(nullptr, (Target->m_iTeam == TERRORIST ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE), _T("^4[%s]^1 ^3%s^1 is already on a team."), gPugCvar.m_Tag->string, STRING(Target->edict()->v.netname));
 
 				this->Menu(Leader);
 			}
@@ -290,7 +290,7 @@ void CPugLeader::Menu(CBasePlayer* Leader)
 			}
 			else
 			{
-				gPugMenu[Leader->entindex()].Create(false, E_MENU::ME_VOTE_LEADER, _T("Jogadores:"));
+				gPugMenu[Leader->entindex()].Create(false, E_MENU::ME_VOTE_LEADER, _T("Players:"));
 
 				for (auto const& Player : Players[SPECTATOR])
 				{
@@ -301,7 +301,7 @@ void CPugLeader::Menu(CBasePlayer* Leader)
 
 				gPugTask.Create(E_TASK::LEADER_MENU, 10.0f, false, Leader->entindex());
 
-				gPugUtil.PrintColor(Leader->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Escolha um jogador em 10 segundos."), gPugCvar.m_Tag->string);
+				gPugUtil.PrintColor(Leader->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Choose a player within 10 seconds."), gPugCvar.m_Tag->string);
 			}
 		}
 		else

@@ -39,7 +39,7 @@ void CPugCvarControl::Menu(CBasePlayer *Player)
 {
     if (gPugAdmin.CheckAccess(Player, ADMIN_CVAR))
     {
-        gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_CVAR, _T("Controle de Cvars"));
+        gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_CVAR, _T("Cvar Control"));
 
         for (auto Item : this->m_Data)
         {
@@ -92,7 +92,7 @@ void CPugCvarControl::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
                     }
                 }
 
-                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 %s ajustada para: ^3%s^1"), Plugin_info.logtag, Pointer->name, Pointer->string);
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 %s set to: ^3%s^1"), Plugin_info.logtag, Pointer->name, Pointer->string);
             }
         }
 
