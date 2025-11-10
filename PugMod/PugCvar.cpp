@@ -33,330 +33,329 @@ void CPugCvar::ServerActivate()
 
     // Log Tag
     //
-    // Padrão: "PUG"
+    // Default "PUG"
     this->m_Tag = this->Register("pug_tag", "PUG");
 
-    // Language
+    // Server language
     //
-    // Padrão: "br"
+    // Default "br"
     this->m_Language = this->Register("pug_language", "br");
 
-    // Prefixo do comando via say (Jogador)
+    // Player command prefix
     //
-    // Padrão: "."
+    // Default "."
     this->m_CmdPrefixPlayer = this->Register("pug_cmd_prefix_player", ".");
 
-    // Prefixo do comando via say (Admin)
+    // Admin command prefix
     //
-    // Padrão: "!"
+    // Default "!"
     this->m_CmdPrefixAdmin = this->Register("pug_cmd_prefix_admin", "!");
 
-    // Tempo entre comandos para considerar uma tentativa de flood
+    // Time between commands to consider a flood attempt
     //
     // Padrao: "0.75"
     this->m_CmdFloodTime = this->Register("pug_cmd_flood_time", "0.75");
 
-    // Máximo de tentativas de flood para bloqueio
+    // Maximum flood attempts before blocking
     //
     // Padrao: "3.0"
     this->m_CmdFloodRepeat = this->Register("pug_cmd_flood_repeat", "3.0");
 
-    // Tempo de bloqueio do anti flood
+    // Anti-flood block time
     //
     // Padrao: "4.0"
     this->m_CmdFloodNextTime = this->Register("pug_cmd_flood_next_time", "4.0");
 
-    // Mínimo de jogadores por time
+    // Minimum players per team
     //
-    // Padrão: "5"
+    // Default "5"
     this->m_PlayersMin = this->Register("pug_players_min", "5");
 
-    // Máximo de jogadores por time em jogo
+    // Maximum players per team in game
     //
-    // Padrão: "5"
+    // Default "5"
     this->m_PlayersMax = this->Register("pug_players_max", "5");
 
-    // Total de rounds por mapa
+    // Total rounds per map
     //
-    // Padrão: "30"
+    // Default "30"
     this->m_Rounds = this->Register("pug_rounds", "30");
 
-    // Total de rounds em overtime
+    // Total overtime rounds per match
     //
-    // Padrão: "6"
+    // Default "6"
     this->m_RoundsOT = this->Register("pug_rounds_ot", "6");
 
-    // Tipo do overtime
+    // Overtime type
     //
-    // 0 Votação
-    // 1 Jogar overtime
-    // 2 Permitir empate
-    // 3 Morte súbita
+    // 1 Play overtime
+    // 2 Allow game end tied
+    // 3 Sudden death
     //
-    // Padrão: "0"
+    // Default "0"
     this->m_OvertimeType = this->Register("pug_ot_type", "0");
 
-    // Modo do sistema ready
+    // Ready system mode
     //
-    // 0 Desligado
-    // 1 Por tempo limite
-    // 2 Sistema ready / notready
+    // 0 Disabled
+    // 1 Automatic (Timer)
+    // 2 Players use the ready system
     //
-    // Padrão: "1"
+    // Default "1"
     this->m_ReadyType = this->Register("pug_ready_type", "1");
 
-    // Lista do sistema ready
+    // Ready system list
     //
-    // 0 Exibir lista completa de Prontos / Aquecendo
-    // 1 Quantidade de jogadores Prontos / Aquecendo
+    // 0 Show full list of Ready / Warming
+    // 1 Number of players Ready / Warming
     //
-    // Padrão: "0"
+    // Default "0"
     this->m_ReadyList = this->Register("pug_ready_list", "0");
 
-    // Tempo em segundos para iniciar a partida no modo aquecimento
-    // Contagem a partir do momento em que todos jogadores estiverem no jogo
+    // Time in seconds to start the match in warmup mode
+    // Counting from the moment all players are in the game
     //
-    // Padrão: "60.0"
+    // Default "60.0"
     this->m_ReadyTimeLimit = this->Register("pug_ready_time_limit", "60.0");
 
-    // Modo de times
+    // Team system mode
+    // 
+    // 0 Vote
+    // 1 Captains
+    // 2 Shuffle Players
+    // 3 None
+    // 4 Balance Skill
+    // 5 Switch Teams
+    // 6 Knife Round
     //
-    // 0 Votação
-    // 1 Capitães
-    // 2 Misturar Times
-    // 3 Nenhum
-    // 4 Balancear Skill
-    // 5 Trocar Times
-    // 6 Round Faca
-    //
-    // Padrão: "0"
+    // Default "0"
     this->m_TeamType = this->Register("pug_team_type", "0");
 
-    // Opções no menu de votação da escolha dos times
+    // Options in the team choice vote menu
     //
-    // a Capitães
-    // b Misturar Times
-    // c Nenhum
-    // d Balancear Skill
-    // e Trocar Times
-    // f Round Faca
+    // a Captains
+    // b Shuffle Players
+    // c None
+    // d Balance Skill
+    // e Switch Teams
+    // f Knife Round
     //
-    // Padrão: "abcdef"
+    // Default "abcdef"
     this->m_TeamOption = this->Register("pug_team_option", "abcdef");
 
-    // Restringir armas
-    // Cada posição é um item (Ver enum ItemID para as posições)
+    // Restrict weapons at the indicated slot
+    // Each slot is one item (See enum ItemID for slots)
     //
-    // 0 Inativo
-    // 1 Ativo
+    // 0 Inactive
+    // 1 Active
     //
-    // Padrão: "000000000000000000000000000000000000000"
+    // Default "000000000000000000000000000000000000000"
     this->m_RestrictItem = this->Register("pug_restrict_item", "000000000000000000000000000000000000000");
 
-    // O Tempo limite das votações do pug
+    // The pug vote time limit
     //
-    // Padrão: "15.0"
+    // Default: "15.0"
     this->m_VoteDelay = this->Register("pug_vote_delay", "15.0");
 
-    // O mapa atual terá uma escolha de mapa
-    // Ps. Não utilizado nas confirações
+    // The current map has a vote to change to
+    // WARNING: Do not use this cvar on server configurations
     //
-    // 0 Inativo
-    // 1 Ativo
+    // 0 Inactive
+    // 1 Active
     //
-    // Padrão: "1"
+    // Default "1"
     this->m_VoteMap = this->Register("pug_vote_map", "0");
 
-    // O último mapa do servidor
-    // Ps. Não utilizado nas confirações
+    // The last map played on server will disable the vote map option
+    // WARNING: Do not use this cvar on server configurations
     //
-    // Padrão: ""
+    // Default ""
     this->m_LastMap = this->Register("pug_last_map", STRING(gpGlobals->mapname));
 
-    // Forçar o round faca no mapa atual
+    // Force knife round on the current map
     //
-    // 0 Inativo
-    // 1 Ativo
+    // 0 Inactive
+    // 1 Active
     //
-    // Padrão: "0"
+    // Default: "0"
     this->m_KnifeRound = this->Register("pug_knife_round", "0");
 
-    // Questionar fim da partida ao desconectar um jogador
+    // Prompt end of match when a player disconnects
     //
-    // 0 Inativo
-    // 1 Ativo
+    // 0 Inactive
+    // 1 Active
     //
-    // Padrão: "1"
+    // Default: "1"
     this->m_VoteEnd  = this->Register("pug_vote_end", "1");
 
-    // Tipo do texto dos placares no chat
+    // Type of score text in chat
     //
-    // 0 Por extenso ([PUG] Os Terroristas estão vencendo: 8-6)
-    // 1 Ambos Placares (Terroristas (8) - (6) Contra-Terroristas)
+    // 0 Written ([PUG] Terrorists are winning: 8-6)
+    // 1 Both Scores (Terrorists (8) - (6) Counter-Terrorists)
     //
-    // Padrão: "0"
+    // Default: "0"
     this->m_ScoreText = this->Register("pug_score_text", "0");
 
-    // Manter o placar total dos times no scoreboard (TAB)
+    // Keep total team score in the scoreboard (TAB)
     //
-    // 0 Resetar placar a cada período
-    // 1 Manter o placar total em todos os períodos
+    // 0 Reset score each period
+    // 1 Keep total score across periods
     //
-    // Padrão: "1"
+    // Default: "1"
 	this->m_ScoreTeams = this->Register("pug_score_teams", "1");
 
-    // Manter o score dos jogadores scoreboard (TAB)
+    // Keep player scores in the scoreboard (TAB)
     //
-    // 0 Resetar scores a cada período
-    // 1 Manter scores em todos os períodos
+    // 0 Reset scores each period
+    // 1 Keep scores across periods
     //
-    // Padrão: "1"
+    // Default: "1"
 	this->m_ScorePlayers = this->Register("pug_score_players", "1");
 
-    // Arquivo de ajuda de comandos via MOTD
-    // Nome do arquivo ou URL do arquivo de ajuda
+    // Help file for commands via MOTD
+    // File name or URL of the help file
     //
-    // Padrão: "motd.html"
+    // Default: "cstrike/addons/pugmod/motd.html"
     this->m_MotdFile = this->Register("pug_motd_file", "motd.html");
 
-    // Arquivo de ajuda de comandos via MOTD
-    // Nome do arquivo ou URL do arquivo de ajuda
+    // Admin help file for commands via MOTD
+    // File name or URL of the help file
     //
-    // Padrão: "motd_admin.html"
+    // Default: "cstrike/addons/pugmod/motd_admin.html"
     this->m_MotdFileAdmin = this->Register("pug_motd_admin_file", "motd_admin.html");
 
-    // Gravar uma demo no lado do cliente ao iniciar a partida
+    // Ask for record a client-side demo when the match starts
     //
-    // 0 Inativo
-    // 1 Ativvo
+    // 0 Inactive
+    // 1 Active
     //
-    // Padrão: "1"
+    // Default: "1"
     this->m_DemoRecord = this->Register("pug_demo_record", "1");
 
-    // Tempo de ban do anti-retry
+    // Anti-retry ban time
     //
-    // 0 Inativo
+    // 0 Inactive
     //
-    // Padrão: "20.0"
+    // Default: "20.0"
     this->m_RetryTime = this->Register("pug_retry_time", "20.0");
 
-    // Flags para ativar os comandos de stats
-    // Se vazio nenhum comando é habilitado
+    // Flags to enable stats commands
     //
-    // a Ativa o comando .hp
-    // b Ativa o comando .dmg
-    // c Ativa o comando .rdmg
-    // d Ativa o comando .sum
+    // a Enables .hp command
+    // b Enables .dmg command
+    // c Enables .rdmg command
+    // d Enables .sum command
+    // e Enables .stats command
     //
-    // Padrão: "abcd"
-    this->m_RoundStats = this->Register("pug_round_stats", "abcd");
+    // Default: "abcde"
+    this->m_RoundStats = this->Register("pug_round_stats", "abcde");
 
-    // Exibe estatísticas no fim do round
+    // Display round-end statistics
     //
-    // 0 Inativo
-    // 1 Exibir Vítimas
-    // 2 Exibir Atacantes
-    // 3 Exibir Ambos
+    // a Execute .hp
+    // b Execute .dmg
+    // c Execute .rdmg
+    // d Execute .sum
+    // e Execute .stats
     //
-    // Padrão: "3"
-    this->m_RoundEndStats = this->Register("pug_round_end_stats", "3");
+    // Default: "e"
+    this->m_RoundEndStats = this->Register("pug_round_end_stats", "e");
 
-    // Ativar modo Deathmatch
-    // Se inativo, será o modo aquecimento comum
+    // Enable Deathmatch mode
+    // If inactive, it will be regular warmup mode
     //
-    // 0 Inativo
-    // 1 Ativo
+    // 0 Inactive
+    // 1 Active
     //
-    // Padrão: "1"
+    // Default: "1"
     this->m_DM_Enable = this->Register("pug_dm_enable", "1");
 
-    // Ocultar kill feed de outros jogadores
+    // Hide kill feed from other players
     //
-    // 0 Inativo
-    // 1 Ativo
+    // 0 Inactive
+    // 1 Active
     //
-    // Padrão: "0"
+    // Default: "0"
     this->m_DM_HideKillFeed = this->Register("pug_dm_hide_kill_feed", "0");
 
-    // Indicador de acertos na tela
+    // Hit indicator on screen
+    // 
+    // 0 Inactive
+    // 1 Active
+    // 2 Active + Through Walls
     //
-    // 0 Inativo
-    // 1 Ativo
-    //
-    // Padrão: "1"
+    // Default: "1"
     this->m_DM_HitIndicator = this->Register("pug_dm_hit_indicator", "1");
 
-    // Somente aceita acertos na cabeça
+    // Only accept headshots
     //
-    // 0 Inativo
-    // 1 Ativo
+    // 0 Inactive
+    // 1 Active
     //
-    // Padrão: "0"
+    // Default: "0"
     this->m_DM_HSOnlyMode = this->Register("pug_dm_hs_mode", "0");
 
-    // Exibir Taxa de mortes / frags e taxa de HS no hud
+    // Show kill/frag rate and HS rate on the HUD
     //
-    // 0 Inativo
-    // 1 Ativo
+    // 0 Inactive
+    // 1 Active
     //
-    // Padrão: "1"
+    // Default: "1"
     this->m_DM_HudKDRatio = this->Register("pug_dm_hud_kd_ratio", "1");
 
-    // Pisca a tela ao matar outro jogador
+    // Flash the screen on killing another player (HS)
     //
-    // 0 Inativo
-    // 1 Ativo
-    // 2 Somente no HS
+    // 0 Inactive
+    // 1 Active
     //
-    // Padrão: "2"
+    // Default: "1"
     this->m_DM_KillFade = this->Register("pug_dm_kill_fade", "2");
 
-    // Recuperar vida após frag
+    // Recover health after a frag
     //
-    // 0 Inativo
+    // 0 Inactive
     //
-    // Padrão: "15"
+    // Default: "15"
     this->m_DM_KillHP = this->Register("pug_dm_kill_hp", "15");
 
-    // Recuperar vida após frag (HS)
+    // Recover health after a frag (HS)
     //
-    // 0 Inativo
+    // 0 Inactive
     //
-    // Padrão: "40"
+    // Default: "40"
     this->m_DM_KillHPHS = this->Register("pug_dm_kill_hp_hs", "40");
 
-    // Recuperar armadura após frag
+    // Recover armor after a frag
     //
-    // 0 Inativo
-    // 1 Ativo
-    // 2 Somente no HS
+    // 0 Inactive
+    // 1 Active
+    // 2 Only on HS
     //
-    // Padrão: "1"
+    // Default: "1"
     this->m_DM_KillRepairArmor = this->Register("pug_dm_kill_repair_armor ", "1");
 
-    // Exibir HP recuperado após frag
+    // Show HP recovered after a frag
     //
-    // 0 Inativo
-    // 1 Ativo
+    // 0 Inactive
+    // 1 Active
     //
-    // Padrão: "1"
+    // Default: "1"
     this->m_DM_KillHealedMsg = this->Register("pug_dm_kill_hp_msg ", "1");
 
-    // Ativar som ao realizar frag
+    // Enable sound on frag (HS)
     //
-    // 0 Inativo
-    // 1 Ativo
-    // 2 Somente no HS
+    // 0 Inactive
+    // 1 Active
     //
-    // Padrão: "2"
+    // Default: "1"
     this->m_DM_KillSound = this->Register("pug_dm_kill_sound", "2");
 
-    // Exibe frags no lugar do dinheiro
+    // Show frags instead of money
     //
-    // 0 Inativo
-    // 1 Ativo
+    // 0 Inactive
+    // 1 Active
     //
-    // Padrão: "1"
+    // Default: "1"
     this->m_DM_MoneyFrag = this->Register("pug_dm_money_frag", "0");
 }
 

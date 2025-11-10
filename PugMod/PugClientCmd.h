@@ -17,6 +17,7 @@ enum E_CLIENT_CMD_ID
     CMD_DMG,
     CMD_RDMG,
     CMD_SUM,
+    CMD_STATS,
     //
     // Admins
     CMD_HELP_ADMIN = 100,
