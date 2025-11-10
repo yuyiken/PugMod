@@ -34,20 +34,60 @@ void CPugStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, flo
 	{
 		if (winStatus != WINSTATUS_NONE)
 		{
-			auto Players = gPugUtil.GetPlayers(true, false);
+            gPugTask.Create(E_TASK::ROUND_END_STATS, 0.5f, false, State);
+		}
+	}
+}
 
+void CPugStats::RoundEndStats()
+{
+    auto State = gPugMod.GetState();
+
+    if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
+    {
+        if (gPugCvar.m_RoundEndStats->string)
+        {
+            auto Players = gPugUtil.GetPlayers(true, false);
+    
             if (Players.size() > 0)
             {
                 for (auto const& Player : Players)
                 {
                     if (Player->IsAlive())
                     {
-                        this->ShowStats(Player);
+                        switch (gPugCvar.m_RoundEndStats->string[0u])
+                        {
+                            case 'a':
+                            {
+                                this->ShowHP(Player);
+                                break;
+                            }
+                            case 'b':
+                            {
+                                this->ShowDamage(Player);
+                                break;
+                            }
+                            case 'c':
+                            {
+                                this->ShowReceivedDamage(Player);
+                                break;
+                            }
+                            case 'd':
+                            {
+                                this->ShowSummary(Player);
+                                break;
+                            }
+                            case 'e':
+                            {
+                                this->ShowStats(Player);
+                                break;
+                            }
+                        }
                     }
                 }
             }
-		}
-	}
+        }
+    }
 }
 
 void CPugStats::GetIntoGame(CBasePlayer *Player)
@@ -108,7 +148,43 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 
     if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
     {
-        this->ShowStats(Victim);
+        if (g_pGameRules)
+        {
+            if (!Victim->IsAlive() || CSGameRules()->m_bRoundTerminating || CSGameRules()->IsFreezePeriod())
+            {
+                if (gPugCvar.m_RoundEndStats->string)
+                {
+                    switch (gPugCvar.m_RoundEndStats->string[0u])
+                    {
+                        case 'a':
+                        {
+                            this->ShowHP(Victim);
+                            break;
+                        }
+                        case 'b':
+                        {
+                            this->ShowDamage(Victim);
+                            break;
+                        }
+                        case 'c':
+                        {
+                            this->ShowReceivedDamage(Victim);
+                            break;
+                        }
+                        case 'd':
+                        {
+                            this->ShowSummary(Victim);
+                            break;
+                        }
+                        case 'e':
+                        {
+                            this->ShowStats(Victim);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

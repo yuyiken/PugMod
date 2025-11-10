@@ -66,6 +66,11 @@ void CPugTask::Execute(int Index)
                 gPugMod.RoundMessage();
                 break;
             }
+            case E_TASK::ROUND_END_STATS:
+            {
+                gPugStats.RoundEndStats();
+                break;
+            }
         }
     }
 }
