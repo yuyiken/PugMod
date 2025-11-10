@@ -13,7 +13,7 @@ constexpr auto STATE_OVERTIME = 9;
 constexpr auto STATE_END = 10;
 
 constexpr std::array<const char *, STATE_END + 1> g_Pug_Config = {"pugmod", "deathmatch", "votemap", "voteteam", "captain", "kniferound", "esl", "halftime", "esl", "esl-ot", "end"};
-constexpr std::array<const char *, STATE_END + 1> g_Pug_String = {"Morto", "Deathmatch", "Escolha do Mapa", "Escolha do Time", "Capitães", "Round Faca", "Primeiro Tempo", "Intervalo", "Segundo Tempo", "Overtime", "Fim"};
+constexpr std::array<const char *, STATE_END + 1> g_Pug_String = {"Dead", "Deathmatch", "Vote Map", "Vote Team", "Captains", "Knife Round", "First Half", "Halftime", "Second Half", "Overtime", "Finished"};
 constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamName = {"None", "Terrorist", "Counter-Terrorist", "Spectactor"};
 constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamNameShort = {"NONE", "TR", "CT", "SPEC"};
 
