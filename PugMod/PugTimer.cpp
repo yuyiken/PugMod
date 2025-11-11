@@ -40,7 +40,7 @@ void CPugtimer::Init(int NextState)
 
     this->m_NextState = NextState;
 
-    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 A começa quando ^3%d^1 jogadores estiverem nos times.", gPugCvar.m_Tag->string, this->m_PlayersMin);
+    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Starts when ^3%d^1 players join the game."), gPugCvar.m_Tag->string, this->m_PlayersMin);
 }
 
 void CPugtimer::Stop(bool Forced)
@@ -57,7 +57,7 @@ void CPugtimer::Stop(bool Forced)
         {
             gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, this->m_NextState);
 
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 O tempo acabou: ^3Todos os jogadores devem estar prontos!", gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Time's up: ^3All players must be ready!"), gPugCvar.m_Tag->string);
         }
     }
 }
@@ -94,11 +94,11 @@ void CPugtimer::StartFrame()
 
                     if (Needed > 1)
                     {
-                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, _T("%s^n%d Jogadores Necessários"), gPugMod.GetString(State), Needed);
+                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, _T("%s^n%d Players Required"), gPugMod.GetString(State), Needed);
                     }
                     else
                     {
-                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, _T("%s^n%d Jogador Necessário"), gPugMod.GetString(State), Needed);
+                        gPugUtil.SendHud(nullptr, g_Timer_HudParam, _T("%s^n%d Player Required"), gPugMod.GetString(State), Needed);
                     }
                 }
                 else
@@ -109,7 +109,7 @@ void CPugtimer::StartFrame()
                     {
                         char szTime[32] = { 0 };
 
-                        strftime(szTime, sizeof(szTime), _T("INICIANDO PARTIDA EM^n%M:%S"), localtime(&RemainTime));
+                        strftime(szTime, sizeof(szTime), _T("MATCH STARTING IN^n%M:%S"), localtime(&RemainTime));
 
                         gPugUtil.SendHud(nullptr, g_Timer_HudParam, szTime);
                     }
