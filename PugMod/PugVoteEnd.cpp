@@ -46,14 +46,14 @@ void CPugVoteEnd::Init()
 
             this->m_VoteList.clear();
             
-            this->m_VoteList.push_back({1, 0, _T("Continuar Partida")});
-            this->m_VoteList.push_back({2, 0, _T("Finalizar Partida")});
+            this->m_VoteList.push_back({1, 0, _T("Continue Match")});
+            this->m_VoteList.push_back({2, 0, _T("End Match")});
             
             this->m_VotesLeft = Players.size();
 
             for (auto const &Player : Players)
             {
-                gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_END, _T("Um Jogador saiu da partida, o que deseja fazer?"));
+                gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_END, _T("A player left the match, what do you want to do?"));
 
                 for (size_t i = 0; i < this->m_VoteList.size(); ++i)
                 {
@@ -66,7 +66,7 @@ void CPugVoteEnd::Init()
 
                 gPugUtil.ClientCommand(Player->edict(), g_VoteEnd_Sound[g_engfuncs.pfnRandomLong(0, 1)]);
 
-                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Um Jogador saiu da partida, o que deseja fazer?"), gPugCvar.m_Tag->string);
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 A player left the match, what do you want to do?"), gPugCvar.m_Tag->string);
             }
         }
         else
@@ -167,7 +167,7 @@ void CPugVoteEnd::StartFrame()
 
                         strftime(szTime, sizeof(szTime), "%M:%S", tm_info);
                         
-                        gPugUtil.SendHud(nullptr, g_VoteEnd_HudParam[0], "Finalizar Partida: %s", szTime);
+                        gPugUtil.SendHud(nullptr, g_VoteEnd_HudParam[0], _T("Finalizar Partida: %s"), szTime);
                     }
 
                     std::string VoteList = "";
@@ -186,7 +186,7 @@ void CPugVoteEnd::StartFrame()
                     }
                     else
                     {
-                        gPugUtil.SendHud(nullptr, g_VoteEnd_HudParam[1], "Nenhum voto registrado.");
+                        gPugUtil.SendHud(nullptr, g_VoteEnd_HudParam[1], _T("No Votes."));
                     }
                 }
                 else
