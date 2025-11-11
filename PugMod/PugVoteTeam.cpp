@@ -12,12 +12,12 @@ void CPugVoteTeam::ServerActivate()
 
     this->m_VotesLeft = 0;
 
-    this->m_VoteList.push_back({VOTE_TEAM_CAPTAIN, 0, _T("Capitães")});
-    this->m_VoteList.push_back({VOTE_TEAM_RANDOM, 0, _T("Misturar Times")});
-    this->m_VoteList.push_back({VOTE_TEAM_UNSORTED, 0, _T("Sem Sorteio")});
-    this->m_VoteList.push_back({VOTE_TEAM_SKILL_BALANCE, 0, _T("Balancear Skill")});
-    this->m_VoteList.push_back({VOTE_TEAM_SWAP_SIDES, 0, _T("Trocar Times")});
-    this->m_VoteList.push_back({VOTE_TEAM_KNIFE_ROUND, 0, _T("Round Faca")});
+    this->m_VoteList.push_back({VOTE_TEAM_CAPTAIN, 0, _T("Captains")});
+    this->m_VoteList.push_back({VOTE_TEAM_RANDOM, 0, _T("Shuffle Teams")});
+    this->m_VoteList.push_back({VOTE_TEAM_UNSORTED, 0, _T("No Draw")});
+    this->m_VoteList.push_back({VOTE_TEAM_SKILL_BALANCE, 0, _T("Balance Skill")});
+    this->m_VoteList.push_back({VOTE_TEAM_SWAP_SIDES, 0, _T("Swap Teams")});
+    this->m_VoteList.push_back({VOTE_TEAM_KNIFE_ROUND, 0, _T("Knife Round")});
 }
 
 void CPugVoteTeam::ServerDeactivate()
@@ -70,7 +70,7 @@ void CPugVoteTeam::Init()
 
         for (auto const &Player : Players)
         {
-            gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_TEAM, _T("Modo de jogo:"));
+            gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_TEAM, _T("Game mode:"));
 
             for (size_t i = 0; i < this->m_VoteList.size(); ++i)
             {
@@ -87,7 +87,7 @@ void CPugVoteTeam::Init()
             gPugMenu[Player->entindex()].Show(Player);
         }
 
-        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Iniciando a escolha dos times."), gPugCvar.m_Tag->string);
+        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Starting team selection."), gPugCvar.m_Tag->string);
     }
 }
 
@@ -113,7 +113,7 @@ void CPugVoteTeam::Stop()
         }
         else
         {
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 A escolha falhou: ^3Nenhum voto."), gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Selection failed: ^3No votes."), gPugCvar.m_Tag->string);
 
             this->ChangeTeam(VOTE_TEAM_RANDOM);
         }
@@ -135,19 +135,19 @@ void CPugVoteTeam::ChangeTeam(int Type)
         {
             this->TeamsRamdomize();
 
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Organizando os jogadores automaticamente."), gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Organizing players automatically."), gPugCvar.m_Tag->string);
             break;
         }
         case VOTE_TEAM_UNSORTED:
         {
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Os times já estão definidos."), gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Teams are already set."), gPugCvar.m_Tag->string);
             break;
         }
         case VOTE_TEAM_SKILL_BALANCE:
         {
             this->TeamsOptimize();
 
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Organizando os jogadores por skill."), gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Organizing players by skill."), gPugCvar.m_Tag->string);
             break;
         }
         case VOTE_TEAM_SWAP_SIDES:
@@ -157,7 +157,7 @@ void CPugVoteTeam::ChangeTeam(int Type)
                 CSGameRules()->SwapAllPlayers();
             }
             
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Trocando o lado dos times."), gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Switching team sides."), gPugCvar.m_Tag->string);
             break;
         }
         case VOTE_TEAM_KNIFE_ROUND:
@@ -205,7 +205,7 @@ void CPugVoteTeam::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 
             this->m_VoteList[Item.Info].Votes += 1;
 
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%s^1 escolheu ^3%s^1."), gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), this->m_VoteList[Item.Info].Name.c_str());
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%s^1 chose ^3%s^1."), gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), this->m_VoteList[Item.Info].Name.c_str());
 
             if (this->m_VotesLeft < 1)
             {
@@ -235,7 +235,7 @@ void CPugVoteTeam::StartFrame()
 
                         strftime(szTime, sizeof(szTime), "%M:%S", tm_info);
                         
-                        gPugUtil.SendHud(nullptr, g_VoteTeam_HudParam[0], _T("Escolha dos Times: %s"), szTime);
+                        gPugUtil.SendHud(nullptr, g_VoteTeam_HudParam[0], _T("Team Choice: %s"), szTime);
                     }
 
                     std::string VoteList = "";
@@ -254,7 +254,7 @@ void CPugVoteTeam::StartFrame()
                     }
                     else
                     {
-                        gPugUtil.SendHud(nullptr, g_VoteTeam_HudParam[1], _T("Nenhum voto registrado."));
+                        gPugUtil.SendHud(nullptr, g_VoteTeam_HudParam[1], _T("No votes registered."));
                     }
                 }
                 else
