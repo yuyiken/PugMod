@@ -238,6 +238,11 @@ bool CPugMenu::Handle(CBasePlayer *Player, int Key)
                                 gPugCvarControl.MenuHandle(Player, this->m_Data[ItemId]);
                                 break;
                             }
+                            case E_MENU::ME_PLAYER_VOTE_MENU:
+                            {
+                                gPugVoteMenu.MenuHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
                         }
                     }
                 }

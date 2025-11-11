@@ -77,6 +77,7 @@
 #include "PugUtil.h"
 #include "PugVoteEnd.h"
 #include "PugVoteMap.h"
+#include "PugVoteMenu.h"
 #include "PugVoteOvertime.h"
 #include "PugVoteTeam.h"
 #include "PugVoteSwapTeam.h"
