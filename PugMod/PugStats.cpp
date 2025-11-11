@@ -13,14 +13,11 @@ void CPugStats::RoundStart()
 
         this->m_Flags = R_STATS_ALL;
 
-        if (gPugCvar.m_RoundStats)
+        if (gPugCvar.m_RoundStats->string)
         {
-            if (gPugCvar.m_RoundStats->string)
+            if (gPugCvar.m_RoundStats->string[0u] != '\0')
             {
-                if (gPugCvar.m_RoundStats->string[0u] != '\0')
-                {
-                    this->m_Flags |= gPugAdmin.ReadFlags(gPugCvar.m_RoundStats->string);
-                }
+                this->m_Flags |= gPugAdmin.ReadFlags(gPugCvar.m_RoundStats->string);
             }
         }
 	}
@@ -214,14 +211,14 @@ bool CPugStats::ShowHP(CBasePlayer *Player)
                                 {
                                     StatsCount++;
 
-                                    gPugUtil.PrintColor(Player->edict(), Target->entindex(), _T("^4[%s]^1 ^3%s^1 com %d HP (%d AP)"), gPugCvar.m_Tag->string, STRING(Target->edict()->v.netname), (int)Target->edict()->v.health, (int)Target->edict()->v.armorvalue);
+                                    gPugUtil.PrintColor(Player->edict(), Target->entindex(), _T("^4[%s]^1 ^3%s^1 with %d HP (%d AP)"), gPugCvar.m_Tag->string, STRING(Target->edict()->v.netname), (int)Target->edict()->v.health, (int)Target->edict()->v.armorvalue);
                                 }
                             }
                         }
 
                         if (!StatsCount)
                         {
-                            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Nenhum jogador vivo."), gPugCvar.m_Tag->string);
+                            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 No player alive."), gPugCvar.m_Tag->string);
                         }
 
                         return true;
@@ -231,7 +228,7 @@ bool CPugStats::ShowHP(CBasePlayer *Player)
         }
     }
 
-    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Comando indisponível."), gPugCvar.m_Tag->string);
+    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
 
 	return false;
 }
@@ -264,7 +261,7 @@ bool CPugStats::ShowDamage(CBasePlayer *Player)
                                 (
                                     Player->edict(),
                                     Target->entindex(),
-                                    _T("^4[%s]^1 Acertou ^3%s^1 %d vez(es) (Dano %d)"),
+                                    _T("^4[%s]^1 Hit ^3%s^1 %d time(s) (Damage %d)"),
                                     gPugCvar.m_Tag->string,
                                     STRING(Target->edict()->v.netname),
                                     this->m_RoundHit[Player->entindex()][Target->entindex()],
@@ -275,7 +272,7 @@ bool CPugStats::ShowDamage(CBasePlayer *Player)
 
                         if (!StatsCount)
                         {
-                            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Nenhum dano nesse round."), gPugCvar.m_Tag->string);
+                            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 No damage this round."), gPugCvar.m_Tag->string);
                         }
 
                         return true;
@@ -285,7 +282,7 @@ bool CPugStats::ShowDamage(CBasePlayer *Player)
         }
     }
 
-    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Comando indisponível."), gPugCvar.m_Tag->string);
+    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
 
 	return false;
 }
@@ -318,7 +315,7 @@ bool CPugStats::ShowReceivedDamage(CBasePlayer *Player)
                                 (
                                     Player->edict(),
                                     Target->entindex(),
-                                    _T("^4[%s]^1 Dano Recebido de ^3%s^1 %d vez(es) (Dano %d)"),
+                                    _T("^4[%s]^1 Damage received from ^3%s^1 %d time(s) (Damage %d)"),
                                     gPugCvar.m_Tag->string,
                                     STRING(Target->edict()->v.netname),
                                     this->m_RoundHit[Target->entindex()][Player->entindex()],
@@ -329,7 +326,7 @@ bool CPugStats::ShowReceivedDamage(CBasePlayer *Player)
 
                         if (!StatsCount)
                         {
-                            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Nenhum dano recebido nesse round."), gPugCvar.m_Tag->string);
+                            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 No damage received this round."), gPugCvar.m_Tag->string);
                         }
 
                         return true;
@@ -339,7 +336,7 @@ bool CPugStats::ShowReceivedDamage(CBasePlayer *Player)
         }
     }
 
-    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Comando indisponível."), gPugCvar.m_Tag->string);
+    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
 
 	return false;
 }
@@ -372,7 +369,7 @@ bool CPugStats::ShowSummary(CBasePlayer *Player)
                                 (
                                     Player->edict(),
                                     Target->entindex(),
-                                    _T("^4[%s]^1 (%d dano | %d hits) para (%d dano | %d hits) de ^3%s^1 (%d HP)"),
+                                    _T("^4[%s]^1 (%d dmg | %d hits) to (%d dmg | %d hits) from ^3%s^1 (%d HP)"),
                                     gPugCvar.m_Tag->string,
                                     this->m_RoundDmg[Player->entindex()][Target->entindex()],
                                     this->m_RoundHit[Player->entindex()][Target->entindex()],
@@ -386,7 +383,7 @@ bool CPugStats::ShowSummary(CBasePlayer *Player)
     
                         if (!StatsCount)
                         {
-                            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Nenhum dano nesse round."), gPugCvar.m_Tag->string);
+                            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 No damage this round."), gPugCvar.m_Tag->string);
                         }
     
                         return true;
@@ -396,7 +393,7 @@ bool CPugStats::ShowSummary(CBasePlayer *Player)
         }
     }
 
-    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Comando indisponível."), gPugCvar.m_Tag->string);
+    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
 
 	return false;
 }

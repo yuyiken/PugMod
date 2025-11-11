@@ -288,15 +288,12 @@ bool CPugClientCmd::Command(edict_t *pEntity)
 
 bool CPugClientCmd::Help(CBasePlayer *Player)
 {
-    if (gPugCvar.m_MotdFile)
+    if (gPugCvar.m_MotdFile->string)
     {
-        if (gPugCvar.m_MotdFile->string)
+        if (gPugCvar.m_MotdFile->string[0u] != '\0')
         {
-            if (gPugCvar.m_MotdFile->string[0u] != '\0')
-            {
-                gPugUtil.ShowMotd(Player->edict(), gPugCvar.m_MotdFile->string, strlen(gPugCvar.m_MotdFile->string));
-                return true;
-            }
+            gPugUtil.ShowMotd(Player->edict(), gPugCvar.m_MotdFile->string, strlen(gPugCvar.m_MotdFile->string));
+            return true;
         }
     }
 
@@ -307,16 +304,13 @@ bool CPugClientCmd::HelpAdmin(CBasePlayer *Player)
 {
     if (gPugAdmin.Access(Player->entindex(), ADMIN_LEVEL_C))
     {
-        if (gPugCvar.m_MotdFileAdmin)
+        if (gPugCvar.m_MotdFileAdmin->string)
         {
-            if (gPugCvar.m_MotdFileAdmin->string)
+            if (gPugCvar.m_MotdFileAdmin->string[0u] != '\0')
             {
-                if (gPugCvar.m_MotdFileAdmin->string[0u] != '\0')
-                {
-                    gPugUtil.ShowMotd(Player->edict(), gPugCvar.m_MotdFileAdmin->string, strlen(gPugCvar.m_MotdFileAdmin->string));
-                    
-                    return true;
-                }
+                gPugUtil.ShowMotd(Player->edict(), gPugCvar.m_MotdFileAdmin->string, strlen(gPugCvar.m_MotdFileAdmin->string));
+                
+                return true;
             }
         }
     }

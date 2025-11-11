@@ -22,7 +22,7 @@ void CPugRetry::PutInServer(edict_t *pEntity)
 
                             if (TimeLeft > 0)
                             {
-                                gPugUtil.ClientDrop(ENTINDEX(pEntity), _T("Aguarde mais %d segundo(s) antes de recoectar-se."), (int)(TimeLeft));
+                                gPugUtil.ClientDrop(ENTINDEX(pEntity), _T("Wait %d more second(s) before reconnecting."), (int)(TimeLeft));
                             }
                             else
                             {

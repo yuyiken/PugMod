@@ -19,15 +19,12 @@ bool CPugRestrictItem::HasRestrictItem(CBasePlayer* Player, ItemID Item, ItemRes
                 }
             }
             
-            if (gPugCvar.m_RestrictItem)
+            if (gPugCvar.m_RestrictItem->string)
             {
-                if (gPugCvar.m_RestrictItem->string)
+                if (gPugCvar.m_RestrictItem->string[Item] != '0')
                 {
-                    if (gPugCvar.m_RestrictItem->string[Item] != '0')
-                    {
-                        gPugUtil.ClientPrint(Player->edict(), E_PRINT::CENTER, "#Cstrike_TitlesTXT_Weapon_Not_Available");
-                        return true;
-                    }
+                    gPugUtil.ClientPrint(Player->edict(), E_PRINT::CENTER, "#Cstrike_TitlesTXT_Weapon_Not_Available");
+                    return true;
                 }
             }
         }
