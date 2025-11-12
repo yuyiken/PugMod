@@ -222,6 +222,11 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                         gPugStats.ShowStats(Player);
                                         return true;
                                     }
+                                    case CMD_VOTE_MENU:
+                                    {
+                                        gPugVoteMenu.Menu(Player);
+                                        return true;
+                                    }
                                     //
                                     // Admins
                                     case CMD_HELP_ADMIN:

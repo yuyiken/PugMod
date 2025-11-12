@@ -12,26 +12,32 @@ class CPugVoteMenu
 public:
     void ServerActivate();
 
+    void DropClient(edict_t *pEntity);
+
     bool Menu(CBasePlayer *Player);
-    void MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item);
+    bool MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item);
 
     bool VoteKick(CBasePlayer *Player);
-    void VoteKickHandle(CBasePlayer *Player, P_MENU_ITEM Item);
+    bool VoteKickHandle(CBasePlayer *Player, P_MENU_ITEM Item);
 
     bool VoteMap(CBasePlayer *Player);
-    void VoteMapHandle(CBasePlayer *Player, P_MENU_ITEM Item);
+    bool VoteMapHandle(CBasePlayer *Player, P_MENU_ITEM Item);
 
     bool VotePause(CBasePlayer *Player);
-    void VotePauseHandle(CBasePlayer *Player, P_MENU_ITEM Item);
+    bool VotePauseHandle(CBasePlayer *Player, P_MENU_ITEM Item);
 
     bool VoteRestart(CBasePlayer *Player);
-    void VoteRestartHandle(CBasePlayer *Player, P_MENU_ITEM Item);
+    bool VoteRestartHandle(CBasePlayer *Player, P_MENU_ITEM Item);
 
     bool VoteCancel(CBasePlayer *Player);
-    void VoteCancelHandle(CBasePlayer *Player, P_MENU_ITEM Item);
+    bool VoteCancelHandle(CBasePlayer *Player, P_MENU_ITEM Item);
 
     bool VoteSurrender(CBasePlayer *Player);
-    void VoteSurrenderHandle(CBasePlayer *Player, P_MENU_ITEM Item);
+    bool VoteSurrenderHandle(CBasePlayer *Player, P_MENU_ITEM Item);
+
+private:
+    std::array<std::array<bool, MAX_CLIENTS + 1U>, MAX_CLIENTS + 1U> m_VoteKick = {};
+    std::array<std::array<bool, MAX_VOTE_MAPS + 1U>, MAX_CLIENTS + 1U> m_VoteMap = {};
 };
 
 extern CPugVoteMenu gPugVoteMenu;

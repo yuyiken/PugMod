@@ -36,6 +36,7 @@ public:
 	cvar_t* m_TeamOption;
 	cvar_t* m_RestrictItem;
 	cvar_t* m_VoteDelay;
+	cvar_t* m_VotePercent;
 	cvar_t* m_VoteMap;
 	cvar_t* m_LastMap;
 	cvar_t* m_KnifeRound;
@@ -49,6 +50,12 @@ public:
 	cvar_t* m_RetryTime;
 	cvar_t* m_RoundStats;
 	cvar_t* m_RoundEndStats;
+	cvar_t* m_PlayerVoteKick;
+	cvar_t* m_PlayerVoteMap;
+	cvar_t* m_PlayerVotePause;
+	cvar_t* m_PlayerVoteRestart;
+	cvar_t* m_PlayerVoteCancel;
+	cvar_t* m_PlayerVoteSurrender;
 
 	cvar_t* m_DM_Enable;
 	cvar_t* m_DM_HideKillFeed;

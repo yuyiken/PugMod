@@ -157,6 +157,11 @@ void CPugCvar::ServerActivate()
     // Default: "15.0"
     this->m_VoteDelay = this->Register("pug_vote_delay", "15.0");
 
+    // The pug vote percentage for success in votes
+    //
+    // Default: "0.70"
+    this->m_VotePercent = this->Register("pug_vote_percent", "0.70");
+
     // The current map has a vote to change to
     // WARNING: Do not use this cvar on server configurations
     //
@@ -260,6 +265,54 @@ void CPugCvar::ServerActivate()
     //
     // Default: "e"
     this->m_RoundEndStats = this->Register("pug_round_end_stats", "e");
+
+    // Allow players to use vote kick command
+    //
+    // 0 Disable
+    // 1 Enable
+    // 
+    // Default: "1"
+    this->m_PlayerVoteKick = this->Register("pug_player_vote_kick", "1");
+
+    // Allow players to use vote map command
+    //
+    // 0 Disable
+    // 1 Enable
+    // 
+    // Default: "1"
+	this->m_PlayerVoteMap = this->Register("pug_player_vote_map", "1");
+
+    // Allow players to use vote pause command
+    //
+    // 0 Disable
+    // 1 Enable
+    // 
+    // Default: "1"
+	this->m_PlayerVotePause = this->Register("pug_player_vote_pause", "1");
+
+    // Allow players to use vote restart command
+    //
+    // 0 Disable
+    // 1 Enable
+    // 
+    // Default: "1"
+	this->m_PlayerVoteRestart = this->Register("pug_player_vote_restart", "1");
+
+    // Allow players to use vote cancel command
+    //
+    // 0 Disable
+    // 1 Enable
+    // 
+    // Default: "1"
+	this->m_PlayerVoteCancel = this->Register("pug_player_vote_cancel", "1");
+
+    // Allow players to vote use surrender command
+    //
+    // 0 Disable
+    // 1 Enable
+    // 
+    // Default: "1"
+	this->m_PlayerVoteSurrender = this->Register("pug_player_vote_surrender", "1");
 
     // Enable Deathmatch mode
     // If inactive, it will be regular warmup mode

@@ -96,7 +96,7 @@ void CPugVoteMap::Stop()
 
         if (Winner.Votes)
         {
-            gPugTask.Create(E_TASK::VOTE_MAP_CHANGE, 5.0f, false, Winner.Index);
+            gPugTask.Create(E_TASK::MAP_CHANGE, 5.0f, false, Winner.Index);
 
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Changing map to: ^3%s^1."), gPugCvar.m_Tag->string, Winner.Name.c_str());
         }
@@ -114,7 +114,7 @@ void CPugVoteMap::Stop()
             {
                 auto Random = this->GetRandom();
 
-                gPugTask.Create(E_TASK::VOTE_MAP_CHANGE, 5.0f, false, Random.Index);
+                gPugTask.Create(E_TASK::MAP_CHANGE, 5.0f, false, Random.Index);
 
                 gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 The next map will be: ^3%s^1."), gPugCvar.m_Tag->string, Random.Name.c_str());
             }

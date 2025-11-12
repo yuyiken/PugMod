@@ -371,26 +371,9 @@ void CPugAdminMenu::MapHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        gPugTask.Create(CHANGE_MAP, 5.0f, false, Item.Info);
+        gPugTask.Create(E_TASK::MAP_CHANGE, 5.0f, false, Item.Info);
 
         gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Changing map to: ^3%s^1."), gPugCvar.m_Tag->string, Item.Text.c_str());
-    }
-}
-
-void CPugAdminMenu::ChangeMap(int Index)
-{
-    auto MapList = gPugMapList.Get();
-
-    if (!MapList.empty())
-    {
-        auto it = MapList.find(Index);
-
-        if (it != MapList.end())
-        {
-            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_VoteMap, "0");
-
-            gPugUtil.ServerCommand("changelevel %s", it->second.c_str());
-        }
     }
 }
 

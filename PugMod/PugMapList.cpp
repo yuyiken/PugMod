@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "PugMapList.h"
 
 CPugMapList gPugMapList;
 
@@ -28,4 +29,21 @@ void CPugMapList::Add(const char *Map)
 std::map<int, std::string> CPugMapList::Get()
 {
     return this->m_Data;
+}
+
+void CPugMapList::ChangeMap(int Index)
+{
+    auto MapList = gPugMapList.Get();
+
+    if (!MapList.empty())
+    {
+        auto it = MapList.find(Index);
+
+        if (it != MapList.end())
+        {
+            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_VoteMap, "0");
+
+            gPugUtil.ServerCommand("changelevel %s", it->second.c_str());
+        }
+    }
 }

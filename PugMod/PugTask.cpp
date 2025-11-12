@@ -36,9 +36,9 @@ void CPugTask::Execute(int Index)
                 gPugMod.SetState(this->m_Task[Index].Parameter);
                 break;
             }
-            case E_TASK::VOTE_MAP_CHANGE:
+            case E_TASK::MAP_CHANGE:
             {
-                gPugVoteMap.ChangeMap(this->m_Task[Index].Parameter);
+                gPugMapList.ChangeMap(this->m_Task[Index].Parameter);
                 break;
             }
             case E_TASK::LEADER_MENU:
@@ -54,11 +54,6 @@ void CPugTask::Execute(int Index)
             case E_TASK::VOTE_OVERTIME:
             {
                 gPugVoteOvertime.Init();
-                break;
-            }
-            case E_TASK::CHANGE_MAP:
-            {
-                gPugAdminMenu.ChangeMap(this->m_Task[Index].Parameter);
                 break;
             }
             case E_TASK::ROUND_MESSAGE:

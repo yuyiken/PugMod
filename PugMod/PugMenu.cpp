@@ -243,6 +243,36 @@ bool CPugMenu::Handle(CBasePlayer *Player, int Key)
                                 gPugVoteMenu.MenuHandle(Player, this->m_Data[ItemId]);
                                 break;
                             }
+                            case E_MENU::ME_PLAYER_VOTE_KICK:
+                            {
+                                gPugVoteMenu.VoteKickHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::ME_PLAYER_VOTE_MAP:
+                            {
+                                gPugVoteMenu.VoteMapHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::ME_PLAYER_VOTE_PAUSE:
+                            {
+                                gPugVoteMenu.VotePauseHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::ME_PLAYER_VOTE_RESTART:
+                            {
+                                gPugVoteMenu.VoteRestartHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::ME_PLAYER_VOTE_CANCEL:
+                            {
+                                gPugVoteMenu.VoteCancelHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
+                            case E_MENU::ME_PLAYER_VOTE_SURRENDER:
+                            {
+                                gPugVoteMenu.VoteSurrenderHandle(Player, this->m_Data[ItemId]);
+                                break;
+                            }
                         }
                     }
                 }
