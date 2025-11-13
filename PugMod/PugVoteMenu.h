@@ -12,6 +12,8 @@ class CPugVoteMenu
 public:
     void ServerActivate();
 
+    void RestartRound();
+
     void DropClient(edict_t *pEntity);
 
     bool Menu(CBasePlayer *Player);
@@ -24,20 +26,16 @@ public:
     bool VoteMapHandle(CBasePlayer *Player, P_MENU_ITEM Item);
 
     bool VotePause(CBasePlayer *Player);
-    bool VotePauseHandle(CBasePlayer *Player, P_MENU_ITEM Item);
-
     bool VoteRestart(CBasePlayer *Player);
-    bool VoteRestartHandle(CBasePlayer *Player, P_MENU_ITEM Item);
-
     bool VoteCancel(CBasePlayer *Player);
-    bool VoteCancelHandle(CBasePlayer *Player, P_MENU_ITEM Item);
-
     bool VoteSurrender(CBasePlayer *Player);
-    bool VoteSurrenderHandle(CBasePlayer *Player, P_MENU_ITEM Item);
-
 private:
     std::array<std::array<bool, MAX_CLIENTS + 1U>, MAX_CLIENTS + 1U> m_VoteKick = {};
     std::array<std::array<bool, MAX_VOTE_MAPS + 1U>, MAX_CLIENTS + 1U> m_VoteMap = {};
+    std::array<std::array<bool, SPECTATOR + 1U>, MAX_CLIENTS + 1U> m_VotePause = {};
+    std::array<bool, MAX_CLIENTS + 1U> m_VoteRestart = {};
+    std::array<bool, MAX_CLIENTS + 1U> m_VoteCancel = {};
+    std::array<std::array<bool, SPECTATOR + 1U>, MAX_CLIENTS + 1U> m_VoteSurrender = {};
 };
 
 extern CPugVoteMenu gPugVoteMenu;

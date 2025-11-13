@@ -5,8 +5,27 @@ CPugVoteMenu gPugVoteMenu;
 void CPugVoteMenu::ServerActivate()
 {
     this->m_VoteKick = {};
-
     this->m_VoteMap = {};
+    this->m_VotePause = {};
+    this->m_VoteRestart = {};
+    this->m_VoteCancel = {};
+    this->m_VoteSurrender = {};
+}
+
+void CPugVoteMenu::RestartRound()
+{
+    if (g_pGameRules)
+    {
+        if (CSGameRules()->m_bCompleteReset)
+        {
+            this->m_VoteKick = {};
+            this->m_VoteMap = {};
+            this->m_VotePause = {};
+            this->m_VoteRestart = {};
+            this->m_VoteCancel = {};
+            this->m_VoteSurrender = {};
+        }
+    }
 }
 
 void CPugVoteMenu::DropClient(edict_t *pEntity)
@@ -17,12 +36,20 @@ void CPugVoteMenu::DropClient(edict_t *pEntity)
     {
         this->m_VoteKick[Player->entindex()].fill(false);
 
-        this->m_VoteMap[Player->entindex()].fill(false);
-
         for (int i = 1; i <= gpGlobals->maxClients; ++i)
         {
             this->m_VoteKick[i][Player->entindex()] = false;
         }
+
+        this->m_VoteMap[Player->entindex()].fill(false);
+
+        this->m_VotePause[Player->entindex()].fill(false);
+
+        this->m_VoteRestart[Player->entindex()] = false;
+
+        this->m_VoteCancel[Player->entindex()]= false;
+
+        this->m_VoteSurrender[Player->entindex()].fill(false);
     }
 }
 
@@ -117,13 +144,13 @@ bool CPugVoteMenu::VoteKick(CBasePlayer *Player)
 
             if (Players[Player->m_iTeam].size() < (size_t)(gPugCvar.m_PlayersMin->value))
             {
-                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Vote kick need more than ^3%d^1 to be used."), gPugCvar.m_Tag->string, (int)(gPugCvar.m_PlayersMin->value));
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Vote kick need more than ^3%d^1 players to be used."), gPugCvar.m_Tag->string, static_cast<int>(gPugCvar.m_PlayersMin->value));
                 return false;
             }
 
             gPugMenu[Player->entindex()].Create(true, E_MENU::ME_PLAYER_VOTE_KICK, _T("Vote Kick:"));
 
-            auto Needs = (Players[Player->m_iTeam].size() - 1);
+            auto Needs = (static_cast<int>(gPugCvar.m_PlayersMin->value) - 1);
 
             for (auto Target : Players[Player->m_iTeam])
             {
@@ -175,7 +202,7 @@ bool CPugVoteMenu::VoteKickHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 
         if (Players[Player->m_iTeam].size() < (size_t)(gPugCvar.m_PlayersMin->value))
         {
-            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Vote kick need more than ^3%d^1 to be used."), gPugCvar.m_Tag->string, (int)(gPugCvar.m_PlayersMin->value));
+            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Vote kick need more than ^3%d^1 players to be used."), gPugCvar.m_Tag->string, static_cast<int>(gPugCvar.m_PlayersMin->value));
             return false;
         }
 
@@ -196,7 +223,7 @@ bool CPugVoteMenu::VoteKickHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 
         if (Progress < 100.0f)
         {
-            gPugUtil.PrintColor(Player->edict(), Player->entindex(), _T("^4[%s]^1 ^3%s^1 voted to kick ^3%s^1: %2.0f%% of votes to kick."), gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), STRING(Target->edict()->v.netname), Progress);
+            gPugUtil.PrintColor(nullptr, Player->entindex(), _T("^4[%s]^1 ^3%s^1 voted to kick ^3%s^1: %2.0f%% of votes to kick."), gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), STRING(Target->edict()->v.netname), Progress);
 
             auto pCommand = gPugClientCmd.Get(CMD_VOTE_MENU);
 
@@ -204,7 +231,7 @@ bool CPugVoteMenu::VoteKickHandle(CBasePlayer *Player, P_MENU_ITEM Item)
             {
                 for (auto const & Temp : Players[Player->m_iTeam])
                 {
-                    gPugUtil.PrintColor(Temp->edict(), Temp->entindex(), _T("^4[%s]^1 Say ^3%s^1 to open vote kick."), gPugCvar.m_Tag->string, pCommand->Name.c_str());
+                    gPugUtil.PrintColor(Temp->edict(), Temp->entindex(), _T("^4[%s]^1 Say ^3%s^1 to open vote menu."), gPugCvar.m_Tag->string, pCommand->Name.c_str());
                 }
             }
         }
@@ -324,7 +351,7 @@ bool CPugVoteMenu::VoteMapHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 
         if (Progress < 100.0f)
         {
-            gPugUtil.PrintColor(Player->edict(), Player->entindex(), _T("^4[%s]^1 ^3%s^1 voted to change map to ^3%s^1: %2.0f%% of votes to change."), gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), Map->second.c_str(), Progress);
+            gPugUtil.PrintColor(nullptr, Player->entindex(), _T("^4[%s]^1 ^3%s^1 voted to change map to ^3%s^1: %2.0f%% of votes to change."), gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), Map->second.c_str(), Progress);
 
             auto pCommand = gPugClientCmd.Get(CMD_VOTE_MENU);
 
@@ -332,7 +359,7 @@ bool CPugVoteMenu::VoteMapHandle(CBasePlayer *Player, P_MENU_ITEM Item)
             {
                 for (auto const & Temp : Players)
                 {
-                    gPugUtil.PrintColor(Temp->edict(), Temp->entindex(), _T("^4[%s]^1 Say ^3%s^1 to open vote map."), gPugCvar.m_Tag->string, pCommand->Name.c_str());
+                    gPugUtil.PrintColor(Temp->edict(), Temp->entindex(), _T("^4[%s]^1 Say ^3%s^1 to open vote menu."), gPugCvar.m_Tag->string, pCommand->Name.c_str());
                 }
             }
         }
@@ -359,17 +386,60 @@ bool CPugVoteMenu::VotePause(CBasePlayer *Player)
 
         if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
         {
+            if (this->m_VotePause[Player->entindex()][Player->m_iTeam])
+            {
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Already voted to pause the game..."), gPugCvar.m_Tag->string);
+                return false;
+            }
+
+            auto Players = gPugUtil.GetPlayers();
+
+            if (Players[Player->m_iTeam].size() < 2)
+            {
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Vote pause need more than ^3%d^1 players to be used."), gPugCvar.m_Tag->string, static_cast<int>(gPugCvar.m_PlayersMin->value));
+                return false;
+            }
+
+            this->m_VotePause[Player->entindex()][Player->m_iTeam] = true;
+
+            auto Count = 0.0f;
+            auto Needs = (static_cast<float>(Players.size()) * gPugCvar.m_VotePercent->value);
+
+            for (int i = 1; i <= gpGlobals->maxClients; ++i)
+            {
+                if (this->m_VotePause[i][Player->m_iTeam])
+                {
+                    Count += 1.0f;
+                }
+            }
+
+            auto Progress = ((Count * 100.0f) / Needs);
+
+            if (Progress < 100.0f)
+            {
+                gPugUtil.PrintColor(nullptr, Player->entindex(), _T("^4[%s]^1 ^3%s^1 voted to pause match: %2.0f%% of votes to pause."), gPugCvar.m_Tag->string, Progress);
+
+                auto pCommand = gPugClientCmd.Get(CMD_VOTE_MENU);
+
+                if (pCommand)
+                {
+                    for (auto const & Temp : Players[Player->m_iTeam])
+                    {
+                        gPugUtil.PrintColor(Temp->edict(), Temp->entindex(), _T("^4[%s]^1 Say ^3%s^1 to open vote menu."), gPugCvar.m_Tag->string, pCommand->Name.c_str());
+                    }
+                }
+            }
+            else
+            {
+                // PAUSE MATCH
+            }
+
             return true;
         }
     }
 
     gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
 
-    return false;
-}
-
-bool CPugVoteMenu::VotePauseHandle(CBasePlayer *Player, P_MENU_ITEM Item)
-{
     return false;
 }
 
@@ -378,20 +448,63 @@ bool CPugVoteMenu::VoteRestart(CBasePlayer *Player)
     if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
     {
         auto State = gPugMod.GetState();
-        
-        if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
+
+        if (State == STATE_FIRST_HALF)
         {
+            if (this->m_VoteRestart[Player->entindex()])
+            {
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Already voted to restart match..."), gPugCvar.m_Tag->string);
+                return false;
+            }
+
+            auto Players = gPugUtil.GetPlayers(true, true);
+
+            if (Players.size() < static_cast<int>(gPugCvar.m_PlayersMin->value))
+            {
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Vote restart need more than ^3%d^1 players to be used."), gPugCvar.m_Tag->string, static_cast<int>(gPugCvar.m_PlayersMin->value));
+                return false;
+            }
+
+            this->m_VoteRestart[Player->entindex()] = true;
+
+            auto Count = 0.0f;
+            auto Needs = (static_cast<float>(Players.size()) * gPugCvar.m_VotePercent->value);
+
+            for (int i = 1; i <= gpGlobals->maxClients; ++i)
+            {
+                if (this->m_VoteRestart[i])
+                {
+                    Count += 1.0f;
+                }
+            }
+
+            auto Progress = ((Count * 100.0f) / Needs);
+
+            if (Progress < 100.0f)
+            {
+                gPugUtil.PrintColor(nullptr, Player->entindex(), _T("^4[%s]^1 ^3%s^1 voted to restart match: %2.0f%% of votes to restart."), gPugCvar.m_Tag->string, Progress);
+
+                auto pCommand = gPugClientCmd.Get(CMD_VOTE_MENU);
+
+                if (pCommand)
+                {
+                    for (auto const & Temp : Players)
+                    {
+                        gPugUtil.PrintColor(Temp->edict(), Temp->entindex(), _T("^4[%s]^1 Say ^3%s^1 to open vote menu."), gPugCvar.m_Tag->string, pCommand->Name.c_str());
+                    }
+                }
+            }
+            else
+            {
+                // RESTART MATCH
+            }
+
             return true;
         }
     }
 
     gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
 
-    return false;
-}
-
-bool CPugVoteMenu::VoteRestartHandle(CBasePlayer *Player, P_MENU_ITEM Item)
-{
     return false;
 }
 
@@ -400,20 +513,63 @@ bool CPugVoteMenu::VoteCancel(CBasePlayer *Player)
     if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
     {
         auto State = gPugMod.GetState();
-        
-        if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
+
+        if (State == STATE_FIRST_HALF)
         {
+            if (this-> m_VoteCancel[Player->entindex()])
+            {
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Already voted to cancel match..."), gPugCvar.m_Tag->string);
+                return false;
+            }
+
+            auto Players = gPugUtil.GetPlayers(true, true);
+
+            if (Players.size() < static_cast<int>(gPugCvar.m_PlayersMin->value))
+            {
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Vote cancel need more than ^3%d^1 players to be used."), gPugCvar.m_Tag->string, static_cast<int>(gPugCvar.m_PlayersMin->value));
+                return false;
+            }
+
+            this->m_VoteCancel[Player->entindex()] = true;
+
+            auto Count = 0.0f;
+            auto Needs = (static_cast<float>(Players.size()) * gPugCvar.m_VotePercent->value);
+
+            for (int i = 1; i <= gpGlobals->maxClients; ++i)
+            {
+                if (this->m_VoteCancel[i])
+                {
+                    Count += 1.0f;
+                }
+            }
+
+            auto Progress = ((Count * 100.0f) / Needs);
+
+            if (Progress < 100.0f)
+            {
+                gPugUtil.PrintColor(nullptr, Player->entindex(), _T("^4[%s]^1 ^3%s^1 voted to cancel match: %2.0f%% of votes to cancel."), gPugCvar.m_Tag->string, Progress);
+
+                auto pCommand = gPugClientCmd.Get(CMD_VOTE_MENU);
+
+                if (pCommand)
+                {
+                    for (auto const & Temp : Players)
+                    {
+                        gPugUtil.PrintColor(Temp->edict(), Temp->entindex(), _T("^4[%s]^1 Say ^3%s^1 to open vote menu."), gPugCvar.m_Tag->string, pCommand->Name.c_str());
+                    }
+                }
+            }
+            else
+            {
+                // CANCEL MATCH
+            }
+
             return true;
         }
     }
 
     gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
 
-    return false;
-}
-
-bool CPugVoteMenu::VoteCancelHandle(CBasePlayer *Player, P_MENU_ITEM Item)
-{
     return false;
 }
 
@@ -431,10 +587,5 @@ bool CPugVoteMenu::VoteSurrender(CBasePlayer *Player)
 
     gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
 
-    return false;
-}
-
-bool CPugVoteMenu::VoteSurrenderHandle(CBasePlayer *Player, P_MENU_ITEM Item)
-{
     return false;
 }
