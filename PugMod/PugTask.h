@@ -8,7 +8,8 @@ enum E_TASK
     VOTE_SWAP_TEAM,
     VOTE_OVERTIME,
     ROUND_MESSAGE,
-    ROUND_END_STATS
+    ROUND_END_STATS,
+    PAUSE_MATCH
 };
 
 typedef struct S_TASK

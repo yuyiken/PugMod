@@ -190,16 +190,6 @@ P_VOTE_MAP_INFO CPugVoteMap::GetRandom()
     return Map;
 }
 
-void CPugVoteMap::ChangeMap(unsigned int MapIndex)
-{
-    if (MapIndex < this->m_MapList.size())
-    {
-        g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_VoteMap, "0");
-
-        gPugUtil.ServerCommand("changelevel %s", this->m_MapList[MapIndex].Name.c_str());
-    }
-}
-
 void CPugVoteMap::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (this->m_Run)

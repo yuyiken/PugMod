@@ -16,6 +16,7 @@ public:
 	cvar_t* m_RoundRestartDelay;
 	cvar_t* m_SvRestart;
 	cvar_t* m_SvRestartRound;
+	cvar_t* m_MpBuyTime;
 
 	cvar_t* m_Tag;
 	cvar_t* m_Language;
@@ -56,6 +57,7 @@ public:
 	cvar_t* m_PlayerVoteRestart;
 	cvar_t* m_PlayerVoteCancel;
 	cvar_t* m_PlayerVoteSurrender;
+	cvar_t* m_PauseTimeout;
 
 	cvar_t* m_DM_Enable;
 	cvar_t* m_DM_HideKillFeed;

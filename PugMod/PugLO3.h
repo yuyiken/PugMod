@@ -4,20 +4,20 @@ constexpr hudtextparms_t g_LO3_HudParam = {-1.0f, 0.20f, 2, 0x00, 0xFF, 0x00, 0x
 
 constexpr std::array<const char*, 5> g_LO3_HudText =
 {
-    "LIVE EM TRÊS RESTARTS",
-    "LIVE EM TRÊS RESTARTS",
-    "LIVE EM DOIS RESTARTS",
-    "LIVE NO PRÓXIMO RESTART",
-    "BOA SORTE & DIVIRTA-SE"
+    "LIVE IN THREE RESTARTS",
+    "LIVE IN THREE RESTARTS",
+    "LIVE IN TWO RESTARTS",
+    "LIVE ON NEXT RESTART",
+    "LIVE GOOD LUCK & HAVE FUN"
 };
 
 constexpr std::array<const char*, 5> g_LO3_Message =
 {
-    "^4[%s]^1 %s: ^3Live em três restarts!",
-    "^4[%s]^1 %s: ^3Live em três restarts!",
-    "^4[%s]^1 %s: ^3Live em dois restarts!",
-    "^4[%s]^1 %s: ^3Live no próximo restart!",
-    "^4[%s]^1 %s: ^3Live! Boa Sorte & Divirta-se!!"
+    "^4[%s]^1 %s: ^3Live in three restarts!",
+    "^4[%s]^1 %s: ^3Live in three restarts!",
+    "^4[%s]^1 %s: ^3Live in two restarts!",
+    "^4[%s]^1 %s: ^3Live on next restart!",
+    "^4[%s]^1 %s: ^Live! Good Luck & Have Fun!!"
 };
 
 constexpr std::array<const char*, 5> g_LO3_Sound =

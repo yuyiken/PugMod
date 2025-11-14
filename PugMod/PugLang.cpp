@@ -7,7 +7,7 @@ void CPugLang::ServerActivate()
     this->m_Data.clear();
 
     char File[MAX_PATH] = { 0 };
-    Q_snprintf(File, sizeof(File), "%s/cfg/language.cfg", gPugUtil.GetPath());
+    Q_snprintf(File, sizeof(File), "%s/cfg/language.cfg", gPugUtil.GetFullPath());
 
     std::ifstream TempFile(File);
 
@@ -21,16 +21,16 @@ void CPugLang::ServerActivate()
         {
             if (!Line.empty())
             {
-                if (Line[0u] == '"')
+                if (Line.find('"') == 0)
                 {
                     Line.erase(std::remove(Line.begin(), Line.end(), '\"'), Line.end());
                     Head = Line;
                 }
-                else if (Line[2u] == ':')
+                if (Line.find(':') == 2)
                 {
                     Lang = Line.substr(0, 2);
 
-                    if (!Line.empty())
+                    if (!Lang.empty() && !Line.empty())
                     {
                         Line.erase(0, 3);
                         Line.erase(std::remove(Line.begin(), Line.end(), '\"'), Line.end());

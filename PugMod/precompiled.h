@@ -66,6 +66,7 @@
 #include "PugLO3.h"
 #include "PugMapList.h"
 #include "PugMod.h"
+#include "PugPause.h"
 #include "PugReady.h"
 #include "PugRestrictItem.h"
 #include "PugRetry.h"

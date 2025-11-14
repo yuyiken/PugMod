@@ -22,6 +22,8 @@ void CPugAdminMenu::Menu(CBasePlayer *Player)
 
         gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_CVAR, false, ADMIN_CVAR, _T("Control Cvars"));
 
+        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_PAUSE, false, ADMIN_VOTE|ADMIN_LEVEL_B, _T("Pause Match"));
+
         gPugMenu[Player->entindex()].Show(Player);
     }
 }
@@ -67,6 +69,11 @@ void CPugAdminMenu::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
                 case ADMIN_MENU_CVAR:
                 {
                     gPugCvarControl.Menu(Player);
+                    break;
+                }
+                case ADMIN_MENU_PAUSE:
+                {
+                    gPugPause.Init(Player);
                     break;
                 }
             }
@@ -412,7 +419,7 @@ void CPugAdminMenu::PugHandle(CBasePlayer *Player, P_MENU_ITEM Item)
     {
         if (Item.Info >= STATE_DEAD && Item.Info <= STATE_END)
         {
-            gPugTask.Create(E_TASK::SET_STATE, 0.3f, false, Item.Info);
+            gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, Item.Info);
 
             gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 State changed: ^3%s^1."), gPugCvar.m_Tag->string, gPugMod.GetString(Item.Info));
         }

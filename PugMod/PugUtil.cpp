@@ -31,6 +31,30 @@ const char* CPugUtil::GetPath()
 	return this->m_Path.c_str();
 }
 
+const char* CPugUtil::GetFullPath()
+{
+	if (this->m_FullPath.empty())
+	{
+		std::string GameDir = gpMetaUtilFuncs->pfnGetGameInfo(PLID, GINFO_GAMEDIR);
+
+		if (!GameDir.empty())
+		{
+			this->m_FullPath = gpMetaUtilFuncs->pfnGetPluginPath(PLID);
+
+			if (!this->m_FullPath.empty())
+			{
+				std::replace(this->m_FullPath.begin(), this->m_FullPath.end(), (char)(92), (char)(47));
+
+				this->m_FullPath.erase(this->m_FullPath.find_last_of((char)(47)), this->m_FullPath.length());
+
+				this->m_FullPath.erase(this->m_FullPath.find_last_of((char)(47)), this->m_FullPath.length());
+			}
+		}
+	}
+
+	return this->m_FullPath.c_str();
+}
+
 void CPugUtil::ServerCommand(const char *Format, ...)
 {
 	static char Command[255] = { 0 };

@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "PugMod.h"
 
 CPugMod gPugMod;
 
@@ -275,6 +276,28 @@ void CPugMod::SwapTeams()
     SWAP(this->m_ScoreOT[TERRORIST], this->m_ScoreOT[CT]);
 
     gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Automatically swapping teams."), gPugCvar.m_Tag->string);
+}
+
+void CPugMod::Surrender(TeamName Team)
+{
+    if (this->m_State >= STATE_FIRST_HALF && this->m_State <= STATE_OVERTIME)
+    {
+        auto HalfRounds = (int)(gPugCvar.m_Rounds->value / 2.0f);
+
+        this->m_Score = {};
+        this->m_ScoreOT = {};
+
+        auto Winner = (Team == TERRORIST ? CT : TERRORIST);
+        
+		this->m_Score[Winner][STATE_FIRST_HALF]  = HalfRounds;
+		this->m_Score[Winner][STATE_SECOND_HALF] = HalfRounds;
+
+        gPugUtil.SendHud(nullptr, g_Pug_HudParam, _T("Game Over!^nThe ^3%s^1 team surrendered!"), g_Pug_TeamName[Team]);
+
+        gPugUtil.PrintColor(nullptr, (Winner == TERRORIST) ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE, _T("^4[%s]^1 Game Over! The ^3%s^1 team surrendered!"), gPugCvar.m_Tag->string, g_Pug_TeamName[Team]);
+
+        gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, STATE_END);
+    }
 }
 
 int CPugMod::GetRound()

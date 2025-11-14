@@ -66,6 +66,11 @@ void CPugTask::Execute(int Index)
                 gPugStats.RoundEndStats();
                 break;
             }
+            case E_TASK::PAUSE_MATCH:
+            {
+                gPugPause.Timer(this->m_Task[Index].Parameter);
+                break;
+            }
         }
     }
 }

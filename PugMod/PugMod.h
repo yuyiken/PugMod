@@ -40,6 +40,7 @@ public:
     void ResetPoint(int State);
 
     void SwapTeams();
+    void Surrender(TeamName Team);
 
     bool ChooseTeam(CBasePlayer *Player, int Slot);
     void GetIntoGame(CBasePlayer *Player);

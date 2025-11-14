@@ -21,6 +21,7 @@ class CPugUtil
 {
 public:
     const char *GetPath();
+    const char *GetFullPath();
     void ServerCommand(const char *Format, ...);
     bool IsNetClient(edict_t *pEntity);
     void PrintColor(edict_t *pEntity, int Sender, const char *Format, ...);
@@ -45,6 +46,7 @@ public:
     void ShowMotd(edict_t* pEntity, char* Motd, unsigned int MotdLength);
 private:
     std::string m_Path;
+    std::string m_FullPath;
 };
 
 extern CPugUtil gPugUtil;

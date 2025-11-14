@@ -31,6 +31,9 @@ void CPugCvar::ServerActivate()
     // sv_restartround
 	this->m_SvRestartRound = g_engfuncs.pfnCVarGetPointer("sv_restartround");
 
+    // mp_buytime
+    this->m_MpBuyTime = g_engfuncs.pfnCVarGetPointer("mp_buytime");
+
     // Log Tag
     //
     // Default "PUG"
@@ -38,8 +41,8 @@ void CPugCvar::ServerActivate()
 
     // Server language
     //
-    // Default "br"
-    this->m_Language = this->Register("pug_language", "br");
+    // Default "en"
+    this->m_Language = this->Register("pug_language", "en");
 
     // Player command prefix
     //
@@ -313,6 +316,13 @@ void CPugCvar::ServerActivate()
     // 
     // Default: "1"
 	this->m_PlayerVoteSurrender = this->Register("pug_player_vote_surrender", "1");
+
+    // Allowed time in seconds for match pause
+    //
+    // 0 Disable
+    //
+    // Default: "60"
+    this->m_PauseTimeout = this->Register("pug_pause_timeout", "60");
 
     // Enable Deathmatch mode
     // If inactive, it will be regular warmup mode

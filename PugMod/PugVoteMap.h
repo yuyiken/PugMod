@@ -32,10 +32,8 @@ public:
     void LoadMaps();
     P_VOTE_MAP_INFO GetWinner();
     P_VOTE_MAP_INFO GetRandom();
-    void ChangeMap(unsigned int MapIndex);
     void MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item);
     void StartFrame();
-
 private:
     bool m_Run = false;
     float m_NextFrame = 0.0f;

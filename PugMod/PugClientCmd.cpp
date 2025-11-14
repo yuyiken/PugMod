@@ -279,6 +279,11 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                         gPugSpawnEdit.EditSpawns(Player);
                                         return true;
                                     }
+                                    case CMD_PAUSE_MATCH:
+                                    {
+                                        gPugPause.Init(Player);
+                                        return true;
+                                    }
                                 }
                             }
                         }

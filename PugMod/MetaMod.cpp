@@ -161,6 +161,10 @@ void DLL_POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 
 	gPugCvarControl.ServerActivate();
 
+	gPugVoteMenu.ServerActivate();
+
+	gPugPause.ServerActivate();
+
 	RETURN_META(MRES_IGNORED);
 }
 

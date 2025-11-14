@@ -8,7 +8,8 @@ enum ADMIN_MENU_LIST
     ADMIN_MENU_TEAM,
     ADMIN_MENU_MAP,
     ADMIN_MENU_PUG,
-    ADMIN_MENU_CVAR
+    ADMIN_MENU_CVAR,
+    ADMIN_MENU_PAUSE
 };
 
 class CPugAdminMenu
@@ -31,7 +32,6 @@ public:
 
     void Map(CBasePlayer *Player);
     void MapHandle(CBasePlayer *Player, P_MENU_ITEM Item);
-    void ChangeMap(int Index);
 
     void Pug(CBasePlayer *Player);
     void PugHandle(CBasePlayer *Player, P_MENU_ITEM Item);
