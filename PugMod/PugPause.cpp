@@ -133,9 +133,25 @@ void CPugPause::Timer(int PauseTime)
 
         this->SetRoundTime(static_cast<int>(gPugCvar.m_MpFreezeTime->value), true);
 
-        gPugUtil.SendHud(nullptr, g_Pause_HudParam2, _T("MATCH WILL CONTINUE AFTER FREEZETIME"));
+        edict_t *pEntity = nullptr;
 
-        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Match will continue after freezetime."), gPugCvar.m_Tag->string);
+        for (int i = 1; i <= gpGlobals->maxClients; ++i)
+        {
+            pEntity = INDEXENT(i);
+
+            if (gPugUtil.IsNetClient(pEntity))
+            {
+                gPugUtil.ScreenShake(pEntity, 2.0f, 2.0f, 2.0f);
+
+                gPugUtil.ScreenFade(pEntity, 2.0f, 2.0f, 0x0002, 0, 0, 200, 100);
+
+                gPugUtil.ClientCommand(pEntity, "spk \"barney/letsgo\"");
+
+                gPugUtil.SendHud(pEntity, g_Pause_HudParam2, _T("MATCH WILL CONTINUE AFTER FREEZETIME"));
+
+                gPugUtil.PrintColor(pEntity, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Match will continue after freezetime."), gPugCvar.m_Tag->string);
+            }
+        }
     }
 }
 
