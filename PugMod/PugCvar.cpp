@@ -324,6 +324,14 @@ void CPugCvar::ServerActivate()
     // Default: "60"
     this->m_PauseTimeout = this->Register("pug_pause_timeout", "60");
 
+    // Fix smoke grenade bug (multiple smoke clouds)
+    //
+    // 0 Disable
+    // 1 Enable
+    //
+    // Default: "1"
+    this->m_SmokeBugFix = this->Register("pug_smoke_bug_fix", "1");
+
     // Enable Deathmatch mode
     // If inactive, it will be regular warmup mode
     //

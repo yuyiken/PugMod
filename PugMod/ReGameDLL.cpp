@@ -71,6 +71,8 @@ bool ReGameDLL_Init()
 
 										g_ReGameHookchains->CSGameRules_OnRoundFreezeEnd()->registerHook(ReGameDLL_CSGameRules_OnRoundFreezeEnd);
 
+										g_ReGameHookchains->CGrenade_ExplodeSmokeGrenade()->registerHook(ReGameDLL_CGrenade_ExplodeSmokeGrenade);
+
 										g_ReGameHookchains->RoundEnd()->registerHook(ReGameDLL_RoundEnd);
 									}
 
@@ -126,6 +128,8 @@ bool ReGameDLL_Stop()
 		g_ReGameHookchains->CBasePlayer_HasRestrictItem()->unregisterHook(ReGameDLL_CBasePlayer_HasRestrictItem);
 
 		g_ReGameHookchains->CSGameRules_OnRoundFreezeEnd()->unregisterHook(ReGameDLL_CSGameRules_OnRoundFreezeEnd);
+
+		g_ReGameHookchains->CGrenade_ExplodeSmokeGrenade()->unregisterHook(ReGameDLL_CGrenade_ExplodeSmokeGrenade);
 
 		g_ReGameHookchains->RoundEnd()->unregisterHook(ReGameDLL_RoundEnd);
 	}
@@ -315,4 +319,11 @@ bool ReGameDLL_RoundEnd(IReGameHook_RoundEnd *chain, int winStatus, ScenarioEven
 	gPugStats.RoundEnd(winStatus, event, tmDelay);
 
 	return Result;
+}
+
+void ReGameDLL_CGrenade_ExplodeSmokeGrenade(IReGameHook_CGrenade_ExplodeSmokeGrenade *chain, CGrenade *pThis)
+{
+	chain->callNext(pThis);
+
+	g_PugBugFix.ExplodeSmokeGrenade(pThis);
 }

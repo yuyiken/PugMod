@@ -58,6 +58,7 @@ public:
 	cvar_t* m_PlayerVoteCancel;
 	cvar_t* m_PlayerVoteSurrender;
 	cvar_t* m_PauseTimeout;
+	cvar_t* m_SmokeBugFix;
 
 	cvar_t* m_DM_Enable;
 	cvar_t* m_DM_HideKillFeed;
