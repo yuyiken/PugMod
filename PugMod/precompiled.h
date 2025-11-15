@@ -75,6 +75,7 @@
 #include "PugSpawnEdit.h"
 #include "PugStats.h"
 #include "PugTask.h"
+#include "PugTeamManager.h"
 #include "PugTimer.h"
 #include "PugUtil.h"
 #include "PugVoteEnd.h"

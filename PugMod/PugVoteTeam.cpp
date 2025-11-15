@@ -122,7 +122,7 @@ void CPugVoteTeam::Stop()
 
 void CPugVoteTeam::ChangeTeam(int Type)
 {
-    auto NewState = (gPugCvar.m_KnifeRound->value) ? STATE_KNIFE_ROUND : STATE_FIRST_HALF;
+    auto NewState = (gPugCvar.m_KnifeRound->value > 0.0f) ? STATE_KNIFE_ROUND : STATE_FIRST_HALF;
 
     switch(Type)
     {

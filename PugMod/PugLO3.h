@@ -17,7 +17,7 @@ constexpr std::array<const char*, 5> g_LO3_Message =
     "^4[%s]^1 %s: ^3Live in three restarts!",
     "^4[%s]^1 %s: ^3Live in two restarts!",
     "^4[%s]^1 %s: ^3Live on next restart!",
-    "^4[%s]^1 %s: ^Live! Good Luck & Have Fun!!"
+    "^4[%s]^1 %s: ^3Live! Good Luck & Have Fun!!"
 };
 
 constexpr std::array<const char*, 5> g_LO3_Sound =

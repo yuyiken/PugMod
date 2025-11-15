@@ -17,7 +17,7 @@ constexpr std::array<const char *, STATE_END + 1> g_Pug_String = {"Dead", "Death
 constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamName = {"None", "Terrorist", "Counter-Terrorist", "Spectactor"};
 constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamNameShort = {"NONE", "TR", "CT", "SPEC"};
 
-constexpr hudtextparms_t g_Pug_HudParam = {-1.0f, 0.20f, 2, 0x00, 0xFF, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0.0f, 0.0f, 10.0f, 2.0f, 1};
+constexpr hudtextparms_t g_Pug_HudParam = {-1.0f, 0.20f, 2, 0x00, 0xFF, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0.0f, 0.0f, 12.0f, 3.0f, 1};
 
 class CPugMod
 {

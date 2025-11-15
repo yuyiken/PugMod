@@ -145,6 +145,8 @@ void DLL_POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 
 	gPugMod.ServerActivate();
 
+	gPugTeamManager.ServerActivate();
+
 	gPugReady.ServerActivate();
 
 	gPugTimer.ServerActivate();
@@ -173,6 +175,8 @@ void DLL_POST_ServerDeactivate()
 	gPugTask.ServerDeactivate();
 
 	gPugMod.ServerDeactivate();
+
+	gPugTeamManager.ServerDeactivate();
 
 	gPugReady.ServerDeactivate();
 

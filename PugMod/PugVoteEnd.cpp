@@ -47,8 +47,13 @@ void CPugVoteEnd::Init()
             this->m_VoteList.clear();
             
             this->m_VoteList.push_back({1, 0, _T("Continue Match")});
-            this->m_VoteList.push_back({2, 0, _T("End Match")});
-            
+            this->m_VoteList.push_back({2, 0, _T("Cancel Match")});
+
+            if (gPugMod.GetState() == STATE_FIRST_HALF)
+            {
+                this->m_VoteList.push_back({3, 0, _T("Restart Match")});
+            }
+
             this->m_VotesLeft = Players.size();
 
             for (auto const &Player : Players)
@@ -68,10 +73,6 @@ void CPugVoteEnd::Init()
 
                 gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 A player left the match, what do you want to do?"), gPugCvar.m_Tag->string);
             }
-        }
-        else
-        {
-            gPugMod.SetState(STATE_END);
         }
     }
 }
@@ -96,7 +97,13 @@ void CPugVoteEnd::Stop()
             {
                 gPugUtil.ClientCommand(nullptr, g_VoteEnd_Sound[2]);
 
-                gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_END);
+                gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, STATE_DEATHMATCH);
+            }
+            else if (Winner.Index == 3)
+            {
+                gPugUtil.ClientCommand(nullptr, g_VoteEnd_Sound[2]);
+
+                gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, STATE_FIRST_HALF);
             }
         }
     }

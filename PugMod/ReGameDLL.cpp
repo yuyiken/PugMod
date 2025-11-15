@@ -158,7 +158,7 @@ void ReGameDLL_CBasePlayer_UpdateClientData(IReGameHook_CBasePlayer_UpdateClient
 
 BOOL ReGameDLL_HandleMenu_ChooseTeam(IReGameHook_HandleMenu_ChooseTeam *chain, CBasePlayer *Player, int Slot)
 {
-	if (gPugMod.ChooseTeam(Player, Slot))
+	if (gPugTeamManager.ChooseTeam(Player, Slot))
 	{
 		Slot = 0;
 		return FALSE;

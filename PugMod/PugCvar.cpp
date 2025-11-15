@@ -244,15 +244,15 @@ void CPugCvar::ServerActivate()
     //
     // 0 Inactive
     //
-    // Default: "60.0"
-	this->m_RageQuitLimit = this->Register("pug_rage_quit_time_limit", "60.0");
+    // Default: "0"
+	this->m_RageQuitLimit = this->Register("pug_rage_quit_time_limit", "0");
 
     // Rage quit ban time in minutes
     //
     // 0 Ban permanently
     //
-    // Default: "1440.0"
-    this->m_RageQuitBanTime = this->Register("pug_rage_quit_ban_time", "1440.0");
+    // Default: "1440"
+    this->m_RageQuitBanTime = this->Register("pug_rage_quit_ban_time", "1440");
 
     // Flags to enable stats commands
     //
