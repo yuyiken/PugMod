@@ -9,7 +9,8 @@ enum E_TASK
     VOTE_OVERTIME,
     ROUND_MESSAGE,
     ROUND_END_STATS,
-    PAUSE_MATCH
+    PAUSE_MATCH,
+    RAGE_BAN_CHECK
 };
 
 typedef struct S_TASK

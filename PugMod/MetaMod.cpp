@@ -222,8 +222,6 @@ void DLL_POST_ClientPutInServer(edict_t *pEntity)
 
 	gPugLeader.PutInServer(pEntity);
 
-	gPugRetry.PutInServer(pEntity);
-
 	RETURN_META(MRES_IGNORED);
 }
 

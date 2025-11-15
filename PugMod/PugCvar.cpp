@@ -240,12 +240,19 @@ void CPugCvar::ServerActivate()
     // Default: "1"
     this->m_DemoRecord = this->Register("pug_demo_record", "1");
 
-    // Anti-retry ban time
+    // Rage quit time limit to ban in seconds
     //
     // 0 Inactive
     //
-    // Default: "20.0"
-    this->m_RetryTime = this->Register("pug_retry_time", "20.0");
+    // Default: "60.0"
+	this->m_RageQuitLimit = this->Register("pug_rage_quit_time_limit", "60.0");
+
+    // Rage quit ban time in minutes
+    //
+    // 0 Ban permanently
+    //
+    // Default: "1440.0"
+    this->m_RageQuitBanTime = this->Register("pug_rage_quit_ban_time", "1440.0");
 
     // Flags to enable stats commands
     //

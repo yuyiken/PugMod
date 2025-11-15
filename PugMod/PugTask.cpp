@@ -71,6 +71,11 @@ void CPugTask::Execute(int Index)
                 gPugPause.Timer(this->m_Task[Index].Parameter);
                 break;
             }
+            case E_TASK::RAGE_BAN_CHECK:
+            {
+                gPugRageBan.CheckList();
+                break;
+            }
         }
     }
 }

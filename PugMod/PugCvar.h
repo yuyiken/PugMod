@@ -48,7 +48,8 @@ public:
 	cvar_t* m_MotdFile;
 	cvar_t* m_MotdFileAdmin;
 	cvar_t* m_DemoRecord;
-	cvar_t* m_RetryTime;
+	cvar_t* m_RageQuitLimit;
+	cvar_t* m_RageQuitBanTime;
 	cvar_t* m_RoundStats;
 	cvar_t* m_RoundEndStats;
 	cvar_t* m_PlayerVoteKick;
