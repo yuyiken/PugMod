@@ -1,5 +1,5 @@
 <h3 align="center">Counter-Strike 1.6 Match Plugin</h3>
-<p align="center">Counter-Strike 1.6 Match Plugin for ReHLDS and MetaMod.</p>
+<p align="center">Counter-Strike 1.6 Match Plugin for ReHLDS and MetaMod</p>
 
 <p align="center">
     <a href=""><img src="https://img.shields.io/github/actions/workflow/status/SmileYzn/pugmod/build.yml?branch=main&label=Build&style=flat-square"></a>
@@ -37,7 +37,6 @@
     <li>Commands in server console</li>
     <li>Settings and configurations via console variable cvars</li>
     <li>Weapon restriction control</li>
-    <li>Anti Retry</li>
     <li>Game name changer on server list change</li>
     <li>Ask to record a demo on client side while match is started/running</li>
     <li>Ask to end pug while an player disconnect from game</li>
@@ -45,9 +44,10 @@
     <li>A complete menu for players to: Vote Kick, Vote Map or Vote to stop match</li>
     <li>Translation system support</li>
     <li>Anti Flood system for chat and radio messages</li>
-    <li>Automatic ban of players that rage quit</li>
+    <li>Automatic ban of players that rage quit from game</li>
+    <li>Smoke Bug Fix</li>
     <li>Supports for Windows and Linux Systems</li>
-</ul> 
+</ul>
 
 <h4>Settings</h4>
 

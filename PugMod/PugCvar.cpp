@@ -149,8 +149,8 @@ void CPugCvar::ServerActivate()
     // Restrict weapons at the indicated slot
     // Each slot is one item (See enum ItemID for slots)
     //
-    // 0 Inactive
-    // 1 Active
+    // 0 Disabled
+    // 1 Enabled
     //
     // Default "000000000000000000000000000000000000000"
     this->m_RestrictItem = this->Register("pug_restrict_item", "000000000000000000000000000000000000000");
@@ -168,8 +168,8 @@ void CPugCvar::ServerActivate()
     // The current map has a vote to change to
     // WARNING: Do not use this cvar on server configurations
     //
-    // 0 Inactive
-    // 1 Active
+    // 0 Disabled
+    // 1 Enabled
     //
     // Default "1"
     this->m_VoteMap = this->Register("pug_vote_map", "0");
@@ -182,16 +182,16 @@ void CPugCvar::ServerActivate()
 
     // Force knife round on the current map
     //
-    // 0 Inactive
-    // 1 Active
+    // 0 Disabled
+    // 1 Enabled
     //
     // Default: "0"
     this->m_KnifeRound = this->Register("pug_knife_round", "0");
 
     // Prompt end of match when a player disconnects
     //
-    // 0 Inactive
-    // 1 Active
+    // 0 Disabled
+    // 1 Enabled
     //
     // Default: "1"
     this->m_VoteEnd  = this->Register("pug_vote_end", "1");
@@ -220,6 +220,14 @@ void CPugCvar::ServerActivate()
     // Default: "1"
 	this->m_ScorePlayers = this->Register("pug_score_players", "1");
 
+    // Display match states and scores in game description
+    //
+    // 0 Disabled
+    // 1 Enabled
+    //
+    // Default: "1"
+    this->m_GameDesc = this->Register("pug_game_desc", "1");
+
     // Help file for commands via MOTD
     // File name or URL of the help file
     //
@@ -234,15 +242,15 @@ void CPugCvar::ServerActivate()
 
     // Ask for record a client-side demo when the match starts
     //
-    // 0 Inactive
-    // 1 Active
+    // 0 Disabled
+    // 1 Enabled
     //
     // Default: "1"
     this->m_DemoRecord = this->Register("pug_demo_record", "1");
 
     // Rage quit time limit to ban in seconds
     //
-    // 0 Inactive
+    // 0 Disabled
     //
     // Default: "0"
 	this->m_RageQuitLimit = this->Register("pug_rage_quit_time_limit", "0");
@@ -342,24 +350,24 @@ void CPugCvar::ServerActivate()
     // Enable Deathmatch mode
     // If inactive, it will be regular warmup mode
     //
-    // 0 Inactive
-    // 1 Active
+    // 0 Disabled
+    // 1 Enabled
     //
     // Default: "1"
     this->m_DM_Enable = this->Register("pug_dm_enable", "1");
 
     // Hide kill feed from other players
     //
-    // 0 Inactive
-    // 1 Active
+    // 0 Disabled
+    // 1 Enabled
     //
     // Default: "0"
     this->m_DM_HideKillFeed = this->Register("pug_dm_hide_kill_feed", "0");
 
     // Hit indicator on screen
     // 
-    // 0 Inactive
-    // 1 Active
+    // 0 Disabled
+    // 1 Enabled
     // 2 Active + Through Walls
     //
     // Default: "1"
@@ -367,46 +375,46 @@ void CPugCvar::ServerActivate()
 
     // Only accept headshots
     //
-    // 0 Inactive
-    // 1 Active
+    // 0 Disabled
+    // 1 Enabled
     //
     // Default: "0"
     this->m_DM_HSOnlyMode = this->Register("pug_dm_hs_mode", "0");
 
     // Show kill/frag rate and HS rate on the HUD
     //
-    // 0 Inactive
-    // 1 Active
+    // 0 Disabled
+    // 1 Enabled
     //
     // Default: "1"
     this->m_DM_HudKDRatio = this->Register("pug_dm_hud_kd_ratio", "1");
 
     // Flash the screen on killing another player (HS)
     //
-    // 0 Inactive
-    // 1 Active
+    // 0 Disabled
+    // 1 Enabled
     //
     // Default: "1"
     this->m_DM_KillFade = this->Register("pug_dm_kill_fade", "2");
 
     // Recover health after a frag
     //
-    // 0 Inactive
+    // 0 Disabled
     //
     // Default: "15"
     this->m_DM_KillHP = this->Register("pug_dm_kill_hp", "15");
 
     // Recover health after a frag (HS)
     //
-    // 0 Inactive
+    // 0 Disabled
     //
     // Default: "40"
     this->m_DM_KillHPHS = this->Register("pug_dm_kill_hp_hs", "40");
 
     // Recover armor after a frag
     //
-    // 0 Inactive
-    // 1 Active
+    // 0 Disabled
+    // 1 Enabled
     // 2 Only on HS
     //
     // Default: "1"
@@ -414,24 +422,24 @@ void CPugCvar::ServerActivate()
 
     // Show HP recovered after a frag
     //
-    // 0 Inactive
-    // 1 Active
+    // 0 Disabled
+    // 1 Enabled
     //
     // Default: "1"
     this->m_DM_KillHealedMsg = this->Register("pug_dm_kill_hp_msg ", "1");
 
     // Enable sound on frag (HS)
     //
-    // 0 Inactive
-    // 1 Active
+    // 0 Disabled
+    // 1 Enabled
     //
     // Default: "1"
     this->m_DM_KillSound = this->Register("pug_dm_kill_sound", "2");
 
     // Show frags instead of money
     //
-    // 0 Inactive
-    // 1 Active
+    // 0 Disabled
+    // 1 Enabled
     //
     // Default: "1"
     this->m_DM_MoneyFrag = this->Register("pug_dm_money_frag", "0");

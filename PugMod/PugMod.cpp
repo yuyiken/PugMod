@@ -1,5 +1,4 @@
 #include "precompiled.h"
-#include "PugMod.h"
 
 CPugMod gPugMod;
 
@@ -237,6 +236,8 @@ int CPugMod::SetState(int State)
         }
     }
 
+    gPugGameDesc.Update();
+
     gPugUtil.ServerCommand("exec %s/cfg/%s.cfg", gPugUtil.GetPath(), g_Pug_Config[State]);
 
     return this->m_State;
@@ -401,6 +402,8 @@ void CPugMod::RestartRound()
                     gPugTask.Create(E_TASK::ROUND_MESSAGE, 1.0f, false, 0);
                 }
             }
+
+            gPugGameDesc.Update();
         }
     }
 }
@@ -439,6 +442,8 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
                     {
                         this->m_ScoreOT[Winner]++;
                     }
+
+                    gPugGameDesc.Update();
                     
                     gPugUtil.ClientPrint(nullptr, E_PRINT::CONSOLE, _T("[%s] Round %d Won By: %s"), gPugCvar.m_Tag->string, (this->GetRound() + 1), g_Pug_TeamName[Winner]);
 

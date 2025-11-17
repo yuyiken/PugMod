@@ -45,6 +45,7 @@ public:
 	cvar_t* m_ScoreText;
 	cvar_t* m_ScoreTeams;
 	cvar_t* m_ScorePlayers;
+	cvar_t* m_GameDesc;
 	cvar_t* m_MotdFile;
 	cvar_t* m_MotdFileAdmin;
 	cvar_t* m_DemoRecord;

@@ -62,6 +62,7 @@
 #include "PugDemoRecord.h"
 #include "PugDM.h"
 #include "PugEngine.h"
+#include "PugGameDesc.h"
 #include "PugLang.h"
 #include "PugLeader.h"
 #include "PugLO3.h"
