@@ -238,6 +238,8 @@ int CPugMod::SetState(int State)
 
     gPugGameDesc.Update();
 
+    g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_State, std::to_string(State).c_str());
+
     gPugUtil.ServerCommand("exec %s/cfg/%s.cfg", gPugUtil.GetPath(), g_Pug_Config[State]);
 
     return this->m_State;

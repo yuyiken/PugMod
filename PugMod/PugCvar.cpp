@@ -56,18 +56,24 @@ void CPugCvar::ServerActivate()
 
     // Time between commands to consider a flood attempt
     //
-    // Padrao: "0.75"
+    // Default: "0.75"
     this->m_CmdFloodTime = this->Register("pug_cmd_flood_time", "0.75");
 
     // Maximum flood attempts before blocking
     //
-    // Padrao: "3.0"
+    // Default: "3.0"
     this->m_CmdFloodRepeat = this->Register("pug_cmd_flood_repeat", "3.0");
 
     // Anti-flood block time
     //
-    // Padrao: "4.0"
+    // Default: "4.0"
     this->m_CmdFloodNextTime = this->Register("pug_cmd_flood_next_time", "4.0");
+
+    // The current pug mod state
+    // WARNING: Do not use this cvar on server configurations
+    //
+    // Default: "0"
+    this->m_State = this->Register("pug_state", "0");
 
     // Minimum players per team
     //

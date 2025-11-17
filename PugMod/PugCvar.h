@@ -25,6 +25,7 @@ public:
 	cvar_t* m_CmdFloodTime;
 	cvar_t* m_CmdFloodRepeat;
 	cvar_t* m_CmdFloodNextTime;
+	cvar_t* m_State;
 	cvar_t* m_PlayersMin;
 	cvar_t* m_PlayersMax;
 	cvar_t* m_Rounds;
