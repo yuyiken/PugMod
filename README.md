@@ -54,8 +54,8 @@
 <details>
     <summary>Pug Mod Variables</summary>
 
-| CVAR | Default | Description |
-|:---:|:---:|:---:|
+| Variable | Default | Description |
+|:----|:---:|:----|
 | pug_tag | PUG | Tag used in logs |
 | pug_language | en | Server language |
 | pug_cmd_prefix_player | . | Command prefix for players |
