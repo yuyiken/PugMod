@@ -53,4 +53,59 @@
 
 <details>
     <summary>Pug Mod Variables</summary>
+
+| CVAR | Default |
+|------|---------|
+| pug_tag | PUG |
+| pug_language | en |
+| pug_cmd_prefix_player | . |
+| pug_cmd_prefix_admin | ! |
+| pug_cmd_flood_time | 0.75 |
+| pug_cmd_flood_repeat | 3.0 |
+| pug_cmd_flood_next_time | 4.0 |
+| pug_players_min | 5 |
+| pug_players_max | 5 |
+| pug_rounds | 30 |
+| pug_rounds_ot | 6 |
+| pug_ot_type | 0 |
+| pug_ready_type | 1 |
+| pug_ready_list | 0 |
+| pug_ready_time_limit | 60.0 |
+| pug_team_type | 0 |
+| pug_team_option | abcdef |
+| pug_restrict_item | 000000000000000000000000000000000000000 |
+| pug_vote_delay | 15.0 |
+| pug_vote_percent | 0.70 |
+| pug_knife_round | 0 |
+| pug_vote_end | 1 |
+| pug_score_text | 0 |
+| pug_score_teams | 1 |
+| pug_score_players | 1 |
+| pug_motd_file | cstrike/addons/pugmod/motd.html |
+| pug_motd_admin_file | cstrike/addons/pugmod/motd_admin.html |
+| pug_demo_record | 1 |
+| pug_rage_quit_time_limit | 0 |
+| pug_rage_quit_ban_time | 1440 |
+| pug_round_stats | abcde |
+| pug_round_end_stats | e |
+| pug_player_vote_kick | 1 |
+| pug_player_vote_map | 1 |
+| pug_player_vote_pause | 1 |
+| pug_player_vote_restart | 1 |
+| pug_player_vote_cancel | 1 |
+| pug_player_vote_surrender | 1 |
+| pug_pause_timeout | 60 |
+| pug_smoke_bug_fix | 1 |
+| pug_dm_enable | 1 |
+| pug_dm_hide_kill_feed | 0 |
+| pug_dm_hit_indicator | 1 |
+| pug_dm_hs_mode | 0 |
+| pug_dm_hud_kd_ratio | 1 |
+| pug_dm_kill_fade | 1 |
+| pug_dm_kill_hp | 15 |
+| pug_dm_kill_hp_hs | 40 |
+| pug_dm_kill_repair_armor | 1 |
+| pug_dm_kill_hp_msg | 1 |
+| pug_dm_kill_sound | 1 |
+| pug_dm_money_frag | 1 |
 </details>

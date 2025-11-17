@@ -56,23 +56,23 @@ void CPugCvar::ServerActivate()
 
     // Time between commands to consider a flood attempt
     //
-    // Default: "0.75"
+    // Default "0.75"
     this->m_CmdFloodTime = this->Register("pug_cmd_flood_time", "0.75");
 
     // Maximum flood attempts before blocking
     //
-    // Default: "3.0"
+    // Default "3.0"
     this->m_CmdFloodRepeat = this->Register("pug_cmd_flood_repeat", "3.0");
 
     // Anti-flood block time
     //
-    // Default: "4.0"
+    // Default "4.0"
     this->m_CmdFloodNextTime = this->Register("pug_cmd_flood_next_time", "4.0");
 
     // The current pug mod state
     // WARNING: Do not use this cvar on server configurations
     //
-    // Default: "0"
+    // Default "0"
     this->m_State = this->Register("pug_state", "0");
 
     // Minimum players per team
@@ -163,12 +163,12 @@ void CPugCvar::ServerActivate()
 
     // The pug vote time limit
     //
-    // Default: "15.0"
+    // Default "15.0"
     this->m_VoteDelay = this->Register("pug_vote_delay", "15.0");
 
     // The pug vote percentage for success in votes
     //
-    // Default: "0.70"
+    // Default "0.70"
     this->m_VotePercent = this->Register("pug_vote_percent", "0.70");
 
     // The current map has a vote to change to
@@ -191,7 +191,7 @@ void CPugCvar::ServerActivate()
     // 0 Disabled
     // 1 Enabled
     //
-    // Default: "0"
+    // Default "0"
     this->m_KnifeRound = this->Register("pug_knife_round", "0");
 
     // Prompt end of match when a player disconnects
@@ -199,7 +199,7 @@ void CPugCvar::ServerActivate()
     // 0 Disabled
     // 1 Enabled
     //
-    // Default: "1"
+    // Default "1"
     this->m_VoteEnd  = this->Register("pug_vote_end", "1");
 
     // Type of score text in chat
@@ -207,7 +207,7 @@ void CPugCvar::ServerActivate()
     // 0 Written ([PUG] Terrorists are winning: 8-6)
     // 1 Both Scores (Terrorists (8) - (6) Counter-Terrorists)
     //
-    // Default: "0"
+    // Default "0"
     this->m_ScoreText = this->Register("pug_score_text", "0");
 
     // Keep total team score in the scoreboard (TAB)
@@ -215,7 +215,7 @@ void CPugCvar::ServerActivate()
     // 0 Reset score each period
     // 1 Keep total score across periods
     //
-    // Default: "1"
+    // Default "1"
 	this->m_ScoreTeams = this->Register("pug_score_teams", "1");
 
     // Keep player scores in the scoreboard (TAB)
@@ -223,7 +223,7 @@ void CPugCvar::ServerActivate()
     // 0 Reset scores each period
     // 1 Keep scores across periods
     //
-    // Default: "1"
+    // Default "1"
 	this->m_ScorePlayers = this->Register("pug_score_players", "1");
 
     // Display match states and scores in game description
@@ -231,19 +231,19 @@ void CPugCvar::ServerActivate()
     // 0 Disabled
     // 1 Enabled
     //
-    // Default: "1"
+    // Default "1"
     this->m_GameDesc = this->Register("pug_game_desc", "1");
 
     // Help file for commands via MOTD
     // File name or URL of the help file
     //
-    // Default: "cstrike/addons/pugmod/motd.html"
+    // Default "cstrike/addons/pugmod/motd.html"
     this->m_MotdFile = this->Register("pug_motd_file", "motd.html");
 
     // Admin help file for commands via MOTD
     // File name or URL of the help file
     //
-    // Default: "cstrike/addons/pugmod/motd_admin.html"
+    // Default "cstrike/addons/pugmod/motd_admin.html"
     this->m_MotdFileAdmin = this->Register("pug_motd_admin_file", "motd_admin.html");
 
     // Ask for record a client-side demo when the match starts
@@ -251,21 +251,21 @@ void CPugCvar::ServerActivate()
     // 0 Disabled
     // 1 Enabled
     //
-    // Default: "1"
+    // Default "1"
     this->m_DemoRecord = this->Register("pug_demo_record", "1");
 
     // Rage quit time limit to ban in seconds
     //
     // 0 Disabled
     //
-    // Default: "0"
+    // Default "0"
 	this->m_RageQuitLimit = this->Register("pug_rage_quit_time_limit", "0");
 
     // Rage quit ban time in minutes
     //
     // 0 Ban permanently
     //
-    // Default: "1440"
+    // Default "1440"
     this->m_RageQuitBanTime = this->Register("pug_rage_quit_ban_time", "1440");
 
     // Flags to enable stats commands
@@ -276,7 +276,7 @@ void CPugCvar::ServerActivate()
     // d Enables .sum command
     // e Enables .stats command
     //
-    // Default: "abcde"
+    // Default "abcde"
     this->m_RoundStats = this->Register("pug_round_stats", "abcde");
 
     // Display round-end statistics
@@ -287,7 +287,7 @@ void CPugCvar::ServerActivate()
     // d Execute .sum
     // e Execute .stats
     //
-    // Default: "e"
+    // Default "e"
     this->m_RoundEndStats = this->Register("pug_round_end_stats", "e");
 
     // Allow players to use vote kick command
@@ -295,7 +295,7 @@ void CPugCvar::ServerActivate()
     // 0 Disable
     // 1 Enable
     // 
-    // Default: "1"
+    // Default "1"
     this->m_PlayerVoteKick = this->Register("pug_player_vote_kick", "1");
 
     // Allow players to use vote map command
@@ -303,7 +303,7 @@ void CPugCvar::ServerActivate()
     // 0 Disable
     // 1 Enable
     // 
-    // Default: "1"
+    // Default "1"
 	this->m_PlayerVoteMap = this->Register("pug_player_vote_map", "1");
 
     // Allow players to use vote pause command
@@ -311,7 +311,7 @@ void CPugCvar::ServerActivate()
     // 0 Disable
     // 1 Enable
     // 
-    // Default: "1"
+    // Default "1"
 	this->m_PlayerVotePause = this->Register("pug_player_vote_pause", "1");
 
     // Allow players to use vote restart command
@@ -319,7 +319,7 @@ void CPugCvar::ServerActivate()
     // 0 Disable
     // 1 Enable
     // 
-    // Default: "1"
+    // Default "1"
 	this->m_PlayerVoteRestart = this->Register("pug_player_vote_restart", "1");
 
     // Allow players to use vote cancel command
@@ -327,7 +327,7 @@ void CPugCvar::ServerActivate()
     // 0 Disable
     // 1 Enable
     // 
-    // Default: "1"
+    // Default "1"
 	this->m_PlayerVoteCancel = this->Register("pug_player_vote_cancel", "1");
 
     // Allow players to vote use surrender command
@@ -335,14 +335,14 @@ void CPugCvar::ServerActivate()
     // 0 Disable
     // 1 Enable
     // 
-    // Default: "1"
+    // Default "1"
 	this->m_PlayerVoteSurrender = this->Register("pug_player_vote_surrender", "1");
 
     // Allowed time in seconds for match pause
     //
     // 0 Disable
     //
-    // Default: "60"
+    // Default "60"
     this->m_PauseTimeout = this->Register("pug_pause_timeout", "60");
 
     // Fix smoke grenade bug (multiple smoke clouds)
@@ -350,7 +350,7 @@ void CPugCvar::ServerActivate()
     // 0 Disable
     // 1 Enable
     //
-    // Default: "1"
+    // Default "1"
     this->m_SmokeBugFix = this->Register("pug_smoke_bug_fix", "1");
 
     // Enable Deathmatch mode
@@ -359,7 +359,7 @@ void CPugCvar::ServerActivate()
     // 0 Disabled
     // 1 Enabled
     //
-    // Default: "1"
+    // Default "1"
     this->m_DM_Enable = this->Register("pug_dm_enable", "1");
 
     // Hide kill feed from other players
@@ -367,7 +367,7 @@ void CPugCvar::ServerActivate()
     // 0 Disabled
     // 1 Enabled
     //
-    // Default: "0"
+    // Default "0"
     this->m_DM_HideKillFeed = this->Register("pug_dm_hide_kill_feed", "0");
 
     // Hit indicator on screen
@@ -376,7 +376,7 @@ void CPugCvar::ServerActivate()
     // 1 Enabled
     // 2 Active + Through Walls
     //
-    // Default: "1"
+    // Default "1"
     this->m_DM_HitIndicator = this->Register("pug_dm_hit_indicator", "1");
 
     // Only accept headshots
@@ -384,7 +384,7 @@ void CPugCvar::ServerActivate()
     // 0 Disabled
     // 1 Enabled
     //
-    // Default: "0"
+    // Default "0"
     this->m_DM_HSOnlyMode = this->Register("pug_dm_hs_mode", "0");
 
     // Show kill/frag rate and HS rate on the HUD
@@ -392,7 +392,7 @@ void CPugCvar::ServerActivate()
     // 0 Disabled
     // 1 Enabled
     //
-    // Default: "1"
+    // Default "1"
     this->m_DM_HudKDRatio = this->Register("pug_dm_hud_kd_ratio", "1");
 
     // Flash the screen on killing another player (HS)
@@ -400,21 +400,21 @@ void CPugCvar::ServerActivate()
     // 0 Disabled
     // 1 Enabled
     //
-    // Default: "1"
+    // Default "1"
     this->m_DM_KillFade = this->Register("pug_dm_kill_fade", "2");
 
     // Recover health after a frag
     //
     // 0 Disabled
     //
-    // Default: "15"
+    // Default "15"
     this->m_DM_KillHP = this->Register("pug_dm_kill_hp", "15");
 
     // Recover health after a frag (HS)
     //
     // 0 Disabled
     //
-    // Default: "40"
+    // Default "40"
     this->m_DM_KillHPHS = this->Register("pug_dm_kill_hp_hs", "40");
 
     // Recover armor after a frag
@@ -423,7 +423,7 @@ void CPugCvar::ServerActivate()
     // 1 Enabled
     // 2 Only on HS
     //
-    // Default: "1"
+    // Default "1"
     this->m_DM_KillRepairArmor = this->Register("pug_dm_kill_repair_armor ", "1");
 
     // Show HP recovered after a frag
@@ -431,7 +431,7 @@ void CPugCvar::ServerActivate()
     // 0 Disabled
     // 1 Enabled
     //
-    // Default: "1"
+    // Default "1"
     this->m_DM_KillHealedMsg = this->Register("pug_dm_kill_hp_msg ", "1");
 
     // Enable sound on frag (HS)
@@ -439,7 +439,7 @@ void CPugCvar::ServerActivate()
     // 0 Disabled
     // 1 Enabled
     //
-    // Default: "1"
+    // Default "1"
     this->m_DM_KillSound = this->Register("pug_dm_kill_sound", "2");
 
     // Show frags instead of money
@@ -447,7 +447,7 @@ void CPugCvar::ServerActivate()
     // 0 Disabled
     // 1 Enabled
     //
-    // Default: "1"
+    // Default "1"
     this->m_DM_MoneyFrag = this->Register("pug_dm_money_frag", "0");
 }
 
