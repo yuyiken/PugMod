@@ -63,7 +63,7 @@ void CPugTask::Execute(int Index)
             }
             case E_TASK::ROUND_END_STATS:
             {
-                gPugStats.RoundEndStats();
+                gPugRoundStats.RoundEndStats();
                 break;
             }
             case E_TASK::PAUSE_MATCH:

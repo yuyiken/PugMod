@@ -179,7 +179,7 @@ bool ReGameDLL_CBasePlayer_GetIntoGame(IReGameHook_CBasePlayer_GetIntoGame *chai
 
 	gPugDemoRecord.GetIntoGame(Player);
 
-	gPugStats.GetIntoGame(Player);
+	gPugRoundStats.GetIntoGame(Player);
 
 	return Result;
 }
@@ -257,7 +257,7 @@ BOOL ReGameDLL_CBasePlayer_TakeDamage(IReGameHook_CBasePlayer_TakeDamage *chain,
 
 	gPugDM.TakeDamage(Player, pevInflictor, pevAttacker, flDamage, bitsDamageType);
 
-	gPugStats.TakeDamage(Player, pevInflictor, pevAttacker, flDamage, bitsDamageType);
+	gPugRoundStats.TakeDamage(Player, pevInflictor, pevAttacker, flDamage, bitsDamageType);
 
 	return Result;
 }
@@ -271,7 +271,7 @@ void ReGameDLL_CSGameRules_SendDeathMessage(IReGameHook_CSGameRules_SendDeathMes
 
 	chain->callNext(KillerBaseEntity, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
 
-	gPugStats.SendDeathMessage(KillerBaseEntity, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
+	gPugRoundStats.SendDeathMessage(KillerBaseEntity, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
 }
 
 void ReGameDLL_CBasePlayer_AddAccount(IReGameHook_CBasePlayer_AddAccount *chain, CBasePlayer *Player, int Amount, RewardType Type, bool TrackChange)
@@ -307,7 +307,7 @@ void ReGameDLL_CSGameRules_OnRoundFreezeEnd(IReGameHook_CSGameRules_OnRoundFreez
 
 	gPugMod.RoundStart();
 
-	gPugStats.RoundStart();
+	gPugRoundStats.RoundStart();
 }
 
 bool ReGameDLL_RoundEnd(IReGameHook_RoundEnd *chain, int winStatus, ScenarioEventEndRound event, float tmDelay)
@@ -316,7 +316,7 @@ bool ReGameDLL_RoundEnd(IReGameHook_RoundEnd *chain, int winStatus, ScenarioEven
 
 	gPugMod.RoundEnd(winStatus, event, tmDelay);
 
-	gPugStats.RoundEnd(winStatus, event, tmDelay);
+	gPugRoundStats.RoundEnd(winStatus, event, tmDelay);
 
 	return Result;
 }

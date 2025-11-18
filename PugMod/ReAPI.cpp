@@ -87,7 +87,7 @@ void ReAPI_SV_DropClient(IRehldsHook_SV_DropClient *chain, IGameClient *client, 
 
 			gPugLeader.DropClient(pEntity);
 
-			gPugStats.DropClient(pEntity);
+			gPugRoundStats.DropClient(pEntity);
 
 			gPugRageBan.DropClient(pEntity);
 		}

@@ -9,7 +9,7 @@ constexpr auto R_STATS_STATS = BIT(4); /* flag "e" */
 
 constexpr hudtextparms_t g_RoundStats_HudParam = {0.70f, 0.28f, 2, 0x00, 0xFF, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0.0f, 0.0f, 12.0f, 3.0f, 2};
 
-class CPugStats
+class CPugRoundStats
 {
 public:
 	void RoundStart();
@@ -30,4 +30,4 @@ private:
 	std::array<std::array<int, MAX_CLIENTS + 1>, MAX_CLIENTS + 1> m_RoundHit;
 };
 
-extern CPugStats gPugStats;
+extern CPugRoundStats gPugRoundStats;

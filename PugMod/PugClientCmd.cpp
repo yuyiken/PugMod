@@ -199,27 +199,27 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                     }
                                     case CMD_HP:
                                     {
-                                        gPugStats.ShowHP(Player);
+                                        gPugRoundStats.ShowHP(Player);
                                         return true;
                                     }
                                     case CMD_DMG:
                                     {
-                                        gPugStats.ShowDamage(Player);
+                                        gPugRoundStats.ShowDamage(Player);
                                         return true;
                                     }
                                     case CMD_RDMG:
                                     {
-                                        gPugStats.ShowReceivedDamage(Player);
+                                        gPugRoundStats.ShowReceivedDamage(Player);
                                         return true;
                                     }
                                     case CMD_SUM:
                                     {
-                                        gPugStats.ShowSummary(Player);
+                                        gPugRoundStats.ShowSummary(Player);
                                         return true;
                                     }
                                     case CMD_STATS:
                                     {
-                                        gPugStats.ShowStats(Player);
+                                        gPugRoundStats.ShowStats(Player);
                                         return true;
                                     }
                                     case CMD_VOTE_MENU:

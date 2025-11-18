@@ -1,8 +1,8 @@
 #include "precompiled.h"
 
-CPugStats gPugStats;
+CPugRoundStats gPugRoundStats;
 
-void CPugStats::RoundStart()
+void CPugRoundStats::RoundStart()
 {
     auto State = gPugMod.GetState();
 
@@ -23,7 +23,7 @@ void CPugStats::RoundStart()
 	}
 }
 
-void CPugStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, float tmDelay)
+void CPugRoundStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, float tmDelay)
 {
     auto State = gPugMod.GetState();
 
@@ -36,7 +36,7 @@ void CPugStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, flo
 	}
 }
 
-void CPugStats::RoundEndStats()
+void CPugRoundStats::RoundEndStats()
 {
     auto State = gPugMod.GetState();
 
@@ -87,13 +87,13 @@ void CPugStats::RoundEndStats()
     }
 }
 
-void CPugStats::GetIntoGame(CBasePlayer *Player)
+void CPugRoundStats::GetIntoGame(CBasePlayer *Player)
 {
     this->m_RoundDmg[Player->entindex()] = {};
     this->m_RoundHit[Player->entindex()] = {};
 }
 
-void CPugStats::DropClient(edict_t *pEntity)
+void CPugRoundStats::DropClient(edict_t *pEntity)
 {
 	if (!FNullEnt(pEntity))
 	{
@@ -110,7 +110,7 @@ void CPugStats::DropClient(edict_t *pEntity)
 	}
 }
 
-void CPugStats::TakeDamage(CBasePlayer *Player, entvars_t *pevInflictor, entvars_t *pevAttacker, float &flDamage, int bitsDamageType)
+void CPugRoundStats::TakeDamage(CBasePlayer *Player, entvars_t *pevInflictor, entvars_t *pevAttacker, float &flDamage, int bitsDamageType)
 {
     auto State = gPugMod.GetState();
 
@@ -139,7 +139,7 @@ void CPugStats::TakeDamage(CBasePlayer *Player, entvars_t *pevInflictor, entvars
 	}
 }
 
-void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Victim, CBasePlayer *Assister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
+void CPugRoundStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Victim, CBasePlayer *Assister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
 {
     auto State = gPugMod.GetState();
 
@@ -185,7 +185,7 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
     }
 }
 
-bool CPugStats::ShowHP(CBasePlayer *Player)
+bool CPugRoundStats::ShowHP(CBasePlayer *Player)
 {
     auto State = gPugMod.GetState();
 
@@ -233,7 +233,7 @@ bool CPugStats::ShowHP(CBasePlayer *Player)
 	return false;
 }
 
-bool CPugStats::ShowDamage(CBasePlayer *Player)
+bool CPugRoundStats::ShowDamage(CBasePlayer *Player)
 {
     auto State = gPugMod.GetState();
         
@@ -287,7 +287,7 @@ bool CPugStats::ShowDamage(CBasePlayer *Player)
 	return false;
 }
 
-bool CPugStats::ShowReceivedDamage(CBasePlayer *Player)
+bool CPugRoundStats::ShowReceivedDamage(CBasePlayer *Player)
 {
     auto State = gPugMod.GetState();
         
@@ -341,7 +341,7 @@ bool CPugStats::ShowReceivedDamage(CBasePlayer *Player)
 	return false;
 }
 
-bool CPugStats::ShowSummary(CBasePlayer *Player)
+bool CPugRoundStats::ShowSummary(CBasePlayer *Player)
 {
     auto State = gPugMod.GetState();
         
@@ -398,7 +398,7 @@ bool CPugStats::ShowSummary(CBasePlayer *Player)
 	return false;
 }
 
-bool CPugStats::ShowStats(CBasePlayer *Player)
+bool CPugRoundStats::ShowStats(CBasePlayer *Player)
 {
     auto State = gPugMod.GetState();
         

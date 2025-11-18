@@ -74,7 +74,7 @@
 #include "PugRestrictItem.h"
 #include "PugServerCmd.h"
 #include "PugSpawnEdit.h"
-#include "PugStats.h"
+#include "PugRoundStats.h"
 #include "PugTask.h"
 #include "PugTeamManager.h"
 #include "PugTimer.h"
