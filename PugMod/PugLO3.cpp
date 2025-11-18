@@ -47,7 +47,7 @@ void CPugLO3::RestartRound()
                     {
                         gPugUtil.ScreenShake(pEntity, 2.0f, 2.0f, 2.0f);
 
-                        gPugUtil.ScreenFade(pEntity, 2.0f, 2.0f, 0x0002, 0, 0, 200, 100);
+                        gPugUtil.ScreenFade(pEntity, 2.0f, 2.0f, 0x0002, RANDOM_LONG(0, 255), RANDOM_LONG(0, 255), RANDOM_LONG(0, 255), 100);
 
                         gPugUtil.ClientCommand(pEntity, g_LO3_Sound[this->m_Restart]);
 
