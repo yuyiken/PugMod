@@ -22,6 +22,7 @@ class CPugUtil
 public:
     const char *GetPath();
     const char *GetFullPath();
+    int MakeDirectory(const char* Path);
     void ServerCommand(const char *Format, ...);
     bool IsNetClient(edict_t *pEntity);
     void PrintColor(edict_t *pEntity, int Sender, const char *Format, ...);
@@ -44,6 +45,7 @@ public:
     std::vector<CBasePlayer *> GetPlayers(bool InGame, bool Bots);
     std::array<std::vector<CBasePlayer *>, SPECTATOR + 1> GetPlayers();
     void ShowMotd(edict_t* pEntity, char* Motd, unsigned int MotdLength);
+    bool IsPlayerVisible(CBasePlayer* Player, CBasePlayer* Target);
 private:
     std::string m_Path;
     std::string m_FullPath;

@@ -75,6 +75,18 @@ void CPugCvar::ServerActivate()
     // Default "0"
     this->m_State = this->Register("pug_state", "0");
 
+    // The current pug game mode
+    // WARNING: Do not use this cvar on server configurations
+    //
+    // Default "0"
+	this->m_PlayGameMode = this->Register("pug_game_mode", "0");
+
+    // The current match have knife round
+    // WARNING: Do not use this cvar on server configurations
+    //
+    // Default "0"
+	this->m_PlayKnifeRound = this->Register("pug_knife_round_mode", "0");
+
     // Minimum players per team
     //
     // Default "5"
@@ -449,6 +461,51 @@ void CPugCvar::ServerActivate()
     //
     // Default "1"
     this->m_DM_MoneyFrag = this->Register("pug_dm_money_frag", "0");
+
+	// Mininum damage to take assistance for player
+    //
+    // Default "50"
+    this->m_ST_AssistanceDmg = gPugCvar.Register("pug_stats_assist_dmg", "50");
+
+	// Round Win Share
+    // Total of Round Win Share points to be divided by winner team of round
+    //
+    // Default "100"
+	this->m_ST_RwsTotalPoints = gPugCvar.Register("pug_stats_total_points", "100");
+	
+	// Round Win Share
+    // Extra amount added to player from winner team that planted the bomb and bomb explode
+    //
+    // Default "30"
+	this->m_ST_RwsC4Explode = gPugCvar.Register("pug_stats_rws_c4_explode", "30");
+
+	// Round Win Share
+    // Extra amount added to player from winner team that defused the bomb
+    //
+    // Default "30"
+	this->m_ST_RwsC4Defused = gPugCvar.Register("pug_stats_rws_c4_defused", "30");
+
+	// Enable Stats Remote API
+    //
+    // Default "0"
+	this->m_API_Enable = gPugCvar.Register("pug_api_enable", "0");
+
+	// Stats Remote API Address (HTTP protocol API)
+    //
+    // Default ""
+    this->m_API_Address = gPugCvar.Register("pug_api_address", "");
+
+	// Stats Remote API Timeout
+    // Timeout in seconds to wait for response from remote server
+    //
+    // Default "5"
+    this->m_API_Timeout = gPugCvar.Register("pug_api_timeout", "5");
+
+	// Stats Remote API Bearer Token send in HTTP Header
+    // Leave empty to disable it
+    //
+    // Default ""
+    this->m_API_Bearer = gPugCvar.Register("pug_api_bearer_token", "");
 }
 
 cvar_t *CPugCvar::Register(const char *pszName, const char *pszValue)

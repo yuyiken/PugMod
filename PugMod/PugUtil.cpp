@@ -55,6 +55,22 @@ const char* CPugUtil::GetFullPath()
 	return this->m_FullPath.c_str();
 }
 
+int CPugUtil::MakeDirectory(const char* Path)
+{
+	struct stat st = { };
+
+	if (stat(Path, &st) == -1)
+	{
+#if defined(_WIN32)
+		return _mkdir(Path);
+#else
+		return mkdir(Path, 0755);
+#endif
+	}
+
+	return 0;
+}
+
 void CPugUtil::ServerCommand(const char *Format, ...)
 {
 	static char Command[255] = { 0 };
@@ -819,4 +835,42 @@ void CPugUtil::ShowMotd(edict_t* pEntity, char* Motd, unsigned int MotdLength)
 			Motd = Buffer;
 		}
 	}
+}
+
+bool CPugUtil::IsPlayerVisible(CBasePlayer* Player, CBasePlayer* Target)
+{
+	if (Player && Target)
+	{
+		edict_t* pEntity = Player->edict();
+		edict_t* pTarget = Target->edict();
+
+		if (pEntity->v.flags & FL_NOTARGET)
+		{
+			return false;
+		}
+		
+		Vector vLooker = (pEntity->v.origin + pEntity->v.view_ofs);
+		Vector vTarget = (pTarget->v.origin + pTarget->v.view_ofs);
+
+		TraceResult tr;
+
+		auto oldSolid = pTarget->v.solid;
+
+		pTarget->v.solid = SOLID_NOT;
+
+		g_engfuncs.pfnTraceLine(vLooker, vTarget, FALSE, pEntity, &tr);
+
+		pTarget->v.solid = oldSolid;
+
+		if (tr.fInOpen && tr.fInWater)
+		{
+			return false;
+		}
+		else if ((tr.flFraction == 1.0) || (ENTINDEX(tr.pHit) == Target->entindex()))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }

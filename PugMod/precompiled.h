@@ -48,6 +48,9 @@
 #include "ReAPI.h"
 #include "ReGameDLL.h"
 
+// JSON
+#include "include/json.hpp"
+
 // Time Format
 #include "include/TimeFormat.h"
 
@@ -75,6 +78,7 @@
 #include "PugServerCmd.h"
 #include "PugSpawnEdit.h"
 #include "PugRoundStats.h"
+#include "PugStats.h"
 #include "PugTask.h"
 #include "PugTeamManager.h"
 #include "PugTimer.h"

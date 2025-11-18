@@ -26,6 +26,8 @@ public:
 	cvar_t* m_CmdFloodRepeat;
 	cvar_t* m_CmdFloodNextTime;
 	cvar_t* m_State;
+	cvar_t* m_PlayGameMode;
+	cvar_t* m_PlayKnifeRound;
 	cvar_t* m_PlayersMin;
 	cvar_t* m_PlayersMax;
 	cvar_t* m_Rounds;
@@ -75,6 +77,16 @@ public:
 	cvar_t* m_DM_KillHealedMsg;
 	cvar_t* m_DM_KillSound;
 	cvar_t* m_DM_MoneyFrag;
+
+	cvar_t* m_ST_AssistanceDmg;
+	cvar_t* m_ST_RwsTotalPoints;
+	cvar_t* m_ST_RwsC4Explode;
+	cvar_t* m_ST_RwsC4Defused;
+
+	cvar_t* m_API_Enable;
+	cvar_t* m_API_Address;
+	cvar_t* m_API_Timeout;
+	cvar_t* m_API_Bearer;
 };
 
 extern CPugCvar gPugCvar;

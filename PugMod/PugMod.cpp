@@ -79,6 +79,9 @@ int CPugMod::SetState(int State)
             {
                 gPugReady.Init(gPugCvar.m_VoteMap->value ? STATE_VOTEMAP : STATE_VOTETEAM);
             }
+
+            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_PlayGameMode, "0");
+            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_PlayKnifeRound, "0");
             
             break;
         }
@@ -95,6 +98,9 @@ int CPugMod::SetState(int State)
             gPugVoteMap.Init();
 
             g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_VoteMap, "0");
+
+            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_PlayGameMode, "0");
+            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_PlayKnifeRound, "0");
             break;
         }
         case STATE_VOTETEAM:
@@ -110,6 +116,9 @@ int CPugMod::SetState(int State)
             gPugVoteTeam.Init();
 
             g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_VoteMap, "1");
+
+            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_PlayGameMode, "0");
+            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_PlayKnifeRound, "0");
             break;
         }
         case STATE_CAPTAIN:
@@ -123,6 +132,9 @@ int CPugMod::SetState(int State)
             gPugTimer.Stop(true);
 
             gPugLeader.Init();
+
+            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_PlayGameMode, "1");
+            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_PlayKnifeRound, "0");
             break;
         }
         case STATE_KNIFE_ROUND:
@@ -134,6 +146,8 @@ int CPugMod::SetState(int State)
             gPugDM.Stop();
             gPugReady.Stop(true);
             gPugTimer.Stop(true);
+
+            g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_PlayKnifeRound, "1");
 
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Knife Round: The ^3winner chooses the starting team."), gPugCvar.m_Tag->string);
 
@@ -237,6 +251,8 @@ int CPugMod::SetState(int State)
     }
 
     gPugGameDesc.Update();
+
+    gPugStats.SetState(State);
 
     g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_State, std::to_string(State).c_str());
 

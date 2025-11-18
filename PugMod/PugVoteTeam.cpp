@@ -167,6 +167,8 @@ void CPugVoteTeam::ChangeTeam(int Type)
         }
     }
 
+    g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_PlayGameMode, std::to_string(Type).c_str());
+
     gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, NewState);
 }
 

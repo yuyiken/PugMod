@@ -61,6 +61,8 @@ bool ReGameDLL_Init()
 
 										g_ReGameHookchains->CBasePlayer_TakeDamage()->registerHook(ReGameDLL_CBasePlayer_TakeDamage);
 
+										g_ReGameHookchains->CSGameRules_PlayerKilled()->registerHook(ReGameDLL_CSGameRules_PlayerKilled);
+
 										g_ReGameHookchains->CSGameRules_SendDeathMessage()->registerHook(ReGameDLL_CSGameRules_SendDeathMessage);
 
 										g_ReGameHookchains->CBasePlayer_AddAccount()->registerHook(ReGameDLL_CBasePlayer_AddAccount);
@@ -71,9 +73,21 @@ bool ReGameDLL_Init()
 
 										g_ReGameHookchains->CSGameRules_OnRoundFreezeEnd()->registerHook(ReGameDLL_CSGameRules_OnRoundFreezeEnd);
 
+										g_ReGameHookchains->RoundEnd()->registerHook(ReGameDLL_RoundEnd);
+
 										g_ReGameHookchains->CGrenade_ExplodeSmokeGrenade()->registerHook(ReGameDLL_CGrenade_ExplodeSmokeGrenade);
 
-										g_ReGameHookchains->RoundEnd()->registerHook(ReGameDLL_RoundEnd);
+										g_ReGameHookchains->CBasePlayer_MakeBomber()->registerHook(ReGameDLL_CBasePlayer_MakeBomber);
+
+										g_ReGameHookchains->CBasePlayer_DropPlayerItem()->registerHook(ReGameDLL_CBasePlayer_DropPlayerItem);
+
+										g_ReGameHookchains->PlantBomb()->registerHook(ReGameDLL_PlantBomb);
+
+										g_ReGameHookchains->CGrenade_DefuseBombStart()->registerHook(ReGameDLL_CGrenade_DefuseBombStart);
+
+										g_ReGameHookchains->CGrenade_DefuseBombEnd()->registerHook(ReGameDLL_CGrenade_DefuseBombEnd);
+
+										g_ReGameHookchains->CGrenade_ExplodeBomb()->registerHook(ReGameDLL_CGrenade_ExplodeBomb);
 									}
 
 									gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] ReGameDLL API Loaded: %d.%d", Plugin_info.logtag, REGAMEDLL_API_VERSION_MAJOR, REGAMEDLL_API_VERSION_MINOR);
@@ -119,6 +133,8 @@ bool ReGameDLL_Stop()
 
 		g_ReGameHookchains->CBasePlayer_TakeDamage()->unregisterHook(ReGameDLL_CBasePlayer_TakeDamage);
 
+		g_ReGameHookchains->CSGameRules_PlayerKilled()->unregisterHook(ReGameDLL_CSGameRules_PlayerKilled);
+
 		g_ReGameHookchains->CSGameRules_SendDeathMessage()->unregisterHook(ReGameDLL_CSGameRules_SendDeathMessage);
 
 		g_ReGameHookchains->CBasePlayer_AddAccount()->unregisterHook(ReGameDLL_CBasePlayer_AddAccount);
@@ -129,9 +145,21 @@ bool ReGameDLL_Stop()
 
 		g_ReGameHookchains->CSGameRules_OnRoundFreezeEnd()->unregisterHook(ReGameDLL_CSGameRules_OnRoundFreezeEnd);
 
+		g_ReGameHookchains->RoundEnd()->unregisterHook(ReGameDLL_RoundEnd);
+
 		g_ReGameHookchains->CGrenade_ExplodeSmokeGrenade()->unregisterHook(ReGameDLL_CGrenade_ExplodeSmokeGrenade);
 
-		g_ReGameHookchains->RoundEnd()->unregisterHook(ReGameDLL_RoundEnd);
+		g_ReGameHookchains->CBasePlayer_MakeBomber()->unregisterHook(ReGameDLL_CBasePlayer_MakeBomber);
+
+		g_ReGameHookchains->CBasePlayer_DropPlayerItem()->unregisterHook(ReGameDLL_CBasePlayer_DropPlayerItem);
+
+		g_ReGameHookchains->PlantBomb()->unregisterHook(ReGameDLL_PlantBomb);
+
+		g_ReGameHookchains->CGrenade_DefuseBombStart()->unregisterHook(ReGameDLL_CGrenade_DefuseBombStart);
+
+		g_ReGameHookchains->CGrenade_DefuseBombEnd()->unregisterHook(ReGameDLL_CGrenade_DefuseBombEnd);
+
+		g_ReGameHookchains->CGrenade_ExplodeBomb()->unregisterHook(ReGameDLL_CGrenade_ExplodeBomb);
 	}
 
 	return true;
@@ -164,6 +192,8 @@ BOOL ReGameDLL_HandleMenu_ChooseTeam(IReGameHook_HandleMenu_ChooseTeam *chain, C
 		return FALSE;
 	}
 
+	gPugStats.ChooseTeam(Player);
+
 	return chain->callNext(Player, Slot);
 }
 
@@ -181,6 +211,8 @@ bool ReGameDLL_CBasePlayer_GetIntoGame(IReGameHook_CBasePlayer_GetIntoGame *chai
 
 	gPugRoundStats.GetIntoGame(Player);
 
+	gPugStats.GetIntoGame(Player);
+
 	return Result;
 }
 
@@ -192,6 +224,8 @@ void ReGameDLL_CSGameRules_RestartRound(IReGameHook_CSGameRules_RestartRound *ch
 
 	gPugVoteMenu.RestartRound();
 
+	gPugStats.RestartRound();
+
 	chain->callNext();
 
 	gPugLO3.RestartRound();
@@ -199,6 +233,8 @@ void ReGameDLL_CSGameRules_RestartRound(IReGameHook_CSGameRules_RestartRound *ch
 	gPugMod.RestartRound();
 
 	gPugPause.RestartRound();
+
+	gPugStats.RestartRound();
 }
 
 edict_t *ReGameDLL_CSGameRules_GetPlayerSpawnSpot(IReGameHook_CSGameRules_GetPlayerSpawnSpot *chain, CBasePlayer *Player)
@@ -259,7 +295,16 @@ BOOL ReGameDLL_CBasePlayer_TakeDamage(IReGameHook_CBasePlayer_TakeDamage *chain,
 
 	gPugRoundStats.TakeDamage(Player, pevInflictor, pevAttacker, flDamage, bitsDamageType);
 
+	gPugStats.TakeDamage(Player, pevInflictor, pevAttacker, flDamage, bitsDamageType);
+
 	return Result;
+}
+
+void ReGameDLL_CSGameRules_PlayerKilled(IReGameHook_CSGameRules_PlayerKilled* chain, CBasePlayer* pVictim, entvars_t* pevKiller, entvars_t* pevInflictor)
+{
+	chain->callNext(pVictim, pevKiller, pevInflictor);
+
+	gPugStats.PlayerKilled(pVictim, pevKiller, pevInflictor);
 }
 
 void ReGameDLL_CSGameRules_SendDeathMessage(IReGameHook_CSGameRules_SendDeathMessage *chain, CBaseEntity *KillerBaseEntity, CBasePlayer *Victim, CBasePlayer *Assister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
@@ -282,6 +327,8 @@ void ReGameDLL_CBasePlayer_AddAccount(IReGameHook_CBasePlayer_AddAccount *chain,
 	}
 
 	chain->callNext(Player, Amount, Type, TrackChange);
+
+	gPugStats.AddAccount(Player, Amount, Type, TrackChange);
 }
 
 void ReGameDLL_CBasePlayer_SetAnimation(IReGameHook_CBasePlayer_SetAnimation *chain, CBasePlayer *Player, PLAYER_ANIM playerAnimation)
@@ -289,6 +336,8 @@ void ReGameDLL_CBasePlayer_SetAnimation(IReGameHook_CBasePlayer_SetAnimation *ch
 	chain->callNext(Player, playerAnimation);
 
 	gPugDM.SetAnimation(Player, playerAnimation);
+
+	gPugStats.SetAnimation(Player, playerAnimation);
 }
 
 bool ReGameDLL_CBasePlayer_HasRestrictItem(IReGameHook_CBasePlayer_HasRestrictItem *chain, CBasePlayer *Player, ItemID ItemIndex, ItemRestType RestType)
@@ -308,6 +357,8 @@ void ReGameDLL_CSGameRules_OnRoundFreezeEnd(IReGameHook_CSGameRules_OnRoundFreez
 	gPugMod.RoundStart();
 
 	gPugRoundStats.RoundStart();
+
+	gPugStats.RoundStart();
 }
 
 bool ReGameDLL_RoundEnd(IReGameHook_RoundEnd *chain, int winStatus, ScenarioEventEndRound event, float tmDelay)
@@ -318,6 +369,8 @@ bool ReGameDLL_RoundEnd(IReGameHook_RoundEnd *chain, int winStatus, ScenarioEven
 
 	gPugRoundStats.RoundEnd(winStatus, event, tmDelay);
 
+	gPugStats.RoundEnd(winStatus, event, tmDelay);
+
 	return Result;
 }
 
@@ -326,4 +379,54 @@ void ReGameDLL_CGrenade_ExplodeSmokeGrenade(IReGameHook_CGrenade_ExplodeSmokeGre
 	chain->callNext(pThis);
 
 	g_PugBugFix.ExplodeSmokeGrenade(pThis);
+}
+
+bool ReGameDLL_CBasePlayer_MakeBomber(IReGameHook_CBasePlayer_MakeBomber* chain, CBasePlayer* pthis)
+{
+	auto ret = chain->callNext(pthis);
+
+	gPugStats.MakeBomber(pthis);
+
+	return ret;
+}
+
+CBaseEntity* ReGameDLL_CBasePlayer_DropPlayerItem(IReGameHook_CBasePlayer_DropPlayerItem* chain, CBasePlayer* pthis, const char* pszItemName)
+{
+	auto ret = chain->callNext(pthis, pszItemName);
+
+	gPugStats.DropPlayerItem(pthis, pszItemName);
+
+	return ret;
+}
+
+CGrenade* ReGameDLL_PlantBomb(IReGameHook_PlantBomb* chain, entvars_t* pevOwner, Vector& vecStart, Vector& vecVelocity)
+{
+	gPugStats.PlantBomb(pevOwner, false);
+
+	auto ret = chain->callNext(pevOwner, vecStart, vecVelocity);
+
+	gPugStats.PlantBomb(pevOwner, true);
+
+	return ret;
+}
+
+void ReGameDLL_CGrenade_DefuseBombStart(IReGameHook_CGrenade_DefuseBombStart* chain, CGrenade* pthis, CBasePlayer* pPlayer)
+{
+	chain->callNext(pthis, pPlayer);
+
+	gPugStats.DefuseBombStart(pPlayer);
+}
+
+void ReGameDLL_CGrenade_DefuseBombEnd(IReGameHook_CGrenade_DefuseBombEnd* chain, CGrenade* pthis, CBasePlayer* pPlayer, bool bDefused)
+{
+	gPugStats.DefuseBombEnd(pPlayer, bDefused);
+
+	chain->callNext(pthis, pPlayer, bDefused);
+}
+
+void ReGameDLL_CGrenade_ExplodeBomb(IReGameHook_CGrenade_ExplodeBomb* chain, CGrenade* pthis, TraceResult* ptr, int bitsDamageType)
+{
+	gPugStats.ExplodeBomb(pthis, ptr, bitsDamageType);
+
+	chain->callNext(pthis, ptr, bitsDamageType);
 }
