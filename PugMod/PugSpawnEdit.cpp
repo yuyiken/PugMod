@@ -477,9 +477,9 @@ void CPugSpawnEdit::AddSpawn(entvars_t v, int Team, float FixOrigin)
 
 	Info.VAngles = v.v_angle;
 
-	auto Index = this->m_Spawns.size();
+	auto Index = this->m_Spawns.size() + 1;
 
-	this->m_Spawns[Index] = Info;
+	this->m_Spawns.insert(std::make_pair(Index, Info));
 
 	this->MakeEntity(Index);
 }
