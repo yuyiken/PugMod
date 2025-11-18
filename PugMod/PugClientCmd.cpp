@@ -259,6 +259,11 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                                         gPugAdminMenu.Team(Player);
                                         return true;
                                     }
+                                    case CMD_ADMIN_MAP:
+                                    {
+                                        gPugAdminMenu.Map(Player);
+                                        return true;
+                                    }
                                     case CMD_ADMIN_MESSAGE:
                                     {
                                         this->Message(Player);

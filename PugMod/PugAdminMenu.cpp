@@ -24,6 +24,8 @@ void CPugAdminMenu::Menu(CBasePlayer *Player)
 
         gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_PAUSE, false, ADMIN_VOTE|ADMIN_LEVEL_B, _T("Pause Match"));
 
+        gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_SPAWN_EDIT, false, ADMIN_LEVEL_D, _T("CSDM: Spawn Manager"));
+
         gPugMenu[Player->entindex()].Show(Player);
     }
 }
@@ -74,6 +76,11 @@ void CPugAdminMenu::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
                 case ADMIN_MENU_PAUSE:
                 {
                     gPugPause.Init(Player);
+                    break;
+                }
+                case ADMIN_MENU_SPAWN_EDIT:
+                {
+                    gPugSpawnEdit.EditSpawns(Player);
                     break;
                 }
             }
