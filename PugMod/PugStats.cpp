@@ -521,14 +521,6 @@ void CPugStats::RestartRound()
 					Player.second.Round.Reset();
 				}
 			}
-			else
-			{
-				for (auto& Player : this->m_Player)
-				{
-					// Reset round stats
-					Player.second.Round.Reset();
-				}
-			}
 		}
 	}
 }
@@ -1333,94 +1325,37 @@ void CPugStats::ExportData()
 		});
 	}
 
-	// If is not empty
 	if (!Data.empty())
 	{
-		// Make directory if not exists
-		gPugUtil.MakeDirectory(MS_SAVE_PATH);
+		char DateTime[32] = {};
+		strftime(DateTime, sizeof(DateTime), "%y%m%d%H%M", localtime(&this->m_Match.EndTime));
 
-		// File path buffer
-		char Buffer[MAX_PATH] = { };
+		auto FullPath = gPugUtil.GetFullPath();
 
-		// Time string
-		char DateTime[32] = { };
+		char Buffer[MAX_PATH] = {};
+		Q_snprintf(Buffer, sizeof(Buffer), "%s/stats", FullPath);
 
-		// Format time string
-		strftime(DateTime, sizeof(DateTime), "%Y-%m-%d-%H-%M-%S", localtime(&this->m_Match.EndTime));
+		gPugUtil.MakeDirectory(Buffer);
 
-		// Format Path with match end time
-		Q_snprintf(Buffer, sizeof(Buffer), "%s/%s.json", MS_SAVE_PATH, DateTime);
+		Q_snprintf(Buffer, sizeof(Buffer), "%s/stats/pug-%s-%s.json", FullPath, DateTime, this->m_Match.Map.c_str());
 
-		// Create file with path buffer
 		std::ofstream DataFile(Buffer);
 
-		// Put Stats data to file buffer
 		DataFile << Data;
 
-		// Close file
 		DataFile.close();
 
-		// If is enabled to send via HTTP
 		if (gPugCvar.m_API_Enable->value)
 		{
-			// If address is not null
 			if (gPugCvar.m_API_Address->string)
 			{
-                // If is not empty
                 if (gPugCvar.m_API_Address->string[0u] != '\0')
                 {
-                    // gPugCurl.PostJSON(gPugCvar.m_API_Address->string, static_cast<long>(gPugCvar.m_API_Timeout->value), gPugCvar.m_API_Bearer->string, Data.dump(), (void*)this->CallbackResult, RANDOM_LONG(1,32));
+                    gPugCurl.PostJSON(gPugCvar.m_API_Address->string, static_cast<long>(gPugCvar.m_API_Timeout->value), gPugCvar.m_API_Bearer->string, Data.dump());
                 }
 			}
 		}
 	}
 
-	// Clear Data
 	Data.clear();
 }
-
-// void CPugStats::CallbackResult(CURL* ch, size_t Size, const char* Memory, int EventIndex)
-// {
-// 	if (ch)
-// 	{
-// 		long HttpResponseCode = 0;
-//
-// 		if (curl_easy_getinfo(ch, CURLINFO_RESPONSE_CODE, &HttpResponseCode) == CURLE_OK)
-// 		{
-// 			if (HttpResponseCode == 200)
-// 			{
-// 				if (Memory)
-// 				{
-// 					try
-// 					{
-// 						auto Data = nlohmann::ordered_json::parse(Memory, nullptr, true, true);
-//
-// 						if (!Data.empty())
-// 						{
-// 							if (Data.contains("ServerExecute"))
-// 							{
-// 								// Check if event result name is not empty and is string
-// 								if (Data["ServerExecute"].is_string())
-// 								{
-// 									// Get Command
-// 									auto String = Data["ServerExecute"].get<std::string>();
-//
-// 									// If command is not empty
-// 									if (!String.empty())
-// 									{
-// 										// Execute command
-// 										gPugUtil.ServerExecute(String);
-// 									}
-// 								}
-// 							}
-// 						}
-// 					}
-// 					catch (nlohmann::ordered_json::parse_error& e)
-// 					{
-// 						LOG_CONSOLE(PLID, "[%s] %s", __func__, e.what());
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// }

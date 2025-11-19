@@ -67,6 +67,7 @@
       <OptimizeReferences>false</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>PugMod.def</ModuleDefinitionFile>
+      <AdditionalDependencies>$(ProjectDir)include\curl\lib\libcurl_a_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>Powershell.exe -ExecutionPolicy Unrestricted -file "$(ProjectDir)\PostBuild.ps1"</Command>
@@ -88,6 +89,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <ModuleDefinitionFile>PugMod.def</ModuleDefinitionFile>
+      <AdditionalDependencies>$(ProjectDir)include\curl\lib\libcurl_a.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>Powershell.exe -ExecutionPolicy Unrestricted -file "$(ProjectDir)\PostBuild.ps1"</Command>

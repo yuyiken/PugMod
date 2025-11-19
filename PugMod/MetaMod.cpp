@@ -127,6 +127,8 @@ void DLL_POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 {
 	gPugCvar.ServerActivate();
 
+	gPugCurl.ServerActivate();
+
 	gPugTask.ServerActivate();
 
 	gPugLang.ServerActivate();
@@ -203,6 +205,8 @@ void DLL_POST_ServerDeactivate()
 
 void DLL_POST_StartFrame()
 {
+	gPugCurl.StartFrame();
+
 	gPugTask.StartFrame();
 
 	gPugReady.StartFrame();

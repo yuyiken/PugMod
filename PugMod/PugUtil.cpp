@@ -55,17 +55,23 @@ const char* CPugUtil::GetFullPath()
 	return this->m_FullPath.c_str();
 }
 
-int CPugUtil::MakeDirectory(const char* Path)
+int CPugUtil::MakeDirectory(const char *Path)
 {
-	struct stat st = { };
-
-	if (stat(Path, &st) == -1)
+	if (Path)
 	{
+		if (Path[0u] != '\0')
+		{
+			struct stat st = {};
+
+			if (stat(Path, &st) == -1)
+			{
 #if defined(_WIN32)
-		return _mkdir(Path);
+				return _mkdir(Path);
 #else
-		return mkdir(Path, 0755);
+				return mkdir(Path, S_IRWXU | S_IRGRP | S_IROTH);
 #endif
+			}
+		}
 	}
 
 	return 0;

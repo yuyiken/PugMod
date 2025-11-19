@@ -11,6 +11,12 @@
 #define _close close
 #define _acces access
 #define _vsnwprintf vswprintf
+#else
+#pragma comment(lib,"ws2_32.lib")
+#pragma comment(lib,"wldap32.lib")
+#pragma comment(lib,"advapi32.lib")
+#pragma comment(lib,"crypt32.lib")
+#pragma comment(lib,"normaliz.lib")
 #endif
 
 #ifdef _WIN32
@@ -27,6 +33,14 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+// cURL sources
+#ifndef CURL_STATICLIB
+#define CURL_STATICLIB
+#endif
+
+// cURL sources
+#include <curl/curl.h>
 
 // CSSDK
 #include <extdll.h>
@@ -60,6 +74,7 @@
 #include "PugAdminMenu.h"
 #include "PugBugFix.h"
 #include "PugClientCmd.h"
+#include "PugCurl.h"
 #include "PugCvar.h"
 #include "PugCvarControl.h"
 #include "PugDemoRecord.h"

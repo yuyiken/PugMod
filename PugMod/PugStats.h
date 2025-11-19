@@ -1,11 +1,5 @@
 #pragma once
 
-// Match Stats Settings Path
-constexpr auto MS_SETTINGS_PATH = "cstrike/addons/matchstats/matchstats.cfg";
-
-// Match Stats Path
-constexpr auto MS_SAVE_PATH = "cstrike/addons/matchstats/logs";
-
 // Match Stats
 typedef struct S_MATCH_STATS
 {
@@ -122,6 +116,7 @@ typedef struct S_ROUND_STATS
 		this->BombDefused = 0;
 		this->BombExploded = 0;
 		this->Versus = 0;
+		this->PlayerDamage.clear();
 	}
 } P_ROUND_STATS, * LP_ROUND_STATS;
 
@@ -326,7 +321,6 @@ public:
 	static bool SayText(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
 	void OnEvent(GameEventType event, int ScenarioEvent, CBaseEntity* pEntity, CBaseEntity* pEntityOther);
 	void ExportData();
-	//static void CallbackResult(CURL* ch, size_t Size, const char* Memory, int EventIndex);
 
 private:
     // State
