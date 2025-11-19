@@ -59,14 +59,8 @@ typedef struct S_MATCH_STATS
 	// Swap Scores
 	void SwapScores()
 	{
-		// Store Terrorist Score
-		auto ScoreTR = this->Score[TERRORIST];
-
-		// Set Terorrorist Score
-		this->Score[TERRORIST] = this->Score[CT];
-
-		// Set CT Score
-		this->Score[CT] = ScoreTR;
+		// Swap Scores
+		SWAP(this->Score[TERRORIST], this->Score[CT]);
 	}
 } P_MATCH_STATS, *LP_MATCH_STATS;
 
@@ -213,6 +207,9 @@ typedef struct S_PLAYER_STATS
 		this->GodLikes = 0;
 		this->DoubleKill = 0;
 
+		// Knife Duels
+		this->KnifeDuels.fill(0);
+
 		// Entries
 		this->EntryFrags = 0;
 		this->EntryDeaths = 0;
@@ -268,6 +265,7 @@ typedef struct S_PLAYER_DATA
 	std::string Name;			// BETA: Player Name
 	int Team;					// BETA: Plyer Team
 	int	Winner;					// BETA: Is Winner of match
+	int IsBot;					// BETA: Is BOT
 
 	// Player Stats
 	std::map<int, P_PLAYER_STATS> Stats;
@@ -327,7 +325,7 @@ private:
     int m_State = STATE_DEAD;
 
 	// Match Data
-	P_MATCH_STATS m_Match = { };
+	P_MATCH_STATS m_Match;
 
 	// Player Data
 	std::map<std::string, P_PLAYER_DATA> m_Player;

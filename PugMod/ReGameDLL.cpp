@@ -233,8 +233,6 @@ void ReGameDLL_CSGameRules_RestartRound(IReGameHook_CSGameRules_RestartRound *ch
 	gPugMod.RestartRound();
 
 	gPugPause.RestartRound();
-
-	gPugStats.RestartRound();
 }
 
 edict_t *ReGameDLL_CSGameRules_GetPlayerSpawnSpot(IReGameHook_CSGameRules_GetPlayerSpawnSpot *chain, CBasePlayer *Player)

@@ -7,21 +7,28 @@ void CPugStats::ServerActivate()
     // State
     this->m_State = STATE_DEAD;
 
+	// Match
+	this->m_Match.Reset();
+
+	// Player
+	this->m_Player.clear();
+
+	// Round events
+	this->m_RoundEvent.clear();
+
 	// Register Say Text messages
 	gPugEngine.RegisterHook("SayText", this->SayText);
 }
 
 void CPugStats::SetState(int State)
 {
-    this->m_State = State;
+	// Update State
+	this->m_State = State;
 
-    switch (this->m_State)
+	// Switch
+    switch (State)
     {
         case STATE_DEAD:
-        case STATE_DEATHMATCH:
-        case STATE_VOTEMAP:
-        case STATE_VOTETEAM:
-        case STATE_CAPTAIN:
         {
             // Clear match data
             this->m_Match.Reset();
@@ -33,6 +40,28 @@ void CPugStats::SetState(int State)
             this->m_RoundEvent.clear();
             break;
         }
+        case STATE_DEATHMATCH:
+        case STATE_VOTEMAP:
+        case STATE_VOTETEAM:
+        case STATE_CAPTAIN:
+		{
+			// Clear match data
+			this->m_Match.Reset();
+
+			// Loop each player
+			for (auto& Player : this->m_Player)
+			{
+				// Clear Chat Log
+				Player.second.ChatLog.clear();
+
+				// Clear player round stats
+				Player.second.Round.Reset();
+			}
+
+			// Clear event data
+			this->m_RoundEvent.clear();
+			break;
+		}
         case STATE_KNIFE_ROUND:
         {
             // Clear match data
@@ -99,9 +128,15 @@ void CPugStats::SetState(int State)
         }
         case STATE_HALFTIME:
         {
-            // Swap Scores
-            this->m_Match.SwapScores();
-            
+			if (gPugMod.GetRound() >= static_cast<int>(gPugCvar.m_Rounds->value))
+			{
+				if (gPugMod.GetScore(TERRORIST) == gPugMod.GetScore(CT))
+				{
+					return;
+				}
+			}
+
+			this->m_Match.SwapScores();
             break;
         }
         case STATE_SECOND_HALF:
@@ -115,7 +150,6 @@ void CPugStats::SetState(int State)
                 // Clear player round stats
                 Player.second.Round.Reset();
             }
-
             break;
         }
         case STATE_OVERTIME:
@@ -129,26 +163,12 @@ void CPugStats::SetState(int State)
                 // Clear player round stats
                 Player.second.Round.Reset();
             }
-
             break;
         }
         case STATE_END:
         {
             // Set end time
             this->m_Match.EndTime = time(0);
-
-            // Loop player list
-            for (auto& Player : this->m_Player)
-            {
-                // Clear winner of match
-                Player.second.Winner = 0;
-
-                // If is in winner team
-                if (Player.second.Team == this->m_Match.Winner)
-                {
-                    Player.second.Winner = 1;
-                }
-            }
 
             // Export data
             this->ExportData();
@@ -186,6 +206,8 @@ void CPugStats::GetIntoGame(CBasePlayer *Player)
 		this->m_Player[Auth].Name = STRING(Player->edict()->v.netname);
 
 		this->m_Player[Auth].Team = static_cast<int>(Player->m_iTeam);
+
+		this->m_Player[Auth].IsBot = Player->IsBot() ? 1 : 0;
 	}
 }
 
@@ -560,6 +582,13 @@ void CPugStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, flo
 
 				// Calculate who is winning the match
 				this->m_Match.Winner = (this->m_Match.Score[TERRORIST] != this->m_Match.Score[CT]) ? (this->m_Match.Score[TERRORIST] > this->m_Match.Score[CT] ? 1 : 2) : 0;
+
+				// Loop player list
+				for (auto& Player : this->m_Player)
+				{
+					// If is in winner team
+					Player.second.Winner = (Player.second.Team == this->m_Match.Winner) ? 1 : 0;
+				}
 
 				// Team Round DAmage
 				std::array<float, SPECTATOR + 1> TeamRoundDamage = { };
@@ -1108,12 +1137,13 @@ void CPugStats::ExportData()
 		{"KnifeRound", this->m_Match.KnifeRound},
 	};
 
-	// Player
-	for (auto const& Player : this->m_Player)
+	// Player Loop
+	for (auto const & Player : this->m_Player)
 	{
-		P_PLAYER_STATS PlayerStats = { };
+		// Player Stats
+		P_PLAYER_STATS PlayerStats = {};
 
-		for (auto const& Stats : Player.second.Stats)
+		for (auto const & Stats : Player.second.Stats)
 		{
 			if (Stats.first == STATE_FIRST_HALF || Stats.first == STATE_SECOND_HALF || Stats.first == STATE_OVERTIME)
 			{
@@ -1214,6 +1244,7 @@ void CPugStats::ExportData()
 			{"Name",Player.second.Name},
 			{"Team",Player.second.Team},
 			{"Winner",Player.second.Winner},
+			{"IsBot",Player.second.IsBot},
 			//
 			// Player stats
 			{"Frags",PlayerStats.Frags},
@@ -1229,7 +1260,7 @@ void CPugStats::ExportData()
 			{"Suicides",PlayerStats.Suicides},
 			//
 			// Round Win Share
-			{"RoundWinShare",(PlayerStats.RoundWinShare / (float)this->m_Match.Rounds)},
+			{"RoundWinShare",(PlayerStats.RoundWinShare / static_cast<float>(this->m_Match.Rounds))},
 			//
 			// Misc Frags
 			{"BlindFrags",PlayerStats.BlindFrags},
