@@ -27,6 +27,11 @@
 // System
 #include <osconfig.h>
 
+// direct.h
+#ifdef _WIN32
+#include <direct.h>
+#endif
+
 // C++
 #include <array>
 #include <map>
