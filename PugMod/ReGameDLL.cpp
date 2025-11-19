@@ -192,9 +192,11 @@ BOOL ReGameDLL_HandleMenu_ChooseTeam(IReGameHook_HandleMenu_ChooseTeam *chain, C
 		return FALSE;
 	}
 
-	gPugStats.ChooseTeam(Player);
+	auto ret = chain->callNext(Player, Slot);
 
-	return chain->callNext(Player, Slot);
+	gPugStats.ChooseTeam(Player);
+	
+	return ret;
 }
 
 bool ReGameDLL_CBasePlayer_GetIntoGame(IReGameHook_CBasePlayer_GetIntoGame *chain, CBasePlayer *Player)
