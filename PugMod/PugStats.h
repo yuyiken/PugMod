@@ -303,6 +303,7 @@ public:
 	void GetIntoGame(CBasePlayer* Player);
 	void DropClient(edict_t *pEntity);
 	void ChooseTeam(CBasePlayer* Player);
+	void SwitchTeam(CBasePlayer* Player);
 	void SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnim);
 	void TakeDamage(CBasePlayer* Victim, entvars_t* pevInflictor, entvars_t* pevAttacker, float& flDamage, int bitsDamageType);
 	void PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_t* pevInflictor);

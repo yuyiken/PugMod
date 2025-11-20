@@ -208,6 +208,11 @@ void CPugStats::GetIntoGame(CBasePlayer *Player)
 		this->m_Player[Auth].Team = static_cast<int>(Player->m_iTeam);
 
 		this->m_Player[Auth].IsBot = Player->IsBot() ? 1 : 0;
+
+		if (!Player->IsBot())
+		{
+			LOG_CONSOLE(PLID, "[%s] %s: %d", __func__, STRING(Player->edict()->v.netname), Player->m_iTeam);
+		}
 	}
 }
 
@@ -235,6 +240,22 @@ void CPugStats::ChooseTeam(CBasePlayer* Player)
 		this->m_Player[Auth].Name = STRING(Player->edict()->v.netname);
 
 		this->m_Player[Auth].Team = static_cast<int>(Player->m_iTeam);
+
+		this->m_Player[Auth].IsBot = Player->IsBot() ? 1 : 0;
+	}
+}
+
+void CPugStats::SwitchTeam(CBasePlayer* Player)
+{
+	auto Auth = this->GetAuthId(Player);
+
+	if (Auth)
+	{
+		this->m_Player[Auth].Name = STRING(Player->edict()->v.netname);
+
+		this->m_Player[Auth].Team = static_cast<int>(Player->m_iTeam);
+
+		this->m_Player[Auth].IsBot = Player->IsBot() ? 1 : 0;
 	}
 }
 
