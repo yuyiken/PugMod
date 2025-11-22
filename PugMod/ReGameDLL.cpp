@@ -63,8 +63,6 @@ bool ReGameDLL_Init()
 
 										g_ReGameHookchains->CBasePlayer_TakeDamage()->registerHook(ReGameDLL_CBasePlayer_TakeDamage);
 
-										g_ReGameHookchains->CSGameRules_PlayerKilled()->registerHook(ReGameDLL_CSGameRules_PlayerKilled);
-
 										g_ReGameHookchains->CSGameRules_SendDeathMessage()->registerHook(ReGameDLL_CSGameRules_SendDeathMessage);
 
 										g_ReGameHookchains->CBasePlayer_AddAccount()->registerHook(ReGameDLL_CBasePlayer_AddAccount);
@@ -136,8 +134,6 @@ bool ReGameDLL_Stop()
 		g_ReGameHookchains->CSGameRules_FPlayerCanTakeDamage()->unregisterHook(ReGameDLL_CSGameRules_FPlayerCanTakeDamage);
 
 		g_ReGameHookchains->CBasePlayer_TakeDamage()->unregisterHook(ReGameDLL_CBasePlayer_TakeDamage);
-
-		g_ReGameHookchains->CSGameRules_PlayerKilled()->unregisterHook(ReGameDLL_CSGameRules_PlayerKilled);
 
 		g_ReGameHookchains->CSGameRules_SendDeathMessage()->unregisterHook(ReGameDLL_CSGameRules_SendDeathMessage);
 
@@ -311,13 +307,6 @@ BOOL ReGameDLL_CBasePlayer_TakeDamage(IReGameHook_CBasePlayer_TakeDamage *chain,
 	return Result;
 }
 
-void ReGameDLL_CSGameRules_PlayerKilled(IReGameHook_CSGameRules_PlayerKilled* chain, CBasePlayer* pVictim, entvars_t* pevKiller, entvars_t* pevInflictor)
-{
-	chain->callNext(pVictim, pevKiller, pevInflictor);
-
-	gPugStats.PlayerKilled(pVictim, pevKiller, pevInflictor);
-}
-
 void ReGameDLL_CSGameRules_SendDeathMessage(IReGameHook_CSGameRules_SendDeathMessage *chain, CBaseEntity *KillerBaseEntity, CBasePlayer *Victim, CBasePlayer *Assister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
 {
 	if (gPugDM.SendDeathMessage(KillerBaseEntity, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill))
@@ -327,9 +316,9 @@ void ReGameDLL_CSGameRules_SendDeathMessage(IReGameHook_CSGameRules_SendDeathMes
 
 	chain->callNext(KillerBaseEntity, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
 
-	gPugRoundStats.SendDeathMessage(KillerBaseEntity, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
-
 	gPugStats.SendDeathMessage(KillerBaseEntity, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
+
+	gPugRoundStats.SendDeathMessage(KillerBaseEntity, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
 }
 
 void ReGameDLL_CBasePlayer_AddAccount(IReGameHook_CBasePlayer_AddAccount *chain, CBasePlayer *Player, int Amount, RewardType Type, bool TrackChange)

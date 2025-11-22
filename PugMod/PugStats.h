@@ -140,7 +140,6 @@ typedef struct S_PLAYER_STATS
 	int NoScope;				// BETA: No Scope Frags
 	int FlyFrags;				// BETA: Flying Frags
 	int WallFrags;				// BETA: Wallbang Frags
-	int	GodLikes;				// TODO: Count of times when a player killed the other accompanied by the wall
 	int DoubleKill;				// BETA: Double Kill
 
 	// TODO: Count of Knife Duels in match (0 Wins, 1 Loses)
@@ -205,7 +204,6 @@ typedef struct S_PLAYER_STATS
 		this->NoScope = 0;
 		this->FlyFrags = 0;
 		this->WallFrags = 0;
-		this->GodLikes = 0;
 		this->DoubleKill = 0;
 
 		// Knife Duels

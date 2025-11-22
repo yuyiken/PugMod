@@ -341,192 +341,6 @@ void CPugStats::TakeDamage(CBasePlayer* Victim, entvars_t* pevInflictor, entvars
 	}
 }
 
-void CPugStats::PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_t* pevInflictor)
-{
-	auto State = gPugMod.GetState();
-
-	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
-	{
-		if (!Victim->m_bKilledByBomb)
-		{
-			auto Killer = UTIL_PlayerByIndexSafe(ENTINDEX(pevKiller));
-
-			if (Killer)
-			{
-				if (Killer->IsPlayer() && Victim->IsPlayer())
-				{
-					auto VictimIndex = Victim->entindex();
-
-					auto KillerIndex = Killer->entindex();
-
-					auto ItemIndex = (Victim->m_bKilledByGrenade) ? WEAPON_HEGRENADE : ((Killer->m_pActiveItem) ? Killer->m_pActiveItem->m_iId : WEAPON_NONE);
-
-					auto VictimAuth = this->GetAuthId(Victim);
-
-					auto KillerAuth = this->GetAuthId(Killer);
-
-					if (VictimIndex != KillerIndex)
-					{
-						this->m_Player[KillerAuth].Stats[State].Frags++;
-
-						this->m_Player[KillerAuth].Stats[State].Weapon[ItemIndex].Frags++;
-
-						this->m_Player[VictimAuth].Stats[State].Deaths++;
-
-						this->m_Player[VictimAuth].Stats[State].Weapon[ItemIndex].Deaths++;
-
-						this->m_Player[KillerAuth].Round.Frags++;
-
-						this->m_Player[VictimAuth].Round.Deaths++;
-
-						if ((gpGlobals->time - this->m_Player[KillerAuth].Round.KillTime) < 0.25f)
-						{
-							this->m_Player[KillerAuth].Stats[State].DoubleKill++;
-						}
-
-						this->m_Player[KillerAuth].Round.KillTime = gpGlobals->time;
-
-						if (Victim->m_LastHitGroup == 1)
-						{
-							this->m_Player[KillerAuth].Stats[State].Headshots++;
-
-							this->m_Player[KillerAuth].Stats[State].Weapon[ItemIndex].Headshots++;
-
-							this->m_Player[KillerAuth].Round.Headshots++;
-						}
-
-						for (int i = 1; i <= gpGlobals->maxClients; ++i)
-						{
-							auto Player = UTIL_PlayerByIndexSafe(i);
-
-							if (Player)
-							{
-								if (!Player->IsDormant())
-								{
-									if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
-									{
-										if (Player->entindex() != KillerIndex)
-										{
-											auto Auth = this->GetAuthId(Player);
-
-											if (Auth)
-											{
-												if (this->m_Player[Auth].Round.PlayerDamage[VictimAuth] >= static_cast<int>(gPugCvar.m_ST_AssistanceDmg->value))
-												{
-													this->m_Player[Auth].Stats[State].Assists++;
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-
-						if (!Victim->m_bKilledByGrenade)
-						{
-							if (Killer->IsBlind())
-							{
-								this->m_Player[KillerAuth].Stats[State].BlindFrags++;
-							}
-
-							if (Victim->IsBlind())
-							{
-								this->m_Player[VictimAuth].Stats[State].BlindDeaths++;
-							}
-						}
-
-						if (ItemIndex != WEAPON_AWP)
-						{
-							if (Victim->m_iLastClientHealth >= 100)
-							{
-								if (Killer->m_lastDamageAmount >= 100)
-								{
-									this->m_Player[KillerAuth].Stats[State].OneShot++;
-								}
-							}
-						}
-
-						if (ItemIndex == WEAPON_AWP || ItemIndex == WEAPON_SCOUT || ItemIndex == WEAPON_G3SG1 || ItemIndex == WEAPON_SG550)
-						{
-							if (Killer->m_iClientFOV == DEFAULT_FOV)
-							{
-								this->m_Player[KillerAuth].Stats[State].NoScope++;
-							}
-						}
-
-						if (!(Victim->edict()->v.flags & FL_ONGROUND))
-						{
-							if (Victim->m_flFallVelocity > 0.0f)
-							{
-								this->m_Player[KillerAuth].Stats[State].FlyFrags++;
-							}
-						}
-
-						if (ItemIndex != WEAPON_HEGRENADE)
-						{
-							if (!gPugUtil.IsPlayerVisible(Killer, Victim))
-							{
-								if (Killer->IsAlive())
-								{
-									this->m_Player[KillerAuth].Stats[State].WallFrags++;
-								}
-							}
-						}
-
-						if (g_pGameRules)
-						{
-							auto NumAliveTR = 0, NumAliveCT = 0, NumDeadTR = 0, NumDeadCT = 0;
-
-							CSGameRules()->InitializePlayerCounts(NumAliveTR, NumAliveCT, NumDeadTR, NumDeadCT);
-
-							if (!NumDeadTR && !NumDeadCT)
-							{
-								this->m_Player[KillerAuth].Stats[State].EntryFrags++;
-
-								this->m_Player[VictimAuth].Stats[State].EntryDeaths++;
-							}
-
-							if (NumAliveTR == 1 || NumAliveCT == 1)
-							{
-								for (int i = 1; i <= gpGlobals->maxClients; ++i)
-								{
-									auto Player = UTIL_PlayerByIndexSafe(i);
-
-									if (Player)
-									{
-										if (Player->IsAlive())
-										{
-											auto Auth = this->GetAuthId(Player);
-
-											if (Auth)
-											{
-												if ((Player->m_iTeam == TERRORIST) && (NumAliveTR == 1))
-												{
-													this->m_Player[Auth].Round.Versus = NumAliveCT;
-												}
-												else if ((Player->m_iTeam == CT) && (NumAliveCT == 1))
-												{
-													this->m_Player[Auth].Round.Versus = NumAliveTR;
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-					else
-					{
-						this->m_Player[VictimAuth].Stats[State].Suicides++;
-					}
-
-					this->OnEvent(EVENT_PLAYER_DIED, ROUND_NONE, Victim, Killer);
-				}
-			}
-		}
-	}
-}
-
 void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Victim, CBasePlayer *Assister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
 {
 	auto State = gPugMod.GetState();
@@ -539,7 +353,172 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 
             if (Killer->IsPlayer() && Victim->IsPlayer())
 			{
+				auto VictimIndex = Victim->entindex();
 
+				auto KillerIndex = Killer->entindex();
+
+				auto ItemIndex = (Victim->m_bKilledByGrenade) ? WEAPON_HEGRENADE : ((Killer->m_pActiveItem) ? Killer->m_pActiveItem->m_iId : WEAPON_NONE);
+
+				auto VictimAuth = this->GetAuthId(Victim);
+
+				auto KillerAuth = this->GetAuthId(Killer);
+
+				if (VictimIndex != KillerIndex)
+				{
+					this->m_Player[KillerAuth].Stats[State].Frags++;
+
+					this->m_Player[KillerAuth].Stats[State].Weapon[ItemIndex].Frags++;
+
+					this->m_Player[VictimAuth].Stats[State].Deaths++;
+
+					this->m_Player[VictimAuth].Stats[State].Weapon[ItemIndex].Deaths++;
+
+					this->m_Player[KillerAuth].Round.Frags++;
+
+					this->m_Player[VictimAuth].Round.Deaths++;
+
+					if ((gpGlobals->time - this->m_Player[KillerAuth].Round.KillTime) < 0.25f)
+					{
+						this->m_Player[KillerAuth].Stats[State].DoubleKill++;
+					}
+
+					this->m_Player[KillerAuth].Round.KillTime = gpGlobals->time;
+
+					if (Victim->m_bHeadshotKilled)
+					{
+						this->m_Player[KillerAuth].Stats[State].Headshots++;
+
+						this->m_Player[KillerAuth].Stats[State].Weapon[ItemIndex].Headshots++;
+
+						this->m_Player[KillerAuth].Round.Headshots++;
+					}
+
+					for (int i = 1; i <= gpGlobals->maxClients; ++i)
+					{
+						auto Player = UTIL_PlayerByIndexSafe(i);
+
+						if (Player)
+						{
+							if (!Player->IsDormant())
+							{
+								if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
+								{
+									if (Player->entindex() != KillerIndex)
+									{
+										auto Auth = this->GetAuthId(Player);
+
+										if (Auth)
+										{
+											if (this->m_Player[Auth].Round.PlayerDamage[VictimAuth] >= static_cast<int>(gPugCvar.m_ST_AssistanceDmg->value))
+											{
+												this->m_Player[Auth].Stats[State].Assists++;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+
+					if (!Victim->m_bKilledByGrenade)
+					{
+						if (Killer->IsBlind())
+						{
+							this->m_Player[KillerAuth].Stats[State].BlindFrags++;
+						}
+
+						if (Victim->IsBlind())
+						{
+							this->m_Player[VictimAuth].Stats[State].BlindDeaths++;
+						}
+					}
+
+					if (ItemIndex != WEAPON_AWP)
+					{
+						if (Victim->m_iLastClientHealth >= 100)
+						{
+							if (Killer->m_lastDamageAmount >= 100)
+							{
+								this->m_Player[KillerAuth].Stats[State].OneShot++;
+							}
+						}
+					}
+
+					if (ItemIndex == WEAPON_AWP || ItemIndex == WEAPON_SCOUT || ItemIndex == WEAPON_G3SG1 || ItemIndex == WEAPON_SG550)
+					{
+						if (Killer->m_iClientFOV == DEFAULT_FOV)
+						{
+							this->m_Player[KillerAuth].Stats[State].NoScope++;
+						}
+					}
+
+					if (!(Victim->edict()->v.flags & FL_ONGROUND))
+					{
+						if (Victim->m_flFallVelocity > 0.0f)
+						{
+							this->m_Player[KillerAuth].Stats[State].FlyFrags++;
+						}
+					}
+
+					if (ItemIndex != WEAPON_HEGRENADE)
+					{
+						if (!gPugUtil.IsPlayerVisible(Killer, Victim))
+						{
+							if (Killer->IsAlive())
+							{
+								this->m_Player[KillerAuth].Stats[State].WallFrags++;
+							}
+						}
+					}
+
+					if (g_pGameRules)
+					{
+						auto NumAliveTR = 0, NumAliveCT = 0, NumDeadTR = 0, NumDeadCT = 0;
+
+						CSGameRules()->InitializePlayerCounts(NumAliveTR, NumAliveCT, NumDeadTR, NumDeadCT);
+
+						if (!NumDeadTR && !NumDeadCT)
+						{
+							this->m_Player[KillerAuth].Stats[State].EntryFrags++;
+
+							this->m_Player[VictimAuth].Stats[State].EntryDeaths++;
+						}
+
+						if (NumAliveTR == 1 || NumAliveCT == 1)
+						{
+							for (int i = 1; i <= gpGlobals->maxClients; ++i)
+							{
+								auto Player = UTIL_PlayerByIndexSafe(i);
+
+								if (Player)
+								{
+									if (Player->IsAlive())
+									{
+										auto Auth = this->GetAuthId(Player);
+
+										if (Auth)
+										{
+											if ((Player->m_iTeam == TERRORIST) && (NumAliveTR == 1))
+											{
+												this->m_Player[Auth].Round.Versus = NumAliveCT;
+											}
+											else if ((Player->m_iTeam == CT) && (NumAliveCT == 1))
+											{
+												this->m_Player[Auth].Round.Versus = NumAliveTR;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					this->m_Player[VictimAuth].Stats[State].Suicides++;
+				}
+
+				this->OnEvent(EVENT_PLAYER_DIED, ROUND_NONE, Victim, Killer);
 			}
 		}
 	}
@@ -1230,7 +1209,6 @@ void CPugStats::ExportData()
 				PlayerStats.NoScope += Stats.second.NoScope;
 				PlayerStats.FlyFrags += Stats.second.FlyFrags;
 				PlayerStats.WallFrags += Stats.second.WallFrags;
-				PlayerStats.GodLikes += Stats.second.GodLikes;
 				PlayerStats.DoubleKill += Stats.second.DoubleKill;
 				//
 				// Knife Duels
@@ -1327,7 +1305,6 @@ void CPugStats::ExportData()
 			{"NoScope",PlayerStats.NoScope},
 			{"FlyFrags",PlayerStats.FlyFrags},
 			{"WallFrags",PlayerStats.WallFrags},
-			{"GodLikes",PlayerStats.GodLikes},
 			{"DoubleKill",PlayerStats.DoubleKill},
 			//
 			// Knife Duels
