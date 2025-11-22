@@ -208,11 +208,6 @@ void CPugStats::GetIntoGame(CBasePlayer *Player)
 		this->m_Player[Auth].Team = static_cast<int>(Player->m_iTeam);
 
 		this->m_Player[Auth].IsBot = Player->IsBot() ? 1 : 0;
-
-		if (!Player->IsBot())
-		{
-			LOG_CONSOLE(PLID, "[%s] %s: %d", __func__, STRING(Player->edict()->v.netname), Player->m_iTeam);
-		}
 	}
 }
 
@@ -1195,10 +1190,8 @@ void CPugStats::ExportData()
 				PlayerStats.DoubleKill += Stats.second.DoubleKill;
 				//
 				// Knife Duels
-				for (size_t i = 0; i < Stats.second.KnifeDuels.size(); i++)
-				{
-					PlayerStats.KnifeDuels[i] += Stats.second.KnifeDuels[i];
-				}
+				PlayerStats.KnifeDuelWin += Stats.second.KnifeDuelWin;
+				PlayerStats.KnifeDuelLose += Stats.second.KnifeDuelLose;
 				//
 				// Entry Stats
 				PlayerStats.EntryFrags += Stats.second.EntryFrags;
@@ -1294,8 +1287,8 @@ void CPugStats::ExportData()
 			{"DoubleKill",PlayerStats.DoubleKill},
 			//
 			// Knife Duels
-			{"KnifeDuelWin",PlayerStats.KnifeDuels[0]},
-			{"KnifeDuelLose",PlayerStats.KnifeDuels[1]},
+			{"KnifeDuelWin",PlayerStats.KnifeDuelWin},
+			{"KnifeDuelLose",PlayerStats.KnifeDuelLose},
 			//
 			// Entry Frags and Deaths
 			{"EntryFrags",PlayerStats.EntryFrags},

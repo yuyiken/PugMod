@@ -144,7 +144,8 @@ typedef struct S_PLAYER_STATS
 	int DoubleKill;				// BETA: Double Kill
 
 	// TODO: Count of Knife Duels in match (0 Wins, 1 Loses)
-	std::array<int, 2> KnifeDuels;
+	int KnifeDuelWin;
+	int KnifeDuelLose;
 
 	// Entries
 	int EntryFrags;				// BETA: Entry Frag of round
@@ -208,7 +209,8 @@ typedef struct S_PLAYER_STATS
 		this->DoubleKill = 0;
 
 		// Knife Duels
-		this->KnifeDuels.fill(0);
+		this->KnifeDuelWin = 0;
+		this->KnifeDuelLose = 0;
 
 		// Entries
 		this->EntryFrags = 0;
