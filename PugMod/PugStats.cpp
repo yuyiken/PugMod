@@ -1210,6 +1210,8 @@ void CPugStats::ExportData()
 				PlayerStats.FlyFrags += Stats.second.FlyFrags;
 				PlayerStats.WallFrags += Stats.second.WallFrags;
 				PlayerStats.DoubleKill += Stats.second.DoubleKill;
+				PlayerStats.SmokeFrags += Stats.second.SmokeFrags;
+				PlayerStats.AssistedFlash += Stats.second.AssistedFlash;
 				//
 				// Knife Duels
 				PlayerStats.KnifeDuelWin += Stats.second.KnifeDuelWin;
@@ -1306,6 +1308,8 @@ void CPugStats::ExportData()
 			{"FlyFrags",PlayerStats.FlyFrags},
 			{"WallFrags",PlayerStats.WallFrags},
 			{"DoubleKill",PlayerStats.DoubleKill},
+			{"SmokeFrags",PlayerStats.SmokeFrags},
+			{"AssistedFlash",PlayerStats.AssistedFlash},
 			//
 			// Knife Duels
 			{"KnifeDuelWin",PlayerStats.KnifeDuelWin},

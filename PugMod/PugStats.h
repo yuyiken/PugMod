@@ -141,6 +141,8 @@ typedef struct S_PLAYER_STATS
 	int FlyFrags;				// BETA: Flying Frags
 	int WallFrags;				// BETA: Wallbang Frags
 	int DoubleKill;				// BETA: Double Kill
+	int SmokeFrags;				// TODO: Smoke grenade penetration kill (bullets went through smoke)
+	int AssistedFlash;			// TODO: Assister helped with a flash
 
 	// TODO: Count of Knife Duels in match (0 Wins, 1 Loses)
 	int KnifeDuelWin;
@@ -167,16 +169,22 @@ typedef struct S_PLAYER_STATS
 	int BombDefusedKit;			// BETA: Bomb Defuses with Kit
 
 	// BETA: Kill streak
-	std::array<int, (MAX_CLIENTS / 2)> KillStreak;
+	std::map<int, int> KillStreak;
 
 	// BETA: Versus: 1 vs X win situations
-	std::array<int, (MAX_CLIENTS / 2)> Versus;
+	std::map<int, int> Versus;
 	
 	// BETA: HitBox (0 Hits, 1 Damage, 2 Hits Received, 3 Damage Received)
 	std::array<std::array<int, 4>, 9> HitBox;
 
 	// BETA: Weapon Stats
 	std::map<int, P_WEAPON_STATS> Weapon;
+
+	// TODO: Dominations
+	std::map<std::string, int> Domination;
+
+	// TODO: Revenges
+	std::map<std::string, int> Revenge;
 	
 	// Clear stats
 	void Reset()
@@ -205,6 +213,8 @@ typedef struct S_PLAYER_STATS
 		this->FlyFrags = 0;
 		this->WallFrags = 0;
 		this->DoubleKill = 0;
+		this->SmokeFrags = 0;
+		this->AssistedFlash = 0;
 
 		// Knife Duels
 		this->KnifeDuelWin = 0;
@@ -213,18 +223,6 @@ typedef struct S_PLAYER_STATS
 		// Entries
 		this->EntryFrags = 0;
 		this->EntryDeaths = 0;
-
-		// Kill streak
-		this->KillStreak.fill(0);
-
-		// Versus: 1 vs X win situations
-		this->Versus.fill(0);
-
-		// HitBox (0 Hits, 1 Damage, 1 Hits Received, 3 Damage Received)
-		this->HitBox.fill({ 0 });
-
-		// Weapon Stats
-		this->Weapon.clear();
 
 		// Rounds
 		this->RoundPlay = 0;
@@ -241,6 +239,24 @@ typedef struct S_PLAYER_STATS
 		this->BombDefusingKit = 0;
 		this->BombDefused = 0;
 		this->BombDefusedKit = 0;
+
+		// Kill streak
+		this->KillStreak.clear();
+
+		// Versus: 1 vs X win situations
+		this->Versus.clear();
+
+		// HitBox (0 Hits, 1 Damage, 1 Hits Received, 3 Damage Received)
+		this->HitBox = {};
+
+		// Weapon Stats
+		this->Weapon.clear();
+
+		// Dominations
+		this->Domination.clear();
+
+		// Revenges
+		this->Revenge.clear();
 	}
 } P_PLAYER_STATS, * LP_PLAYER_STATS;
 
