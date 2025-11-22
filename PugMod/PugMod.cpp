@@ -252,7 +252,7 @@ int CPugMod::SetState(int State)
 
     gPugGameDesc.Update();
 
-    gPugStats.SetState(State);
+    gPugStats.SetState();
 
     g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_State, std::to_string(State).c_str());
 

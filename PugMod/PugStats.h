@@ -300,7 +300,7 @@ class CPugStats
 {
 public:
 	void ServerActivate();
-	void SetState(int State);
+	void SetState();
     const char* GetAuthId(CBasePlayer* Player);
 	void GetIntoGame(CBasePlayer* Player);
 	void DropClient(edict_t *pEntity);
@@ -309,6 +309,7 @@ public:
 	void SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnim);
 	void TakeDamage(CBasePlayer* Victim, entvars_t* pevInflictor, entvars_t* pevAttacker, float& flDamage, int bitsDamageType);
 	void PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_t* pevInflictor);
+	void SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Victim, CBasePlayer *Assister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill);
 	void AddAccount(CBasePlayer* Player, int amount, RewardType type, bool bTrackChange);
 	void RestartRound();
 	void RoundStart();
@@ -324,9 +325,6 @@ public:
 	void ExportData();
 
 private:
-    // State
-    int m_State = STATE_DEAD;
-
 	// Match Data
 	P_MATCH_STATS m_Match;
 

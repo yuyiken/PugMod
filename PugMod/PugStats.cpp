@@ -4,9 +4,6 @@ CPugStats gPugStats;
 
 void CPugStats::ServerActivate()
 {
-    // State
-    this->m_State = STATE_DEAD;
-
 	// Match
 	this->m_Match.Reset();
 
@@ -20,10 +17,10 @@ void CPugStats::ServerActivate()
 	gPugEngine.RegisterHook("SayText", this->SayText);
 }
 
-void CPugStats::SetState(int State)
+void CPugStats::SetState()
 {
-	// Update State
-	this->m_State = State;
+	// State
+	auto State = gPugMod.GetState();
 
 	// Switch
     switch (State)
@@ -113,7 +110,7 @@ void CPugStats::SetState(int State)
             for (auto& Player : this->m_Player)
             {
                 // Clear player stats
-                Player.second.Stats[this->m_State].Reset();
+                Player.second.Stats[State].Reset();
 
                 // Clear Chat Log
                 Player.second.ChatLog.clear();
@@ -145,7 +142,7 @@ void CPugStats::SetState(int State)
             for (auto& Player : this->m_Player)
             {
                 // Clear player stats
-                Player.second.Stats[this->m_State].Reset();
+                Player.second.Stats[State].Reset();
 
                 // Clear player round stats
                 Player.second.Round.Reset();
@@ -158,7 +155,7 @@ void CPugStats::SetState(int State)
             for (auto& Player : this->m_Player)
             {
                 // Clear player stats
-                Player.second.Stats[this->m_State].Reset();
+                Player.second.Stats[State].Reset();
 
                 // Clear player round stats
                 Player.second.Round.Reset();
@@ -256,7 +253,9 @@ void CPugStats::SwitchTeam(CBasePlayer* Player)
 
 void CPugStats::SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnim)
 {
-	if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
+	auto State = gPugMod.GetState();
+
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
 		if ((playerAnim == PLAYER_ATTACK1) || (playerAnim == PLAYER_ATTACK2))
 		{
@@ -270,9 +269,9 @@ void CPugStats::SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnim)
 
 						if (Auth)
 						{
-							this->m_Player[Auth].Stats[this->m_State].Shots++;
+							this->m_Player[Auth].Stats[State].Shots++;
 
-							this->m_Player[Auth].Stats[this->m_State].Weapon[Player->m_pActiveItem->m_iId].Shots++;
+							this->m_Player[Auth].Stats[State].Weapon[Player->m_pActiveItem->m_iId].Shots++;
 
 							this->m_Player[Auth].Round.Shots++;
 						}
@@ -285,7 +284,9 @@ void CPugStats::SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnim)
 
 void CPugStats::TakeDamage(CBasePlayer* Victim, entvars_t* pevInflictor, entvars_t* pevAttacker, float& flDamage, int bitsDamageType)
 {
-	if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
+	auto State = gPugMod.GetState();
+
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
 		if (!Victim->m_bKilledByBomb)
 		{
@@ -307,23 +308,23 @@ void CPugStats::TakeDamage(CBasePlayer* Victim, entvars_t* pevInflictor, entvars
 
 							auto ItemIndex = (bitsDamageType & DMG_EXPLOSION) ? WEAPON_HEGRENADE : ((Attacker->m_pActiveItem) ? Attacker->m_pActiveItem->m_iId : WEAPON_NONE);
 
-							this->m_Player[AttackerAuth].Stats[this->m_State].Hits++;
-							this->m_Player[AttackerAuth].Stats[this->m_State].Damage += DamageTaken;
+							this->m_Player[AttackerAuth].Stats[State].Hits++;
+							this->m_Player[AttackerAuth].Stats[State].Damage += DamageTaken;
 
-							this->m_Player[AttackerAuth].Stats[this->m_State].HitBox[Victim->m_LastHitGroup][0]++;
-							this->m_Player[AttackerAuth].Stats[this->m_State].HitBox[Victim->m_LastHitGroup][1] += DamageTaken;
+							this->m_Player[AttackerAuth].Stats[State].HitBox[Victim->m_LastHitGroup][0]++;
+							this->m_Player[AttackerAuth].Stats[State].HitBox[Victim->m_LastHitGroup][1] += DamageTaken;
 
-							this->m_Player[AttackerAuth].Stats[this->m_State].Weapon[ItemIndex].Hits++;
-							this->m_Player[AttackerAuth].Stats[this->m_State].Weapon[ItemIndex].Damage += DamageTaken;
+							this->m_Player[AttackerAuth].Stats[State].Weapon[ItemIndex].Hits++;
+							this->m_Player[AttackerAuth].Stats[State].Weapon[ItemIndex].Damage += DamageTaken;
 
-							this->m_Player[VictimAuth].Stats[this->m_State].HitsReceived++;
-							this->m_Player[VictimAuth].Stats[this->m_State].DamageReceived += DamageTaken;
+							this->m_Player[VictimAuth].Stats[State].HitsReceived++;
+							this->m_Player[VictimAuth].Stats[State].DamageReceived += DamageTaken;
 
-							this->m_Player[VictimAuth].Stats[this->m_State].HitBox[Victim->m_LastHitGroup][2]++;
-							this->m_Player[VictimAuth].Stats[this->m_State].HitBox[Victim->m_LastHitGroup][3] += DamageTaken;
+							this->m_Player[VictimAuth].Stats[State].HitBox[Victim->m_LastHitGroup][2]++;
+							this->m_Player[VictimAuth].Stats[State].HitBox[Victim->m_LastHitGroup][3] += DamageTaken;
 
-							this->m_Player[VictimAuth].Stats[this->m_State].Weapon[ItemIndex].HitsReceived++;
-							this->m_Player[VictimAuth].Stats[this->m_State].Weapon[ItemIndex].DamageReceived += DamageTaken;
+							this->m_Player[VictimAuth].Stats[State].Weapon[ItemIndex].HitsReceived++;
+							this->m_Player[VictimAuth].Stats[State].Weapon[ItemIndex].DamageReceived += DamageTaken;
 
 							this->m_Player[AttackerAuth].Round.Hits++;
 							this->m_Player[AttackerAuth].Round.Damage += DamageTaken;
@@ -342,7 +343,9 @@ void CPugStats::TakeDamage(CBasePlayer* Victim, entvars_t* pevInflictor, entvars
 
 void CPugStats::PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_t* pevInflictor)
 {
-	if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
+	auto State = gPugMod.GetState();
+
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
 		if (!Victim->m_bKilledByBomb)
 		{
@@ -364,13 +367,13 @@ void CPugStats::PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_
 
 					if (VictimIndex != KillerIndex)
 					{
-						this->m_Player[KillerAuth].Stats[this->m_State].Frags++;
+						this->m_Player[KillerAuth].Stats[State].Frags++;
 
-						this->m_Player[KillerAuth].Stats[this->m_State].Weapon[ItemIndex].Frags++;
+						this->m_Player[KillerAuth].Stats[State].Weapon[ItemIndex].Frags++;
 
-						this->m_Player[VictimAuth].Stats[this->m_State].Deaths++;
+						this->m_Player[VictimAuth].Stats[State].Deaths++;
 
-						this->m_Player[VictimAuth].Stats[this->m_State].Weapon[ItemIndex].Deaths++;
+						this->m_Player[VictimAuth].Stats[State].Weapon[ItemIndex].Deaths++;
 
 						this->m_Player[KillerAuth].Round.Frags++;
 
@@ -378,16 +381,16 @@ void CPugStats::PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_
 
 						if ((gpGlobals->time - this->m_Player[KillerAuth].Round.KillTime) < 0.25f)
 						{
-							this->m_Player[KillerAuth].Stats[this->m_State].DoubleKill++;
+							this->m_Player[KillerAuth].Stats[State].DoubleKill++;
 						}
 
 						this->m_Player[KillerAuth].Round.KillTime = gpGlobals->time;
 
 						if (Victim->m_LastHitGroup == 1)
 						{
-							this->m_Player[KillerAuth].Stats[this->m_State].Headshots++;
+							this->m_Player[KillerAuth].Stats[State].Headshots++;
 
-							this->m_Player[KillerAuth].Stats[this->m_State].Weapon[ItemIndex].Headshots++;
+							this->m_Player[KillerAuth].Stats[State].Weapon[ItemIndex].Headshots++;
 
 							this->m_Player[KillerAuth].Round.Headshots++;
 						}
@@ -410,7 +413,7 @@ void CPugStats::PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_
 											{
 												if (this->m_Player[Auth].Round.PlayerDamage[VictimAuth] >= static_cast<int>(gPugCvar.m_ST_AssistanceDmg->value))
 												{
-													this->m_Player[Auth].Stats[this->m_State].Assists++;
+													this->m_Player[Auth].Stats[State].Assists++;
 												}
 											}
 										}
@@ -423,12 +426,12 @@ void CPugStats::PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_
 						{
 							if (Killer->IsBlind())
 							{
-								this->m_Player[KillerAuth].Stats[this->m_State].BlindFrags++;
+								this->m_Player[KillerAuth].Stats[State].BlindFrags++;
 							}
 
 							if (Victim->IsBlind())
 							{
-								this->m_Player[VictimAuth].Stats[this->m_State].BlindDeaths++;
+								this->m_Player[VictimAuth].Stats[State].BlindDeaths++;
 							}
 						}
 
@@ -438,7 +441,7 @@ void CPugStats::PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_
 							{
 								if (Killer->m_lastDamageAmount >= 100)
 								{
-									this->m_Player[KillerAuth].Stats[this->m_State].OneShot++;
+									this->m_Player[KillerAuth].Stats[State].OneShot++;
 								}
 							}
 						}
@@ -447,7 +450,7 @@ void CPugStats::PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_
 						{
 							if (Killer->m_iClientFOV == DEFAULT_FOV)
 							{
-								this->m_Player[KillerAuth].Stats[this->m_State].NoScope++;
+								this->m_Player[KillerAuth].Stats[State].NoScope++;
 							}
 						}
 
@@ -455,7 +458,7 @@ void CPugStats::PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_
 						{
 							if (Victim->m_flFallVelocity > 0.0f)
 							{
-								this->m_Player[KillerAuth].Stats[this->m_State].FlyFrags++;
+								this->m_Player[KillerAuth].Stats[State].FlyFrags++;
 							}
 						}
 
@@ -465,7 +468,7 @@ void CPugStats::PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_
 							{
 								if (Killer->IsAlive())
 								{
-									this->m_Player[KillerAuth].Stats[this->m_State].WallFrags++;
+									this->m_Player[KillerAuth].Stats[State].WallFrags++;
 								}
 							}
 						}
@@ -478,9 +481,9 @@ void CPugStats::PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_
 
 							if (!NumDeadTR && !NumDeadCT)
 							{
-								this->m_Player[KillerAuth].Stats[this->m_State].EntryFrags++;
+								this->m_Player[KillerAuth].Stats[State].EntryFrags++;
 
-								this->m_Player[VictimAuth].Stats[this->m_State].EntryDeaths++;
+								this->m_Player[VictimAuth].Stats[State].EntryDeaths++;
 							}
 
 							if (NumAliveTR == 1 || NumAliveCT == 1)
@@ -514,7 +517,7 @@ void CPugStats::PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_
 					}
 					else
 					{
-						this->m_Player[VictimAuth].Stats[this->m_State].Suicides++;
+						this->m_Player[VictimAuth].Stats[State].Suicides++;
 					}
 
 					this->OnEvent(EVENT_PLAYER_DIED, ROUND_NONE, Victim, Killer);
@@ -524,9 +527,29 @@ void CPugStats::PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_
 	}
 }
 
+void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Victim, CBasePlayer *Assister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
+{
+	auto State = gPugMod.GetState();
+
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
+	{
+        if (KillerBaseEntity && Victim)
+        {
+            auto Killer = static_cast<CBasePlayer*>(KillerBaseEntity);
+
+            if (Killer->IsPlayer() && Victim->IsPlayer())
+			{
+
+			}
+		}
+	}
+}
+
 void CPugStats::AddAccount(CBasePlayer* Player, int amount, RewardType type, bool bTrackChange)
 {
-	if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
+	auto State = gPugMod.GetState();
+
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
 		if (type == RT_ROUND_BONUS || type == RT_HOSTAGE_TOOK || type == RT_HOSTAGE_RESCUED || type == RT_ENEMY_KILLED || type == RT_VIP_KILLED || type == RT_VIP_RESCUED_MYSELF)
 		{
@@ -534,7 +557,7 @@ void CPugStats::AddAccount(CBasePlayer* Player, int amount, RewardType type, boo
 
 			if (Auth)
 			{
-				this->m_Player[Auth].Stats[this->m_State].Money += amount;
+				this->m_Player[Auth].Stats[State].Money += amount;
 			}
 		}
 	}
@@ -542,7 +565,9 @@ void CPugStats::AddAccount(CBasePlayer* Player, int amount, RewardType type, boo
 
 void CPugStats::RestartRound()
 {
-	if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
+	auto State = gPugMod.GetState();
+
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
 		if (g_pGameRules)
 		{
@@ -553,7 +578,7 @@ void CPugStats::RestartRound()
 				for (auto& Player : this->m_Player)
 				{
 					// Reset player stats of this state
-					Player.second.Stats[this->m_State].Reset();
+					Player.second.Stats[State].Reset();
 
 					// Reset round stats
 					Player.second.Round.Reset();
@@ -565,7 +590,9 @@ void CPugStats::RestartRound()
 
 void CPugStats::RoundStart()
 {
-	if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
+	auto State = gPugMod.GetState();
+
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
 		// For each player
 		for (auto& Player : this->m_Player)
@@ -578,7 +605,9 @@ void CPugStats::RoundStart()
 
 void CPugStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, float tmDelay)
 {
-	if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
+	auto State = gPugMod.GetState();
+
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
 		if (g_pGameRules)
 		{
@@ -642,15 +671,15 @@ void CPugStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, flo
 
 							if (Auth)
 							{
-								this->m_Player[Auth].Stats[this->m_State].RoundPlay++;
+								this->m_Player[Auth].Stats[State].RoundPlay++;
 
 								if (Player->m_iTeam == Winner)
 								{
-									this->m_Player[Auth].Stats[this->m_State].RoundWin++;
+									this->m_Player[Auth].Stats[State].RoundWin++;
 
 									if (this->m_Player[Auth].Round.Versus > 0)
 									{
-										this->m_Player[Auth].Stats[this->m_State].Versus[this->m_Player[Auth].Round.Versus]++;
+										this->m_Player[Auth].Stats[State].Versus[this->m_Player[Auth].Round.Versus]++;
 									}
 
 									if (CSGameRules()->m_bBombDefused || CSGameRules()->m_bTargetBombed)
@@ -663,7 +692,7 @@ void CPugStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, flo
 											{
 												TotalPoints -= gPugCvar.m_ST_RwsC4Defused->value;
 
-												this->m_Player[Auth].Stats[this->m_State].RoundWinShare += gPugCvar.m_ST_RwsC4Defused->value;
+												this->m_Player[Auth].Stats[State].RoundWinShare += gPugCvar.m_ST_RwsC4Defused->value;
 											}
 										}
 
@@ -673,31 +702,31 @@ void CPugStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, flo
 											{
 												TotalPoints -= gPugCvar.m_ST_RwsC4Explode->value;
 
-												this->m_Player[Auth].Stats[this->m_State].RoundWinShare += gPugCvar.m_ST_RwsC4Explode->value;
+												this->m_Player[Auth].Stats[State].RoundWinShare += gPugCvar.m_ST_RwsC4Explode->value;
 											}
 										}
 
 										if (this->m_Player[Auth].Round.Damage > 0)
 										{
-											this->m_Player[Auth].Stats[this->m_State].RoundWinShare += ((((float)this->m_Player[Auth].Round.Damage * (TotalPoints / 100.0f)) / TeamRoundDamage[Winner]) * 100.0f);
+											this->m_Player[Auth].Stats[State].RoundWinShare += ((((float)this->m_Player[Auth].Round.Damage * (TotalPoints / 100.0f)) / TeamRoundDamage[Winner]) * 100.0f);
 										}
 									}
 									else
 									{
 										if (this->m_Player[Auth].Round.Damage > 0)
 										{
-											this->m_Player[Auth].Stats[this->m_State].RoundWinShare += (((float)this->m_Player[Auth].Round.Damage / TeamRoundDamage[Winner]) * 100.0f);
+											this->m_Player[Auth].Stats[State].RoundWinShare += (((float)this->m_Player[Auth].Round.Damage / TeamRoundDamage[Winner]) * 100.0f);
 										}
 									}
 								}
 								else
 								{
-									this->m_Player[Auth].Stats[this->m_State].RoundLose++;
+									this->m_Player[Auth].Stats[State].RoundLose++;
 								}
 
 								if (this->m_Player[Auth].Round.Frags > 0)
 								{
-									this->m_Player[Auth].Stats[this->m_State].KillStreak[this->m_Player[Auth].Round.Frags]++;
+									this->m_Player[Auth].Stats[State].KillStreak[this->m_Player[Auth].Round.Frags]++;
 								}
 							}
 						}
@@ -710,7 +739,9 @@ void CPugStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, flo
 
 void CPugStats::MakeBomber(CBasePlayer* Player)
 {
-	if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
+	auto State = gPugMod.GetState();
+
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
 		if (Player->m_bHasC4)
 		{
@@ -718,7 +749,7 @@ void CPugStats::MakeBomber(CBasePlayer* Player)
 
 			if (Auth)
 			{
-				this->m_Player[Auth].Stats[this->m_State].BombSpawn++;
+				this->m_Player[Auth].Stats[State].BombSpawn++;
 			}
 		}
 	}
@@ -726,7 +757,9 @@ void CPugStats::MakeBomber(CBasePlayer* Player)
 
 void CPugStats::DropPlayerItem(CBasePlayer* Player, const char* pszItemName)
 {
-	if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
+	auto State = gPugMod.GetState();
+
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
 		if (pszItemName)
 		{
@@ -738,7 +771,7 @@ void CPugStats::DropPlayerItem(CBasePlayer* Player, const char* pszItemName)
 
 					if (Auth)
 					{
-						this->m_Player[Auth].Stats[this->m_State].BombDrop++;
+						this->m_Player[Auth].Stats[State].BombDrop++;
 					}
 				}
 			}
@@ -748,7 +781,9 @@ void CPugStats::DropPlayerItem(CBasePlayer* Player, const char* pszItemName)
 
 void CPugStats::PlantBomb(entvars_t* pevOwner, bool Planted)
 {
-	if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
+	auto State = gPugMod.GetState();
+
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
 		auto Player = UTIL_PlayerByIndexSafe(ENTINDEX(pevOwner));
 
@@ -760,13 +795,13 @@ void CPugStats::PlantBomb(entvars_t* pevOwner, bool Planted)
 			{
 				if (Planted)
 				{
-					this->m_Player[Auth].Stats[this->m_State].BombPlanted++;
+					this->m_Player[Auth].Stats[State].BombPlanted++;
 
 					this->OnEvent(EVENT_BOMB_PLANTED, ROUND_NONE, Player, nullptr);
 				}
 				else
 				{
-					this->m_Player[Auth].Stats[this->m_State].BombPlanting++;
+					this->m_Player[Auth].Stats[State].BombPlanting++;
 				}
 			}
 		}
@@ -775,17 +810,19 @@ void CPugStats::PlantBomb(entvars_t* pevOwner, bool Planted)
 
 void CPugStats::DefuseBombStart(CBasePlayer* Player)
 {
-	if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
+	auto State = gPugMod.GetState();
+
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
 		auto Auth = this->GetAuthId(Player);
 
 		if (Auth)
 		{
-			this->m_Player[Auth].Stats[this->m_State].BombDefusing++;
+			this->m_Player[Auth].Stats[State].BombDefusing++;
 
 			if (Player->m_bHasDefuser)
 			{
-				this->m_Player[Auth].Stats[this->m_State].BombDefusingKit++;
+				this->m_Player[Auth].Stats[State].BombDefusingKit++;
 			}
 		}
 	}
@@ -793,7 +830,9 @@ void CPugStats::DefuseBombStart(CBasePlayer* Player)
 
 void CPugStats::DefuseBombEnd(CBasePlayer* Player, bool Defused)
 {
-	if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
+	auto State = gPugMod.GetState();
+
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
 		auto Auth = this->GetAuthId(Player);
 
@@ -801,11 +840,11 @@ void CPugStats::DefuseBombEnd(CBasePlayer* Player, bool Defused)
 		{
 			if (Defused)
 			{
-				this->m_Player[Auth].Stats[this->m_State].BombDefused++;
+				this->m_Player[Auth].Stats[State].BombDefused++;
 
 				if (Player->m_bHasDefuser)
 				{
-					this->m_Player[Auth].Stats[this->m_State].BombDefusedKit++;
+					this->m_Player[Auth].Stats[State].BombDefusedKit++;
 				}
 
 				this->m_Player[Auth].Round.BombDefused = true;
@@ -818,7 +857,9 @@ void CPugStats::DefuseBombEnd(CBasePlayer* Player, bool Defused)
 
 void CPugStats::ExplodeBomb(CGrenade* pThis, TraceResult* ptr, int bitsDamageType)
 {
-	if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF || this->m_State == STATE_OVERTIME)
+	auto State = gPugMod.GetState();
+
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
 		if (pThis->m_bIsC4)
 		{
@@ -832,7 +873,7 @@ void CPugStats::ExplodeBomb(CGrenade* pThis, TraceResult* ptr, int bitsDamageTyp
 
 					if (Auth)
 					{
-						this->m_Player[Auth].Stats[this->m_State].BombExploded++;
+						this->m_Player[Auth].Stats[State].BombExploded++;
 
 						this->m_Player[Auth].Round.BombExploded = true;
 
@@ -873,8 +914,11 @@ bool CPugStats::SayText(int msg_dest, int msg_type, const float* pOrigin, edict_
 						// If is chat for all or for all dead
 						if (!Q_stricmp("#Cstrike_Chat_All", Format) || !Q_stricmp("#Cstrike_Chat_AllDead", Format))
 						{
+							// Get State
+							auto State = gPugMod.GetState();
+
                             // If match is running
-                            if (gPugStats.m_State != STATE_DEAD)
+                            if (State != STATE_DEAD)
                             {
                                 // If player is not null
                                 if (Player)
@@ -895,7 +939,7 @@ bool CPugStats::SayText(int msg_dest, int msg_type, const float* pOrigin, edict_
                                             Chat.Time = time(NULL);
 
                                             // Set match state
-                                            Chat.State = gPugStats.m_State;
+                                            Chat.State = State;
 
                                             // Set team
                                             Chat.Team = static_cast<int>(Player->m_iTeam);
