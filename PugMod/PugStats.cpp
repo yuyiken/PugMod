@@ -1238,15 +1238,15 @@ void CPugStats::ExportData()
 				PlayerStats.BombDefusedKit += Stats.second.BombDefusedKit;
 				//
 				// Kill streak
-				for (size_t i = 0;i < Stats.second.KillStreak.size();i++)
+				for (auto & ks : Stats.second.KillStreak)
 				{
-					PlayerStats.KillStreak[i] += Stats.second.KillStreak[i];
+					PlayerStats.KillStreak[ks.first] += ks.second;
 				}
 				//
 				// Versus
-				for (size_t i = 0; i < Stats.second.Versus.size(); i++)
+				for (auto & vs : Stats.second.Versus)
 				{
-					PlayerStats.Versus[i] += Stats.second.Versus[i];
+					PlayerStats.Versus[vs.first] += vs.second;
 				}
 				//
 				// HitBox (0 Hits, 1 Damage, 1 Hits Received, 3 Damage Received)
