@@ -1197,7 +1197,7 @@ void CPugStats::SaveData()
 			// If state
 			if (Stats.first == STATE_FIRST_HALF || Stats.first == STATE_SECOND_HALF || Stats.first == STATE_OVERTIME)
 			{
-				Data["Player"][Player.first]["Stats"][Stats.first] =
+				Data["Player"][Player.first]["Stats"][std::to_string(Stats.first)] =
 				{
 					// Player stats
 					{"Frags",Stats.second.Frags},
@@ -1263,8 +1263,7 @@ void CPugStats::SaveData()
 				// Weapon Stats
 				for (auto const& Weapon : Stats.second.Weapon)
 				{
-					//this->m_Player[Auth].Stats[State].Weapon[Player->m_pActiveItem->m_iId].Shots++;
-					Data["Player"][Player.first]["Weapons"][Weapon.first] =
+					Data["Player"][Player.first]["Weapon"][std::to_string(Weapon.first)] =
 					{
 						{"Frags", Weapon.second.Frags},
 						{"Deaths", Weapon.second.Deaths},
