@@ -119,20 +119,42 @@ void CPugServerCmd::AddMap()
 void CPugServerCmd::Status()
 {
     auto Players = gPugUtil.GetPlayers();
-    
+
     auto State = gPugMod.GetState();
 
-    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Status: %s (%s)", gPugCvar.m_Tag->string, gPugMod.GetString(State), STRING(gpGlobals->mapname));
-    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] %s: %d", gPugCvar.m_Tag->string,g_Pug_TeamName[TERRORIST], Players[TERRORIST].size());
-    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] %s: %d", gPugCvar.m_Tag->string,g_Pug_TeamName[CT], Players[CT].size());
-    gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] %s: %d", gPugCvar.m_Tag->string,g_Pug_TeamName[SPECTATOR], Players[SPECTATOR].size());
+    gpMetaUtilFuncs->pfnLogConsole
+    (
+        PLID, 
+        "[%s] Status: %s (%s)", 
+        gPugCvar.m_Tag->string, 
+        gPugMod.GetString(State), 
+        STRING(gpGlobals->mapname)
+    );
+
+    gpMetaUtilFuncs->pfnLogConsole
+    (
+        PLID,
+        "[%s] Players: (%s %d) x (%s %d) x (%s %d)",
+        gPugCvar.m_Tag->string, 
+        g_Pug_TeamName[TERRORIST],
+        Players[TERRORIST].size(),
+        g_Pug_TeamName[CT],
+        Players[CT].size(),
+        g_Pug_TeamName[SPECTATOR],
+        Players[SPECTATOR].size()
+    );
 
     if (State >= STATE_FIRST_HALF && State <= STATE_END)
     {
-        if (g_pGameRules)
-        {
-            gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Score %s: %d", gPugCvar.m_Tag->string, g_Pug_TeamName[TERRORIST], CSGameRules()->m_iNumTerroristWins);
-            gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Score %s: %d", gPugCvar.m_Tag->string, g_Pug_TeamName[CT], CSGameRules()->m_iNumCTWins);
-        }
+        gpMetaUtilFuncs->pfnLogConsole
+        (
+            PLID, 
+            "[%s] Scores: (%s %d) x (%s %d)", 
+            gPugCvar.m_Tag->string, 
+            g_Pug_TeamName[TERRORIST], 
+            gPugMod.GetScore(TERRORIST),
+            g_Pug_TeamName[CT], 
+            gPugMod.GetScore(CT)
+        );
     }
 }

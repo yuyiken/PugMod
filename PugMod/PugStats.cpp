@@ -1213,7 +1213,7 @@ void CPugStats::SaveData()
 					{"Suicides",Stats.second.Suicides},
 					//
 					// Round Win Share
-					{"RoundWinShare", Stats.second.RoundWinShare > 0 ? (Stats.second.RoundWinShare / static_cast<float>(this->m_Match.Rounds)) : 0},
+					{"RoundWinShare", Stats.second.RoundWinShare > 0.0f ? (Stats.second.RoundWinShare / static_cast<float>(Stats.second.RoundWin)) : 0.0f},
 					//
 					// Misc Frags
 					{"BlindFrags",Stats.second.BlindFrags},
