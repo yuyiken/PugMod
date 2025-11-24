@@ -104,7 +104,7 @@ void CPugVoteMap::Stop()
         {
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Selection failed: No votes."), gPugCvar.m_Tag->string);
 
-            if (gPugUtil.GetPlayers(true, true).size() >= static_cast<size_t>(gPugCvar.m_PlayersMin->value))
+            if (gPugUtil.GetPlayers(true, false).size() >= static_cast<size_t>(gPugCvar.m_PlayersMin->value))
             {
                 gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, STATE_VOTEMAP);
 
