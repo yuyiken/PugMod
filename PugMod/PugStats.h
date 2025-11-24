@@ -169,10 +169,10 @@ typedef struct S_PLAYER_STATS
 	int BombDefusedKit;			// BETA: Bomb Defuses with Kit
 
 	// BETA: Kill streak
-	std::map<int, int> KillStreak;
+	std::array<int, 10> KillStreak;
 
 	// BETA: Versus: 1 vs X win situations
-	std::map<int, int> Versus;
+	std::array<int, 10> Versus;
 	
 	// BETA: HitBox (0 Hits, 1 Damage, 2 Hits Received, 3 Damage Received)
 	std::array<std::array<int, 4>, 9> HitBox;
@@ -241,10 +241,10 @@ typedef struct S_PLAYER_STATS
 		this->BombDefusedKit = 0;
 
 		// Kill streak
-		this->KillStreak.clear();
+		this->KillStreak.fill(0);
 
 		// Versus: 1 vs X win situations
-		this->Versus.clear();
+		this->Versus.fill(0);
 
 		// HitBox (0 Hits, 1 Damage, 1 Hits Received, 3 Damage Received)
 		this->HitBox = {};
@@ -336,16 +336,10 @@ public:
 	void ExplodeBomb(CGrenade* pThis, TraceResult* ptr, int bitsDamageType);
 	static bool SayText(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
 	void OnEvent(GameEventType event, int ScenarioEvent, CBaseEntity* pEntity, CBaseEntity* pEntityOther);
-	void ExportData();
-
+	void SaveData();
 private:
-	// Match Data
 	P_MATCH_STATS m_Match;
-
-	// Player Data
 	std::map<std::string, P_PLAYER_DATA> m_Player;
-
-	// Match event data
 	std::vector<P_ROUND_EVENT> m_RoundEvent;
 };
 
