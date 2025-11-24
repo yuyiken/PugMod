@@ -120,8 +120,8 @@ typedef struct S_PLAYER_STATS
 	// Stats
 	int Frags;					// BETA: Player Frags
 	int Deaths;					// BETA: Player Deaths
-	int Assists;				// BETA: Player Kill Assists
-	int Headshots;				// BETA: Headshots by player
+	int Assists;				// TEST: Player Kill Assists
+	int Headshots;				// TEST: Headshots by player
 	int Shots;					// BETA: Shots by player
 	int Hits;					// BETA: Hits done by player
 	int HitsReceived;			// BETA: Hits received by player
@@ -138,11 +138,11 @@ typedef struct S_PLAYER_STATS
 	int BlindDeaths;			// BETA: Player deaths when blinded by flashbang
 	int OneShot;				// BETA: One Shot Frags (Except for AWP)
 	int NoScope;				// BETA: No Scope Frags
-	int FlyFrags;				// BETA: Flying Frags
-	int WallFrags;				// BETA: Wallbang Frags
+	int FlyFrags;				// TEST: Flying Frags
+	int WallFrags;				// TEST: Wallbang Frags
 	int DoubleKill;				// BETA: Double Kill
-	int SmokeFrags;				// TODO: Smoke grenade penetration kill (bullets went through smoke)
-	int AssistedFlash;			// TODO: Assister helped with a flash
+	int SmokeFrags;				// BETA: Smoke grenade penetration kill (bullets went through smoke)
+	int AssistedFlash;			// TEST: Assister helped with a flash
 
 	// TODO: Count of Knife Duels in match (0 Wins, 1 Loses)
 	int KnifeDuelWin;
@@ -169,10 +169,10 @@ typedef struct S_PLAYER_STATS
 	int BombDefusedKit;			// BETA: Bomb Defuses with Kit
 
 	// BETA: Kill streak
-	std::array<int, 10> KillStreak;
+	std::array<int, MAX_CLIENTS / 2> KillStreak;
 
 	// BETA: Versus: 1 vs X win situations
-	std::array<int, 10> Versus;
+	std::array<int, MAX_CLIENTS / 2> Versus;
 	
 	// BETA: HitBox (0 Hits, 1 Damage, 2 Hits Received, 3 Damage Received)
 	std::array<std::array<int, 4>, 9> HitBox;
@@ -180,10 +180,10 @@ typedef struct S_PLAYER_STATS
 	// BETA: Weapon Stats
 	std::map<int, P_WEAPON_STATS> Weapon;
 
-	// TODO: Dominations
+	// TEST: Dominations
 	std::map<std::string, int> Domination;
 
-	// TODO: Revenges
+	// TEST: Revenges
 	std::map<std::string, int> Revenge;
 	
 	// Clear stats
@@ -241,10 +241,10 @@ typedef struct S_PLAYER_STATS
 		this->BombDefusedKit = 0;
 
 		// Kill streak
-		this->KillStreak.fill(0);
+		this->KillStreak = {};
 
 		// Versus: 1 vs X win situations
-		this->Versus.fill(0);
+		this->Versus = {};
 
 		// HitBox (0 Hits, 1 Damage, 1 Hits Received, 3 Damage Received)
 		this->HitBox = {};

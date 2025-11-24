@@ -384,7 +384,7 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 
 					this->m_Player[KillerAuth].Round.KillTime = gpGlobals->time;
 
-					if (Victim->m_bHeadshotKilled)
+					if (iRarityOfKill & 0x001 /*KILLRARITY_HEADSHOT*/)
 					{
 						this->m_Player[KillerAuth].Stats[State].Headshots++;
 
@@ -393,41 +393,47 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 						this->m_Player[KillerAuth].Round.Headshots++;
 					}
 
-					for (int i = 1; i <= gpGlobals->maxClients; ++i)
+					if (iRarityOfKill & 0x010 /*KILLRARITY_THRUSMOKE*/)
 					{
-						auto Player = UTIL_PlayerByIndexSafe(i);
+						this->m_Player[KillerAuth].Stats[State].SmokeFrags++;
+					}
 
-						if (Player)
+					if (iRarityOfKill & 0x020 /*KILLRARITY_ASSISTEDFLASH*/)
+					{
+						if (Assister)
 						{
-							if (!Player->IsDormant())
-							{
-								if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
-								{
-									if (Player->entindex() != KillerIndex)
-									{
-										auto Auth = this->GetAuthId(Player);
+							auto AssisterAuth = this->GetAuthId(Assister);
 
-										if (Auth)
-										{
-											if (this->m_Player[Auth].Round.PlayerDamage[VictimAuth] >= static_cast<int>(gPugCvar.m_ST_AssistanceDmg->value))
-											{
-												this->m_Player[Auth].Stats[State].Assists++;
-											}
-										}
-									}
-								}
+							if (AssisterAuth)
+							{
+								this->m_Player[AssisterAuth].Stats[State].AssistedFlash++;
+							}
+						}
+					}
+
+					if (iDeathMessageFlags & 0x002 /*PLAYERDEATH_ASSISTANT*/)
+					{
+						if (Assister)
+						{
+							auto AssisterAuth = this->GetAuthId(Assister);
+
+							if (AssisterAuth)
+							{
+								this->m_Player[AssisterAuth].Stats[State].Assists++;
 							}
 						}
 					}
 
 					if (!Victim->m_bKilledByGrenade)
 					{
-						if (Killer->IsBlind())
+						const float flPeekTime = 0.6f;
+
+						if (Killer->m_blindAlpha >= 255 && Killer->m_blindFadeTime > (flPeekTime * 2.0f) && (Killer->m_blindStartTime + Killer->m_blindHoldTime + flPeekTime) > gpGlobals->time)
 						{
 							this->m_Player[KillerAuth].Stats[State].BlindFrags++;
 						}
 
-						if (Victim->IsBlind())
+						if (Victim->m_blindAlpha >= 255 && Victim->m_blindFadeTime > (flPeekTime * 2.0f) && (Victim->m_blindStartTime + Victim->m_blindHoldTime + flPeekTime) > gpGlobals->time)
 						{
 							this->m_Player[VictimAuth].Stats[State].BlindDeaths++;
 						}
@@ -446,29 +452,30 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 
 					if (ItemIndex == WEAPON_AWP || ItemIndex == WEAPON_SCOUT || ItemIndex == WEAPON_G3SG1 || ItemIndex == WEAPON_SG550)
 					{
-						if (Killer->m_iClientFOV == DEFAULT_FOV)
+						if (iRarityOfKill & 0x004 /* KILLRARITY_NOSCOPE */)
 						{
 							this->m_Player[KillerAuth].Stats[State].NoScope++;
 						}
 					}
 
-					if (!(Victim->edict()->v.flags & FL_ONGROUND))
+					if (iRarityOfKill & 0x200 /* KILLRARITY_INAIR */)
 					{
-						if (Victim->m_flFallVelocity > 0.0f)
-						{
-							this->m_Player[KillerAuth].Stats[State].FlyFrags++;
-						}
+						this->m_Player[KillerAuth].Stats[State].FlyFrags++;
 					}
 
-					if (ItemIndex != WEAPON_HEGRENADE)
+					if (iRarityOfKill & 0x008 /* KILLRARITY_PENETRATED */)
 					{
-						if (!gPugUtil.IsPlayerVisible(Killer, Victim))
-						{
-							if (Killer->IsAlive())
-							{
-								this->m_Player[KillerAuth].Stats[State].WallFrags++;
-							}
-						}
+						this->m_Player[KillerAuth].Stats[State].WallFrags++;
+					}
+
+					if (iRarityOfKill & 0x080 /* KILLRARITY_DOMINATION */)
+					{
+						this->m_Player[KillerAuth].Stats[State].Domination[VictimAuth]++;
+					}
+
+					if (iRarityOfKill & 0x100 /* KILLRARITY_REVENGE */)
+					{
+						this->m_Player[KillerAuth].Stats[State].Revenge[VictimAuth]++;
 					}
 
 					if (g_pGameRules)
@@ -1261,19 +1268,34 @@ void CPugStats::SaveData()
 				};
 				//
 				// Weapon Stats
-				for (auto const& Weapon : Stats.second.Weapon)
+				if (!Stats.second.Weapon.empty())
 				{
-					Data["Player"][Player.first]["Weapon"][std::to_string(Weapon.first)] =
+					for (auto const& Weapon : Stats.second.Weapon)
 					{
-						{"Frags", Weapon.second.Frags},
-						{"Deaths", Weapon.second.Deaths},
-						{"Headshots", Weapon.second.Headshots},
-						{"Shots", Weapon.second.Shots},
-						{"Hits", Weapon.second.Hits},
-						{"HitsReceived", Weapon.second.HitsReceived},
-						{"Damage", Weapon.second.Damage},
-						{"DamageReceived", Weapon.second.DamageReceived}
-					};
+						Data["Player"][Player.first]["Weapon"][std::to_string(Weapon.first)] =
+						{
+							{"Frags", Weapon.second.Frags},
+							{"Deaths", Weapon.second.Deaths},
+							{"Headshots", Weapon.second.Headshots},
+							{"Shots", Weapon.second.Shots},
+							{"Hits", Weapon.second.Hits},
+							{"HitsReceived", Weapon.second.HitsReceived},
+							{"Damage", Weapon.second.Damage},
+							{"DamageReceived", Weapon.second.DamageReceived}
+						};
+					}
+				}
+				//
+				// Domination
+				if (!Stats.second.Domination.empty())
+				{
+					Data["Player"][Player.first]["Domination"] = Stats.second.Domination;
+				}
+				//
+				// Revenge
+				if (!Stats.second.Revenge.empty())
+				{
+					Data["Player"][Player.first]["Revenge"] = Stats.second.Revenge;
 				}
 			}
 		}
