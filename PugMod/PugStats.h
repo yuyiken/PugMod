@@ -120,8 +120,8 @@ typedef struct S_PLAYER_STATS
 	// Stats
 	int Frags;					// BETA: Player Frags
 	int Deaths;					// BETA: Player Deaths
-	int Assists;				// TEST: Player Kill Assists
-	int Headshots;				// TEST: Headshots by player
+	int Assists;				// BETA: Player Kill Assists
+	int Headshots;				// BETA: Headshots by player
 	int Shots;					// BETA: Shots by player
 	int Hits;					// BETA: Hits done by player
 	int HitsReceived;			// BETA: Hits received by player
@@ -138,11 +138,11 @@ typedef struct S_PLAYER_STATS
 	int BlindDeaths;			// BETA: Player deaths when blinded by flashbang
 	int OneShot;				// BETA: One Shot Frags (Except for AWP)
 	int NoScope;				// BETA: No Scope Frags
-	int FlyFrags;				// TEST: Flying Frags
-	int WallFrags;				// TEST: Wallbang Frags
+	int FlyFrags;				// BETA: Flying Frags
+	int WallFrags;				// BETA: Wallbang Frags
 	int DoubleKill;				// BETA: Double Kill
 	int SmokeFrags;				// BETA: Smoke grenade penetration kill (bullets went through smoke)
-	int AssistedFlash;			// TEST: Assister helped with a flash
+	int AssistedFlash;			// BETA: Assister helped with a flash
 
 	// TODO: Count of Knife Duels in match (0 Wins, 1 Loses)
 	int KnifeDuelWin;
@@ -180,10 +180,10 @@ typedef struct S_PLAYER_STATS
 	// BETA: Weapon Stats
 	std::map<int, P_WEAPON_STATS> Weapon;
 
-	// TEST: Dominations
+	// BETA: Dominations
 	std::map<std::string, int> Domination;
 
-	// TEST: Revenges
+	// BETA: Revenges
 	std::map<std::string, int> Revenge;
 	
 	// Clear stats

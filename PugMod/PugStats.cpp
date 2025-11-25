@@ -426,14 +426,12 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 
 					if (!Victim->m_bKilledByGrenade)
 					{
-						const float flPeekTime = 0.6f;
-
-						if (Killer->m_blindAlpha >= 255 && Killer->m_blindFadeTime > (flPeekTime * 2.0f) && (Killer->m_blindStartTime + Killer->m_blindHoldTime + flPeekTime) > gpGlobals->time)
+						if (Killer->IsBlind())
 						{
 							this->m_Player[KillerAuth].Stats[State].BlindFrags++;
 						}
 
-						if (Victim->m_blindAlpha >= 255 && Victim->m_blindFadeTime > (flPeekTime * 2.0f) && (Victim->m_blindStartTime + Victim->m_blindHoldTime + flPeekTime) > gpGlobals->time)
+						if (Victim->IsBlind())
 						{
 							this->m_Player[VictimAuth].Stats[State].BlindDeaths++;
 						}
@@ -1268,34 +1266,31 @@ void CPugStats::SaveData()
 				};
 				//
 				// Weapon Stats
-				if (!Stats.second.Weapon.empty())
+				for (auto const& Weapon : Stats.second.Weapon)
 				{
-					for (auto const& Weapon : Stats.second.Weapon)
+					Data["Player"][Player.first]["Weapon"][std::to_string(Stats.first)][std::to_string(Weapon.first)] =
 					{
-						Data["Player"][Player.first]["Weapon"][std::to_string(Weapon.first)] =
-						{
-							{"Frags", Weapon.second.Frags},
-							{"Deaths", Weapon.second.Deaths},
-							{"Headshots", Weapon.second.Headshots},
-							{"Shots", Weapon.second.Shots},
-							{"Hits", Weapon.second.Hits},
-							{"HitsReceived", Weapon.second.HitsReceived},
-							{"Damage", Weapon.second.Damage},
-							{"DamageReceived", Weapon.second.DamageReceived}
-						};
-					}
+						{"Frags", Weapon.second.Frags},
+						{"Deaths", Weapon.second.Deaths},
+						{"Headshots", Weapon.second.Headshots},
+						{"Shots", Weapon.second.Shots},
+						{"Hits", Weapon.second.Hits},
+						{"HitsReceived", Weapon.second.HitsReceived},
+						{"Damage", Weapon.second.Damage},
+						{"DamageReceived", Weapon.second.DamageReceived}
+					};
 				}
 				//
 				// Domination
-				if (!Stats.second.Domination.empty())
+				for (auto const& Domination : Stats.second.Domination)
 				{
-					Data["Player"][Player.first]["Domination"] = Stats.second.Domination;
+					Data["Player"][Player.first]["Domination"][std::to_string(Stats.first)][Domination.first] = Domination.second;
 				}
 				//
 				// Revenge
-				if (!Stats.second.Revenge.empty())
+				for (auto const& Revenge : Stats.second.Revenge)
 				{
-					Data["Player"][Player.first]["Revenge"] = Stats.second.Revenge;
+					Data["Player"][Player.first]["Revenge"][std::to_string(Stats.first)][Revenge.first] = Revenge.second;
 				}
 			}
 		}

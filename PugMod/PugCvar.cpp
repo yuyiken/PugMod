@@ -462,11 +462,6 @@ void CPugCvar::ServerActivate()
     // Default "1"
     this->m_DM_MoneyFrag = this->Register("pug_dm_money_frag", "0");
 
-	// Mininum damage to take assistance for player
-    //
-    // Default "50"
-    this->m_ST_AssistanceDmg = gPugCvar.Register("pug_stats_assist_dmg", "50");
-
 	// Round Win Share
     // Total of Round Win Share points to be divided by winner team of round
     //

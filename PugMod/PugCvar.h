@@ -78,7 +78,6 @@ public:
 	cvar_t* m_DM_KillSound;
 	cvar_t* m_DM_MoneyFrag;
 
-	cvar_t* m_ST_AssistanceDmg;
 	cvar_t* m_ST_RwsTotalPoints;
 	cvar_t* m_ST_RwsC4Explode;
 	cvar_t* m_ST_RwsC4Defused;
