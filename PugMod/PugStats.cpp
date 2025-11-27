@@ -1268,7 +1268,7 @@ void CPugStats::SaveData()
 				// Weapon Stats
 				for (auto const& Weapon : Stats.second.Weapon)
 				{
-					Data["Player"][Player.first]["Weapon"][std::to_string(Stats.first)][std::to_string(Weapon.first)] =
+					Data["Player"][Player.first]["Stats"][std::to_string(Stats.first)]["Weapon"][std::to_string(Weapon.first)] =
 					{
 						{"Frags", Weapon.second.Frags},
 						{"Deaths", Weapon.second.Deaths},
@@ -1284,13 +1284,13 @@ void CPugStats::SaveData()
 				// Domination
 				for (auto const& Domination : Stats.second.Domination)
 				{
-					Data["Player"][Player.first]["Domination"][std::to_string(Stats.first)][Domination.first] = Domination.second;
+					Data["Player"][Player.first]["Stats"][std::to_string(Stats.first)]["Domination"][Domination.first] = Domination.second;
 				}
 				//
 				// Revenge
 				for (auto const& Revenge : Stats.second.Revenge)
 				{
-					Data["Player"][Player.first]["Revenge"][std::to_string(Stats.first)][Revenge.first] = Revenge.second;
+					Data["Player"][Player.first]["Stats"][std::to_string(Stats.first)]["Revenge"][Revenge.first] = Revenge.second;
 				}
 			}
 		}
@@ -1352,13 +1352,13 @@ void CPugStats::SaveData()
 
 		DataFile.close();
 
-		if (gPugCvar.m_API_Enable->value)
+		if (gPugCvar.m_API_Enable->value > 0.0f)
 		{
 			if (gPugCvar.m_API_Address->string)
 			{
                 if (gPugCvar.m_API_Address->string[0u] != '\0')
                 {
-                    gPugCurl.PostJSON(gPugCvar.m_API_Address->string, static_cast<long>(gPugCvar.m_API_Timeout->value), gPugCvar.m_API_Bearer->string, Data.dump());
+                    gPugCurl.PostJSON(gPugCvar.m_API_Address->string, (long)(gPugCvar.m_API_Timeout->value), gPugCvar.m_API_Bearer->string, Data.dump());
                 }
 			}
 		}

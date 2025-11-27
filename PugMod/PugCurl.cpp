@@ -32,7 +32,7 @@ void CPugCurl::StartFrame()
 			{
 				if (MsgInfo->msg == CURLMSG_DONE)
 				{
-					int Index = 0;
+					long Index = 0;
 
 					curl_easy_getinfo(MsgInfo->easy_handle, CURLINFO_PRIVATE, &Index);
 
@@ -63,11 +63,11 @@ void CPugCurl::PostJSON(const char* url, long Timeout, std::string BearerToken, 
 
 			if (ch)
 			{
-				this->m_Data[this->m_RequestIndex] = { };
+				this->m_Data[this->m_RequestIndex] = {0};
 
 				curl_easy_setopt(ch, CURLOPT_URL, url);
 
-				curl_easy_setopt(ch, CURLOPT_TIMEOUT, (Timeout) > 0 ? Timeout : 5);
+				curl_easy_setopt(ch, CURLOPT_TIMEOUT, (Timeout) > 0 ? Timeout : 10);
 
 				curl_easy_setopt(ch, CURLOPT_FOLLOWLOCATION, 1L);
 
@@ -149,32 +149,41 @@ void CPugCurl::CallbackResult(CURL* ch, size_t Size, const char* Memory)
 			{
 				if (Memory)
 				{
-					try
+					if (Memory[0u] != '\0')
 					{
-						auto Data = nlohmann::ordered_json::parse(Memory, nullptr, true, true);
-
-						if (!Data.empty())
+						try
 						{
-							if (Data.contains("ServerExecute"))
-							{
-								if (Data["ServerExecute"].is_string())
-								{
-									auto String = Data["ServerExecute"].get<std::string>();
+							auto Data = nlohmann::ordered_json::parse(Memory, nullptr, true, true);
 
-									if (!String.empty())
+							if (!Data.empty())
+							{
+								if (Data.contains("ServerExecute"))
+								{
+									if (Data["ServerExecute"].is_string())
 									{
-										gPugUtil.ServerCommand("%s", String.c_str());
+										auto String = Data["ServerExecute"].get<std::string>();
+
+										if (!String.empty())
+										{
+											gPugUtil.ServerCommand("%s", String.c_str());
+										}
 									}
 								}
 							}
 						}
-					}
-					catch (nlohmann::ordered_json::parse_error& e)
-					{
-						LOG_CONSOLE(PLID, "[%s] %s", __func__, e.what());
+						catch (nlohmann::ordered_json::parse_error& e)
+						{
+							LOG_CONSOLE(PLID, "[%s] %s", __func__, e.what());
+						}
 					}
 				}
 			}
+			else
+			{
+				LOG_CONSOLE(PLID, "[%s] Response: HTTP Code %d, check pug_api_address and pug_api_timeout.", Plugin_info.logtag, HttpResponseCode);
+			}
 		}
+
+		curl_easy_cleanup(ch);
 	}
 }

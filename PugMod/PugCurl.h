@@ -14,7 +14,6 @@ public:
 	void PostJSON(const char* url, long Timeout, std::string BearerToken, std::string PostData);
 	static size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, void* userp);
     void CallbackResult(CURL* ch, size_t Size, const char* Memory);
-
 private:
 	CURLM* m_MultiHandle = NULL;
 	long m_RequestIndex = 0;

@@ -493,8 +493,8 @@ void CPugCvar::ServerActivate()
 	// Stats Remote API Timeout
     // Timeout in seconds to wait for response from remote server
     //
-    // Default "5"
-    this->m_API_Timeout = gPugCvar.Register("pug_api_timeout", "5");
+    // Default "10"
+    this->m_API_Timeout = gPugCvar.Register("pug_api_timeout", "10");
 
 	// Stats Remote API Bearer Token send in HTTP Header
     // Leave empty to disable it
