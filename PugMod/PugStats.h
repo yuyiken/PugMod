@@ -75,7 +75,15 @@ typedef struct S_WEAPON_STATS
 	int HitsReceived;
 	int Damage;
 	int DamageReceived;
-} P_WEAPON_STATS, * LP_WEAPON_STATS;
+} P_WEAPON_STATS, *LP_WEAPON_STATS;
+
+// Dominations
+typedef struct S_DOMINATION_STATS
+{
+	int DominationBegin;
+	int Domination;
+	int Revenge;
+} P_DOMINATION_STATS, *LP_DOMINATION_STATS;
 
 // Round Stats
 typedef struct S_ROUND_STATS
@@ -180,11 +188,8 @@ typedef struct S_PLAYER_STATS
 	// BETA: Weapon Stats
 	std::map<int, P_WEAPON_STATS> Weapon;
 
-	// BETA: Dominations
-	std::map<std::string, int> Domination;
-
-	// BETA: Revenges
-	std::map<std::string, int> Revenge;
+	// BETA: Dominations / Revenge
+	std::map<std::string, P_DOMINATION_STATS> Domination;
 	
 	// Clear stats
 	void Reset()
@@ -254,9 +259,6 @@ typedef struct S_PLAYER_STATS
 
 		// Dominations
 		this->Domination.clear();
-
-		// Revenges
-		this->Revenge.clear();
 	}
 } P_PLAYER_STATS, * LP_PLAYER_STATS;
 

@@ -71,7 +71,7 @@ void CPugStats::SetState()
         case STATE_FIRST_HALF:
         {
             // Set start time
-            this->m_Match.StartTime = time(0);
+            this->m_Match.StartTime = time(NULL);
             
             // Set end time
             this->m_Match.EndTime = 0;
@@ -165,7 +165,7 @@ void CPugStats::SetState()
         case STATE_END:
         {
             // Set end time
-            this->m_Match.EndTime = time(0);
+            this->m_Match.EndTime = time(NULL);
 
 			// Save Data
 			this->SaveData();
@@ -198,7 +198,7 @@ void CPugStats::GetIntoGame(CBasePlayer *Player)
 
 	if (Auth)
 	{
-		this->m_Player[Auth].JoinGameTime = time(0);
+		this->m_Player[Auth].JoinGameTime = time(NULL);
 
 		this->m_Player[Auth].Name = STRING(Player->edict()->v.netname);
 
@@ -218,7 +218,7 @@ void CPugStats::DropClient(edict_t *pEntity)
 
         if (Auth)
         {
-            this->m_Player[Auth].DisconnectTime = time(0);
+            this->m_Player[Auth].DisconnectTime = time(NULL);
         }
     }
 }
@@ -466,14 +466,19 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 						this->m_Player[KillerAuth].Stats[State].WallFrags++;
 					}
 
+					if (iRarityOfKill & 0x040 /* KILLRARITY_DOMINATION_BEGAN */)
+					{
+						this->m_Player[KillerAuth].Stats[State].Domination[VictimAuth].DominationBegin++;
+					}
+					
 					if (iRarityOfKill & 0x080 /* KILLRARITY_DOMINATION */)
 					{
-						this->m_Player[KillerAuth].Stats[State].Domination[VictimAuth]++;
+						this->m_Player[KillerAuth].Stats[State].Domination[VictimAuth].Domination++;
 					}
 
 					if (iRarityOfKill & 0x100 /* KILLRARITY_REVENGE */)
 					{
-						this->m_Player[KillerAuth].Stats[State].Revenge[VictimAuth]++;
+						this->m_Player[KillerAuth].Stats[State].Domination[VictimAuth].Revenge++;
 					}
 
 					if (g_pGameRules)
@@ -1281,16 +1286,15 @@ void CPugStats::SaveData()
 					};
 				}
 				//
-				// Domination
+				// Domination / Revenge
 				for (auto const& Domination : Stats.second.Domination)
 				{
-					Data["Player"][Player.first]["Stats"][std::to_string(Stats.first)]["Domination"][Domination.first] = Domination.second;
-				}
-				//
-				// Revenge
-				for (auto const& Revenge : Stats.second.Revenge)
-				{
-					Data["Player"][Player.first]["Stats"][std::to_string(Stats.first)]["Revenge"][Revenge.first] = Revenge.second;
+					Data["Player"][Player.first]["Stats"][std::to_string(Stats.first)]["Domination"][Domination.first] = 
+					{
+						{"DominationBegin", Domination.second.DominationBegin},
+						{"Domination", Domination.second.Domination},
+						{"Revenge", Domination.second.Revenge}
+					};
 				}
 			}
 		}
