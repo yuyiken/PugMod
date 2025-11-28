@@ -311,8 +311,8 @@ void CPugStats::TakeDamage(CBasePlayer* Victim, entvars_t* pevInflictor, entvars
 							this->m_Player[AttackerAuth].Stats[State].Hits++;
 							this->m_Player[AttackerAuth].Stats[State].Damage += DamageTaken;
 
-							this->m_Player[AttackerAuth].Stats[State].HitBox[Victim->m_LastHitGroup][0]++;
-							this->m_Player[AttackerAuth].Stats[State].HitBox[Victim->m_LastHitGroup][1] += DamageTaken;
+							this->m_Player[AttackerAuth].Stats[State].HitBox[Victim->m_LastHitGroup].Hits++;
+							this->m_Player[AttackerAuth].Stats[State].HitBox[Victim->m_LastHitGroup].Damage += DamageTaken;
 
 							this->m_Player[AttackerAuth].Stats[State].Weapon[ItemIndex].Hits++;
 							this->m_Player[AttackerAuth].Stats[State].Weapon[ItemIndex].Damage += DamageTaken;
@@ -320,8 +320,8 @@ void CPugStats::TakeDamage(CBasePlayer* Victim, entvars_t* pevInflictor, entvars
 							this->m_Player[VictimAuth].Stats[State].HitsReceived++;
 							this->m_Player[VictimAuth].Stats[State].DamageReceived += DamageTaken;
 
-							this->m_Player[VictimAuth].Stats[State].HitBox[Victim->m_LastHitGroup][2]++;
-							this->m_Player[VictimAuth].Stats[State].HitBox[Victim->m_LastHitGroup][3] += DamageTaken;
+							this->m_Player[VictimAuth].Stats[State].HitBox[Victim->m_LastHitGroup].HitsReceived++;
+							this->m_Player[VictimAuth].Stats[State].HitBox[Victim->m_LastHitGroup].DamageReceived += DamageTaken;
 
 							this->m_Player[VictimAuth].Stats[State].Weapon[ItemIndex].HitsReceived++;
 							this->m_Player[VictimAuth].Stats[State].Weapon[ItemIndex].DamageReceived += DamageTaken;
@@ -372,6 +372,10 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 					this->m_Player[VictimAuth].Stats[State].Deaths++;
 
 					this->m_Player[VictimAuth].Stats[State].Weapon[ItemIndex].Deaths++;
+
+					this->m_Player[KillerAuth].Stats[State].HitBox[Victim->m_LastHitGroup].Frags++;
+
+					this->m_Player[VictimAuth].Stats[State].HitBox[Victim->m_LastHitGroup].Deaths++;
 
 					this->m_Player[KillerAuth].Round.Frags++;
 
@@ -1210,65 +1214,76 @@ void CPugStats::SaveData()
 				Data["Player"][Player.first]["Stats"][std::to_string(Stats.first)] =
 				{
 					// Player stats
-					{"Frags",Stats.second.Frags},
-					{"Deaths",Stats.second.Deaths},
-					{"Assists",Stats.second.Assists},
-					{"Headshots",Stats.second.Headshots},
-					{"Shots",Stats.second.Shots},
-					{"Hits",Stats.second.Hits},
-					{"HitsReceived",Stats.second.HitsReceived},
-					{"Damage",Stats.second.Damage},
-					{"DamageReceived",Stats.second.DamageReceived},
-					{"Money",Stats.second.Money},
-					{"Suicides",Stats.second.Suicides},
+					{"Frags", Stats.second.Frags},
+					{"Deaths", Stats.second.Deaths},
+					{"Assists", Stats.second.Assists},
+					{"Headshots", Stats.second.Headshots},
+					{"Shots", Stats.second.Shots},
+					{"Hits", Stats.second.Hits},
+					{"HitsReceived", Stats.second.HitsReceived},
+					{"Damage", Stats.second.Damage},
+					{"DamageReceived", Stats.second.DamageReceived},
+					{"Money", Stats.second.Money},
+					{"Suicides", Stats.second.Suicides},
 					//
 					// Round Win Share
 					{"RoundWinShare", Stats.second.RoundWinShare > 0.0f ? (Stats.second.RoundWinShare / static_cast<float>(Stats.second.RoundWin)) : 0.0f},
 					//
 					// Misc Frags
-					{"BlindFrags",Stats.second.BlindFrags},
-					{"BlindDeaths",Stats.second.BlindDeaths},
-					{"OneShot",Stats.second.OneShot},
-					{"NoScope",Stats.second.NoScope},
-					{"FlyFrags",Stats.second.FlyFrags},
-					{"WallFrags",Stats.second.WallFrags},
-					{"DoubleKill",Stats.second.DoubleKill},
-					{"SmokeFrags",Stats.second.SmokeFrags},
-					{"AssistedFlash",Stats.second.AssistedFlash},
+					{"BlindFrags", Stats.second.BlindFrags},
+					{"BlindDeaths", Stats.second.BlindDeaths},
+					{"OneShot", Stats.second.OneShot},
+					{"NoScope", Stats.second.NoScope},
+					{"FlyFrags", Stats.second.FlyFrags},
+					{"WallFrags", Stats.second.WallFrags},
+					{"DoubleKill", Stats.second.DoubleKill},
+					{"SmokeFrags", Stats.second.SmokeFrags},
+					{"AssistedFlash", Stats.second.AssistedFlash},
 					//
 					// Knife Duels
-					{"KnifeDuelWin",Stats.second.KnifeDuelWin},
-					{"KnifeDuelLose",Stats.second.KnifeDuelLose},
+					{"KnifeDuelWin", Stats.second.KnifeDuelWin},
+					{"KnifeDuelLose", Stats.second.KnifeDuelLose},
 					//
 					// Entry Frags and Deaths
-					{"EntryFrags",Stats.second.EntryFrags},
-					{"EntryDeaths",Stats.second.EntryDeaths},
+					{"EntryFrags", Stats.second.EntryFrags},
+					{"EntryDeaths", Stats.second.EntryDeaths},
 					//
 					// Round counter
-					{"RoundPlay",Stats.second.RoundPlay},
-					{"RoundWin",Stats.second.RoundWin},
-					{"RoundLose",Stats.second.RoundLose},
+					{"RoundPlay", Stats.second.RoundPlay},
+					{"RoundWin", Stats.second.RoundWin},
+					{"RoundLose", Stats.second.RoundLose},
 					//
 					// Bomb counter
-					{"BombSpawn",Stats.second.BombSpawn},
-					{"BombDrop",Stats.second.BombDrop},
-					{"BombPlanting",Stats.second.BombPlanting},
-					{"BombPlanted",Stats.second.BombPlanted},
-					{"BombExploded",Stats.second.BombExploded},
-					{"BombDefusing",Stats.second.BombDefusing},
-					{"BombDefusingKit",Stats.second.BombDefusingKit},
-					{"BombDefused",Stats.second.BombDefused},
-					{"BombDefusedKit",Stats.second.BombDefusedKit},
+					{"BombSpawn", Stats.second.BombSpawn},
+					{"BombDrop", Stats.second.BombDrop},
+					{"BombPlanting", Stats.second.BombPlanting},
+					{"BombPlanted", Stats.second.BombPlanted},
+					{"BombExploded", Stats.second.BombExploded},
+					{"BombDefusing", Stats.second.BombDefusing},
+					{"BombDefusingKit", Stats.second.BombDefusingKit},
+					{"BombDefused", Stats.second.BombDefused},
+					{"BombDefusedKit", Stats.second.BombDefusedKit},
 					//
 					// Kill Streak
-					{"KillStreak",Stats.second.KillStreak},
+					{"KillStreak", Stats.second.KillStreak},
 					//
 					// Versus
-					{"Versus",Stats.second.Versus},
-					//
-					// Hitbox Data
-					{"HitBox",Stats.second.HitBox}
+					{"Versus", Stats.second.Versus}
 				};
+				//
+				// Hitbox Stats
+				for (auto const& Hitbox : Stats.second.HitBox)
+				{
+					Data["Player"][Player.first]["Stats"][std::to_string(Stats.first)]["Hitbox"][std::to_string(Hitbox.first)] =
+					{
+						{"Hits", Hitbox.second.Hits},
+						{"Damage", Hitbox.second.Damage},
+						{"HitsReceived", Hitbox.second.HitsReceived},
+						{"DamageReceived", Stats.second.DamageReceived},
+						{"Frags", Hitbox.second.Frags},
+						{"Deaths", Hitbox.second.Deaths},
+					};
+				}
 				//
 				// Weapon Stats
 				for (auto const& Weapon : Stats.second.Weapon)

@@ -77,6 +77,17 @@ typedef struct S_WEAPON_STATS
 	int DamageReceived;
 } P_WEAPON_STATS, *LP_WEAPON_STATS;
 
+// Hitbox Stats
+typedef struct S_HITBOX_STATS
+{
+	int Hits;
+	int Damage;
+	int HitsReceived;
+	int DamageReceived;
+	int Frags;
+	int Deaths;
+} P_HITBOX_STATS, *LP_HITBOX_STATS;
+
 // Dominations
 typedef struct S_DOMINATION_STATS
 {
@@ -182,8 +193,8 @@ typedef struct S_PLAYER_STATS
 	// BETA: Versus: 1 vs X win situations
 	std::array<int, MAX_CLIENTS / 2> Versus;
 	
-	// BETA: HitBox (0 Hits, 1 Damage, 2 Hits Received, 3 Damage Received)
-	std::array<std::array<int, 4>, 9> HitBox;
+	// BETA: HitBox
+	std::map<int, P_HITBOX_STATS> HitBox;
 
 	// BETA: Weapon Stats
 	std::map<int, P_WEAPON_STATS> Weapon;
@@ -251,8 +262,8 @@ typedef struct S_PLAYER_STATS
 		// Versus: 1 vs X win situations
 		this->Versus = {};
 
-		// HitBox (0 Hits, 1 Damage, 1 Hits Received, 3 Damage Received)
-		this->HitBox = {};
+		// HitBox (0 Hits, 1 Damage, 2 Hits Received, 3 Damage Received)
+		this->HitBox.clear();
 
 		// Weapon Stats
 		this->Weapon.clear();
