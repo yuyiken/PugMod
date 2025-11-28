@@ -61,7 +61,6 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalOptions>/MP</AdditionalOptions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
@@ -84,7 +83,6 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalOptions>/MP</AdditionalOptions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

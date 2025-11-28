@@ -92,7 +92,7 @@ jobs:
         mkdir -p Release
 
         # Execute Build
-        msbuild PugMod.vcxproj -property:configuration=Release -nologo -verbosity:minimal -maxcpucount
+        msbuild PugMod.vcxproj -property:configuration=Release -nologo -verbosity:minimal
 
         # Make dlls path
         mkdir -p ../cstrike/addons/pugmod/dlls

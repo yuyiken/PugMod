@@ -18,8 +18,7 @@
                     "${workspaceFolderBasename}.vcxproj",
                     "-property:configuration=Release",
                     "-nologo",
-                    "-verbosity:minimal",
-                    "-maxcpucount"
+                    "-verbosity:minimal"
                 ]
             },
             "linux":
@@ -52,8 +51,7 @@
                     "${workspaceFolderBasename}.vcxproj",
                     "-property:configuration=Debug",
                     "-nologo",
-                    "-verbosity:minimal",
-                    "-maxcpucount"
+                    "-verbosity:minimal"
                 ]
             },
             "linux":
