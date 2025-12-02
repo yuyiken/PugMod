@@ -349,7 +349,7 @@ public:
 	void ExplodeBomb(CGrenade* pThis, TraceResult* ptr, int bitsDamageType);
 	static bool SayText(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
 	void OnEvent(GameEventType event, int ScenarioEvent, CBaseEntity* pEntity, CBaseEntity* pEntityOther);
-	void GenerateData();
+	void DumpData();
 	void SaveData(nlohmann::ordered_json Data);
 	void UploadData(nlohmann::ordered_json Data);
 private:

@@ -169,7 +169,7 @@ void CPugStats::SetState()
             this->m_Match.EndTime = time(NULL);
 
 			// Generate Data
-			this->GenerateData();
+			this->DumpData();
             break;
         }
     }
@@ -1168,7 +1168,7 @@ void CPugStats::OnEvent(GameEventType event, int ScenarioEvent, CBaseEntity* pEn
 	this->m_RoundEvent.push_back(Event);
 }
 
-void CPugStats::GenerateData()
+void CPugStats::DumpData()
 {
 	// Data
 	nlohmann::ordered_json Data;
