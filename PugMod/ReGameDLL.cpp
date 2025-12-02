@@ -195,11 +195,11 @@ BOOL ReGameDLL_HandleMenu_ChooseTeam(IReGameHook_HandleMenu_ChooseTeam *chain, C
 	auto ret = chain->callNext(Player, Slot);
 
 	gPugStats.ChooseTeam(Player);
-	
+
 	return ret;
 }
 
-void ReGameDLL_CBasePlayer_SwitchTeam(IReGameHook_CBasePlayer_SwitchTeam* chain, CBasePlayer* Player)
+void ReGameDLL_CBasePlayer_SwitchTeam(IReGameHook_CBasePlayer_SwitchTeam *chain, CBasePlayer *Player)
 {
 	chain->callNext(Player);
 
@@ -276,7 +276,7 @@ void ReGameDLL_CBasePlayer_OnSpawnEquip(IReGameHook_CBasePlayer_OnSpawnEquip *ch
 
 void ReGameDLL_ShowVGUIMenu(IReGameHook_ShowVGUIMenu *chain, CBasePlayer *Player, int MenuType, int BitMask, char *pszMenuText)
 {
-	if(gPugDM.ShowVGUIMenu(Player, MenuType, BitMask, pszMenuText))
+	if (gPugDM.ShowVGUIMenu(Player, MenuType, BitMask, pszMenuText))
 	{
 		return;
 	}
@@ -323,7 +323,7 @@ void ReGameDLL_CSGameRules_SendDeathMessage(IReGameHook_CSGameRules_SendDeathMes
 
 void ReGameDLL_CBasePlayer_AddAccount(IReGameHook_CBasePlayer_AddAccount *chain, CBasePlayer *Player, int Amount, RewardType Type, bool TrackChange)
 {
-	if(gPugDM.AddAccount(Player, Amount, Type, TrackChange))
+	if (gPugDM.AddAccount(Player, Amount, Type, TrackChange))
 	{
 		Amount = 0;
 	}
@@ -383,7 +383,7 @@ void ReGameDLL_CGrenade_ExplodeSmokeGrenade(IReGameHook_CGrenade_ExplodeSmokeGre
 	g_PugBugFix.ExplodeSmokeGrenade(pThis);
 }
 
-bool ReGameDLL_CBasePlayer_MakeBomber(IReGameHook_CBasePlayer_MakeBomber* chain, CBasePlayer* pthis)
+bool ReGameDLL_CBasePlayer_MakeBomber(IReGameHook_CBasePlayer_MakeBomber *chain, CBasePlayer *pthis)
 {
 	auto ret = chain->callNext(pthis);
 
@@ -392,7 +392,7 @@ bool ReGameDLL_CBasePlayer_MakeBomber(IReGameHook_CBasePlayer_MakeBomber* chain,
 	return ret;
 }
 
-CBaseEntity* ReGameDLL_CBasePlayer_DropPlayerItem(IReGameHook_CBasePlayer_DropPlayerItem* chain, CBasePlayer* pthis, const char* pszItemName)
+CBaseEntity *ReGameDLL_CBasePlayer_DropPlayerItem(IReGameHook_CBasePlayer_DropPlayerItem *chain, CBasePlayer *pthis, const char *pszItemName)
 {
 	auto ret = chain->callNext(pthis, pszItemName);
 
@@ -401,7 +401,7 @@ CBaseEntity* ReGameDLL_CBasePlayer_DropPlayerItem(IReGameHook_CBasePlayer_DropPl
 	return ret;
 }
 
-CGrenade* ReGameDLL_PlantBomb(IReGameHook_PlantBomb* chain, entvars_t* pevOwner, Vector& vecStart, Vector& vecVelocity)
+CGrenade *ReGameDLL_PlantBomb(IReGameHook_PlantBomb *chain, entvars_t *pevOwner, Vector &vecStart, Vector &vecVelocity)
 {
 	gPugStats.PlantBomb(pevOwner, false);
 
@@ -412,21 +412,21 @@ CGrenade* ReGameDLL_PlantBomb(IReGameHook_PlantBomb* chain, entvars_t* pevOwner,
 	return ret;
 }
 
-void ReGameDLL_CGrenade_DefuseBombStart(IReGameHook_CGrenade_DefuseBombStart* chain, CGrenade* pthis, CBasePlayer* pPlayer)
+void ReGameDLL_CGrenade_DefuseBombStart(IReGameHook_CGrenade_DefuseBombStart *chain, CGrenade *pthis, CBasePlayer *pPlayer)
 {
 	chain->callNext(pthis, pPlayer);
 
 	gPugStats.DefuseBombStart(pPlayer);
 }
 
-void ReGameDLL_CGrenade_DefuseBombEnd(IReGameHook_CGrenade_DefuseBombEnd* chain, CGrenade* pthis, CBasePlayer* pPlayer, bool bDefused)
+void ReGameDLL_CGrenade_DefuseBombEnd(IReGameHook_CGrenade_DefuseBombEnd *chain, CGrenade *pthis, CBasePlayer *pPlayer, bool bDefused)
 {
 	gPugStats.DefuseBombEnd(pPlayer, bDefused);
 
 	chain->callNext(pthis, pPlayer, bDefused);
 }
 
-void ReGameDLL_CGrenade_ExplodeBomb(IReGameHook_CGrenade_ExplodeBomb* chain, CGrenade* pthis, TraceResult* ptr, int bitsDamageType)
+void ReGameDLL_CGrenade_ExplodeBomb(IReGameHook_CGrenade_ExplodeBomb *chain, CGrenade *pthis, TraceResult *ptr, int bitsDamageType)
 {
 	gPugStats.ExplodeBomb(pthis, ptr, bitsDamageType);
 
