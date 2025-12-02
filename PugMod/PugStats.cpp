@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "PugStats.h"
 
 CPugStats gPugStats;
 
@@ -167,8 +168,8 @@ void CPugStats::SetState()
             // Set end time
             this->m_Match.EndTime = time(NULL);
 
-			// Save Data
-			this->SaveData();
+			// Generate Data
+			this->GenerateData();
             break;
         }
     }
@@ -1167,7 +1168,7 @@ void CPugStats::OnEvent(GameEventType event, int ScenarioEvent, CBaseEntity* pEn
 	this->m_RoundEvent.push_back(Event);
 }
 
-void CPugStats::SaveData()
+void CPugStats::GenerateData()
 {
 	// Data
 	nlohmann::ordered_json Data;
@@ -1353,24 +1354,46 @@ void CPugStats::SaveData()
 	// If data is not empty
 	if (!Data.empty())
 	{
-		char DateTime[32] = {};
-		strftime(DateTime, sizeof(DateTime), "%y%m%d%H%M", localtime(&this->m_Match.EndTime));
+		// Save data in file
+		this->SaveData(Data);
 
-		auto FullPath = gPugUtil.GetFullPath();
+		// Upload data
+		this->UploadData(Data);
+	}
 
-		char Buffer[MAX_PATH] = {};
-		Q_snprintf(Buffer, sizeof(Buffer), "%s/stats", FullPath);
+	Data.clear();
+}
 
-		gPugUtil.MakeDirectory(Buffer);
+void CPugStats::SaveData(nlohmann::ordered_json Data)
+{
+	if (!Data.empty())
+	{
+		char Date[32] = {};
+		strftime(Date, sizeof(Date), "%y%m%d%H%M", localtime(&this->m_Match.EndTime));
 
-		Q_snprintf(Buffer, sizeof(Buffer), "%s/stats/pug-%s-%s.json", FullPath, DateTime, this->m_Match.Map.c_str());
+		char File[32] = {};
+		Q_snprintf(File, sizeof(File), "pug-%s-%s.json", Date, this->m_Match.Map.c_str());
 
-		std::ofstream DataFile(Buffer);
+		char Path[MAX_PATH] = {};
+		Q_snprintf(Path, sizeof(Path), "%s/stats", gPugUtil.GetFullPath());
+
+		gPugUtil.MakeDirectory(Path);
+
+		char FilePath[MAX_PATH * 2] = {};
+		Q_snprintf(FilePath, sizeof(FilePath), "%s/%s", Path, File);
+
+		std::ofstream DataFile(FilePath);
 
 		DataFile << Data;
 
 		DataFile.close();
+	}
+}
 
+void CPugStats::UploadData(nlohmann::ordered_json Data)
+{
+	if (!Data.empty())
+	{
 		if (gPugCvar.m_API_Enable->value > 0.0f)
 		{
 			if (gPugCvar.m_API_Address->string)
@@ -1382,6 +1405,4 @@ void CPugStats::SaveData()
 			}
 		}
 	}
-
-	Data.clear();
 }
