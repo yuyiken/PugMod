@@ -1,5 +1,5 @@
 # Makefile settings
-MAKEFLAGS += --warn-undefined-variables --silent --jobs=4
+MAKEFLAGS += --warn-undefined-variables --silent
 #
 # Build directory
 BUILD_DIR=Release
