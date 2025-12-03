@@ -99,6 +99,7 @@
 #include "PugSpawnEdit.h"
 #include "PugRoundStats.h"
 #include "PugStats.h"
+#include "PugStatus.h"
 #include "PugTask.h"
 #include "PugTeamManager.h"
 #include "PugTimer.h"

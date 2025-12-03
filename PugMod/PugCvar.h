@@ -86,6 +86,7 @@ public:
 	cvar_t* m_API_Address;
 	cvar_t* m_API_Timeout;
 	cvar_t* m_API_Bearer;
+	cvar_t* m_API_Status;
 };
 
 extern CPugCvar gPugCvar;

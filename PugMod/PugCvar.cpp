@@ -501,6 +501,12 @@ void CPugCvar::ServerActivate()
     //
     // Default ""
     this->m_API_Bearer = gPugCvar.Register("pug_api_bearer_token", "");
+
+    // Time (in seconds) to send server status to API
+    // The minimum value is 20.0, if is less that will disable update
+    //
+    // Default "0"
+    this->m_API_Status = gPugCvar.Register("pug_api_status_update", "0");
 }
 
 cvar_t *CPugCvar::Register(const char *pszName, const char *pszValue)

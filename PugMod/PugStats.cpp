@@ -1,5 +1,4 @@
 #include "precompiled.h"
-#include "PugStats.h"
 
 CPugStats gPugStats;
 

@@ -171,6 +171,8 @@ void DLL_POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 
 	gPugStats.ServerActivate();
 
+	gPugStatus.ServerActivate();
+
 	RETURN_META(MRES_IGNORED);
 }
 
@@ -220,6 +222,8 @@ void DLL_POST_StartFrame()
 	gPugLeader.StartFrame();
 
 	gPugVoteSwapTeam.StartFrame();
+
+	gPugStatus.StartFrame();
 
 	RETURN_META(MRES_IGNORED);
 }
