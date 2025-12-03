@@ -1370,7 +1370,7 @@ void CPugStats::SaveData(nlohmann::ordered_json Data)
 		char Date[32] = {};
 		strftime(Date, sizeof(Date), "%y%m%d%H%M", localtime(&this->m_Match.EndTime));
 
-		char File[32] = {};
+		char File[128] = {};
 		Q_snprintf(File, sizeof(File), "pug-%s-%s.json", Date, this->m_Match.Map.c_str());
 
 		char Path[MAX_PATH] = {};
