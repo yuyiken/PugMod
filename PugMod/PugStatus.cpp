@@ -57,37 +57,44 @@ void CPugStatus::SendStatus()
 
     this->m_Data["MaxRounds"] = static_cast<int>(gPugCvar.m_Rounds->value);
 
-    this->m_Data["NumPlayers"] = 0;
-
     this->m_Data["MaxPlayers"] = gpGlobals->maxClients;
 
-    auto Players = gPugUtil.GetPlayers(false, true);
+    auto Teams = gPugUtil.GetPlayers();
 
-    if (Players.size() > 0)
+    this->m_Data["NumPlayers"] = 
     {
-        this->m_Data["NumPlayers"] = static_cast<int>(Players.size());
+        {"0", Teams[UNASSIGNED].size()},
+        {"1", Teams[TERRORIST].size()},
+        {"2", Teams[CT].size()},
+        {"3", Teams[SPECTATOR].size()}
+    };
 
-        for (auto const & Player : Players)
+    for (auto const & Team : Teams)
+    {
+        if (Team.size() > 0)
         {
-            auto Auth = gPugStats.GetAuthId(Player);
-
-            if (Auth)
+            for (auto const & Player : Team)
             {
-                if (Auth[0u] != '\0')
+                auto Auth = gPugStats.GetAuthId(Player);
+
+                if (Auth)
                 {
-                    this->m_Data["Players"][std::to_string(Player->entindex())] =
+                    if (Auth[0u] != '\0')
                     {
-                        {"EntityId", Player->entindex()},
-                        {"Auth", Auth},
-                        {"Name", STRING(Player->edict()->v.netname)},
-                        {"UserId", g_engfuncs.pfnGetPlayerUserId(Player->edict())},
-                        {"Team", Player->m_iTeam},
-                        {"Frags", static_cast<int>(Player->edict()->v.frags)},
-                        {"Deaths", Player->m_iDeaths},
-                    };
+                        this->m_Data["Players"][std::to_string(Player->entindex())] =
+                        {
+                            {"EntityId", Player->entindex()},
+                            {"Auth", Auth},
+                            {"Name", STRING(Player->edict()->v.netname)},
+                            {"UserId", g_engfuncs.pfnGetPlayerUserId(Player->edict())},
+                            {"Team", Player->m_iTeam},
+                            {"Frags", static_cast<int>(Player->edict()->v.frags)},
+                            {"Deaths", Player->m_iDeaths},
+                        };
+                    }
                 }
-            }
-        }   
+            }   
+        }
     }
 
     if (!this->m_Data.empty())
