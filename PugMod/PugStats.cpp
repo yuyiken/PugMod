@@ -109,7 +109,7 @@ void CPugStats::SetState()
 			// Mininum Players
 			this->m_Match.MinPlayers = static_cast<int>(gPugCvar.m_PlayersMin->value);
 
-			// Maximum Pl,ayers
+			// Maximum Players
 			this->m_Match.MaxPlayers = static_cast<int>(gPugCvar.m_PlayersMax->value);
             
             // Loop each player
