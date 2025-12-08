@@ -1194,6 +1194,8 @@ void CPugStats::DumpData()
 		{"MaxRoundsOT", this->m_Match.MaxRoundsOT},
 		{"GameMode", this->m_Match.GameMode},
 		{"KnifeRound", this->m_Match.KnifeRound},
+		{"MinPlayers", this->m_Match.MinPlayers},
+		{"MaxPlayers", this->m_Match.MaxPlayers}
 	};
 
 	// Player Loop
