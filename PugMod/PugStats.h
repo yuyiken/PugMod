@@ -39,6 +39,12 @@ typedef struct S_MATCH_STATS
 	// Match will have Knife Round
 	int KnifeRound;
 
+	// Minimum Players
+	int MinPlayers;
+
+	// Maximum Players
+	int MaxPlayers;
+
 	// Reset
 	void Reset()
 	{
@@ -54,6 +60,8 @@ typedef struct S_MATCH_STATS
 		this->MaxRoundsOT = 0;
 		this->GameMode = 0;
 		this->KnifeRound = 0;
+		this->MinPlayers = 0;
+		this->MaxPlayers = 0;
 	}
 
 	// Swap Scores
