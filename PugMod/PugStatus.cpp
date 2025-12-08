@@ -87,6 +87,15 @@ void CPugStatus::SendStatus()
                 {
                     if (Auth[0u] != '\0')
                     {
+                        auto Frags = static_cast<int>(Player->edict()->v.frags);
+                        auto Deaths = Player->m_iDeaths;
+
+                        if (State >= STATE_FIRST_HALF && State <= STATE_OVERTIME)
+                        {
+                            Frags = gPugMod.GetPoint(Player->entindex(), 0);
+                            Deaths = gPugMod.GetPoint(Player->entindex(), 1);
+                        }
+
                         this->m_Data["Players"][std::to_string(Player->entindex())] =
                         {
                             {"EntityId", Player->entindex()},
@@ -94,8 +103,8 @@ void CPugStatus::SendStatus()
                             {"Name", STRING(Player->edict()->v.netname)},
                             {"UserId", g_engfuncs.pfnGetPlayerUserId(Player->edict())},
                             {"Team", Player->m_iTeam},
-                            {"Frags", static_cast<int>(Player->edict()->v.frags)},
-                            {"Deaths", Player->m_iDeaths},
+                            {"Frags", Frags},
+                            {"Deaths", Deaths},
                         };
                     }
                 }
