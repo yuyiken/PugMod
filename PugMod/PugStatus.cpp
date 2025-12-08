@@ -37,7 +37,7 @@ void CPugStatus::SendStatus()
 
     this->m_Data["Address"] = g_engfuncs.pfnCVarGetString("net_address");
 
-    this->m_Data["Hostname"] = g_engfuncs.pfnCVarGetString("hostname");
+    this->m_Data["HostName"] = g_engfuncs.pfnCVarGetString("hostname");
 
     this->m_Data["Map"] = STRING(gpGlobals->mapname);
 
@@ -47,7 +47,13 @@ void CPugStatus::SendStatus()
 
     this->m_Data["GameMode"] = static_cast<int>(gPugCvar.m_PlayGameMode->value);
 
-    this->m_Data["State"] = gPugMod.GetString(gPugMod.GetState());
+    auto State = gPugMod.GetState();
+
+    this->m_Data["State"] = gPugMod.GetString(State);
+
+    this->m_Data["StateIndex"] = State;
+
+    this->m_Data["IsLive"] = (State >= STATE_FIRST_HALF && State <= STATE_OVERTIME);
 
     this->m_Data["ScoreTR"] = gPugMod.GetScore(TERRORIST);
 
