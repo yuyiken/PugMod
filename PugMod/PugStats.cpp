@@ -986,6 +986,9 @@ void CPugStats::OnEvent(GameEventType event, int ScenarioEvent, CBaseEntity* pEn
 	
 	// Store event scenario
 	Event.ScenarioEvent = ScenarioEvent;
+
+	// Store State
+	Event.State = gPugMod.GetState();
 	
 	// Switch of event
 	switch (event)
@@ -1347,6 +1350,7 @@ void CPugStats::DumpData()
 			{"Time",Event.Time},
 			{"Type",Event.Type},
 			{"ScenarioEvent", Event.ScenarioEvent},
+			{"State", Event.State},
 			{"Winner",Event.Winner},
 			{"Loser",Event.Loser},
 			{"Killer",Event.Killer.c_str()},

@@ -321,6 +321,7 @@ typedef struct S_ROUND_EVENT
 	float		Time;			// Round Time Seconds;
 	int			Type;			// ROUND_NONE for player events, ScenarioEventEndRound for round events
 	int			ScenarioEvent;	// Scenario Event End Round
+	int 		State;			// Match State
 	int			Winner;			// Winner team of event
 	int			Loser;			// Loser team of event
 	std::string Killer;			// Killer
