@@ -87,6 +87,12 @@ void CPugCvar::ServerActivate()
     // Default "0"
 	this->m_PlayKnifeRound = this->Register("pug_knife_round_mode", "0");
 
+    // The PUG game mode
+    // The string used in server status
+    //
+    // Default "PUG"
+    this->m_ModName = this->Register("pug_mod_name", "PUG");
+
     // Minimum players per team
     //
     // Default "5"

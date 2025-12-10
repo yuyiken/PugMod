@@ -28,6 +28,7 @@ public:
 	cvar_t* m_State;
 	cvar_t* m_PlayGameMode;
 	cvar_t* m_PlayKnifeRound;
+	cvar_t* m_ModName;
 	cvar_t* m_PlayersMin;
 	cvar_t* m_PlayersMax;
 	cvar_t* m_Rounds;

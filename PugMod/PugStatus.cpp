@@ -43,6 +43,8 @@ void CPugStatus::SendStatus()
 
     this->m_Data["Game"] = (g_pGameRules ? CSGameRules()->m_GameDesc : "Counter-Strike");
 
+    this->m_Data["ModName"] = (gPugCvar.m_ModName->string ? gPugCvar.m_ModName->string : "PUG");
+
     this->m_Data["KnifeRound"] = static_cast<int>(gPugCvar.m_PlayKnifeRound->value);
 
     this->m_Data["GameMode"] = static_cast<int>(gPugCvar.m_PlayGameMode->value);
@@ -63,7 +65,11 @@ void CPugStatus::SendStatus()
 
     this->m_Data["MaxRounds"] = static_cast<int>(gPugCvar.m_Rounds->value);
 
-    this->m_Data["MaxPlayers"] = gpGlobals->maxClients;
+    this->m_Data["Slots"] = gpGlobals->maxClients;
+
+    this->m_Data["MinPlayers"] = static_cast<int>(gPugCvar.m_PlayersMin->value);
+
+    this->m_Data["MaxPlayers"] = static_cast<int>(gPugCvar.m_PlayersMax->value);
 
     auto Teams = gPugUtil.GetPlayers();
 
