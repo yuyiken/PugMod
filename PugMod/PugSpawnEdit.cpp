@@ -172,10 +172,10 @@ void CPugSpawnEdit::AddSpawnMenu(CBasePlayer* Player)
 {
 	gPugMenu[Player->entindex()].Create(false, E_MENU::DM_SPAWN_EDIT_ADD_SPAWN, _T("CSDM: Add Spawn Menu"));
 
-	gPugMenu[Player->entindex()].AddItem(1, false, 0, _T("Add current position as a Random Spawn"));
-	gPugMenu[Player->entindex()].AddItem(2, false, 0, _T("Add current position as a TR Spawn"));
-	gPugMenu[Player->entindex()].AddItem(3, false, 0, _T("Add current position as a CT Spawn"));
-	gPugMenu[Player->entindex()].AddItem(4, false, 0, _T("Cancel"));
+	gPugMenu[Player->entindex()].AddItem(0, false, 0, _T("Add current position as a Random Spawn"));
+	gPugMenu[Player->entindex()].AddItem(1, false, 1, _T("Add current position as a TR Spawn"));
+	gPugMenu[Player->entindex()].AddItem(2, false, 2, _T("Add current position as a CT Spawn"));
+	gPugMenu[Player->entindex()].AddItem(3, false, 3, _T("Cancel"));
 
 	gPugMenu[Player->entindex()].Show(Player);
 }
@@ -184,33 +184,18 @@ void CPugSpawnEdit::AddSpawnMenuHandle(CBasePlayer* Player, P_MENU_ITEM Item)
 {
 	if (Player)
 	{
-		if (!Item.Disabled)
+		switch (Item.Info)
 		{
-			switch (Item.Info)
+			case 3:
 			{
-				case 1:
-				{
-					this->AddSpawn(Player->edict()->v, UNASSIGNED, 15.0f);
-					this->AddSpawnMenu(Player);
-					break;
-				}
-				case 2:
-				{
-					this->AddSpawn(Player->edict()->v, TERRORIST, 15.0f);
-					this->AddSpawnMenu(Player);
-					break;
-				}
-				case 3:
-				{
-					this->AddSpawn(Player->edict()->v, CT, 15.0f);
-					this->AddSpawnMenu(Player);
-					break;
-				}
-				case 4:
-				{
-					this->Menu(Player);
-					break;
-				}
+				this->Menu(Player);
+				break;
+			}
+			default:
+			{
+				this->AddSpawn(Player->edict()->v, Item.Info, 15.0f);
+				this->AddSpawnMenu(Player);
+				break;
 			}
 		}
 	}
@@ -302,9 +287,12 @@ edict_t* CPugSpawnEdit::MakeEntity(int EntityIndex)
 				pEntity->v.flags = (pEntity->v.flags & FL_ONGROUND);
 				pEntity->v.sequence = 1;
 
-				if (this->m_Entities[Spawn.first])
+				if (this->m_Entities.find(Spawn.first) != this->m_Entities.end())
 				{
-					g_engfuncs.pfnRemoveEntity(this->m_Entities[Spawn.first]);
+					if (!FNullEnt(this->m_Entities[Spawn.first]))
+					{
+						g_engfuncs.pfnRemoveEntity(this->m_Entities[Spawn.first]);
+					}
 				}
 
 				this->m_Entities[Spawn.first] = pEntity;
@@ -347,9 +335,12 @@ edict_t* CPugSpawnEdit::MakeEntity(int EntityIndex)
 			pEntity->v.flags = (pEntity->v.flags & FL_ONGROUND);
 			pEntity->v.sequence = 1;
 
-			if (this->m_Entities[EntityIndex])
+			if (this->m_Entities.find(EntityIndex) != this->m_Entities.end())
 			{
-				g_engfuncs.pfnRemoveEntity(this->m_Entities[EntityIndex]);
+				if (!FNullEnt(this->m_Entities[EntityIndex]))
+				{
+					g_engfuncs.pfnRemoveEntity(this->m_Entities[EntityIndex]);
+				}
 			}
 
 			this->m_Entities[EntityIndex] = pEntity;
@@ -477,9 +468,9 @@ void CPugSpawnEdit::AddSpawn(entvars_t v, int Team, float FixOrigin)
 
 	Info.VAngles = v.v_angle;
 
-	auto Index = this->m_Spawns.size() + 1;
+	size_t Index = this->m_Spawns.size() + 1;
 
-	this->m_Spawns.insert(std::make_pair(Index, Info));
+	this->m_Spawns[Index] = Info;
 
 	this->MakeEntity(Index);
 }

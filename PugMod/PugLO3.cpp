@@ -29,7 +29,7 @@ void CPugLO3::Init(int Restart)
 
                 g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_SvRestart, "2");
 
-                gPugTask.Create(E_TASK::LO3_RESTART, 3.3f, false, (Restart - 1));
+                gPugTask.Create(E_TASK::LO3_RESTART, 3.0f, false, (Restart - 1));
             }
             else
             {
