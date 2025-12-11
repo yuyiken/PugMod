@@ -198,7 +198,7 @@ void DLL_POST_ServerDeactivate()
 
 	gPugLeader.ServerDeactivate();
 
-	gPugVoteSwapTeam.ServerActivate();
+	gPugVoteSwapTeam.ServerDeactivate();
 
 	gPugDemoRecord.ServerDeactivate();
 

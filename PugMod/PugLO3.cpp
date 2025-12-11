@@ -2,62 +2,38 @@
 
 CPugLO3 gPugLO3;
 
-void CPugLO3::Init()
+void CPugLO3::Init(int Restart)
 {
-    this->m_Run = true;
-    
-    this->m_Restart = 0;
-
-    this->RestartRound();
-}
-
-void CPugLO3::RestartRound()
-{
-    if (this->m_Run)
+    if (Restart >= 0)
     {
         if (g_pGameRules)
         {
-            if (!CSGameRules()->m_bCompleteReset)
+            auto Players = gPugUtil.GetPlayers(false, false);
+
+            for (auto const & Player : Players)
             {
-                if (this->m_Restart <= 3)
-                {
-                    CSGameRules()->m_bGameStarted = false;
-                    CSGameRules()->m_bCompleteReset = true;
-                    CSGameRules()->m_flRestartRoundTime = (gpGlobals->time + 3.0f);
+                gPugUtil.ScreenShake(Player->edict(), 2.0f, 2.0f, 2.0f);
 
-                    g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_SvRestartRound, "0");
-                    g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_SvRestart, "0");
-                }
-                else
-                {
-                    this->m_Run = false;
+                gPugUtil.ScreenFade(Player->edict(), 2.0f, 2.0f, 0x0002, RANDOM_LONG(0, 255), RANDOM_LONG(0, 255), RANDOM_LONG(0, 255), 100);
 
-                    CSGameRules()->m_bGameStarted = true;
-                }
+                gPugUtil.ClientCommand(Player->edict(), g_LO3_Sound[Restart]);
 
-                auto State = gPugMod.GetState();
+                gPugUtil.SendHud(Player->edict(), g_LO3_HudParam, _T(g_LO3_HudText[Restart]));
 
-                edict_t *pEntity = nullptr;
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T(g_LO3_Message[Restart]), gPugCvar.m_Tag->string, gPugMod.GetString(gPugMod.GetState()));
+            }
 
-                for (int i = 1; i <= gpGlobals->maxClients; ++i)
-                {
-                    pEntity = INDEXENT(i);
+            if (Restart > 0)
+            {
+                CSGameRules()->m_bGameStarted = false;
 
-                    if (gPugUtil.IsNetClient(pEntity))
-                    {
-                        gPugUtil.ScreenShake(pEntity, 2.0f, 2.0f, 2.0f);
+                g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_SvRestart, "2");
 
-                        gPugUtil.ScreenFade(pEntity, 2.0f, 2.0f, 0x0002, RANDOM_LONG(0, 255), RANDOM_LONG(0, 255), RANDOM_LONG(0, 255), 100);
-
-                        gPugUtil.ClientCommand(pEntity, g_LO3_Sound[this->m_Restart]);
-
-                        gPugUtil.SendHud(pEntity, g_LO3_HudParam, _T(g_LO3_HudText[this->m_Restart]));
-
-                        gPugUtil.PrintColor(pEntity, E_PRINT_TEAM::DEFAULT, _T(g_LO3_Message[this->m_Restart]), gPugCvar.m_Tag->string, gPugMod.GetString(State));
-                    }
-                }
-
-                this->m_Restart += 1;
+                gPugTask.Create(E_TASK::LO3_RESTART, 3.3f, false, (Restart - 1));
+            }
+            else
+            {
+                CSGameRules()->m_bGameStarted = true;
             }
         }
     }

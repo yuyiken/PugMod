@@ -151,7 +151,7 @@ int CPugMod::SetState(int State)
 
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Knife Round: The ^3winner chooses the starting team."), gPugCvar.m_Tag->string);
 
-            gPugLO3.Init();
+            gPugLO3.Init(4);
             break;
         }
         case STATE_FIRST_HALF:
@@ -171,7 +171,7 @@ int CPugMod::SetState(int State)
             
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%s^1 started: Get ready!!"), gPugCvar.m_Tag->string, gPugMod.GetString(State));
 
-            gPugLO3.Init();
+            gPugLO3.Init(4);
             break;
         }
         case STATE_HALFTIME:
@@ -213,7 +213,7 @@ int CPugMod::SetState(int State)
 
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%s^1 started: Get ready!!"), gPugCvar.m_Tag->string, gPugMod.GetString(State));
 
-            gPugLO3.Init();
+            gPugLO3.Init(4);
             break;
         }
         case STATE_OVERTIME:
@@ -224,7 +224,7 @@ int CPugMod::SetState(int State)
 
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%s^1 started: Get ready!!"), gPugCvar.m_Tag->string, gPugMod.GetString(State));
 
-            gPugLO3.Init();
+            gPugLO3.Init(4);
             break;
         }
         case STATE_END:

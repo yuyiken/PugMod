@@ -1,43 +1,42 @@
 #pragma once
 
+
 constexpr hudtextparms_t g_LO3_HudParam = {-1.0f, 0.20f, 2, 0x00, 0xFF, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0.0f, 0.0f, 10.0f, 2.0f, 4};
 
 constexpr std::array<const char*, 5> g_LO3_HudText =
 {
-    "LIVE IN THREE RESTARTS",
-    "LIVE IN THREE RESTARTS",
-    "LIVE IN TWO RESTARTS",
+    "LIVE GOOD LUCK & HAVE FUN",
     "LIVE ON NEXT RESTART",
-    "LIVE GOOD LUCK & HAVE FUN"
+    "LIVE IN TWO RESTARTS",
+    "LIVE IN THREE RESTARTS",
+    "LIVE IN THREE RESTARTS"
 };
 
 constexpr std::array<const char*, 5> g_LO3_Message =
 {
-    "^4[%s]^1 %s: ^3Live in three restarts!",
-    "^4[%s]^1 %s: ^3Live in three restarts!",
-    "^4[%s]^1 %s: ^3Live in two restarts!",
+    "^4[%s]^1 %s: ^3Live! Good Luck & Have Fun!!",
     "^4[%s]^1 %s: ^3Live on next restart!",
-    "^4[%s]^1 %s: ^3Live! Good Luck & Have Fun!!"
+    "^4[%s]^1 %s: ^3Live in two restarts!",
+    "^4[%s]^1 %s: ^3Live in three restarts!",
+    "^4[%s]^1 %s: ^3Live in three restarts!"
 };
 
 constexpr std::array<const char*, 5> g_LO3_Sound =
 {
-    "spk \"fvox/blip, voice_off\"",
-    "spk \"fvox/blip, three\"",
-    "spk \"fvox/blip, two\"",
+    "spk \"barney/letsgo\"",
     "spk \"fvox/blip, one\"",
-    "spk \"barney/letsgo\""
+    "spk \"fvox/blip, two\"",
+    "spk \"fvox/blip, three\"",
+    "spk \"fvox/blip, voice_off\"",
 };
 
 class CPugLO3
 {
 public:
-    void Init();
-    void RestartRound();
+    void Init(int RestartNum);
 
 private:
-    bool m_Run = false;
-    int m_Restart = 0;
+    int m_RestartNum;
 };
 
 extern CPugLO3 gPugLO3;
