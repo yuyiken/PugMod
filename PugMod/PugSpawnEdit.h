@@ -10,6 +10,7 @@ public:
 	void MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item);
 	void AddSpawnMenu(CBasePlayer* Player);
 	void AddSpawnMenuHandle(CBasePlayer* Player, P_MENU_ITEM Item);
+	void ToggleNoClip(CBasePlayer* Player);
 	void DiscardChanges(CBasePlayer* Player);
 	void DiscardChangesHandle(CBasePlayer* Player, P_MENU_ITEM Item);
 	edict_t* MakeEntity(int EntityIndex);

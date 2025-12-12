@@ -112,45 +112,31 @@ void CPugSpawnEdit::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 				case 2:
 				{
 					this->EditSpawn(Player, Player->edict()->v, 15.0f);
-
-					this->Menu(Player);
+					gPugMenu[Player->entindex()].Show(Player);
 					break;
 				}
 				case 3:
 				{
 					this->DeleteSpawn(Player->entindex());
-
-					this->Menu(Player);
+					gPugMenu[Player->entindex()].Show(Player);
 					break;
 				}
 				case 4:
 				{
 					this->Refresh(Player);
-					this->Menu(Player);
+					gPugMenu[Player->entindex()].Show(Player);
 					break;
 				}
 				case 5:
 				{
 					this->ShowStats(Player);
-					this->Menu(Player);
+					gPugMenu[Player->entindex()].Show(Player);
 					break;
 				}
 				case 6:
 				{
-					if (Player->edict()->v.movetype == MOVETYPE_WALK)
-					{
-						Player->edict()->v.movetype = MOVETYPE_NOCLIP;
-
-						gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::BLUE, _T("^4[%s]^1 ^3No-Clip Enabled."), gPugCvar.m_Tag->string);
-					}
-					else if (Player->edict()->v.movetype == MOVETYPE_NOCLIP)
-					{
-						Player->edict()->v.movetype = MOVETYPE_WALK;
-
-						gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::RED, _T("^4[%s]^1 ^3No-Clip Disabled."), gPugCvar.m_Tag->string);
-					}
-
-					this->Menu(Player);
+					this->ToggleNoClip(Player);
+					gPugMenu[Player->entindex()].Show(Player);
 					break;
 				}
 				case 7:
@@ -161,13 +147,13 @@ void CPugSpawnEdit::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 				case 8:
 				{
 					this->Save(Player);
-					this->Menu(Player);
+					gPugMenu[Player->entindex()].Show(Player);
 					break;
 				}
 				case 9:
 				{
 					this->ShowStuckedSpawns(Player);
-					this->Menu(Player);
+					gPugMenu[Player->entindex()].Show(Player);
 					break;
 				}
 			}
@@ -205,6 +191,22 @@ void CPugSpawnEdit::AddSpawnMenuHandle(CBasePlayer* Player, P_MENU_ITEM Item)
 				break;
 			}
 		}
+	}
+}
+
+void CPugSpawnEdit::ToggleNoClip(CBasePlayer* Player)
+{
+	if (Player->edict()->v.movetype == MOVETYPE_WALK)
+	{
+		Player->edict()->v.movetype = MOVETYPE_NOCLIP;
+
+		gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::BLUE, _T("^4[%s]^1 ^3No-Clip Enabled."), gPugCvar.m_Tag->string);
+	}
+	else if (Player->edict()->v.movetype == MOVETYPE_NOCLIP)
+	{
+		Player->edict()->v.movetype = MOVETYPE_WALK;
+
+		gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::RED, _T("^4[%s]^1 ^3No-Clip Disabled."), gPugCvar.m_Tag->string);
 	}
 }
 
@@ -696,6 +698,8 @@ void CPugSpawnEdit::ShowStuckedSpawns(CBasePlayer* Player)
 {
 	if (!this->m_Entities.empty())
 	{
+		auto StuckedSpawns = false;
+
 		for (auto const & Entity : this->m_Entities)
 		{
 			auto Spawn = this->m_Spawns.find(Entity.first);
@@ -704,6 +708,8 @@ void CPugSpawnEdit::ShowStuckedSpawns(CBasePlayer* Player)
 			{
 				if (this->IsStuck(Entity.first))
 				{
+					StuckedSpawns = true;
+
 					this->GlowEnt(Entity.first, Vector(255.0f, 0.0f, 255.0f));
 
 					gPugUtil.PrintColor
@@ -721,6 +727,11 @@ void CPugSpawnEdit::ShowStuckedSpawns(CBasePlayer* Player)
 					this->UnGlowEnt(Entity.first);
 				}
 			}
+		}
+
+		if (!StuckedSpawns)
+		{
+			gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::RED, _T("^4[%s]^1 ^4Good Job! No trapped Spawn were found!"), gPugCvar.m_Tag->string);
 		}
 	}
 	else
