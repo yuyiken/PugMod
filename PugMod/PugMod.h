@@ -42,7 +42,6 @@ public:
     void SwapTeams();
     void Surrender(TeamName Team);
 
-    bool ChooseTeam(CBasePlayer *Player, int Slot);
     void GetIntoGame(CBasePlayer *Player);
     void DropClient(edict_t *pEntity);
 

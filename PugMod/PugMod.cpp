@@ -450,7 +450,7 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
         {
             if (g_pGameRules)
             {
-                if (!CSGameRules()->m_bCompleteReset)
+                if (!CSGameRules()->m_bCompleteReset && CSGameRules()->m_bGameStarted)
                 {
                     TeamName Winner = (winStatus == WINSTATUS_TERRORISTS) ? TERRORIST : CT;
 
