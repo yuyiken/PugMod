@@ -35,7 +35,7 @@ void CPugSpawnEdit::EditSpawns(CBasePlayer* Player)
 			
 			this->MakeEntity(-1);
 
-			this->Menu(Player);
+			this->Menu(Player, 0);
 		}
 		else
 		{
@@ -44,7 +44,7 @@ void CPugSpawnEdit::EditSpawns(CBasePlayer* Player)
 	}
 }
 
-void CPugSpawnEdit::Menu(CBasePlayer* Player)
+void CPugSpawnEdit::Menu(CBasePlayer* Player, int Page)
 {
 	gPugMenu[Player->entindex()].Create(true, E_MENU::DM_SPAWN_EDIT, _T("CSDM: Spawn Manager"));
 
@@ -93,7 +93,7 @@ void CPugSpawnEdit::Menu(CBasePlayer* Player)
 
 	gPugMenu[Player->entindex()].AddItem(9, false, 0, _T("Show Stucked Spawns"));
 
-	gPugMenu[Player->entindex()].Show(Player);
+	gPugMenu[Player->entindex()].Display(Player, Page);
 }
 
 void CPugSpawnEdit::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
@@ -112,31 +112,31 @@ void CPugSpawnEdit::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 				case 2:
 				{
 					this->EditSpawn(Player, Player->edict()->v, 15.0f);
-					gPugMenu[Player->entindex()].Show(Player);
+					this->Menu(Player, 0);
 					break;
 				}
 				case 3:
 				{
 					this->DeleteSpawn(Player->entindex());
-					gPugMenu[Player->entindex()].Show(Player);
+					this->Menu(Player, 0);
 					break;
 				}
 				case 4:
 				{
 					this->Refresh(Player);
-					gPugMenu[Player->entindex()].Show(Player);
+					this->Menu(Player, 0);
 					break;
 				}
 				case 5:
 				{
 					this->ShowStats(Player);
-					gPugMenu[Player->entindex()].Show(Player);
+					this->Menu(Player, 0);
 					break;
 				}
 				case 6:
 				{
 					this->ToggleNoClip(Player);
-					gPugMenu[Player->entindex()].Show(Player);
+					this->Menu(Player, 0);
 					break;
 				}
 				case 7:
@@ -147,13 +147,13 @@ void CPugSpawnEdit::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 				case 8:
 				{
 					this->Save(Player);
-					gPugMenu[Player->entindex()].Show(Player);
+					this->Menu(Player, 1);
 					break;
 				}
 				case 9:
 				{
 					this->ShowStuckedSpawns(Player);
-					gPugMenu[Player->entindex()].Show(Player);
+					this->Menu(Player, 1);
 					break;
 				}
 			}
@@ -181,7 +181,7 @@ void CPugSpawnEdit::AddSpawnMenuHandle(CBasePlayer* Player, P_MENU_ITEM Item)
 		{
 			case 3:
 			{
-				this->Menu(Player);
+				this->Menu(Player, 0);
 				break;
 			}
 			default:
@@ -231,7 +231,7 @@ void CPugSpawnEdit::DiscardChangesHandle(CBasePlayer* Player, P_MENU_ITEM Item)
 		{
 			case 1:
 			{
-				this->Menu(Player);
+				this->Menu(Player, 0);
 				break;
 			}
 			case 2:

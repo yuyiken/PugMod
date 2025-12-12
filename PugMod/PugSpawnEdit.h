@@ -6,7 +6,7 @@ public:
 	void ServerActivate();
 	void ServerDeactivate();
 	void EditSpawns(CBasePlayer* Player);
-	void Menu(CBasePlayer* Player);
+	void Menu(CBasePlayer* Player, int Page);
 	void MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item);
 	void AddSpawnMenu(CBasePlayer* Player);
 	void AddSpawnMenuHandle(CBasePlayer* Player, P_MENU_ITEM Item);
