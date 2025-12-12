@@ -1,5 +1,4 @@
 #include "precompiled.h"
-#include "PugSpawnEdit.h"
 
 CPugSpawnEdit gPugSpawnEdit;
 
@@ -481,20 +480,7 @@ void CPugSpawnEdit::AddSpawn(CBasePlayer* Player, int Team)
 
 	if (!FNullEnt(pEntity))
 	{
-		auto EntityIndex = ENTINDEX(pEntity);
-
-		if (this->IsStuck(EntityIndex))
-		{
-			gPugUtil.PrintColor
-			(
-				Player->edict(),
-				E_PRINT_TEAM::RED,
-				_T("^4[%s]^1 This spawn (Number ^4%d^1) (Team ^4%s^1) may be stuck: ^3Please fix it."),
-				gPugCvar.m_Tag->string,
-				Index,
-				(Team == UNASSIGNED) ? "ANY" : (Team == CT ? "CT" : "TR")
-			);
-		}
+		this->Refresh(Player);
 	}
 }
 
@@ -754,9 +740,9 @@ void CPugSpawnEdit::ShowStuckedSpawns(CBasePlayer* Player)
 	}
 }
 
-void CPugSpawnEdit::RespawnPlayer(CBasePlayer *Player, int Index)
+void CPugSpawnEdit::RespawnPlayer(CBasePlayer *Player, int SpawnIndex)
 {
-	auto Spawn = this->m_Spawns.find(Index);
+	auto Spawn = this->m_Spawns.find(SpawnIndex);
 
 	if (Spawn != this->m_Spawns.end())
 	{
