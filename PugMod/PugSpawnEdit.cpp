@@ -91,6 +91,8 @@ void CPugSpawnEdit::Menu(CBasePlayer* Player)
 
 	gPugMenu[Player->entindex()].AddItem(8, false, 0, _T("Save all changes"));
 
+	gPugMenu[Player->entindex()].AddItem(9, false, 0, _T("Show Stucked Spawns"));
+
 	gPugMenu[Player->entindex()].Show(Player);
 }
 
@@ -159,7 +161,12 @@ void CPugSpawnEdit::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 				case 8:
 				{
 					this->Save(Player);
-
+					this->Menu(Player);
+					break;
+				}
+				case 9:
+				{
+					this->ShowStuckedSpawns(Player);
 					this->Menu(Player);
 					break;
 				}
@@ -615,26 +622,29 @@ void CPugSpawnEdit::ShowStats(CBasePlayer* Player)
 	auto TotalTR = 0;
 	auto TotalCT = 0;
 
-	for (auto const& Spawn : this->m_Spawns)
+	if (!this->m_Spawns.empty())
 	{
-		TotalSpawns++;
-
-		switch (Spawn.second.Team)
+		for (auto const& Spawn : this->m_Spawns)
 		{
-			case UNASSIGNED:
+			TotalSpawns++;
+
+			switch (Spawn.second.Team)
 			{
-				TotalRandom++;
-				break;
-			}
-			case TERRORIST:
-			{
-				TotalTR++;
-				break;
-			}
-			case CT:
-			{
-				TotalCT++;
-				break;
+				case UNASSIGNED:
+				{
+					TotalRandom++;
+					break;
+				}
+				case TERRORIST:
+				{
+					TotalTR++;
+					break;
+				}
+				case CT:
+				{
+					TotalCT++;
+					break;
+				}
 			}
 		}
 	}
@@ -680,4 +690,41 @@ void CPugSpawnEdit::Save(CBasePlayer* Player)
 	{
 		gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::RED, _T("^4[%s]^1 Failed to save file: ^3No Spawn in the list."), gPugCvar.m_Tag->string);
 	}	
+}
+
+void CPugSpawnEdit::ShowStuckedSpawns(CBasePlayer* Player)
+{
+	if (!this->m_Entities.empty())
+	{
+		for (auto const & Entity : this->m_Entities)
+		{
+			auto Spawn = this->m_Spawns.find(Entity.first);
+
+			if (Spawn != this->m_Spawns.end())
+			{
+				if (this->IsStuck(Entity.first))
+				{
+					this->GlowEnt(Entity.first, Vector(255.0f, 0.0f, 255.0f));
+
+					gPugUtil.PrintColor
+					(
+						Player->edict(),
+						E_PRINT_TEAM::RED,
+						_T("^4[%s]^1 This spawn (Number ^4%d^1) (Team ^4%s^1) may be stuck: ^3Please fix it."),
+						gPugCvar.m_Tag->string,
+						Entity.first,
+						(Spawn->second.Team == UNASSIGNED) ? "ANY" : (Spawn->second.Team == CT ? "CT" : "TR")
+					);
+				}
+				else
+				{
+					this->UnGlowEnt(Entity.first);
+				}
+			}
+		}
+	}
+	else
+	{
+		gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::RED, _T("^4[%s]^1 ^3No Spawn in the list."), gPugCvar.m_Tag->string);
+	}
 }

@@ -25,6 +25,7 @@ public:
 	void Refresh(CBasePlayer* Player);
 	void ShowStats(CBasePlayer* Player);
 	void Save(CBasePlayer* Player);
+	void ShowStuckedSpawns(CBasePlayer* Player);
 
 private:
 	string_t m_InfoTarget = 0;
