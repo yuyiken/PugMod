@@ -19,15 +19,15 @@ public:
 	void UnGlowEnt(int EntityIndex);
 	bool IsStuck(int EntityIndex);
 	void SetPosition(int EntityIndex);
-	void AddSpawn(entvars_t v, int Team, float FixOrigin);
-	void EditSpawn(CBasePlayer *Player, entvars_t v, float FixOrigin);
+	void AddSpawn(CBasePlayer* Player, int Team);
+	void EditSpawn(CBasePlayer *Player);
 	void DeleteSpawn(int EntityIndex);
 	int ClosestSpawn(edict_t* pEdict);
 	void Refresh(CBasePlayer* Player);
 	void ShowStats(CBasePlayer* Player);
 	void Save(CBasePlayer* Player);
 	void ShowStuckedSpawns(CBasePlayer* Player);
-
+	void RespawnPlayer(CBasePlayer* Player, int SpawnIndex);
 private:
 	string_t m_InfoTarget = 0;
 	std::map<size_t, P_SPAWN> m_Spawns = {};

@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "PugSpawnEdit.h"
 
 CPugSpawnEdit gPugSpawnEdit;
 
@@ -111,7 +112,7 @@ void CPugSpawnEdit::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 				}
 				case 2:
 				{
-					this->EditSpawn(Player, Player->edict()->v, 15.0f);
+					this->EditSpawn(Player);
 					this->Menu(Player, 0);
 					break;
 				}
@@ -186,7 +187,7 @@ void CPugSpawnEdit::AddSpawnMenuHandle(CBasePlayer* Player, P_MENU_ITEM Item)
 			}
 			default:
 			{
-				this->AddSpawn(Player->edict()->v, Item.Info, 15.0f);
+				this->AddSpawn(Player, Item.Info);
 				this->AddSpawnMenu(Player);
 				break;
 			}
@@ -460,31 +461,44 @@ void CPugSpawnEdit::SetPosition(int EntityIndex)
 	}
 }
 
-void CPugSpawnEdit::AddSpawn(entvars_t v, int Team, float FixOrigin)
+void CPugSpawnEdit::AddSpawn(CBasePlayer* Player, int Team)
 {
 	P_SPAWN Info = {};
 
-	if (FixOrigin != 0.0f)
-	{
-		v.origin[2] += FixOrigin;
-	}
+	Info.Vecs = Player->edict()->v.origin;
 
-	Info.Vecs = v.origin;
-
-	Info.Angles = v.angles;
+	Info.Angles = Player->edict()->v.angles;
 
 	Info.Team = Team;
 
-	Info.VAngles = v.v_angle;
+	Info.VAngles = Player->edict()->v.v_angle;
 
 	size_t Index = this->m_Spawns.size() + 1;
 
 	this->m_Spawns[Index] = Info;
 
-	this->MakeEntity(Index);
+	auto pEntity = this->MakeEntity(Index);
+
+	if (!FNullEnt(pEntity))
+	{
+		auto EntityIndex = ENTINDEX(pEntity);
+
+		if (this->IsStuck(EntityIndex))
+		{
+			gPugUtil.PrintColor
+			(
+				Player->edict(),
+				E_PRINT_TEAM::RED,
+				_T("^4[%s]^1 This spawn (Number ^4%d^1) (Team ^4%s^1) may be stuck: ^3Please fix it."),
+				gPugCvar.m_Tag->string,
+				Index,
+				(Team == UNASSIGNED) ? "ANY" : (Team == CT ? "CT" : "TR")
+			);
+		}
+	}
 }
 
-void CPugSpawnEdit::EditSpawn(CBasePlayer *Player, entvars_t v, float FixOrigin)
+void CPugSpawnEdit::EditSpawn(CBasePlayer *Player)
 {
 	auto EntityIndex = Player->entindex();
 
@@ -498,18 +512,13 @@ void CPugSpawnEdit::EditSpawn(CBasePlayer *Player, entvars_t v, float FixOrigin)
 			{
 				this->RemoveEntity(this->m_Marked[EntityIndex]);
 
-				if (FixOrigin != 0.0f)
-				{
-					v.origin[2] += FixOrigin;
-				}
+				this->m_Spawns[this->m_Marked[EntityIndex]].Vecs = Player->edict()->v.origin;
 
-				this->m_Spawns[this->m_Marked[EntityIndex]].Vecs = v.origin;
-
-				this->m_Spawns[this->m_Marked[EntityIndex]].Angles = v.angles;
+				this->m_Spawns[this->m_Marked[EntityIndex]].Angles = Player->edict()->v.angles;
 
 				this->m_Spawns[this->m_Marked[EntityIndex]].Team = 0;
 
-				this->m_Spawns[this->m_Marked[EntityIndex]].VAngles = v.v_angle;
+				this->m_Spawns[this->m_Marked[EntityIndex]].VAngles = Player->edict()->v.v_angle;
 
 				this->MakeEntity(this->m_Marked[EntityIndex]);
 
@@ -708,6 +717,11 @@ void CPugSpawnEdit::ShowStuckedSpawns(CBasePlayer* Player)
 			{
 				if (this->IsStuck(Entity.first))
 				{
+					if (!StuckedSpawns)
+					{
+						this->RespawnPlayer(Player, Entity.first);
+					}
+
 					StuckedSpawns = true;
 
 					this->GlowEnt(Entity.first, Vector(255.0f, 0.0f, 255.0f));
@@ -737,5 +751,51 @@ void CPugSpawnEdit::ShowStuckedSpawns(CBasePlayer* Player)
 	else
 	{
 		gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::RED, _T("^4[%s]^1 ^3No Spawn in the list."), gPugCvar.m_Tag->string);
+	}
+}
+
+void CPugSpawnEdit::RespawnPlayer(CBasePlayer *Player, int Index)
+{
+	auto Spawn = this->m_Spawns.find(Index);
+
+	if (Spawn != this->m_Spawns.end())
+	{
+		if (!Spawn->second.Vecs.IsZero())
+		{
+			Player->edict()->v.origin = Spawn->second.Vecs + Vector(0.0f, 0.0f, 1.0f);
+
+			if (!Spawn->second.Angles.IsZero())
+			{
+				Player->edict()->v.angles = Spawn->second.Angles;
+			}
+
+			if (!Spawn->second.VAngles.IsZero())
+			{
+				Player->edict()->v.v_angle = Spawn->second.VAngles;
+
+				Player->edict()->v.v_angle.z = 0;
+
+				Player->edict()->v.angles = Player->edict()->v.v_angle;
+			}
+
+			Player->edict()->v.velocity = Vector(0.0f, 0.0f, 0.0f);
+
+			Player->edict()->v.punchangle = Vector(0.0f, 0.0f, 0.0f);
+
+			Player->edict()->v.fixangle = 1;
+
+			Player->m_bloodColor = BLOOD_COLOR_RED;
+
+			Player->m_modelIndexPlayer = Player->edict()->v.modelindex;
+
+			if (Player->edict()->v.flags & FL_DUCKING)
+			{
+				g_engfuncs.pfnSetSize(Player->edict(), VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX);
+			}
+			else
+			{
+				g_engfuncs.pfnSetSize(Player->edict(), VEC_HULL_MIN, VEC_HULL_MAX);
+			}
+		}
 	}
 }
