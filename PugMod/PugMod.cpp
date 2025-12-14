@@ -133,6 +133,11 @@ int CPugMod::SetState(int State)
 
             gPugLeader.Init();
 
+            if (g_pGameRules)
+            {
+                CSGameRules()->BalanceTeams();
+            }
+
             g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_PlayGameMode, "1");
             g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_PlayKnifeRound, "0");
             break;
@@ -146,6 +151,11 @@ int CPugMod::SetState(int State)
             gPugDM.Stop();
             gPugReady.Stop(true);
             gPugTimer.Stop(true);
+
+            if (g_pGameRules)
+            {
+                CSGameRules()->BalanceTeams();
+            }
 
             g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_PlayKnifeRound, "1");
 
@@ -210,6 +220,11 @@ int CPugMod::SetState(int State)
             gPugDM.Stop();
             gPugReady.Stop(true);
             gPugTimer.Stop(true);
+
+            if (g_pGameRules)
+            {
+                CSGameRules()->BalanceTeams();
+            }
 
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%s^1 started: Get ready!!"), gPugCvar.m_Tag->string, gPugMod.GetString(State));
 
@@ -422,6 +437,17 @@ void CPugMod::RestartRound()
             }
 
             gPugGameDesc.Update();
+        }
+        else
+        {
+            if (this->m_State == STATE_FIRST_HALF || this->m_State == STATE_SECOND_HALF)
+            {
+                this->ResetPoint(this->m_State);
+
+                this->SetScore(TERRORIST, this->m_State, 0);
+
+                this->SetScore(CT, this->m_State, 0);
+            }
         }
     }
 }
