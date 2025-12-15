@@ -17,13 +17,13 @@ public:
 		{
 			const std::vector<long> Seconds_In_Time = { 1, 60, 3600, 86400, 604800, 2592000, 31536000 };
 
-			const std::array<std::string, TIMEUNIT_YEARS + 1> TimeUnitText = { "Segundo", "Minuto", "Hora", "Dia", "Semana", "Mês", "Ano" };
+			const std::array<std::string, TIMEUNIT_YEARS + 1U> TimeUnitText = { "Segundo", "Minuto", "Hora", "Dia", "Semana", "Mês", "Ano" };
 
-			std::array<time_t, TIMEUNIT_YEARS + 1> UnitCount;
+			std::array<time_t, TIMEUNIT_YEARS + 1U> UnitCount;
 
 			UnitCount[TIMEUNIT_SECONDS] = (TimeUnit == TIMEUNIT_SECONDS) ? unitCnt : (unitCnt * Seconds_In_Time[TimeUnit]);
 
-			std::array<std::string, TIMEUNIT_YEARS + 1> timeElement;
+			std::array<std::string, TIMEUNIT_YEARS + 1U> timeElement;
 
 			auto maxElementIdx = -1;
 

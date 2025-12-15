@@ -101,7 +101,7 @@ void CPugRoundStats::DropClient(edict_t *pEntity)
 
 		if (EntityIndex > 0 && EntityIndex <= gpGlobals->maxClients)
 		{
-			for (auto i = 0; i <= gpGlobals->maxClients; i++)
+			for (auto i = 1; i <= gpGlobals->maxClients; i++)
 			{
 				this->m_RoundDmg[i][EntityIndex] = 0;
 				this->m_RoundHit[i][EntityIndex] = 0;

@@ -12,10 +12,10 @@ constexpr auto STATE_SECOND_HALF = 8;
 constexpr auto STATE_OVERTIME = 9;
 constexpr auto STATE_END = 10;
 
-constexpr std::array<const char *, STATE_END + 1> g_Pug_Config = {"pugmod", "deathmatch", "votemap", "voteteam", "captain", "kniferound", "esl", "halftime", "esl", "esl-ot", "end"};
-constexpr std::array<const char *, STATE_END + 1> g_Pug_String = {"Dead", "Deathmatch", "Vote Map", "Vote Team", "Captains", "Knife Round", "First Half", "Halftime", "Second Half", "Overtime", "Finished"};
-constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamName = {"None", "Terrorist", "Counter-Terrorist", "Spectactor"};
-constexpr std::array<const char *, SPECTATOR + 1> g_Pug_TeamNameShort = {"NONE", "TR", "CT", "SPEC"};
+constexpr std::array<const char *, STATE_END + 1U> g_Pug_Config = {"pugmod", "deathmatch", "votemap", "voteteam", "captain", "kniferound", "esl", "halftime", "esl", "esl-ot", "end"};
+constexpr std::array<const char *, STATE_END + 1U> g_Pug_String = {"Dead", "Deathmatch", "Vote Map", "Vote Team", "Captains", "Knife Round", "First Half", "Halftime", "Second Half", "Overtime", "Finished"};
+constexpr std::array<const char *, SPECTATOR + 1U> g_Pug_TeamName = {"None", "Terrorist", "Counter-Terrorist", "Spectactor"};
+constexpr std::array<const char *, SPECTATOR + 1U> g_Pug_TeamNameShort = {"NONE", "TR", "CT", "SPEC"};
 
 constexpr hudtextparms_t g_Pug_HudParam = {-1.0f, 0.20f, 2, 0x00, 0xFF, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0.0f, 0.0f, 12.0f, 3.0f, 1};
 
@@ -36,7 +36,7 @@ public:
     void SetScore(TeamName Team, int State, int Score);
 
     int GetPoint(int EntityIndex, int Type);
-    void SetPoint(int State, int EntityIndex, int Type, int Point);
+    void SetPoint(int EntityIndex, int State, int Type, int Point);
     void ResetPoint(int State);
 
     void SwapTeams();
@@ -60,7 +60,7 @@ private:
     int m_State = STATE_DEAD;
     std::array<std::array<int, STATE_END + 1U>, SPECTATOR + 1U> m_Score = {};
     std::array<int, SPECTATOR + 1U> m_ScoreOT = {};
-    std::array<std::array<std::array<int, 2>, STATE_END + 1U>, MAX_CLIENTS + 1U> m_Point = {};
+    std::array<std::array<std::array<int, 2U>, STATE_END + 1U>, MAX_CLIENTS + 1U> m_Point = {};
 };
 
 extern CPugMod gPugMod;

@@ -61,8 +61,8 @@ public:
 private:
     std::map<std::string, P_CLIENT_CMD> m_Data = {};
 
-    std::array<float, MAX_CLIENTS + 1> m_FloodCount = {};
-    std::array<float, MAX_CLIENTS + 1> m_FloodTimer = {};
+    std::array<float, MAX_CLIENTS + 1U> m_FloodCount = {};
+    std::array<float, MAX_CLIENTS + 1U> m_FloodTimer = {};
 };
 
 extern CPugClientCmd gPugClientCmd;

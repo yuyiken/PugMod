@@ -68,13 +68,18 @@ void CPugReady::PutInServer(edict_t *pEntity)
 {
     if (!FNullEnt(pEntity))
     {
-        this->m_Ready[ENTINDEX(pEntity)] = false;
+        auto EntityIndex = ENTINDEX(pEntity);
+
+        if (EntityIndex > 0 && EntityIndex <= gpGlobals->maxClients)
+        {
+            this->m_Ready[EntityIndex] = false;
+        }
     }
 }
 
 void CPugReady::GetIntoGame(CBasePlayer *Player)
 {
-    if (this->m_Run)
+    if (Player)
     {
         this->m_Ready[Player->entindex()] = false;
     }
@@ -124,11 +129,11 @@ void CPugReady::StartFrame()
     {
         if (gpGlobals->time >= this->m_NextFrame)
         {
-            std::string PlayerList[2];
+            std::array<std::string, 2U> PlayerList = {};
 
-            std::array<short, 2> ReadyCount = {};
+            std::array<int, 2U> ReadyCount = {};
             
-            for (int i = 1; i <= gpGlobals->maxClients; ++i)
+            for (auto i = 1; i <= gpGlobals->maxClients; i++)
             {
                 auto Player = UTIL_PlayerByIndex(i);
 
@@ -138,7 +143,7 @@ void CPugReady::StartFrame()
                     {
                         if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
                         {
-                            auto IsReady = (Player->IsBot() || this->m_Ready[i]) ? 1 : 0;
+                            int IsReady = (Player->IsBot() || this->m_Ready[i]) ? 1 : 0;
 
                             ReadyCount[IsReady]++;
 

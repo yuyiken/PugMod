@@ -26,8 +26,8 @@ public:
 	bool ShowStats(CBasePlayer *Player);
 private:
 	int m_Flags = R_STATS_ALL;
-	std::array<std::array<int, MAX_CLIENTS + 1>, MAX_CLIENTS + 1> m_RoundDmg;
-	std::array<std::array<int, MAX_CLIENTS + 1>, MAX_CLIENTS + 1> m_RoundHit;
+	std::array<std::array<int, MAX_CLIENTS + 1U>, MAX_CLIENTS + 1U> m_RoundDmg;
+	std::array<std::array<int, MAX_CLIENTS + 1U>, MAX_CLIENTS + 1U> m_RoundHit;
 };
 
 extern CPugRoundStats gPugRoundStats;

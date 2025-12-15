@@ -3,7 +3,7 @@
 #define BIT_LEADER_TYPE BIT(24)
 #define BIT_LEADER_MENU BIT(25)
 
-constexpr std::array<hudtextparms_t, 6> g_Leader_HudParam =
+constexpr std::array<hudtextparms_t, 6U> g_Leader_HudParam =
 {{
     {0.70f, 0.02f, 2, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0.0f, 0.0f, 0.93f, 0.93f, 1}, // Terroristas (%d / %d):
     {0.70f, 0.02f, 2, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0.0f, 0.0f, 0.93f, 0.93f, 2}, // \n%s

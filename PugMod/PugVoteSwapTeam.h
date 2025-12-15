@@ -1,12 +1,12 @@
 #pragma once
 
-constexpr std::array<hudtextparms_t, 2> g_VoteSwapTeam_HudParam =
+constexpr std::array<hudtextparms_t, 2U> g_VoteSwapTeam_HudParam =
 {{
     {0.23f, 0.02f, 2, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0.0f, 0.0f, 0.93f, 0.93f, 1},
     {0.23f, 0.05f, 2, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0.0f, 0.0f, 0.93f, 0.93f, 2},
 }};
 
-constexpr std::array<const char*, 3> g_VoteSwapTeam_Sound =
+constexpr std::array<const char*, 3U> g_VoteSwapTeam_Sound =
 {
     "spk gman/gman_Choose1",
     "spk gman/gman_Choose2",

@@ -635,7 +635,7 @@ void CPugStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, flo
 				}
 
 				// Team Round DAmage
-				std::array<float, SPECTATOR + 1> TeamRoundDamage = { };
+				std::array<float, SPECTATOR + 1U> TeamRoundDamage = { };
 
 				for (int i = 1; i <= gpGlobals->maxClients; ++i)
 				{

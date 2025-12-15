@@ -1,6 +1,6 @@
 #pragma once
 
-constexpr std::array<const char*, 3> g_Menu_Sound =
+constexpr std::array<const char*, 3U> g_Menu_Sound =
 {
     "spk common/menu1", // 0 -> Next / Next
     "spk common/menu2", // 1 -> Select Normal
@@ -65,4 +65,4 @@ private:
     int m_Handle = 0;
 };
 
-extern std::array<CPugMenu, MAX_CLIENTS + 1> gPugMenu;
+extern std::array<CPugMenu, MAX_CLIENTS + 1U> gPugMenu;

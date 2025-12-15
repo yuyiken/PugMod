@@ -346,30 +346,48 @@ int CPugMod::GetScore(TeamName Team)
 
 void CPugMod::SetScore(TeamName Team, int State, int Score)
 {
-    this->m_Score[Team][State] = Score;
+    if (State >= STATE_DEAD && State <= STATE_END)
+    {
+        this->m_Score[Team][State] = Score;
+    }
 }
 
 int CPugMod::GetPoint(int EntityIndex, int Type)
 {
     if (EntityIndex >= 1 && EntityIndex <= gpGlobals->maxClients)
     {
-        return (this->m_Point[STATE_FIRST_HALF][EntityIndex][Type] + this->m_Point[STATE_SECOND_HALF][EntityIndex][Type] + this->m_Point[STATE_OVERTIME][EntityIndex][Type]);
+        if (Type == 0 || Type == 1)
+        {
+            return (this->m_Point[EntityIndex][STATE_FIRST_HALF][Type] + this->m_Point[EntityIndex][STATE_SECOND_HALF][Type] + this->m_Point[EntityIndex][STATE_OVERTIME][Type]);
+        }
     }
 
     return 0;
 }
 
-void CPugMod::SetPoint(int State, int EntityIndex, int Type, int Point)
+void CPugMod::SetPoint(int EntityIndex, int State, int Type, int Point)
 {
-    if (EntityIndex >= 1 && EntityIndex <= gpGlobals->maxClients)
+    if (State >= STATE_DEAD && State <= STATE_END)
     {
-        this->m_Point[State][EntityIndex][Type] = Point;
+        if (EntityIndex >= 1 && EntityIndex <= gpGlobals->maxClients)
+        {
+            if (Type == 0 || Type == 1)
+            {
+                this->m_Point[EntityIndex][State][Type] = Point;
+            }
+        }
     }
 }
 
 void CPugMod::ResetPoint(int State)
 {
-    this->m_Point[State] = {};
+    if (State >= STATE_DEAD && State <= STATE_END)
+    {
+        for (int i = 1; i <= gpGlobals->maxClients; ++i)
+        {
+            this->m_Point[i][State].fill(0);
+        }
+    }
 }
 
 void CPugMod::GetIntoGame(CBasePlayer *Player)
@@ -745,8 +763,8 @@ bool CPugMod::ScoreInfo(int msg_dest, int msg_type, const float *pOrigin, edict_
 
             if (EntityIndex >= 1 && EntityIndex <= gpGlobals->maxClients)
             {
-                gPugMod.SetPoint(State, EntityIndex, 0, gPugEngine.GetShort(1));
-                gPugMod.SetPoint(State, EntityIndex, 1, gPugEngine.GetShort(2));
+                gPugMod.SetPoint(EntityIndex, State, 0, gPugEngine.GetShort(1));
+                gPugMod.SetPoint(EntityIndex, State, 1, gPugEngine.GetShort(2));
 
                 gPugEngine.SetArgInt(1, gPugMod.GetPoint(EntityIndex, 0));
                 gPugEngine.SetArgInt(2, gPugMod.GetPoint(EntityIndex, 1));

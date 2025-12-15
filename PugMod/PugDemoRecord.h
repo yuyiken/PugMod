@@ -13,7 +13,7 @@ public:
     void MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item);
 
 private:
-    std::array<bool, MAX_CLIENTS + 1> m_Asked = {};
+    std::array<bool, MAX_CLIENTS + 1U> m_Asked = {};
 };
 
 extern CPugDemoRecord gPugDemoRecord;

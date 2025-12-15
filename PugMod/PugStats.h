@@ -19,7 +19,7 @@ typedef struct S_MATCH_STATS
 	std::string Address;
 
 	// BETA: Team Score
-	std::array<int, SPECTATOR + 1> Score = { };
+	std::array<int, SPECTATOR + 1U> Score = { };
 
 	// BETA: Winner of match
 	int Winner;
@@ -196,10 +196,10 @@ typedef struct S_PLAYER_STATS
 	int BombDefusedKit;			// BETA: Bomb Defuses with Kit
 
 	// BETA: Kill streak
-	std::array<int, MAX_CLIENTS / 2> KillStreak;
+	std::array<int, MAX_CLIENTS + 1U> KillStreak;
 
 	// BETA: Versus: 1 vs X win situations
-	std::array<int, MAX_CLIENTS / 2> Versus;
+	std::array<int, MAX_CLIENTS + 1U> Versus;
 	
 	// BETA: HitBox
 	std::map<int, P_HITBOX_STATS> HitBox;
@@ -344,7 +344,6 @@ public:
 	void SwitchTeam(CBasePlayer* Player);
 	void SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnim);
 	void TakeDamage(CBasePlayer* Victim, entvars_t* pevInflictor, entvars_t* pevAttacker, float& flDamage, int bitsDamageType);
-	void PlayerKilled(CBasePlayer* Victim, entvars_t* pevKiller, entvars_t* pevInflictor);
 	void SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Victim, CBasePlayer *Assister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill);
 	void AddAccount(CBasePlayer* Player, int amount, RewardType type, bool bTrackChange);
 	void RestartRound();

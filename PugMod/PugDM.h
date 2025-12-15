@@ -43,16 +43,14 @@ typedef struct S_DM_INFO
     std::map<int, int> m_WeaponState  = {};
     float m_Headshots = 0.0f;
 
-    std::array<bool, DM_OPT_RESPAWN + 1> m_Option = {};
+    std::array<bool, DM_OPT_RESPAWN + 1U> m_Option = {};
 
     void Clear()
     {
         this->m_HideMenu = false;
         this->m_WeaponLast.fill(WEAPON_NONE);
         this->m_WeaponState.clear();
-
         this->m_Headshots = 0.0f;
-
         this->m_Option.fill(false);
     }
 } P_DM_INFO, *LP_DM_INFO;

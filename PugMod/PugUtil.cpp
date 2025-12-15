@@ -763,9 +763,9 @@ std::vector<CBasePlayer *> CPugUtil::GetPlayers(bool InGame, bool Bots)
 	return Players;
 }
 
-std::array<std::vector<CBasePlayer *>, SPECTATOR + 1> CPugUtil::GetPlayers()
+std::array<std::vector<CBasePlayer *>, SPECTATOR + 1U> CPugUtil::GetPlayers()
 {
-	std::array<std::vector<CBasePlayer *>, SPECTATOR + 1> Players;
+	std::array<std::vector<CBasePlayer *>, SPECTATOR + 1U> Players;
 
 	for (int i = 1; i <= gpGlobals->maxClients; ++i)
 	{

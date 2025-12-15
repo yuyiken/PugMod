@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-std::array<CPugMenu, MAX_CLIENTS + 1> gPugMenu;
+std::array<CPugMenu, MAX_CLIENTS + 1U> gPugMenu;
 
 void CPugMenu::Clear()
 {

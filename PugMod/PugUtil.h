@@ -43,7 +43,7 @@ public:
     void DrawTracer(Vector Start, Vector End);
     void DrawLine(Vector Start, Vector End, int Life, int Red, int Green, int Blue);
     std::vector<CBasePlayer *> GetPlayers(bool InGame, bool Bots);
-    std::array<std::vector<CBasePlayer *>, SPECTATOR + 1> GetPlayers();
+    std::array<std::vector<CBasePlayer *>, SPECTATOR + 1U> GetPlayers();
     void ShowMotd(edict_t* pEntity, char* Motd, unsigned int MotdLength);
     bool IsPlayerVisible(CBasePlayer* Player, CBasePlayer* Target);
 private:
