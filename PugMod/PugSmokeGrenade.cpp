@@ -1,8 +1,8 @@
 #include "precompiled.h"
 
-CPugBugFix g_PugBugFix;
+CPugSmokeGrenade gPugSmokeGrenade;
 
-void CPugBugFix::ExplodeSmokeGrenade(CGrenade* Entity)
+void CPugSmokeGrenade::ExplodeSmokeGrenade(CGrenade* Entity)
 {
 	if (gPugCvar.m_SmokeBugFix->value > 0.0f)
 	{

@@ -380,7 +380,7 @@ void ReGameDLL_CGrenade_ExplodeSmokeGrenade(IReGameHook_CGrenade_ExplodeSmokeGre
 {
 	chain->callNext(pThis);
 
-	g_PugBugFix.ExplodeSmokeGrenade(pThis);
+	gPugSmokeGrenade.ExplodeSmokeGrenade(pThis);
 }
 
 bool ReGameDLL_CBasePlayer_MakeBomber(IReGameHook_CBasePlayer_MakeBomber *chain, CBasePlayer *pthis)

@@ -1,9 +1,9 @@
 #pragma once
 
-class CPugBugFix
+class CPugSmokeGrenade
 {
 public:
     void ExplodeSmokeGrenade(CGrenade* Entity);
 };
 
-extern CPugBugFix g_PugBugFix;
+extern CPugSmokeGrenade gPugSmokeGrenade;

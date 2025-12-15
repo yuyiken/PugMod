@@ -10,6 +10,7 @@ void DLL_POST_ServerDeactivate();
 void DLL_POST_StartFrame();
 void DLL_POST_ClientPutInServer(edict_t *pEntity);
 void DLL_POST_ClientUserInfoChanged(edict_t *pEntity, char *infobuffer);
+void DLL_POST_TraceLine();
 #pragma endregion
 
 #pragma region NEW_DLL_PRE
@@ -32,4 +33,5 @@ void ENGINE_PRE_MessageEnd(void);
 #pragma endregion
 
 #pragma region ENGINE_POST
+void ENGINE_POST_TraceLine(const float *vFrom, const float *vTo, int fNoMonsters, edict_t *pentToSkip, TraceResult *pTraceResult);
 #pragma endregion
