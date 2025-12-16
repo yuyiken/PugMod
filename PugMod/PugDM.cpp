@@ -404,20 +404,25 @@ void CPugDM::UpdateClientData(CBasePlayer *Player)
         {
             if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
             {
-                if (this->m_Info[Player->entindex()].m_Option[DM_OPT_HUD_KD])
-                {
-                    if (gpGlobals->time >= Player->m_iUpdateTime)
-                    {
-                        gPugUtil.SendDHud
-                        (
-                            Player->edict(),
-                            g_DM_HudInfo,
-                            _T("KD: %.2f^nHSP: %.2f%%"),
-                            (Player->m_iDeaths > 0) ? (Player->edict()->v.frags / (float)(Player->m_iDeaths)) : (Player->edict()->v.frags > 0.0f ? 100.0f : 0.0f),
-                            (Player->edict()->v.frags > 0.0f) ? ((this->m_Info[Player->entindex()].m_Headshots / Player->edict()->v.frags) * 100.0f) : 0.0f
-                        );
+                auto EntityIndex = Player->entindex();
 
-                        Player->m_iUpdateTime = static_cast<int>(gpGlobals->time + 1.0f);
+                if (EntityIndex > 0 && EntityIndex <= gpGlobals->maxClients)
+                {
+                    if (this->m_Info[EntityIndex].m_Option[DM_OPT_HUD_KD])
+                    {
+                        if (gpGlobals->time >= Player->m_iUpdateTime)
+                        {
+                            gPugUtil.SendDHud
+                            (
+                                Player->edict(),
+                                g_DM_HudInfo,
+                                _T("KD: %.2f^nHSP: %.2f%%"),
+                                (Player->m_iDeaths > 0) ? (Player->edict()->v.frags / (float)(Player->m_iDeaths)) : (Player->edict()->v.frags > 0.0f ? 100.0f : 0.0f),
+                                (Player->edict()->v.frags > 0.0f) ? ((this->m_Info[EntityIndex].m_Headshots / Player->edict()->v.frags) * 100.0f) : 0.0f
+                            );
+
+                            Player->m_iUpdateTime = static_cast<int>(gpGlobals->time + 1.0f);
+                        }
                     }
                 }
             }
