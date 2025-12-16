@@ -501,7 +501,7 @@ void CPugUtil::SendHud(edict_t *pEntity, const hudtextparms_t &TextParams, const
 
 	va_start(ArgPtr, Format);
 
-	vsnprintf(szString, sizeof(szString), Format, ArgPtr);
+	Q_vsnprintf(szString, sizeof(szString), Format, ArgPtr);
 
 	va_end(ArgPtr);
 
@@ -549,17 +549,33 @@ void CPugUtil::SendHud(edict_t *pEntity, const hudtextparms_t &TextParams, const
 
 void CPugUtil::SendDHud(edict_t *pEntity, const hudtextparms_t &TextParams, const char *Format, ...)
 {
-	static char Text[128] = {0};
+	#define DRC_CMD_MESSAGE 6
+
+	static char Text[128];
 
 	va_list ArgPtr;
 
 	va_start(ArgPtr, Format);
 
-	int Length = vsnprintf(Text, sizeof(Text), Format, ArgPtr);
+	Q_vsnprintf(Text, sizeof(Text), Format, ArgPtr);
 
 	va_end(ArgPtr);
 
 	this->ParseColor(Text);
+
+	int Length = strlen(Text);
+
+	if (Length > 127)
+	{
+		Length = 127;
+
+		if (((Text[Length - 1] & 0xFF) >= 0xC2) && ((Text[Length - 1] & 0xFF) <= 0xEF))
+		{
+			Length--;
+		}
+
+		Text[Length] = 0;
+	}
 
 	if (!FNullEnt(pEntity))
 	{
@@ -571,7 +587,7 @@ void CPugUtil::SendDHud(edict_t *pEntity, const hudtextparms_t &TextParams, cons
 	}
 
 	g_engfuncs.pfnWriteByte(Length + 31);
-	g_engfuncs.pfnWriteByte(6);
+	g_engfuncs.pfnWriteByte(DRC_CMD_MESSAGE);
 	g_engfuncs.pfnWriteByte(TextParams.effect);
 	g_engfuncs.pfnWriteLong(TextParams.b1 + (TextParams.g1 << 8) + (TextParams.r1 << 16));
 	g_engfuncs.pfnWriteLong((*((int32_t *)&TextParams.x)));
