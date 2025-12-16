@@ -426,16 +426,10 @@ C_DLLEXPORT int GetEngineFunctions_Post(enginefuncs_t *pengfuncsFromEngine, int 
 {
 	memset(&g_ENGINE_FunctionTable_Post, 0, sizeof(enginefuncs_t));
 
-	g_ENGINE_FunctionTable_Post.pfnTraceLine = ENGINE_POST_TraceLine;
+	// Functions here
 
 	memcpy(pengfuncsFromEngine, &g_ENGINE_FunctionTable_Post, sizeof(enginefuncs_t));
 
 	return 1;
-}
-
-void ENGINE_POST_TraceLine(const float *vFrom, const float *vTo, int fNoMonsters, edict_t *pentToSkip, TraceResult *pTraceResult)
-{
-	gPugTraceLine.TraceLine(vFrom, vTo, fNoMonsters, pentToSkip, pTraceResult);
-	RETURN_META(MRES_IGNORED);
 }
 #pragma endregion

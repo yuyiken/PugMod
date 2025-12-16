@@ -33,5 +33,4 @@ void ENGINE_PRE_MessageEnd(void);
 #pragma endregion
 
 #pragma region ENGINE_POST
-void ENGINE_POST_TraceLine(const float *vFrom, const float *vTo, int fNoMonsters, edict_t *pentToSkip, TraceResult *pTraceResult);
 #pragma endregion

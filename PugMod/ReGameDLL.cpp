@@ -88,6 +88,8 @@ bool ReGameDLL_Init()
 										g_ReGameHookchains->CGrenade_DefuseBombEnd()->registerHook(ReGameDLL_CGrenade_DefuseBombEnd);
 
 										g_ReGameHookchains->CGrenade_ExplodeBomb()->registerHook(ReGameDLL_CGrenade_ExplodeBomb);
+
+										g_ReGameHookchains->CBaseEntity_FireBullets3()->registerHook(ReGameDLL_CBaseEntity_FireBullets3);
 									}
 
 									gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] ReGameDLL API Loaded: %d.%d", Plugin_info.logtag, REGAMEDLL_API_VERSION_MAJOR, REGAMEDLL_API_VERSION_MINOR);
@@ -160,6 +162,8 @@ bool ReGameDLL_Stop()
 		g_ReGameHookchains->CGrenade_DefuseBombEnd()->unregisterHook(ReGameDLL_CGrenade_DefuseBombEnd);
 
 		g_ReGameHookchains->CGrenade_ExplodeBomb()->unregisterHook(ReGameDLL_CGrenade_ExplodeBomb);
+
+		g_ReGameHookchains->CBaseEntity_FireBullets3()->unregisterHook(ReGameDLL_CBaseEntity_FireBullets3);
 	}
 
 	return true;
@@ -431,4 +435,11 @@ void ReGameDLL_CGrenade_ExplodeBomb(IReGameHook_CGrenade_ExplodeBomb *chain, CGr
 	gPugStats.ExplodeBomb(pthis, ptr, bitsDamageType);
 
 	chain->callNext(pthis, ptr, bitsDamageType);
+}
+
+Vector &ReGameDLL_CBaseEntity_FireBullets3(IReGameHook_CBaseEntity_FireBullets3 *chain, CBaseEntity *pEntity, Vector &vecSrc, Vector &vecDirShooting, float vecSpread, float flDistance, int iPenetration, int iBulletType, int iDamage, float flRangeModifier, entvars_t *pevAttacker, bool bPistol, int shared_rand)
+{
+	vecSpread = gPugSpread.GetSpread(pEntity, vecSrc, vecDirShooting, vecSpread, flDistance, iPenetration, iBulletType, iDamage, flRangeModifier, pevAttacker, bPistol, shared_rand);
+
+	return chain->callNext(pEntity, vecSrc, vecDirShooting, vecSpread, flDistance, iPenetration, iBulletType, iDamage, flRangeModifier, pevAttacker, bPistol, shared_rand);
 }
