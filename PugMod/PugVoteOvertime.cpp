@@ -76,7 +76,7 @@ void CPugVoteOvertime::Init()
                 gPugUtil.ClientCommand(Player->edict(), g_VoteOverimte_Sound[g_engfuncs.pfnRandomLong(0, 1)]);
             }
 
-            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 A partida está empatada, escolha o que fazer:"), gPugCvar.m_Tag->string);
+            gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 The match is tied, choose what to do:"), gPugCvar.m_Tag->string);
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 1. Sudden Death: ^3The winning team will be the match winner."), gPugCvar.m_Tag->string);
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 2. Play Overtime: ^3The winner will be decided via Overtime."), gPugCvar.m_Tag->string);
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 3. End Tied: ^3The match ends without a winner."), gPugCvar.m_Tag->string);
