@@ -36,21 +36,21 @@ void CPugRoundStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario
 	}
 }
 
-void CPugRoundStats::RoundEndStats()
+void CPugRoundStats::PlayerEndStats(int EntityIndex)
 {
     auto State = gPugMod.GetState();
 
     if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
     {
-        if (gPugCvar.m_RoundEndStats->string)
+        auto Player = UTIL_PlayerByIndexSafe(EntityIndex);
+
+        if (Player)
         {
-            auto Players = gPugUtil.GetPlayers(true, false);
-    
-            if (Players.size() > 0)
+            if (g_pGameRules)
             {
-                for (auto const& Player : Players)
+                if (!Player->IsAlive() || CSGameRules()->m_bRoundTerminating || CSGameRules()->IsFreezePeriod())
                 {
-                    if (Player->IsAlive())
+                    if (gPugCvar.m_RoundEndStats->string)
                     {
                         switch (gPugCvar.m_RoundEndStats->string[0u])
                         {
@@ -80,6 +80,30 @@ void CPugRoundStats::RoundEndStats()
                                 break;
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+void CPugRoundStats::RoundEndStats()
+{
+    auto State = gPugMod.GetState();
+
+    if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
+    {
+        if (gPugCvar.m_RoundEndStats->string)
+        {
+            auto Players = gPugUtil.GetPlayers(true, false);
+    
+            if (Players.size() > 0)
+            {
+                for (auto const& Player : Players)
+                {
+                    if (Player->IsAlive())
+                    {
+                        this->PlayerEndStats(Player->entindex());
                     }
                 }
             }
@@ -145,42 +169,9 @@ void CPugRoundStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer
 
     if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
     {
-        if (g_pGameRules)
+        if (Victim)
         {
-            if (!Victim->IsAlive() || CSGameRules()->m_bRoundTerminating || CSGameRules()->IsFreezePeriod())
-            {
-                if (gPugCvar.m_RoundEndStats->string)
-                {
-                    switch (gPugCvar.m_RoundEndStats->string[0u])
-                    {
-                        case 'a':
-                        {
-                            this->ShowHP(Victim);
-                            break;
-                        }
-                        case 'b':
-                        {
-                            this->ShowDamage(Victim);
-                            break;
-                        }
-                        case 'c':
-                        {
-                            this->ShowReceivedDamage(Victim);
-                            break;
-                        }
-                        case 'd':
-                        {
-                            this->ShowSummary(Victim);
-                            break;
-                        }
-                        case 'e':
-                        {
-                            this->ShowStats(Victim);
-                            break;
-                        }
-                    }
-                }
-            }
+            gPugTask.Create(E_TASK::ROUND_PLAYER_STATS, 1.0f, false, Victim->entindex());
         }
     }
 }
