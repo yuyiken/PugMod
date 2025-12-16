@@ -56,7 +56,8 @@ bool ReAPI_Init()
 		}
 	}
 
-	gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] ReHLDS API failed to load.", Plugin_info.logtag);
+	gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] ReHLDS API Failed: %d.%d version is needed.", Plugin_info.logtag, REHLDS_API_VERSION_MAJOR, REHLDS_API_VERSION_MINOR);
+	gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Download at: https://github.com/rehlds/ReHLDS/actions", Plugin_info.logtag);
 
 	return false;
 }

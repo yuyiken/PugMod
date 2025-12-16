@@ -104,7 +104,8 @@ bool ReGameDLL_Init()
 		}
 	}
 
-	gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] ReGameDLL API failed to load.", Plugin_info.logtag);
+	gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] ReGameDLL API Failed: %d.%d version is needed.", Plugin_info.logtag, REGAMEDLL_API_VERSION_MAJOR, REGAMEDLL_API_VERSION_MINOR);
+	gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] Download at: https://github.com/rehlds/ReGameDLL_CS/actions", Plugin_info.logtag);
 
 	return false;
 }
