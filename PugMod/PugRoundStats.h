@@ -17,9 +17,7 @@ public:
     void GetIntoGame(CBasePlayer *Player);
     void DropClient(edict_t *pEntity);
 	void TakeDamage(CBasePlayer *Victim, entvars_t *pevInflictor, entvars_t *pevAttacker, float& flDamage, int bitsDamageType);
-	void SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Victim, CBasePlayer *Assister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill);
-	void PlayerEndStats(int EntityIndex);
-	void RoundEndStats();
+	void StartDeathCam(CBasePlayer *Player);
 	bool ShowHP(CBasePlayer *Player);
 	bool ShowDamage(CBasePlayer *Player);
 	bool ShowReceivedDamage(CBasePlayer *Player);

@@ -65,6 +65,8 @@ bool ReGameDLL_Init()
 
 										g_ReGameHookchains->CSGameRules_SendDeathMessage()->registerHook(ReGameDLL_CSGameRules_SendDeathMessage);
 
+										g_ReGameHookchains->CBasePlayer_StartDeathCam()->registerHook(ReGameDLL_CBasePlayer_StartDeathCam);
+
 										g_ReGameHookchains->CBasePlayer_AddAccount()->registerHook(ReGameDLL_CBasePlayer_AddAccount);
 
 										g_ReGameHookchains->CBasePlayer_SetAnimation()->registerHook(ReGameDLL_CBasePlayer_SetAnimation);
@@ -139,6 +141,8 @@ bool ReGameDLL_Stop()
 		g_ReGameHookchains->CBasePlayer_TakeDamage()->unregisterHook(ReGameDLL_CBasePlayer_TakeDamage);
 
 		g_ReGameHookchains->CSGameRules_SendDeathMessage()->unregisterHook(ReGameDLL_CSGameRules_SendDeathMessage);
+
+		g_ReGameHookchains->CBasePlayer_StartDeathCam()->unregisterHook(ReGameDLL_CBasePlayer_StartDeathCam);
 
 		g_ReGameHookchains->CBasePlayer_AddAccount()->unregisterHook(ReGameDLL_CBasePlayer_AddAccount);
 
@@ -322,8 +326,13 @@ void ReGameDLL_CSGameRules_SendDeathMessage(IReGameHook_CSGameRules_SendDeathMes
 	chain->callNext(KillerBaseEntity, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
 
 	gPugStats.SendDeathMessage(KillerBaseEntity, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
+}
 
-	gPugRoundStats.SendDeathMessage(KillerBaseEntity, Victim, Assister, pevInflictor, killerWeaponName, iDeathMessageFlags, iRarityOfKill);
+void ReGameDLL_CBasePlayer_StartDeathCam(IReGameHook_CBasePlayer_StartDeathCam *chain, CBasePlayer *Player)
+{
+	chain->callNext(Player);
+
+	gPugRoundStats.StartDeathCam(Player);
 }
 
 void ReGameDLL_CBasePlayer_AddAccount(IReGameHook_CBasePlayer_AddAccount *chain, CBasePlayer *Player, int Amount, RewardType Type, bool TrackChange)
@@ -374,9 +383,9 @@ bool ReGameDLL_RoundEnd(IReGameHook_RoundEnd *chain, int winStatus, ScenarioEven
 
 	gPugMod.RoundEnd(winStatus, event, tmDelay);
 
-	gPugRoundStats.RoundEnd(winStatus, event, tmDelay);
-
 	gPugStats.RoundEnd(winStatus, event, tmDelay);
+
+	gPugRoundStats.RoundEnd(winStatus, event, tmDelay);
 
 	return Result;
 }

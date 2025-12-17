@@ -79,8 +79,11 @@ bool CPugTeamManager::ChooseTeam(CBasePlayer *Player, int Slot)
                     {
                         if (Slot != this->m_Data[Auth])
                         {
-                            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Team change by reconnect is not allowed."), gPugCvar.m_Tag->string);
-                            return true;
+                            if (!gPugAdmin.Access(Player->entindex(), ADMIN_IMMUNITY))
+                            {
+                                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Team change by reconnect is not allowed."), gPugCvar.m_Tag->string);
+                                return true;
+                            }
                         }
                     }
                 }

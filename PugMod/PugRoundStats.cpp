@@ -28,27 +28,36 @@ void CPugRoundStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario
     auto State = gPugMod.GetState();
 
 	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
-	{
-		if (winStatus != WINSTATUS_NONE)
-		{
-            gPugTask.Create(E_TASK::ROUND_END_STATS, 0.5f, false, State);
-		}
-	}
+    {
+        if (g_pGameRules)
+        {
+            if (CSGameRules()->m_bRoundTerminating)
+            {
+                auto Players = gPugUtil.GetPlayers(true, false);
+
+                if (Players.size() > 0)
+                {
+                    for (auto const & Player : Players)
+                    {
+                        this->StartDeathCam(Player);
+                    }
+                }
+            }
+        }
+    }
 }
 
-void CPugRoundStats::PlayerEndStats(int EntityIndex)
+void CPugRoundStats::StartDeathCam(CBasePlayer *Player)
 {
     auto State = gPugMod.GetState();
 
     if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
     {
-        auto Player = UTIL_PlayerByIndexSafe(EntityIndex);
-
         if (Player)
         {
             if (g_pGameRules)
             {
-                if (!Player->IsAlive() || CSGameRules()->m_bRoundTerminating || CSGameRules()->IsFreezePeriod())
+                if (!Player->IsBot())
                 {
                     if (gPugCvar.m_RoundEndStats->string)
                     {
@@ -80,30 +89,6 @@ void CPugRoundStats::PlayerEndStats(int EntityIndex)
                                 break;
                             }
                         }
-                    }
-                }
-            }
-        }
-    }
-}
-
-void CPugRoundStats::RoundEndStats()
-{
-    auto State = gPugMod.GetState();
-
-    if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
-    {
-        if (gPugCvar.m_RoundEndStats->string)
-        {
-            auto Players = gPugUtil.GetPlayers(true, false);
-    
-            if (Players.size() > 0)
-            {
-                for (auto const& Player : Players)
-                {
-                    if (Player->IsAlive())
-                    {
-                        this->PlayerEndStats(Player->entindex());
                     }
                 }
             }
@@ -161,19 +146,6 @@ void CPugRoundStats::TakeDamage(CBasePlayer *Player, entvars_t *pevInflictor, en
             gPugUtil.SendDeathMsg(NULL, NULL, Player, NULL, NULL, "c4", 0, 0);
 		}
 	}
-}
-
-void CPugRoundStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Victim, CBasePlayer *Assister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
-{
-    auto State = gPugMod.GetState();
-
-    if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
-    {
-        if (Victim)
-        {
-            gPugTask.Create(E_TASK::ROUND_PLAYER_STATS, 1.0f, false, Victim->entindex());
-        }
-    }
 }
 
 bool CPugRoundStats::ShowHP(CBasePlayer *Player)
@@ -413,23 +385,23 @@ bool CPugRoundStats::ShowStats(CBasePlayer *Player)
     
                                 Q_memset(HudList, 0, sizeof(HudList));
     
-                                auto PlayerId = Player->entindex();
+                                auto EntityIndex = Player->entindex();
     
                                 for (auto const& Target : Players)
                                 {
                                     auto TargetId = Target->entindex();
     
-                                    if (this->m_RoundHit[PlayerId][TargetId])
+                                    if (this->m_RoundHit[EntityIndex][TargetId])
                                     {
-                                        Q_snprintf(HudList[0] + strlen(HudList[0]), sizeof(HudList[0]), _T("%s -- %d hit(s) / %d dmg\n"), STRING(Target->edict()->v.netname), this->m_RoundHit[PlayerId][TargetId], this->m_RoundDmg[PlayerId][TargetId]);
+                                        Q_snprintf(HudList[0] + strlen(HudList[0]), sizeof(HudList[0]), _T("%s -- %d hit(s) / %d dmg\n"), STRING(Target->edict()->v.netname), this->m_RoundHit[EntityIndex][TargetId], this->m_RoundDmg[EntityIndex][TargetId]);
                                     }
     
-                                    if (this->m_RoundHit[TargetId][PlayerId])
+                                    if (this->m_RoundHit[TargetId][EntityIndex])
                                     {
-                                        Q_snprintf(HudList[1] + strlen(HudList[1]), sizeof(HudList[1]), _T("%s -- %d hit(s) / %d dmg\n"), STRING(Target->edict()->v.netname), this->m_RoundHit[TargetId][PlayerId], this->m_RoundDmg[TargetId][PlayerId]);
+                                        Q_snprintf(HudList[1] + strlen(HudList[1]), sizeof(HudList[1]), _T("%s -- %d hit(s) / %d dmg\n"), STRING(Target->edict()->v.netname), this->m_RoundHit[TargetId][EntityIndex], this->m_RoundDmg[TargetId][EntityIndex]);
                                     }
                                 }
-    
+
                                 if (HudList[0][0u] != '\0')
                                 {
                                     Q_snprintf(HudList[2], sizeof(HudList[2]), _T("Victims:^n%s"), HudList[0]);

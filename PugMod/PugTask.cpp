@@ -66,16 +66,6 @@ void CPugTask::Execute(int Index)
                 gPugMod.RoundMessage();
                 break;
             }
-            case E_TASK::ROUND_PLAYER_STATS:
-            {
-                gPugRoundStats.PlayerEndStats(this->m_Task[Index].Parameter);
-                break;
-            }
-            case E_TASK::ROUND_END_STATS:
-            {
-                gPugRoundStats.RoundEndStats();
-                break;
-            }
             case E_TASK::PAUSE_MATCH:
             {
                 gPugPause.Timer(this->m_Task[Index].Parameter);
