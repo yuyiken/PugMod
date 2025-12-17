@@ -82,7 +82,7 @@ void CPugVoteTeam::Init()
                 }
             }
 
-            gPugUtil.ClientCommand(Player->edict(), g_VoteTeam_Sound[g_engfuncs.pfnRandomLong(0, 1)]);
+            gPugUtil.ClientCommand(Player->edict(), g_VoteTeam_Sound[RANDOM_LONG(0, 1)]);
 
             gPugMenu[Player->entindex()].Show(Player);
         }
@@ -186,7 +186,7 @@ P_VOTE_TEAM_INFO CPugVoteTeam::GetWinner()
             }
             else if (Item.Votes == Winner.Votes)
             {
-                if (g_engfuncs.pfnRandomLong(0, 1))
+                if (RANDOM_LONG(0, 1))
                 {
                     Winner = Item;
                 }
@@ -276,11 +276,11 @@ void CPugVoteTeam::TeamsRamdomize()
 
     if (Players.size())
     {
-        TeamName Team = static_cast<TeamName>(g_engfuncs.pfnRandomLong(TERRORIST, CT));
+        TeamName Team = static_cast<TeamName>(RANDOM_LONG(TERRORIST, CT));
 
         do
         {
-            auto i = g_engfuncs.pfnRandomLong(0, Players.size() - 1);
+            auto i = RANDOM_LONG(0, Players.size() - 1);
 
 			Players[i]->edict()->v.deadflag = DEAD_DEAD;
 
@@ -313,7 +313,7 @@ void CPugVoteTeam::TeamsOptimize()
 
         std::sort(Sorted.begin(), Sorted.end(), std::greater<float>());
 
-        TeamName Team = static_cast<TeamName>(g_engfuncs.pfnRandomLong(TERRORIST, CT));
+        TeamName Team = static_cast<TeamName>(RANDOM_LONG(TERRORIST, CT));
 
         for (size_t i = 0; i < Sorted.size(); i++)
         {

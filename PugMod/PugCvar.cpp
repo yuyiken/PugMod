@@ -5,34 +5,34 @@ CPugCvar gPugCvar;
 void CPugCvar::ServerActivate()
 {
     // allow_spectators
-    this->m_AllowSpectators = g_engfuncs.pfnCVarGetPointer("allow_spectators");
+    this->m_AllowSpectators = CVAR_GET_POINTER("allow_spectators");
 
     // mp_maxmoney
-    this->m_MpMaxMoney = g_engfuncs.pfnCVarGetPointer("mp_maxmoney");
+    this->m_MpMaxMoney = CVAR_GET_POINTER("mp_maxmoney");
 
     // mp_freezetime
-    this->m_MpFreezeTime = g_engfuncs.pfnCVarGetPointer("mp_freezetime");
+    this->m_MpFreezeTime = CVAR_GET_POINTER("mp_freezetime");
 
     // mp_auto_join_team
-    this->m_AutoTeamJoin = g_engfuncs.pfnCVarGetPointer("mp_auto_join_team");
+    this->m_AutoTeamJoin = CVAR_GET_POINTER("mp_auto_join_team");
 
     // humans_join_team
-    this->m_HumansJoinTeam = g_engfuncs.pfnCVarGetPointer("humans_join_team");
+    this->m_HumansJoinTeam = CVAR_GET_POINTER("humans_join_team");
 
     // bot_join_team
-    this->m_BotJoinTeam = g_engfuncs.pfnCVarGetPointer("bot_join_team");
+    this->m_BotJoinTeam = CVAR_GET_POINTER("bot_join_team");
 
     // mp_round_restart_delay
-    this->m_RoundRestartDelay = g_engfuncs.pfnCVarGetPointer("mp_round_restart_delay");
+    this->m_RoundRestartDelay = CVAR_GET_POINTER("mp_round_restart_delay");
 
     // sv_restart
-	this->m_SvRestart = g_engfuncs.pfnCVarGetPointer("sv_restart");
+	this->m_SvRestart = CVAR_GET_POINTER("sv_restart");
 
     // sv_restartround
-	this->m_SvRestartRound = g_engfuncs.pfnCVarGetPointer("sv_restartround");
+	this->m_SvRestartRound = CVAR_GET_POINTER("sv_restartround");
 
     // mp_buytime
-    this->m_MpBuyTime = g_engfuncs.pfnCVarGetPointer("mp_buytime");
+    this->m_MpBuyTime = CVAR_GET_POINTER("mp_buytime");
 
     // Log Tag
     //
@@ -517,7 +517,7 @@ void CPugCvar::ServerActivate()
 
 cvar_t *CPugCvar::Register(const char *pszName, const char *pszValue)
 {
-    cvar_t *pPointer = g_engfuncs.pfnCVarGetPointer(pszName);
+    cvar_t *pPointer = CVAR_GET_POINTER(pszName);
 
     if (!pPointer)
     {
@@ -543,9 +543,9 @@ cvar_t *CPugCvar::Register(const char *pszName, const char *pszValue)
                 
                 Data.flags = (FCVAR_SERVER | FCVAR_PROTECTED | FCVAR_SPONLY | FCVAR_UNLOGGED);
 
-                g_engfuncs.pfnCVarRegister(&Data);
+                CVAR_REGISTER(&Data);
 
-                pPointer = g_engfuncs.pfnCVarGetPointer(Data.name);
+                pPointer = CVAR_GET_POINTER(Data.name);
 
                 if (pPointer)
                 {

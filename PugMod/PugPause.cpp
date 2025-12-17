@@ -173,10 +173,10 @@ void CPugPause::SetRoundTime(int Time, bool FreezePeriod)
 
 	static int iMsgRoundTime;
 
-	if (iMsgRoundTime || (iMsgRoundTime = gpMetaUtilFuncs->pfnGetUserMsgID(&Plugin_info, "RoundTime", NULL)))
+	if (iMsgRoundTime || (iMsgRoundTime = GET_USER_MSG_ID(PLID, "RoundTime", NULL)))
 	{
-		g_engfuncs.pfnMessageBegin(MSG_ALL, iMsgRoundTime, NULL, NULL);
-		g_engfuncs.pfnWriteShort(Time);
-		g_engfuncs.pfnMessageEnd();
+        MESSAGE_BEGIN(MSG_ALL, iMsgRoundTime);
+		WRITE_SHORT(Time);
+		MESSAGE_END();
 	}
 }

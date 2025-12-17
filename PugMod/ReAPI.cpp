@@ -9,7 +9,7 @@ IRehldsServerStatic *g_RehldsSvs;
 
 bool ReAPI_Init()
 {
-	if (g_engfuncs.pfnIsDedicatedServer())
+	if (IS_DEDICATED_SERVER())
 	{
 #ifdef WIN32
 		auto engineModule = Sys_GetModuleHandle("swds.dll");

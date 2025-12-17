@@ -91,7 +91,7 @@ void CPugUtil::ServerCommand(const char *Format, ...)
 
 	strcat(Command, "\n");
 
-	g_engfuncs.pfnServerCommand(Command);
+	SERVER_COMMAND(Command);
 }
 
 bool CPugUtil::IsNetClient(edict_t *pEntity)
@@ -160,11 +160,11 @@ void CPugUtil::PrintColor(edict_t* pEntity, int Sender, const char* Format, ...)
 		{
 			if (!(pEntity->v.flags & FL_FAKECLIENT))
 			{
-				g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgSayText, nullptr, pEntity);
-				g_engfuncs.pfnWriteByte(Sender ? Sender : ENTINDEX(pEntity));
-				g_engfuncs.pfnWriteString("%s");
-				g_engfuncs.pfnWriteString(szText);
-				g_engfuncs.pfnMessageEnd();
+				MESSAGE_BEGIN(MSG_ONE, iMsgSayText, nullptr, pEntity);
+				WRITE_BYTE(Sender ? Sender : ENTINDEX(pEntity));
+				WRITE_STRING("%s");
+				WRITE_STRING(szText);
+				MESSAGE_END();
 			}
 		}
 		else
@@ -175,11 +175,11 @@ void CPugUtil::PrintColor(edict_t* pEntity, int Sender, const char* Format, ...)
 
 				if (this->IsNetClient(pEntity))
 				{
-					g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgSayText, nullptr, pEntity);
-					g_engfuncs.pfnWriteByte(Sender ? Sender : i);
-					g_engfuncs.pfnWriteString("%s");
-					g_engfuncs.pfnWriteString(szText);
-					g_engfuncs.pfnMessageEnd();
+					MESSAGE_BEGIN(MSG_ONE, iMsgSayText, nullptr, pEntity);
+					WRITE_BYTE(Sender ? Sender : i);
+					WRITE_STRING("%s");
+					WRITE_STRING(szText);
+					MESSAGE_END();
 				}
 			}
 		}
@@ -194,10 +194,10 @@ void CPugUtil::TeamInfo(edict_t *pEntity, int playerIndex, const char *pszTeamNa
 
 		if (iMsgTeamInfo || (iMsgTeamInfo = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "TeamInfo", NULL)))
 		{
-			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgTeamInfo, nullptr, pEntity);
-			g_engfuncs.pfnWriteByte(playerIndex);
-			g_engfuncs.pfnWriteString(pszTeamName);
-			g_engfuncs.pfnMessageEnd();
+			MESSAGE_BEGIN(MSG_ONE, iMsgTeamInfo, nullptr, pEntity);
+			WRITE_BYTE(playerIndex);
+			WRITE_STRING(pszTeamName);
+			MESSAGE_END();
 		}
 	}
 }
@@ -273,17 +273,17 @@ void CPugUtil::ClientPrint(edict_t *pEntity, int iMsgDest, const char *Format, .
 	{
 		if (!FNullEnt(pEntity))
 		{
-			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgTextMsg, nullptr, pEntity);
+			MESSAGE_BEGIN(MSG_ONE, iMsgTextMsg, nullptr, pEntity);
 		}
 		else
 		{
-			g_engfuncs.pfnMessageBegin(MSG_BROADCAST, iMsgTextMsg, nullptr, nullptr);
+			MESSAGE_BEGIN(MSG_BROADCAST, iMsgTextMsg);
 		}
 
-		g_engfuncs.pfnWriteByte(iMsgDest);
-		g_engfuncs.pfnWriteString("%s");
-		g_engfuncs.pfnWriteString(Buffer);
-		g_engfuncs.pfnMessageEnd();
+		WRITE_BYTE(iMsgDest);
+		WRITE_STRING("%s");
+		WRITE_STRING(Buffer);
+		MESSAGE_END();
 	}
 }
 
@@ -303,7 +303,7 @@ void CPugUtil::ClientCommand(edict_t *pEntity, const char *Format, ...)
 
 	if (!FNullEnt(pEntity))
 	{
-		g_engfuncs.pfnClientCommand(pEntity, Command);
+		CLIENT_COMMAND(pEntity, Command);
 	}
 	else
 	{
@@ -313,7 +313,7 @@ void CPugUtil::ClientCommand(edict_t *pEntity, const char *Format, ...)
 
 			if (this->IsNetClient(pEntity))
 			{
-				g_engfuncs.pfnClientCommand(pEntity, Command);
+				CLIENT_COMMAND(pEntity, Command);
 			}
 		}
 	}
@@ -346,7 +346,7 @@ void CPugUtil::ClientDrop(int EntityIndex, const char* Format, ...)
 
 		if (Player)
 		{
-			int UserIndex = g_engfuncs.pfnGetPlayerUserId(Player->edict());
+			int UserIndex = GETPLAYERUSERID(Player->edict());
 
 			if (!FNullEnt(Player->edict()) && UserIndex > 0)
 			{
@@ -372,9 +372,9 @@ void CPugUtil::ClientSlap(edict_t *pEntity, float Damage, bool RandomDirection)
 		{
 			if (RandomDirection)
 			{
-				pEntity->v.velocity.x += g_engfuncs.pfnRandomLong(-600, 600);
-				pEntity->v.velocity.y += g_engfuncs.pfnRandomLong(-180, 180);
-				pEntity->v.velocity.z += g_engfuncs.pfnRandomLong(100, 200);
+				pEntity->v.velocity.x += RANDOM_LONG(-600, 600);
+				pEntity->v.velocity.y += RANDOM_LONG(-180, 180);
+				pEntity->v.velocity.z += RANDOM_LONG(100, 200);
 			}
 			else
 			{
@@ -387,13 +387,13 @@ void CPugUtil::ClientSlap(edict_t *pEntity, float Damage, bool RandomDirection)
 				fang[1] = vang.y;
 				fang[2] = vang.z;
 
-				g_engfuncs.pfnAngleVectors(fang, v_forward, v_right, NULL);
+				UTIL_MakeVectorsPrivate(fang, v_forward, v_right, NULL);
 
 				pEntity->v.velocity = pEntity->v.velocity + v_forward * 220 + Vector(0.0f, 0.0f, 200.0f);
 			}
 
-			pEntity->v.punchangle.x = static_cast<vec_t>(g_engfuncs.pfnRandomLong(-10, 10));
-			pEntity->v.punchangle.y = static_cast<vec_t>(g_engfuncs.pfnRandomLong(-10, 10));
+			pEntity->v.punchangle.x = static_cast<vec_t>(RANDOM_LONG(-10, 10));
+			pEntity->v.punchangle.y = static_cast<vec_t>(RANDOM_LONG(-10, 10));
 
 			pEntity->v.health -= Damage;
 
@@ -419,7 +419,7 @@ void CPugUtil::ClientSlap(edict_t *pEntity, float Damage, bool RandomDirection)
 				"player/pl_pain7.wav"
 			};
 
-			g_engfuncs.pfnEmitSound(pEntity, CHAN_VOICE, cs_sound[g_engfuncs.pfnRandomLong(0, 4)], 1.0, ATTN_NORM, 0, PITCH_NORM);
+			EMIT_SOUND_DYN2(pEntity, CHAN_VOICE, cs_sound[RANDOM_LONG(0, 4)], 1.0, ATTN_NORM, 0, PITCH_NORM);
 		}
 		else
 		{
@@ -509,42 +509,42 @@ void CPugUtil::SendHud(edict_t *pEntity, const hudtextparms_t &TextParams, const
 
 	if (!FNullEnt(pEntity))
 	{
-		g_engfuncs.pfnMessageBegin(MSG_ONE_UNRELIABLE, SVC_TEMPENTITY, nullptr, pEntity);
+		MESSAGE_BEGIN(MSG_ONE_UNRELIABLE, SVC_TEMPENTITY, nullptr, pEntity);
 	}
 	else
 	{
-		g_engfuncs.pfnMessageBegin(MSG_BROADCAST, SVC_TEMPENTITY, nullptr, nullptr);
+		MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	}
 
-	g_engfuncs.pfnWriteByte(TE_TEXTMESSAGE);
-	g_engfuncs.pfnWriteByte(TextParams.channel & 0xFF);
+	WRITE_BYTE(TE_TEXTMESSAGE);
+	WRITE_BYTE(TextParams.channel & 0xFF);
 
-	g_engfuncs.pfnWriteShort(this->FixedSigned16(TextParams.x, BIT(13)));
-	g_engfuncs.pfnWriteShort(this->FixedSigned16(TextParams.y, BIT(13)));
+	WRITE_SHORT(this->FixedSigned16(TextParams.x, BIT(13)));
+	WRITE_SHORT(this->FixedSigned16(TextParams.y, BIT(13)));
 
-	g_engfuncs.pfnWriteByte(TextParams.effect);
+	WRITE_BYTE(TextParams.effect);
 
-	g_engfuncs.pfnWriteByte(TextParams.r1);
-	g_engfuncs.pfnWriteByte(TextParams.g1);
-	g_engfuncs.pfnWriteByte(TextParams.b1);
-	g_engfuncs.pfnWriteByte(TextParams.a1);
+	WRITE_BYTE(TextParams.r1);
+	WRITE_BYTE(TextParams.g1);
+	WRITE_BYTE(TextParams.b1);
+	WRITE_BYTE(TextParams.a1);
 
-	g_engfuncs.pfnWriteByte(TextParams.r2);
-	g_engfuncs.pfnWriteByte(TextParams.g2);
-	g_engfuncs.pfnWriteByte(TextParams.b2);
-	g_engfuncs.pfnWriteByte(TextParams.a2);
+	WRITE_BYTE(TextParams.r2);
+	WRITE_BYTE(TextParams.g2);
+	WRITE_BYTE(TextParams.b2);
+	WRITE_BYTE(TextParams.a2);
 
-	g_engfuncs.pfnWriteShort(this->FixedUnsigned16(TextParams.fadeinTime, BIT(8)));
-	g_engfuncs.pfnWriteShort(this->FixedUnsigned16(TextParams.fadeoutTime, BIT(8)));
-	g_engfuncs.pfnWriteShort(this->FixedUnsigned16(TextParams.holdTime, BIT(8)));
+	WRITE_SHORT(this->FixedUnsigned16(TextParams.fadeinTime, BIT(8)));
+	WRITE_SHORT(this->FixedUnsigned16(TextParams.fadeoutTime, BIT(8)));
+	WRITE_SHORT(this->FixedUnsigned16(TextParams.holdTime, BIT(8)));
 
 	if (TextParams.effect == 2)
 	{
-		g_engfuncs.pfnWriteShort(this->FixedUnsigned16(TextParams.fxTime, BIT(8)));
+		WRITE_SHORT(this->FixedUnsigned16(TextParams.fxTime, BIT(8)));
 	}
 
-	g_engfuncs.pfnWriteString(szString);
-	g_engfuncs.pfnMessageEnd();
+	WRITE_STRING(szString);
+	MESSAGE_END();
 }
 
 void CPugUtil::SendDHud(edict_t *pEntity, const hudtextparms_t &TextParams, const char *Format, ...)
@@ -579,25 +579,25 @@ void CPugUtil::SendDHud(edict_t *pEntity, const hudtextparms_t &TextParams, cons
 
 	if (!FNullEnt(pEntity))
 	{
-		g_engfuncs.pfnMessageBegin(MSG_ONE_UNRELIABLE, SVC_DIRECTOR, nullptr, pEntity);
+		MESSAGE_BEGIN(MSG_ONE_UNRELIABLE, SVC_DIRECTOR, nullptr, pEntity);
 	}
 	else
 	{
-		g_engfuncs.pfnMessageBegin(MSG_BROADCAST, SVC_DIRECTOR, nullptr, nullptr);
+		MESSAGE_BEGIN(MSG_BROADCAST, SVC_DIRECTOR);
 	}
 
-	g_engfuncs.pfnWriteByte(Length + 31);
-	g_engfuncs.pfnWriteByte(DRC_CMD_MESSAGE);
-	g_engfuncs.pfnWriteByte(TextParams.effect);
-	g_engfuncs.pfnWriteLong(TextParams.b1 + (TextParams.g1 << 8) + (TextParams.r1 << 16));
-	g_engfuncs.pfnWriteLong((*((int32_t *)&TextParams.x)));
-	g_engfuncs.pfnWriteLong((*((int32_t *)&TextParams.y)));
-	g_engfuncs.pfnWriteLong((*((int32_t *)&TextParams.fadeinTime)));
-	g_engfuncs.pfnWriteLong((*((int32_t *)&TextParams.fadeoutTime)));
-	g_engfuncs.pfnWriteLong((*((int32_t *)&TextParams.holdTime)));
-	g_engfuncs.pfnWriteLong((*((int32_t *)&TextParams.fxTime)));
-	g_engfuncs.pfnWriteString(Text);
-	g_engfuncs.pfnMessageEnd();
+	WRITE_BYTE(Length + 31);
+	WRITE_BYTE(DRC_CMD_MESSAGE);
+	WRITE_BYTE(TextParams.effect);
+	WRITE_LONG(TextParams.b1 + (TextParams.g1 << 8) + (TextParams.r1 << 16));
+	WRITE_LONG((*((int32_t *)&TextParams.x)));
+	WRITE_LONG((*((int32_t *)&TextParams.y)));
+	WRITE_LONG((*((int32_t *)&TextParams.fadeinTime)));
+	WRITE_LONG((*((int32_t *)&TextParams.fadeoutTime)));
+	WRITE_LONG((*((int32_t *)&TextParams.holdTime)));
+	WRITE_LONG((*((int32_t *)&TextParams.fxTime)));
+	WRITE_STRING(Text);
+	MESSAGE_END();
 }
 
 void CPugUtil::SendDeathMsg(edict_t *pEntity, CBaseEntity *pKiller, CBasePlayer *pVictim, CBasePlayer *pAssister, entvars_t *pevInflictor, const char *killerWeaponName, int iDeathMessageFlags, int iRarityOfKill)
@@ -608,41 +608,41 @@ void CPugUtil::SendDeathMsg(edict_t *pEntity, CBaseEntity *pKiller, CBasePlayer 
 	{
 		if (!FNullEnt(pEntity))
 		{
-			g_engfuncs.pfnMessageBegin(MSG_ONE, iDeathMsg, nullptr, pEntity);
+			MESSAGE_BEGIN(MSG_ONE, iDeathMsg, nullptr, pEntity);
 		}
 		else
 		{
-			g_engfuncs.pfnMessageBegin(MSG_ALL, iDeathMsg, nullptr, nullptr);
+			MESSAGE_BEGIN(MSG_ALL, iDeathMsg);
 		}
 
-		g_engfuncs.pfnWriteByte((pKiller && pKiller->IsPlayer()) ? pKiller->entindex() : 0);
-		g_engfuncs.pfnWriteByte(pVictim->entindex());
-		g_engfuncs.pfnWriteByte((iRarityOfKill & 0x001));
-		g_engfuncs.pfnWriteString(killerWeaponName);
+		WRITE_BYTE((pKiller && pKiller->IsPlayer()) ? pKiller->entindex() : 0);
+		WRITE_BYTE(pVictim->entindex());
+		WRITE_BYTE((iRarityOfKill & 0x001));
+		WRITE_STRING(killerWeaponName);
 
 		if (iDeathMessageFlags > 0)
 		{
-			g_engfuncs.pfnWriteLong(iDeathMessageFlags);
+			WRITE_LONG(iDeathMessageFlags);
 
 			if (iDeathMessageFlags & 0x001)
 			{
-				g_engfuncs.pfnWriteCoord(pVictim->pev->origin.x);
-				g_engfuncs.pfnWriteCoord(pVictim->pev->origin.y);
-				g_engfuncs.pfnWriteCoord(pVictim->pev->origin.z);
+				WRITE_COORD(pVictim->pev->origin.x);
+				WRITE_COORD(pVictim->pev->origin.y);
+				WRITE_COORD(pVictim->pev->origin.z);
 			}
 
 			if (iDeathMessageFlags & 0x002)
 			{
-				g_engfuncs.pfnWriteByte((pAssister && pAssister->IsPlayer()) ? pAssister->entindex() : 0);
+				WRITE_BYTE((pAssister && pAssister->IsPlayer()) ? pAssister->entindex() : 0);
 			}
 
 			if (iDeathMessageFlags & 0x004)
 			{
-				g_engfuncs.pfnWriteByte(iRarityOfKill);
+				WRITE_BYTE(iRarityOfKill);
 			}
 		}
 
-		g_engfuncs.pfnMessageEnd();
+		MESSAGE_END();
 	}
 }
 
@@ -654,15 +654,15 @@ void CPugUtil::ScreenFade(edict_t *pEntity, float Duration, float HoldTime, int 
 
 		if (iMsgScreenFade || (iMsgScreenFade = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "ScreenFade", nullptr)))
 		{
-			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgScreenFade, nullptr, pEntity);
-			g_engfuncs.pfnWriteShort(gPugUtil.FixedUnsigned16(Duration, BIT(12)));
-			g_engfuncs.pfnWriteShort(gPugUtil.FixedUnsigned16(HoldTime, BIT(12)));
-			g_engfuncs.pfnWriteShort(FadeFlags);
-			g_engfuncs.pfnWriteByte(Red);
-			g_engfuncs.pfnWriteByte(Green);
-			g_engfuncs.pfnWriteByte(Blue);
-			g_engfuncs.pfnWriteByte(Alpha);
-			g_engfuncs.pfnMessageEnd();
+			MESSAGE_BEGIN(MSG_ONE, iMsgScreenFade, nullptr, pEntity);
+			WRITE_SHORT(gPugUtil.FixedUnsigned16(Duration, BIT(12)));
+			WRITE_SHORT(gPugUtil.FixedUnsigned16(HoldTime, BIT(12)));
+			WRITE_SHORT(FadeFlags);
+			WRITE_BYTE(Red);
+			WRITE_BYTE(Green);
+			WRITE_BYTE(Blue);
+			WRITE_BYTE(Alpha);
+			MESSAGE_END();
 		}
 	}
 	else
@@ -687,11 +687,11 @@ void CPugUtil::ScreenShake(edict_t *pEntity, float Amplitude, float Duration, fl
 
 		if (iMsgScreenShake || (iMsgScreenShake = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "ScreenShake", nullptr)))
 		{
-			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgScreenShake, nullptr, pEntity);
-			g_engfuncs.pfnWriteShort(gPugUtil.FixedUnsigned16(Amplitude, BIT(12)));
-			g_engfuncs.pfnWriteShort(gPugUtil.FixedUnsigned16(Duration, BIT(12)));
-			g_engfuncs.pfnWriteShort(gPugUtil.FixedUnsigned16(Frequency, BIT(8)));
-			g_engfuncs.pfnMessageEnd();
+			MESSAGE_BEGIN(MSG_ONE, iMsgScreenShake, nullptr, pEntity);
+			WRITE_SHORT(gPugUtil.FixedUnsigned16(Amplitude, BIT(12)));
+			WRITE_SHORT(gPugUtil.FixedUnsigned16(Duration, BIT(12)));
+			WRITE_SHORT(gPugUtil.FixedUnsigned16(Frequency, BIT(8)));
+			MESSAGE_END();
 		}
 	}
 	else
@@ -710,32 +710,32 @@ void CPugUtil::ScreenShake(edict_t *pEntity, float Amplitude, float Duration, fl
 
 void CPugUtil::DrawTracer(Vector Start, Vector End)
 {
-	g_engfuncs.pfnMessageBegin(MSG_BROADCAST, SVC_TEMPENTITY, Start, nullptr);
-	g_engfuncs.pfnWriteByte(TE_TRACER);
-	g_engfuncs.pfnWriteCoord(Start.x);
-	g_engfuncs.pfnWriteCoord(Start.y);
-	g_engfuncs.pfnWriteCoord(Start.z);
-	g_engfuncs.pfnWriteCoord(End.x);
-	g_engfuncs.pfnWriteCoord(End.y);
-	g_engfuncs.pfnWriteCoord(End.z);
-	g_engfuncs.pfnMessageEnd();
+	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY, Start);
+	WRITE_BYTE(TE_TRACER);
+	WRITE_COORD(Start.x);
+	WRITE_COORD(Start.y);
+	WRITE_COORD(Start.z);
+	WRITE_COORD(End.x);
+	WRITE_COORD(End.y);
+	WRITE_COORD(End.z);
+	MESSAGE_END();
 }
 
 void CPugUtil::DrawLine(Vector Start, Vector End, int Life, int Red, int Green, int Blue)
 {
-	g_engfuncs.pfnMessageBegin(MSG_BROADCAST, SVC_TEMPENTITY, Start, nullptr);
-	g_engfuncs.pfnWriteByte(TE_LINE);
-	g_engfuncs.pfnWriteCoord(Start.x);
-	g_engfuncs.pfnWriteCoord(Start.y);
-	g_engfuncs.pfnWriteCoord(Start.z);
-	g_engfuncs.pfnWriteCoord(End.x);
-	g_engfuncs.pfnWriteCoord(End.y);
-	g_engfuncs.pfnWriteCoord(End.z);
-	g_engfuncs.pfnWriteShort(Life);
-	g_engfuncs.pfnWriteByte(Red);
-	g_engfuncs.pfnWriteByte(Green);
-	g_engfuncs.pfnWriteByte(Blue);
-	g_engfuncs.pfnMessageEnd();
+	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY, Start);
+	WRITE_BYTE(TE_LINE);
+	WRITE_COORD(Start.x);
+	WRITE_COORD(Start.y);
+	WRITE_COORD(Start.z);
+	WRITE_COORD(End.x);
+	WRITE_COORD(End.y);
+	WRITE_COORD(End.z);
+	WRITE_SHORT(Life);
+	WRITE_BYTE(Red);
+	WRITE_BYTE(Green);
+	WRITE_BYTE(Blue);
+	MESSAGE_END();
 }
 
 std::vector<CBasePlayer *> CPugUtil::GetPlayers(bool InGame, bool Bots)
@@ -803,7 +803,7 @@ void CPugUtil::ShowMotd(edict_t* pEntity, char* Motd, unsigned int MotdLength)
 {
 	static int iMsgMOTD;
 
-	if (iMsgMOTD || (iMsgMOTD = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "MOTD", NULL)))
+	if (iMsgMOTD || (iMsgMOTD = GET_USER_MSG_ID(PLID, "MOTD", NULL)))
 	{
 		if (MotdLength < 128)
 		{
@@ -813,14 +813,14 @@ void CPugUtil::ShowMotd(edict_t* pEntity, char* Motd, unsigned int MotdLength)
 			{
 				int FileLength = 0;
 
-				char* FileContent = reinterpret_cast<char*>(g_engfuncs.pfnLoadFileForMe(Motd, &FileLength));
+				char* FileContent = reinterpret_cast<char*>(LOAD_FILE_FOR_ME(Motd, &FileLength));
 
 				if (FileLength)
 				{
 					this->ShowMotd(pEntity, FileContent, FileLength);
 				}
 
-				g_engfuncs.pfnFreeFile(FileContent);
+				FREE_FILE(FileContent);
 
 				return;
 			}
@@ -847,10 +847,10 @@ void CPugUtil::ShowMotd(edict_t* pEntity, char* Motd, unsigned int MotdLength)
 
 			*Buffer = 0;
 
-			g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgMOTD, NULL, pEntity);
-			g_engfuncs.pfnWriteByte(Character ? FALSE : TRUE);
-			g_engfuncs.pfnWriteString(Motd);
-			g_engfuncs.pfnMessageEnd();
+			MESSAGE_BEGIN(MSG_ONE, iMsgMOTD, NULL, pEntity);
+			WRITE_BYTE(Character ? FALSE : TRUE);
+			WRITE_STRING(Motd);
+			MESSAGE_END();
 
 			*Buffer = Character;
 
@@ -880,7 +880,7 @@ bool CPugUtil::IsPlayerVisible(CBasePlayer* Player, CBasePlayer* Target)
 
 		pTarget->v.solid = SOLID_NOT;
 
-		g_engfuncs.pfnTraceLine(vLooker, vTarget, FALSE, pEntity, &tr);
+		TRACE_LINE(vLooker, vTarget, FALSE, pEntity, &tr);
 
 		pTarget->v.solid = oldSolid;
 

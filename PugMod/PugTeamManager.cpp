@@ -67,7 +67,7 @@ bool CPugTeamManager::ChooseTeam(CBasePlayer *Player, int Slot)
     }
     else if (Player->m_iTeam == UNASSIGNED || Player->m_iTeam == SPECTATOR)
     {
-        auto Auth = g_engfuncs.pfnGetPlayerAuthId(Player->edict());
+        auto Auth = GETPLAYERAUTHID(Player->edict());
 
         if (Auth)
         {
@@ -102,7 +102,7 @@ void CPugTeamManager::DropClient(edict_t *pEntity)
     {
         if (Player->m_iTeam == TERRORIST || Player->m_iTeam == SPECTATOR)
         {
-            auto Auth = g_engfuncs.pfnGetPlayerAuthId(Player->edict());
+            auto Auth = GETPLAYERAUTHID(Player->edict());
 
             if (Auth)
             {

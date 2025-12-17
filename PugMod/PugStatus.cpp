@@ -35,9 +35,9 @@ void CPugStatus::SendStatus()
 {
 	this->m_Data["Time"] = time(NULL);
 
-    this->m_Data["Address"] = g_engfuncs.pfnCVarGetString("net_address");
+    this->m_Data["Address"] = CVAR_GET_STRING("net_address");
 
-    this->m_Data["HostName"] = g_engfuncs.pfnCVarGetString("hostname");
+    this->m_Data["HostName"] = CVAR_GET_STRING("hostname");
 
     this->m_Data["Map"] = STRING(gpGlobals->mapname);
 
@@ -107,7 +107,7 @@ void CPugStatus::SendStatus()
                             {"EntityId", Player->entindex()},
                             {"Auth", Auth},
                             {"Name", STRING(Player->edict()->v.netname)},
-                            {"UserId", g_engfuncs.pfnGetPlayerUserId(Player->edict())},
+                            {"UserId", GETPLAYERUSERID(Player->edict())},
                             {"Team", Player->m_iTeam},
                             {"Frags", Frags},
                             {"Deaths", Deaths},

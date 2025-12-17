@@ -761,7 +761,7 @@ bool CPugMod::ScoreInfo(int msg_dest, int msg_type, const float *pOrigin, edict_
         {
             auto EntityIndex = gPugEngine.GetByte(0);
 
-            if (EntityIndex >= 1 && EntityIndex <= gpGlobals->maxClients)
+            if (EntityIndex > 0 && EntityIndex <= gpGlobals->maxClients)
             {
                 gPugMod.SetPoint(EntityIndex, State, 0, gPugEngine.GetShort(1));
                 gPugMod.SetPoint(EntityIndex, State, 1, gPugEngine.GetShort(2));

@@ -89,7 +89,7 @@ bool CPugClientCmd::Command(edict_t *pEntity)
 {
     if (!FNullEnt(pEntity))
     {
-        auto pszCommand = g_engfuncs.pfnCmd_Argv(0);
+        auto pszCommand = CMD_ARGV(0);
 
         if (pszCommand)
         {
@@ -107,7 +107,7 @@ bool CPugClientCmd::Command(edict_t *pEntity)
 
                     if (_stricmp(pszCommand, "menuselect") == 0)
                     {
-                        auto pszArgv = g_engfuncs.pfnCmd_Argv(1);
+                        auto pszArgv = CMD_ARGV(1);
 
                         if (pszArgv)
                         {
@@ -126,13 +126,13 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                     }
                     else if (_stricmp(pszCommand, "say") == 0 || _stricmp(pszCommand, "say_team") == 0)
                     {
-                        auto pszArgv = g_engfuncs.pfnCmd_Argv(1);
+                        auto pszArgv = CMD_ARGV(1);
 
                         if (pszArgv)
                         {
                             if (pszArgv[0u] == gPugCvar.m_CmdPrefixPlayer->string[0u] || pszArgv[0u] == gPugCvar.m_CmdPrefixAdmin->string[0u])
                             {
-                                gPugUtil.ClientCommand(pEntity, "%s\n", g_engfuncs.pfnCmd_Args());
+                                gPugUtil.ClientCommand(pEntity, "%s\n", CMD_ARGS());
                                 return true;
                             }
                         }
@@ -337,7 +337,7 @@ bool CPugClientCmd::Message(CBasePlayer *Player)
 {
     if (gPugAdmin.CheckAccess(Player, ADMIN_CHAT))
     {
-        auto pCmdArgs = g_engfuncs.pfnCmd_Args();
+        auto pCmdArgs = CMD_ARGS();
 
         if (pCmdArgs)
         {
@@ -348,7 +348,7 @@ bool CPugClientCmd::Message(CBasePlayer *Player)
             }
         }
 
-        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Usage: ^3%s^1 <message>"), gPugCvar.m_Tag->string, g_engfuncs.pfnCmd_Argv(0));
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Usage: ^3%s^1 <message>"), gPugCvar.m_Tag->string, CMD_ARGV(0));
         return true;
     }
 
@@ -359,7 +359,7 @@ bool CPugClientCmd::Rcon(CBasePlayer *Player)
 {
     if (gPugAdmin.CheckAccess(Player, ADMIN_RCON))
     {
-        auto pCmdArgs = g_engfuncs.pfnCmd_Args();
+        auto pCmdArgs = CMD_ARGS();
 
         if (pCmdArgs)
         {
@@ -381,7 +381,7 @@ bool CPugClientCmd::Rcon(CBasePlayer *Player)
             }
         }
 
-        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Usage: ^3%s^1 <command>"), gPugCvar.m_Tag->string, g_engfuncs.pfnCmd_Argv(0));
+        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Usage: ^3%s^1 <command>"), gPugCvar.m_Tag->string, CMD_ARGV(0));
         return true;
     }
 

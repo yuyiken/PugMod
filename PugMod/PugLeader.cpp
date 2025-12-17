@@ -62,9 +62,9 @@ void CPugLeader::Init()
 			}
 		}
 
-		auto User = g_engfuncs.pfnRandomLong(0, 1);
+		auto User = RANDOM_LONG(0, 1);
 
-		auto Team = g_engfuncs.pfnRandomLong(1, 2);
+		auto Team = RANDOM_LONG(1, 2);
 
 		this->SetLeader(Players.at(User), Team);
 

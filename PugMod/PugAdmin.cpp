@@ -47,7 +47,7 @@ void CPugAdmin::PutInServer(edict_t* pEntity)
 
         this->m_Flag[EntityIndex] |= this->ReadFlags("z");
 
-        auto Auth = g_engfuncs.pfnGetPlayerAuthId(pEntity);
+        auto Auth = GETPLAYERAUTHID(pEntity);
 
         if (Auth)
         {
@@ -106,7 +106,7 @@ int CPugAdmin::Access(std::string Auth, int Level)
 
 std::string CPugAdmin::GetFlags(edict_t* pEdict)
 {
-    auto Auth = g_engfuncs.pfnGetPlayerAuthId(pEdict);
+    auto Auth = GETPLAYERAUTHID(pEdict);
 
     if (Auth)
     {

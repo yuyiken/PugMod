@@ -16,7 +16,7 @@ void CPugRageBan::DropClient(edict_t *pEntity)
             {
                 if (!Player->IsBot())
                 {
-                    auto AuthId = g_engfuncs.pfnGetPlayerAuthId(pEntity);
+                    auto AuthId = GETPLAYERAUTHID(pEntity);
 
                     if (AuthId)
                     {
@@ -60,7 +60,7 @@ void CPugRageBan::CheckList()
 
                     if (Player)
                     {
-                        auto AuthId = g_engfuncs.pfnGetPlayerAuthId(Player->edict());
+                        auto AuthId = GETPLAYERAUTHID(Player->edict());
 
                         if (AuthId)
                         {

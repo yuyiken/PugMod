@@ -69,7 +69,7 @@ void CPugVoteEnd::Init()
 
                 gPugMenu[Player->entindex()].Show(Player);
 
-                gPugUtil.ClientCommand(Player->edict(), g_VoteEnd_Sound[g_engfuncs.pfnRandomLong(0, 1)]);
+                gPugUtil.ClientCommand(Player->edict(), g_VoteEnd_Sound[RANDOM_LONG(0, 1)]);
 
                 gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 A player left the match, what do you want to do?"), gPugCvar.m_Tag->string);
             }
@@ -123,7 +123,7 @@ P_VOTE_END_INFO CPugVoteEnd::GetWinner()
             }
             else if (Item.Votes == Winner.Votes)
             {
-                if (g_engfuncs.pfnRandomLong(0, 1))
+                if (RANDOM_LONG(0, 1))
                 {
                     Winner = Item;
                 }

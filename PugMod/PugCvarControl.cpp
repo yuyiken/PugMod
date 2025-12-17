@@ -15,7 +15,7 @@ void CPugCvarControl::Add(const char *Name, const char *String)
     {
         if (Name[0u] != '\0')
         {
-            auto Pointer = g_engfuncs.pfnCVarGetPointer(Name);
+            auto Pointer = CVAR_GET_POINTER(Name);
 
             if (Pointer)
             {

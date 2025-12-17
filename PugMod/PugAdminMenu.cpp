@@ -193,7 +193,7 @@ void CPugAdminMenu::BanHandle(CBasePlayer *Player, P_MENU_ITEM Item)
             }
             else
             {
-				gPugUtil.ServerCommand(_T("banid %d %s"), Item.Extra, g_engfuncs.pfnGetPlayerAuthId(Target->edict()));
+				gPugUtil.ServerCommand(_T("banid %d %s"), Item.Extra, GETPLAYERAUTHID(Target->edict()));
 
 				gPugUtil.ServerCommand(_T("wait;wait;writeid;writeip"));
 

@@ -73,7 +73,7 @@ void CPugVoteMap::Init()
                 }
             }
 
-            gPugUtil.ClientCommand(Player->edict(), g_VoteMap_Sound[g_engfuncs.pfnRandomLong(0, 1)]);
+            gPugUtil.ClientCommand(Player->edict(), g_VoteMap_Sound[RANDOM_LONG(0, 1)]);
 
             gPugMenu[Player->entindex()].Show(Player);
         }
@@ -163,7 +163,7 @@ P_VOTE_MAP_INFO CPugVoteMap::GetWinner()
             }
             else if (Item.Votes == Winner.Votes)
             {
-                if (g_engfuncs.pfnRandomLong(0, 1))
+                if (RANDOM_LONG(0, 1))
                 {
                     Winner = Item;
                 }
@@ -182,7 +182,7 @@ P_VOTE_MAP_INFO CPugVoteMap::GetRandom()
     {
         do
         {
-            Map = this->m_MapList.at(g_engfuncs.pfnRandomLong(0, this->m_MapList.size() - 1));
+            Map = this->m_MapList.at(RANDOM_LONG(0, this->m_MapList.size() - 1));
         }
         while (Map.This || Map.Last);
     }

@@ -83,12 +83,12 @@ void CPugMenu::Hide(CBasePlayer *Player)
 
             if (iMsgShowMenu || (iMsgShowMenu = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "ShowMenu", NULL)))
             {
-                g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgShowMenu, nullptr, Player->edict());
-                g_engfuncs.pfnWriteShort(0);
-                g_engfuncs.pfnWriteChar(0);
-                g_engfuncs.pfnWriteByte(0);
-                g_engfuncs.pfnWriteString("");
-                g_engfuncs.pfnMessageEnd();
+                MESSAGE_BEGIN(MSG_ONE, iMsgShowMenu, nullptr, Player->edict());
+                WRITE_SHORT(0);
+                WRITE_CHAR(0);
+                WRITE_BYTE(0);
+                WRITE_STRING("");
+                MESSAGE_END();
             }
         }
     }
@@ -423,12 +423,12 @@ void CPugMenu::ShowMenu(CBasePlayer *Player, int Slots, int Time, std::string Te
 
                         pMenuList = aMenuList + iCharCount;
 
-                        g_engfuncs.pfnMessageBegin(MSG_ONE, iMsgShowMenu, nullptr, Player->edict());
-                        g_engfuncs.pfnWriteShort(Slots);
-                        g_engfuncs.pfnWriteChar(Time);
-                        g_engfuncs.pfnWriteByte(*pMenuList ? TRUE : FALSE);
-                        g_engfuncs.pfnWriteString(szChunk);
-                        g_engfuncs.pfnMessageEnd();
+                        MESSAGE_BEGIN(MSG_ONE, iMsgShowMenu, nullptr, Player->edict());
+                        WRITE_SHORT(Slots);
+                        WRITE_CHAR(Time);
+                        WRITE_BYTE(*pMenuList ? TRUE : FALSE);
+                        WRITE_STRING(szChunk);
+                        MESSAGE_END();
                     }
                 }
             }

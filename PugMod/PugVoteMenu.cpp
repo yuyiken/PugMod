@@ -239,7 +239,7 @@ bool CPugVoteMenu::VoteKickHandle(CBasePlayer *Player, P_MENU_ITEM Item)
         {
             gPugUtil.PrintColor(Player->edict(), Player->entindex(), _T("^4[%s]^1 ^3%s^1 Kicked: ^4%d^1 votes reached."), gPugCvar.m_Tag->string, STRING(Target->edict()->v.netname), Needs);
 
-            gPugUtil.ServerCommand("kick #%d %s", g_engfuncs.pfnGetPlayerUserId(Target->edict()), _T("Kicked by Vote Kick."));
+            gPugUtil.ServerCommand("kick #%d %s", GETPLAYERUSERID(Target->edict()), _T("Kicked by Vote Kick."));
         }
 
         return true;

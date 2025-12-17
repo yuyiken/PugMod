@@ -77,13 +77,13 @@ void CPugStats::SetState()
             this->m_Match.EndTime = 0;
             
             // Set hostname
-            this->m_Match.HostName = g_engfuncs.pfnCVarGetString("hostname");
+            this->m_Match.HostName = CVAR_GET_STRING("hostname");
             
             // Set map name
             this->m_Match.Map = STRING(gpGlobals->mapname);
             
             // Set address
-            this->m_Match.Address = g_engfuncs.pfnCVarGetString("net_address");
+            this->m_Match.Address = CVAR_GET_STRING("net_address");
             
             // Set score
             this->m_Match.Score.fill(0);
@@ -188,7 +188,7 @@ const char* CPugStats::GetAuthId(CBasePlayer *Player)
         {
             if (!(Player->edict()->v.flags & FL_FAKECLIENT))
             {
-                return g_engfuncs.pfnGetPlayerAuthId(Player->edict());
+                return GETPLAYERAUTHID(Player->edict());
             }
 
             return STRING(Player->edict()->v.netname);

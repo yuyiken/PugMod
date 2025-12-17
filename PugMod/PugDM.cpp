@@ -106,7 +106,7 @@ bool CPugDM::GetPlayerSpawnSpot(CBasePlayer *Player)
                 {
                     auto Spawn = this->m_Spawn.begin();
 
-                    std::advance(Spawn, g_engfuncs.pfnRandomLong(0, this->m_Spawn.size()));
+                    std::advance(Spawn, RANDOM_LONG(0, this->m_Spawn.size()));
 
                     if (!Spawn->second.Vecs.IsZero())
                     {
@@ -140,11 +140,11 @@ bool CPugDM::GetPlayerSpawnSpot(CBasePlayer *Player)
 
                             if (Player->edict()->v.flags & FL_DUCKING)
                             {
-                                g_engfuncs.pfnSetSize(Player->edict(), VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX);
+                                SET_SIZE(Player->edict(), VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX);
                             }
                             else
                             {
-                                g_engfuncs.pfnSetSize(Player->edict(), VEC_HULL_MIN, VEC_HULL_MAX);
+                                SET_SIZE(Player->edict(), VEC_HULL_MIN, VEC_HULL_MAX);
                             }
 
                             return true;
@@ -162,7 +162,7 @@ bool CPugDM::CheckDistance(CBasePlayer *Player, vec3_t Origin, float Distance)
 {
     edict_t *pEntity = nullptr;
 
-    while (!FNullEnt(pEntity = g_engfuncs.pfnFindEntityInSphere(pEntity, Origin, Distance)))
+    while (!FNullEnt(pEntity = FIND_ENTITY_IN_SPHERE(pEntity, Origin, Distance)))
     {
         auto Target = UTIL_PlayerByIndexSafe(ENTINDEX(pEntity));
 
@@ -179,6 +179,22 @@ bool CPugDM::CheckDistance(CBasePlayer *Player, vec3_t Origin, float Distance)
     }
 
     return true;
+}
+
+void CPugDM::CheckMapConditions()
+{
+    if (this->m_Run)
+    {
+        if (g_pGameRules)
+        {
+            CSGameRules()->m_bMapHasBombTarget = false;
+            CSGameRules()->m_bMapHasBombZone = false;
+            CSGameRules()->m_bMapHasRescueZone = false;
+            CSGameRules()->m_bMapHasBuyZone = false;
+            CSGameRules()->m_bMapHasEscapeZone = false;
+            CSGameRules()->m_bMapHasVIPSafetyZone = false;
+        }
+    }
 }
 
 void CPugDM::GetIntoGame(CBasePlayer *Player)
@@ -207,6 +223,27 @@ void CPugDM::PlayerSpawn(CBasePlayer *Player)
         {
             this->m_Info[Player->entindex()].m_Headshots = 0.0f;
         }
+
+        Player->m_iClientHideHUD = 0;
+        Player->m_iHideHUD |= HIDEHUD_TIMER;
+
+        static int iHideWeaponMsg;
+        
+        if (iHideWeaponMsg || (iHideWeaponMsg = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "HideWeapon", NULL)))
+        {
+            MESSAGE_BEGIN(MSG_ONE_UNRELIABLE, iHideWeaponMsg, nullptr, Player->pev);
+            WRITE_BYTE(HIDEHUD_TIMER);
+            MESSAGE_END();   
+        }
+
+        // static int iCrosshairMsg;
+
+        // if (iCrosshairMsg || (iCrosshairMsg = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "Crosshair", NULL)))
+        // {
+        //     MESSAGE_BEGIN(MSG_ONE_UNRELIABLE, iCrosshairMsg, nullptr, Player->pev);
+        //     WRITE_BYTE(0);
+        //     MESSAGE_END();   
+        // }
     }
 }
 
@@ -709,7 +746,7 @@ bool CPugDM::EquipRandomItem(CBasePlayer *Player, int Slot)
         {
             if (this->m_Weapon.size() > 0)
             {
-                auto Weapon = std::next(std::begin(this->m_Weapon), g_engfuncs.pfnRandomLong(0, this->m_Weapon.size() - 1));
+                auto Weapon = std::next(std::begin(this->m_Weapon), RANDOM_LONG(0, this->m_Weapon.size() - 1));
 
                 if (Weapon->SlotInfo)
                 {
@@ -801,7 +838,7 @@ bool CPugDM::IsEntityStuck(edict_t *pEntity)
     {
         TraceResult trResult = {};
 
-        g_engfuncs.pfnTraceHull(pEntity->v.origin, pEntity->v.origin, dont_ignore_monsters, (pEntity->v.flags & FL_DUCKING) ? 3 : 1, pEntity, &trResult);
+        TRACE_HULL(pEntity->v.origin, pEntity->v.origin, dont_ignore_monsters, (pEntity->v.flags & FL_DUCKING) ? 3 : 1, pEntity, &trResult);
 
         return (trResult.fStartSolid || trResult.fAllSolid || !trResult.fInOpen);
     }

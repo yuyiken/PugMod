@@ -10,7 +10,7 @@ void CPugSpawnEdit::ServerActivate()
 
 	this->m_Marked.clear();
 
-	this->m_InfoTarget = g_engfuncs.pfnAllocString("info_target");
+	this->m_InfoTarget = ALLOC_STRING("info_target");
 }
 
 void CPugSpawnEdit::ServerDeactivate()
@@ -266,27 +266,27 @@ edict_t* CPugSpawnEdit::MakeEntity(int EntityIndex)
 	{
 		for (auto const& Spawn : this->m_Spawns)
 		{
-			pEntity = g_engfuncs.pfnCreateNamedEntity(this->m_InfoTarget);
+			pEntity = CREATE_NAMED_ENTITY(this->m_InfoTarget);
 
 			if (!FNullEnt(pEntity))
 			{
-				pEntity->v.classname = g_engfuncs.pfnAllocString("view_spawn");
+				pEntity->v.classname = ALLOC_STRING("view_spawn");
 
 				switch (Spawn.second.Team)
 				{
 					case 0:
 					{
-						g_engfuncs.pfnSetModel(pEntity, "models/player/vip/vip.mdl");
+						SET_MODEL(pEntity, "models/player/vip/vip.mdl");
 						break;
 					}
 					case 1:
 					{
-						g_engfuncs.pfnSetModel(pEntity, "models/player/terror/terror.mdl");
+						SET_MODEL(pEntity, "models/player/terror/terror.mdl");
 						break;
 					}
 					case 2:
 					{
-						g_engfuncs.pfnSetModel(pEntity, "models/player/urban/urban.mdl");
+						SET_MODEL(pEntity, "models/player/urban/urban.mdl");
 						break;
 					}
 				}
@@ -300,7 +300,7 @@ edict_t* CPugSpawnEdit::MakeEntity(int EntityIndex)
 				{
 					if (!FNullEnt(this->m_Entities[Spawn.first]))
 					{
-						g_engfuncs.pfnRemoveEntity(this->m_Entities[Spawn.first]);
+						REMOVE_ENTITY(this->m_Entities[Spawn.first]);
 					}
 				}
 
@@ -312,29 +312,29 @@ edict_t* CPugSpawnEdit::MakeEntity(int EntityIndex)
 	}
 	else
 	{
-		pEntity = g_engfuncs.pfnCreateNamedEntity(this->m_InfoTarget);
+		pEntity = CREATE_NAMED_ENTITY(this->m_InfoTarget);
 
 		if (!FNullEnt(pEntity))
 		{
-			pEntity->v.classname = g_engfuncs.pfnAllocString("view_spawn");
+			pEntity->v.classname = ALLOC_STRING("view_spawn");
 
-			g_engfuncs.pfnSetModel(pEntity, "models/player/vip/vip.mdl");
+			SET_MODEL(pEntity, "models/player/vip/vip.mdl");
 
 			switch (this->m_Spawns[EntityIndex].Team)
 			{
 				case 0:
 				{
-					g_engfuncs.pfnSetModel(pEntity, "models/player/vip/vip.mdl");
+					SET_MODEL(pEntity, "models/player/vip/vip.mdl");
 					break;
 				}
 				case 1:
 				{
-					g_engfuncs.pfnSetModel(pEntity, "models/player/terror/terror.mdl");
+					SET_MODEL(pEntity, "models/player/terror/terror.mdl");
 					break;
 				}
 				case 2:
 				{
-					g_engfuncs.pfnSetModel(pEntity, "models/player/urban/urban.mdl");
+					SET_MODEL(pEntity, "models/player/urban/urban.mdl");
 					break;
 				}
 			}
@@ -348,7 +348,7 @@ edict_t* CPugSpawnEdit::MakeEntity(int EntityIndex)
 			{
 				if (!FNullEnt(this->m_Entities[EntityIndex]))
 				{
-					g_engfuncs.pfnRemoveEntity(this->m_Entities[EntityIndex]);
+					REMOVE_ENTITY(this->m_Entities[EntityIndex]);
 				}
 			}
 
@@ -369,7 +369,7 @@ void CPugSpawnEdit::RemoveEntity(int EntityIndex)
 		{
 			if (!FNullEnt(this->m_Entities[Spawn.first]))
 			{
-				g_engfuncs.pfnRemoveEntity(this->m_Entities[Spawn.first]);
+				REMOVE_ENTITY(this->m_Entities[Spawn.first]);
 			}
 		}
 
@@ -383,7 +383,7 @@ void CPugSpawnEdit::RemoveEntity(int EntityIndex)
 	{
 		if (!FNullEnt(this->m_Entities[EntityIndex]))
 		{
-			g_engfuncs.pfnRemoveEntity(this->m_Entities[EntityIndex]);
+			REMOVE_ENTITY(this->m_Entities[EntityIndex]);
 		}
 
 		this->m_Spawns.erase(EntityIndex);
@@ -436,7 +436,7 @@ bool CPugSpawnEdit::IsStuck(int EntityIndex)
     {
         TraceResult trResult = {};
 
-        g_engfuncs.pfnTraceHull(pEntity->v.origin, pEntity->v.origin, dont_ignore_monsters, (pEntity->v.flags & FL_DUCKING) ? 3 : 1, pEntity, &trResult);
+        TRACE_HULL(pEntity->v.origin, pEntity->v.origin, dont_ignore_monsters, (pEntity->v.flags & FL_DUCKING) ? 3 : 1, pEntity, &trResult);
 
         return (trResult.fStartSolid || trResult.fAllSolid || !trResult.fInOpen);
     }
@@ -776,11 +776,11 @@ void CPugSpawnEdit::RespawnPlayer(CBasePlayer *Player, int SpawnIndex)
 
 			if (Player->edict()->v.flags & FL_DUCKING)
 			{
-				g_engfuncs.pfnSetSize(Player->edict(), VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX);
+				SET_SIZE(Player->edict(), VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX);
 			}
 			else
 			{
-				g_engfuncs.pfnSetSize(Player->edict(), VEC_HULL_MIN, VEC_HULL_MAX);
+				SET_SIZE(Player->edict(), VEC_HULL_MIN, VEC_HULL_MAX);
 			}
 		}
 	}

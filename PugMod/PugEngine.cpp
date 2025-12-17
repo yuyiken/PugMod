@@ -4,7 +4,7 @@ CPugEngine gPugEngine;
 
 void CPugEngine::RegisterHook(const char* MsgName, bool (*Function)(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity))
 {
-	auto UserMsgId = gpMetaUtilFuncs->pfnGetUserMsgID(&Plugin_info, MsgName, 0);
+	auto UserMsgId = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, MsgName, 0);
 
 	if (UserMsgId)
 	{
@@ -50,7 +50,7 @@ bool CPugEngine::MessageEnd()
 
 				if (!BlockMessage)
 				{
-					g_engfuncs.pfnMessageBegin(this->m_Data.msg_dest, this->m_Data.msg_type, this->m_Data.pOrigin, this->m_Data.pEntity);
+					MESSAGE_BEGIN(this->m_Data.msg_dest, this->m_Data.msg_type, this->m_Data.pOrigin, this->m_Data.pEntity);
 
 					for (auto const& Param : this->m_Data.Param)
 					{
@@ -58,48 +58,48 @@ bool CPugEngine::MessageEnd()
 						{
 							case MESSAGE_TYPE_BYTE:
 							{
-								g_engfuncs.pfnWriteByte(Param.second.iValue);
+								WRITE_BYTE(Param.second.iValue);
 								break;
 							}
 							case MESSAGE_TYPE_CHAR:
 							{
-								g_engfuncs.pfnWriteChar(Param.second.iValue);
+								WRITE_CHAR(Param.second.iValue);
 								break;
 							}
 							case MESSAGE_TYPE_SHORT:
 							{
-								g_engfuncs.pfnWriteShort(Param.second.iValue);
+								WRITE_SHORT(Param.second.iValue);
 								break;
 							}
 							case MESSAGE_TYPE_LONG:
 							{
-								g_engfuncs.pfnWriteLong(Param.second.iValue);
+								WRITE_LONG(Param.second.iValue);
 								break;
 							}
 							case MESSAGE_TYPE_ANGLE:
 							{
-								g_engfuncs.pfnWriteAngle(Param.second.flValue);
+								WRITE_ANGLE(Param.second.flValue);
 								break;
 							}
 							case MESSAGE_TYPE_COORD:
 							{
-								g_engfuncs.pfnWriteCoord(Param.second.flValue);
+								WRITE_COORD(Param.second.flValue);
 								break;
 							}
 							case MESSAGE_TYPE_STRING:
 							{
-								g_engfuncs.pfnWriteString(Param.second.szValue);
+								WRITE_STRING(Param.second.szValue);
 								break;
 							}
 							case MESSAGE_TYPE_ENTITY:
 							{
-								g_engfuncs.pfnWriteEntity(Param.second.iValue);
+								WRITE_ENTITY(Param.second.iValue);
 								break;
 							}
 						}
 					}
 
-					g_engfuncs.pfnMessageEnd();
+					MESSAGE_END();
 				}
 			}
 		}

@@ -70,7 +70,7 @@ void CPugVoteSwapTeam::Init(int Team)
 
                 gPugMenu[Player->entindex()].Show(Player);
 
-                gPugUtil.ClientCommand(Player->edict(), g_VoteSwapTeam_Sound[g_engfuncs.pfnRandomLong(0, 1)]);
+                gPugUtil.ClientCommand(Player->edict(), g_VoteSwapTeam_Sound[RANDOM_LONG(0, 1)]);
             }
 
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 The ^3%s^1 won: Starting team pick."), gPugCvar.m_Tag->string, g_Pug_TeamName[Team]);
@@ -133,7 +133,7 @@ P_VOTE_SWAP_INFO CPugVoteSwapTeam::GetWinner()
             }
             else if (Item.Votes == Winner.Votes)
             {
-                if (g_engfuncs.pfnRandomLong(0, 1))
+                if (RANDOM_LONG(0, 1))
                 {
                     Winner = Item;
                 }

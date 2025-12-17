@@ -15,7 +15,7 @@ void CPugMapList::Add(const char *Map)
         {
             char *File = strdup(Map);
 
-            if (g_engfuncs.pfnIsMapValid(File))
+            if (IS_MAP_VALID(File))
             {
                 this->m_Data.insert(std::make_pair(this->m_Data.size(), Map));
             }
