@@ -223,27 +223,6 @@ void CPugDM::PlayerSpawn(CBasePlayer *Player)
         {
             this->m_Info[Player->entindex()].m_Headshots = 0.0f;
         }
-
-        Player->m_iClientHideHUD = 0;
-        Player->m_iHideHUD |= HIDEHUD_TIMER;
-
-        static int iHideWeaponMsg;
-        
-        if (iHideWeaponMsg || (iHideWeaponMsg = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "HideWeapon", NULL)))
-        {
-            MESSAGE_BEGIN(MSG_ONE_UNRELIABLE, iHideWeaponMsg, nullptr, Player->pev);
-            WRITE_BYTE(HIDEHUD_TIMER);
-            MESSAGE_END();   
-        }
-
-        // static int iCrosshairMsg;
-
-        // if (iCrosshairMsg || (iCrosshairMsg = gpMetaUtilFuncs->pfnGetUserMsgID(PLID, "Crosshair", NULL)))
-        // {
-        //     MESSAGE_BEGIN(MSG_ONE_UNRELIABLE, iCrosshairMsg, nullptr, Player->pev);
-        //     WRITE_BYTE(0);
-        //     MESSAGE_END();   
-        // }
     }
 }
 
